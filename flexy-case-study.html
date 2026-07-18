@@ -202,6 +202,8 @@
   .limitation-card{background:#fff;border:1px solid var(--border);border-radius:12px;padding:20px;}
   .limitation-card h4{margin:0 0 8px;font-size:14.5px;}
   .limitation-card p{font-size:13.5px;color:var(--ink-soft);margin:0 0 8px;}
+  .limitation-card ul{margin:0 0 10px;padding-left:18px;}
+  .limitation-card li{font-size:13.5px;color:var(--ink-soft);margin-bottom:5px;}
   .limitation-card .src{font-size:12px;color:var(--ink-soft);}
   .limitation-card .src a{color:var(--teal-dark);}
 </style>
@@ -252,8 +254,7 @@
 
 <section id="tldr">
   <div class="wrap">
-    <div class="section-kicker">60-second version</div>
-    <h2 class="section-title">The short version</h2>
+    <div class="section-kicker">The short version</div>
     <div class="summary-box">
       Flexy shows what electricity costs right now and automatically shifts EV charging into the cheapest hours.
     </div>
@@ -271,7 +272,7 @@
     <details class="section-collapse">
     <summary>
       <div class="summary-head">
-        <div class="section-kicker" style="margin-bottom:0;">Problem &amp; market</div>
+        <div class="section-kicker" style="margin-bottom:0;">Problem &amp; positioning</div>
       </div>
       <span class="toggle-ic"></span>
     </summary>
@@ -345,7 +346,7 @@
     <details class="section-collapse">
     <summary>
       <div class="summary-head">
-        <div class="section-kicker" style="margin-bottom:0;">Research — four personas</div>
+        <div class="section-kicker" style="margin-bottom:0;">Research</div>
       </div>
       <span class="toggle-ic"></span>
     </summary>
@@ -404,7 +405,7 @@
     <details class="section-collapse">
     <summary>
       <div class="summary-head">
-        <div class="section-kicker" style="margin-bottom:0;">Prioritization — ICE roadmap</div>
+        <div class="section-kicker" style="margin-bottom:0;">Prioritized roadmap</div>
       </div>
       <span class="toggle-ic"></span>
     </summary>
@@ -438,7 +439,6 @@
 <section id="prototype">
   <div class="wrap">
     <div class="section-kicker">Prototype</div>
-    <h2 class="section-title">Interactive click-dummy</h2>
     <p class="lede">A full coded phone-frame prototype covering the entire MVP flow: discovering Flexy through a ComEd email, installing it, connecting a ComEd account, an intro carousel, connecting an EV (brand selection → manufacturer login → permissions, matching how Smartcar-style integrations actually work), setting charging preferences, and the live Price &amp; Cost and Smart Charging dashboards.</p>
     <div class="proto-frame-wrap">
       <iframe class="proto" src="flexy-click-dummy.html" title="Flexy interactive prototype"></iframe>
@@ -453,27 +453,38 @@
 <section id="limitations">
   <div class="wrap">
     <div class="section-kicker">Limitations</div>
-    <h2 class="section-title">What this prototype is, and isn't</h2>
     <p class="lede">Industry commentary on AI-assisted prototypes in 2025-2026 converges on one point: a polished demo and a shippable product are different things, and it's easy to mistake one for the other. A few of the gaps commonly named by product practitioners, applied honestly to Flexy:</p>
     <div class="limitation-grid">
       <div class="limitation-card">
         <h4>A working demo isn't 10% of the way to done</h4>
-        <p>Stakeholders often see a polished AI-built demo and assume it's nearly finished, when the actual engineering (backend, auth, data persistence, real integrations) hasn't started. Flexy's click-dummy is exactly this: a fully coded phone-frame flow with no real backend, no ComEd account connection, and no live Smartcar/EV API behind it — all data is hardcoded or simulated.</p>
+        <ul>
+          <li>Stakeholders often see a polished AI-built demo and assume it's nearly finished, when the actual engineering (backend, auth, data persistence, real integrations) hasn't started.</li>
+          <li>Flexy's click-dummy is exactly this: no real backend, no ComEd account connection, no live Smartcar/EV API — all data is hardcoded or simulated.</li>
+        </ul>
         <span class="src">Source: <a href="https://usekyros.ai/blog/from-prototype-to-production-ai-apps-never-ship" target="_blank" rel="noopener">Kyros, "From Prototype to Production"</a></span>
       </div>
       <div class="limitation-card">
         <h4>Automated design still needs real users</h4>
-        <p>AI-generated screens can miss subtle hierarchy, spacing, and comprehension issues that only surface with real usability testing. Flexy's personas and interviews are synthetic and internally consistent, but they were never tested against an actual human clicking through the flow — a real usability round would likely surface friction this process can't.</p>
+        <ul>
+          <li>AI-generated screens can miss subtle hierarchy, spacing, and comprehension issues that only surface with real usability testing.</li>
+          <li>Flexy's personas and interviews are synthetic and internally consistent, but were never tested against an actual human clicking through the flow.</li>
+        </ul>
         <span class="src">Source: <a href="https://www.parallelhq.com/blog/ai-powered-prototyping-tools" target="_blank" rel="noopener">Parallel, "AI-Powered Prototyping for UI/UX Design"</a></span>
       </div>
       <div class="limitation-card">
         <h4>Happy-path only, no edge cases</h4>
-        <p>AI-built prototypes handle the intended flow well but typically skip error states, failed API calls, and concurrent-use conditions. Flexy's click-dummy shows the ideal path (EV connects cleanly, prices load, charging schedules as expected) with no built-out states for a failed ComEd login, a stale price feed, or a car that drops connection mid-session.</p>
+        <ul>
+          <li>AI-built prototypes handle the intended flow well but typically skip error states, failed API calls, and concurrent-use conditions.</li>
+          <li>Flexy's click-dummy shows the ideal path only — no built-out states for a failed ComEd login, a stale price feed, or a car that drops connection mid-session.</li>
+        </ul>
         <span class="src">Source: <a href="https://codeconductor.ai/blog/vibe-coding-for-product-managers/" target="_blank" rel="noopener">CodeConductor, "Vibe Coding for PMs"</a></span>
       </div>
       <div class="limitation-card">
         <h4>Prototype code isn't production code</h4>
-        <p>AI-generated prototypes are typically built isolated from any real codebase and would need to be re-implemented by an engineering team to actually ship — the prototype validates the idea, not the architecture. Flexy's click-dummy is static HTML/CSS/JS built to demonstrate the flow; it has no data layer, no security review, and no compliance pass (relevant here, since a real version would handle utility account data and OAuth tokens to EV manufacturer APIs).</p>
+        <ul>
+          <li>AI-generated prototypes are typically isolated from any real codebase and would need to be re-implemented by an engineering team to actually ship.</li>
+          <li>Flexy's click-dummy is static HTML/CSS/JS with no data layer, no security review, and no compliance pass — relevant since a real version would handle utility account data and OAuth tokens to EV manufacturer APIs.</li>
+        </ul>
         <span class="src">Source: <a href="https://monday.com/blog/vibe-coding/vibe-coding-product-managers/" target="_blank" rel="noopener">monday.com, "Vibe coding for product managers"</a></span>
       </div>
     </div>
