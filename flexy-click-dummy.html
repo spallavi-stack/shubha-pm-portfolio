@@ -1291,8 +1291,12 @@ const RANGE_PRICES = {
 
 let priceState = { hours: FALLBACK_COMED_PRICES, source: 'fallback', label: FALLBACK_LABEL, dateStr: '20260716', touMode: false };
 let currentRange = 'today';
+// When live data is loaded, this holds the true clock hour for each bar (a rolling 24hr window
+// rarely lines up with 12AM–11PM). Null means "use the synthetic day array's own hour index."
+let activeHourLabels = null;
 
 function hourLabel(h){ const ampm = h<12 ? 'AM':'PM'; let hr=h%12; if(hr===0)hr=12; return hr+ampm; }
+function getLabel(i){ return activeHourLabels ? activeHourLabels[i] : hourLabel(i); }
 function priceTier(price, sorted){
   const n = sorted.length;
   const lowCut = sorted[Math.floor(n*0.33)], highCut = sorted[Math.floor(n*0.67)];
@@ -1302,7 +1306,10 @@ function updateLegend(){
   const touOn = priceState.touMode;
   document.getElementById('legTou').style.display = touOn ? 'inline-flex' : 'none';
   document.getElementById('touFootnote').style.display = touOn ? 'block' : 'none';
-  document.getElementById('priceChartTitle').textContent = touOn ? ('Price, ' + (currentRange==='today'?'today':RANGE_LABEL[currentRange]) + ' (TOU)') : ('Price, ' + (currentRange==='today'?'today':RANGE_LABEL[currentRange]));
+  const periodLabel = currentRange === 'today'
+    ? (priceState.source === 'live' ? 'last 24 hrs' : 'today')
+    : RANGE_LABEL[currentRange];
+  document.getElementById('priceChartTitle').textContent = 'Price, ' + periodLabel + (touOn ? ' (TOU)' : '');
 }
 
 function drawChart(basePrices, loadCurve){
@@ -1319,12 +1326,12 @@ function drawChart(basePrices, loadCurve){
     const tier = priceTier(p, sorted);
     const baseH = (p/maxTotal)*(h-10);
     const x = i*bw;
-    bars += `<rect x="${x}" y="${h-baseH}" width="${bw-1}" height="${baseH}" fill="${priceColors[tier]}" opacity="0.75"><title>${hourLabel(i)}: ${p.toFixed(1)}¢/kWh</title></rect>`;
+    bars += `<rect x="${x}" y="${h-baseH}" width="${bw-1}" height="${baseH}" fill="${priceColors[tier]}" opacity="0.75"><title>${getLabel(i)}: ${p.toFixed(1)}¢/kWh</title></rect>`;
     if(touOn){
       const delta = touDeltaCents(i);
       if(delta>0){
         const premH = (delta/maxTotal)*(h-10);
-        bars += `<rect x="${x}" y="${h-baseH-premH}" width="${bw-1}" height="${premH}" fill="var(--tou-premium)" opacity="0.85"><title>${hourLabel(i)} TOU premium: +${delta.toFixed(1)}¢/kWh</title></rect>`;
+        bars += `<rect x="${x}" y="${h-baseH-premH}" width="${bw-1}" height="${premH}" fill="var(--tou-premium)" opacity="0.85"><title>${getLabel(i)} TOU premium: +${delta.toFixed(1)}¢/kWh</title></rect>`;
       }
     }
   });
@@ -1348,10 +1355,10 @@ function drawCostChart(basePrices, loadCurve){
   let bars='';
   baseCosts.forEach((c,i)=>{
     const x = i*bw, baseH = (c/maxCost)*(h-10);
-    bars += `<rect x="${x}" y="${h-baseH}" width="${bw-1}" height="${baseH}" fill="var(--flexy-teal)" opacity="0.8"><title>${hourLabel(i)}: $${c.toFixed(2)}</title></rect>`;
+    bars += `<rect x="${x}" y="${h-baseH}" width="${bw-1}" height="${baseH}" fill="var(--flexy-teal)" opacity="0.8"><title>${getLabel(i)}: $${c.toFixed(2)}</title></rect>`;
     if(premCosts[i]>0){
       const premH = (premCosts[i]/maxCost)*(h-10);
-      bars += `<rect x="${x}" y="${h-baseH-premH}" width="${bw-1}" height="${premH}" fill="var(--tou-premium)" opacity="0.85"><title>${hourLabel(i)} TOU premium: $${premCosts[i].toFixed(2)}</title></rect>`;
+      bars += `<rect x="${x}" y="${h-baseH-premH}" width="${bw-1}" height="${premH}" fill="var(--tou-premium)" opacity="0.85"><title>${getLabel(i)} TOU premium: $${premCosts[i].toFixed(2)}</title></rect>`;
     }
   });
   svg.innerHTML = bars;
@@ -1376,19 +1383,24 @@ function renderTodayStats(){
   const totals = prices.map((p,i)=> p + (touOn? touDeltaCents(i):0));
   const totalCost = totals.reduce((sum,p,i)=> sum + (p/100)*consumption[i], 0);
   const avgPrice = totals.reduce((a,b)=>a+b,0)/totals.length;
-  document.getElementById('costVal').textContent = '$'+totalCost.toFixed(2);
+  const currentPriceVal = (priceState.source === 'live' && typeof priceState.latestPrice === 'number')
+    ? priceState.latestPrice
+    : totals[totals.length-1];
+  document.getElementById('costVal').textContent = priceState.source === 'live' ? currentPriceVal.toFixed(1)+'¢' : '$'+totalCost.toFixed(2);
+  document.getElementById('costLbl').textContent = priceState.source === 'live' ? 'Price right now' : 'Cost today';
   document.getElementById('avgVal').textContent = avgPrice.toFixed(1)+'¢';
   const minIdx = prices.indexOf(Math.min(...prices));
-  document.getElementById('cheapWindowVal').textContent = hourLabel(minIdx) + '–' + hourLabel((minIdx+3)%24);
+  document.getElementById('cheapWindowVal').textContent = getLabel(minIdx) + '–' + getLabel((minIdx+3)%24);
   updateLegend();
   drawChart(prices, consumption);
   drawCostChart(prices, consumption);
   if(priceState.source === 'live'){
     setBadge('live', 'Live ComEd data');
+    document.getElementById('verifyLink').href = 'https://hourlypricing.comed.com/api?type=5minutefeed';
   } else {
     setBadge('fallback', priceState.label);
+    document.getElementById('verifyLink').href = 'https://hourlypricing.comed.com/api?type=day&date=' + priceState.dateStr;
   }
-  document.getElementById('verifyLink').href = 'https://hourlypricing.comed.com/api?type=day&date=' + priceState.dateStr;
 }
 
 function setRange(btn, range){
@@ -1396,6 +1408,7 @@ function setRange(btn, range){
   btn.classList.add('active');
   if(range === 'today'){ renderTodayStats(); return; }
   currentRange = range;
+  activeHourLabels = null; // week/month/year use the synthetic 0–23 day arrays below
   const prices = RANGE_PRICES[range];
   const touOn = priceState.touMode;
   const totals = prices.map((p,i)=> p + (touOn? touDeltaCents(i):0));
@@ -1420,33 +1433,59 @@ function toggleTOU(){
   else { setRange(document.querySelector('#s8 .seg button.active'), currentRange); }
 }
 
-// Regex-based parser for ComEd's `Date.UTC(...)` array-literal response, not eval().
-function parseComedDayResponse(text){
-  const re = /Date\.UTC\(\d+,\d+,\d+,(\d+),\d+,\d+\),\s*([\d.]+)\]/g;
-  const out = new Array(24).fill(null);
-  let m;
-  while((m = re.exec(text)) !== null){
-    out[parseInt(m[1],10)] = parseFloat(m[2]);
-  }
-  return out.every(v=>v!==null) ? out : null;
-}
-
-// Server-side fetches aren't subject to CORS; the public proxy below is only needed because this
-// prototype runs client-side in a browser preview. A real backend would call ComEd's API directly.
+// Live data: ComEd's public 5-minute feed (hourlypricing.comed.com/api?type=5minutefeed).
+// It's a genuinely public, no-key, CORS-open JSON endpoint — confirmed working directly from a
+// browser on this deployed site, so no proxy is needed (an earlier draft of this function routed
+// through a third-party CORS proxy against a different, day-array endpoint; that approach was
+// flakier — the day endpoint is incomplete until the calendar day ends, which meant "today" almost
+// always fell back to the captured snapshot below).
+//
+// The feed returns 5-minute readings for roughly the trailing 24 hours, newest first. We bucket
+// those into hourly averages by actual Central-time clock hour (America/Chicago), so the chart
+// always shows real ComEd prices for the last 24 hours rather than "today so far."
 async function loadRealComedData(){
-  const today = new Date();
-  const dateStr = today.getFullYear() + String(today.getMonth()+1).padStart(2,'0') + String(today.getDate()).padStart(2,'0');
   try{
-    const url = 'https://hourlypricing.comed.com/api?type=day&date=' + dateStr;
-    const proxied = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(url);
-    const res = await fetch(proxied, {cache:'no-store'});
-    if(!res.ok) throw new Error('fetch failed');
-    const text = await res.text();
-    const parsed = parseComedDayResponse(text);
-    if(!parsed) throw new Error('parse failed or incomplete day');
-    priceState = { hours: parsed, source: 'live', label: 'Live ComEd data', dateStr, touMode: priceState.touMode };
+    const res = await fetch('https://hourlypricing.comed.com/api?type=5minutefeed', {cache:'no-store'});
+    if(!res.ok) throw new Error('fetch failed: ' + res.status);
+    const data = await res.json();
+    if(!Array.isArray(data) || data.length < 12) throw new Error('unexpected response shape');
+
+    const fmt = new Intl.DateTimeFormat('en-US', {
+      timeZone: 'America/Chicago', hour12: false,
+      year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit'
+    });
+    const buckets = new Map(); // "YYYY-MM-DD HH" -> { sum, count, hour24, ts }
+    data.forEach(d => {
+      const ms = parseInt(d.millisUTC, 10);
+      const price = parseFloat(d.price);
+      if(!Number.isFinite(ms) || !Number.isFinite(price)) return;
+      const parts = fmt.formatToParts(new Date(ms));
+      const get = t => parts.find(p => p.type === t).value;
+      const key = get('year') + '-' + get('month') + '-' + get('day') + ' ' + get('hour');
+      const hour24 = parseInt(get('hour'), 10) % 24;
+      if(!buckets.has(key)) buckets.set(key, { sum: 0, count: 0, hour24, ts: ms });
+      const b = buckets.get(key);
+      b.sum += price; b.count += 1; b.ts = Math.max(b.ts, ms);
+    });
+
+    const hourly = Array.from(buckets.values())
+      .sort((a, b) => a.ts - b.ts)
+      .slice(-24)
+      .map(b => ({ hour24: b.hour24, avg: b.sum / b.count }));
+    if(hourly.length < 20) throw new Error('not enough complete hourly buckets: ' + hourly.length);
+
+    priceState = {
+      hours: hourly.map(e => e.avg),
+      source: 'live',
+      label: 'Live ComEd data (rolling last 24 hrs)',
+      dateStr: '',
+      touMode: priceState.touMode,
+      latestPrice: parseFloat(data[0].price)
+    };
+    activeHourLabels = hourly.map(e => hourLabel(e.hour24));
   } catch(e){
     priceState = { hours: FALLBACK_COMED_PRICES, source: 'fallback', label: FALLBACK_LABEL, dateStr: '20260716', touMode: priceState.touMode };
+    activeHourLabels = null;
   }
   if(currentRange === 'today') renderTodayStats();
 }
