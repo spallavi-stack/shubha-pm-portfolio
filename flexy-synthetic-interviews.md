@@ -1,6 +1,6 @@
-# Flexy — Synthetic User Interviews (Week 2)
+# Flexy - Synthetic User Interviews (Week 2)
 
-**Method note (read this first):** These are synthetic interviews — each persona's answers are generated in character, grounded strictly in what's already established in their persona brief (goals, pain points, current behavior, tech-savviness) plus the real ComEd/Illinois facts documented in the product brief. Nothing below is real user data. Treat this as a rehearsal pass that sharpens our questions and surfaces likely themes — not a substitute for eventually talking to real ComEd customers. Where an answer feels like a genuinely useful insight vs. a plausible-but-unverified guess, I've flagged it in the synthesis section.
+**Method note (read this first):** These are synthetic interviews - each persona's answers are generated in character, grounded strictly in what's already established in their persona brief (goals, pain points, current behavior, tech-savviness) plus the real ComEd/Illinois facts documented in the product brief. Nothing below is real user data. Treat this as a rehearsal pass that sharpens our questions and surfaces likely themes - not a substitute for eventually talking to real ComEd customers. Where an answer feels like a genuinely useful insight vs. a plausible-but-unverified guess, I've flagged it in the synthesis section.
 
 **Interview guide (same 7 questions asked of every persona):**
 1. Walk me through what you do today about [their specific problem area].
@@ -9,11 +9,11 @@
 4. Here's Flexy's idea: [relevant feature]. What's your gut reaction?
 5. What would make you trust an app to make decisions like this automatically?
 6. What would make you *not* trust it, or turn it off?
-7. Would you pay for this, and if so, how — subscription, one-time, or would you only use it if ComEd gave it to you for free?
+7. Would you pay for this, and if so, how - subscription, one-time, or would you only use it if ComEd gave it to you for free?
 
 ---
 
-## 1. Marcus Webb — The Accidental Peak Charger
+## 1. Marcus Webb - The Accidental Peak Charger
 
 **Q1:** I plug my car in whenever I get home from work. I don't really check anything, I just plug it in and go inside.
 
@@ -31,15 +31,15 @@
 
 ---
 
-## 2. Priya Raman — The TOU Skeptic
+## 2. Priya Raman - The TOU Skeptic
 
 **Q1:** Right now I'm just on my regular rate. I looked at the ComEd PDF about the new time-of-use plan and honestly couldn't tell if it would help or hurt me.
 
 **Q2:** Not knowing my own usage well enough to do the math myself. I do laundry and run the dishwasher in the afternoon, and the flyer made it sound like that's exactly the expensive time under the new plan.
 
-**Q3:** I want someone to just tell me, based on what I actually use and when, whether switching makes sense for me specifically — not a generic example household.
+**Q3:** I want someone to just tell me, based on what I actually use and when, whether switching makes sense for me specifically - not a generic example household.
 
-**Q4 (reaction to price graph):** That's helpful, but what I really want is the comparison — show me what I'd have paid last month under each plan, not just the graph of prices.
+**Q4 (reaction to price graph):** That's helpful, but what I really want is the comparison - show me what I'd have paid last month under each plan, not just the graph of prices.
 
 **Q5:** If it used my real ComEd data, not estimates, and showed its work rather than just giving me a yes/no.
 
@@ -49,17 +49,17 @@
 
 ---
 
-## 3. Devon Michaels — The Overwhelmed Watcher
+## 3. Devon Michaels - The Overwhelmed Watcher
 
-**Q1:** I check the ComEd hourly price page some mornings, then forget about it for two weeks, then feel guilty and check again. For the dishwasher and laundry I just go on vibes — I think nighttime's cheaper, but I've never actually confirmed that.
+**Q1:** I check the ComEd hourly price page some mornings, then forget about it for two weeks, then feel guilty and check again. For the dishwasher and laundry I just go on vibes - I think nighttime's cheaper, but I've never actually confirmed that.
 
 **Q2:** The mental overhead. I know I'm supposed to be saving money by watching prices, but watching prices constantly isn't actually saving me anything if I never act on what I see.
 
-**Q3:** I want the awareness without the labor for the stuff you genuinely can't automate, and full automation for the one thing you can actually reach into — my car.
+**Q3:** I want the awareness without the labor for the stuff you genuinely can't automate, and full automation for the one thing you can actually reach into - my car.
 
-**Q4 (reaction to EV charging automation + informational consumption view):** Honestly, I appreciate that you're not overpromising here. I don't expect an app to reach into my dishwasher — that'd be a little much. But if my car just handles itself, and I get a clear picture of the rest of my usage instead of a guess, that's already most of what I wanted.
+**Q4 (reaction to EV charging automation + informational consumption view):** Honestly, I appreciate that you're not overpromising here. I don't expect an app to reach into my dishwasher - that'd be a little much. But if my car just handles itself, and I get a clear picture of the rest of my usage instead of a guess, that's already most of what I wanted.
 
-**Q5:** Transparency after the fact on the EV side — show me weekly "here's what we shifted and here's what it saved" — and for the rest of my usage, just make the consumption view genuinely clear, not a wall of numbers.
+**Q5:** Transparency after the fact on the EV side - show me weekly "here's what we shifted and here's what it saved" - and for the rest of my usage, just make the consumption view genuinely clear, not a wall of numbers.
 
 **Q6:** If the EV automation required daily check-ins or manual approval for every charge, I'd abandon it exactly like I abandoned checking prices manually. And if the consumption view was just raw data with no interpretation, I'd stop opening the app.
 
@@ -67,17 +67,17 @@
 
 ---
 
-## 4. Carla Jimenez — The SREC Skeptic
+## 4. Carla Jimenez - The SREC Skeptic
 
 **Q1:** I've gotten three solar quotes over the last eight months. Each one has different assumptions about savings, and I can't tell which one is being straight with me.
 
-**Q2:** Feeling like every number I'm given is designed to get me to sign, not to inform me. I run a business — I know a sales pitch when I see one, but I still can't independently verify their math.
+**Q2:** Feeling like every number I'm given is designed to get me to sign, not to inform me. I run a business - I know a sales pitch when I see one, but I still can't independently verify their math.
 
 **Q3:** I want to put in my actual bills and get an honest payback number, with the SREC lump sum and no federal credit already factored in, without anyone trying to close a sale on me.
 
-**Q4 (reaction to solar savings calculator):** Yes — that's what's missing. If it uses my real usage instead of a "typical household," I'd trust it more than any of the three contractors I've talked to.
+**Q4 (reaction to solar savings calculator):** Yes - that's what's missing. If it uses my real usage instead of a "typical household," I'd trust it more than any of the three contractors I've talked to.
 
-**Q5:** If it shows its assumptions — SREC price, system size, my actual annual usage — rather than a black-box number.
+**Q5:** If it shows its assumptions - SREC price, system size, my actual annual usage - rather than a black-box number.
 
 **Q6:** If the numbers were suspiciously close to what one of the solar companies quoted me, I'd wonder if it was secretly built to favor a specific installer.
 
@@ -85,17 +85,17 @@
 
 ---
 
-## 5. Bob Thornton — The HEAR Rebate Chaser
+## 5. Bob Thornton - The HEAR Rebate Chaser
 
 **Q1:** I called two HVAC guys. One said I could get the $8,000 rebate, the other said it's not available in Winnebago County yet. I don't know who's right.
 
 **Q2:** Not having anywhere neutral to check. The contractors have a reason to tell me what gets me to sign, so I don't fully trust either answer.
 
-**Q3:** I just want someone to tell me straight — am I eligible, is the money actually available where I live right now, and how much would I get. That's it.
+**Q3:** I just want someone to tell me straight - am I eligible, is the money actually available where I live right now, and how much would I get. That's it.
 
 **Q4 (reaction to heat pump savings calculator with eligibility flag):** That'd solve my whole problem. If it just told me yes or no on eligibility before I even talk to a contractor, I wouldn't be going back and forth like this.
 
-**Q5:** If it's connected to the actual state program status, not just general information that goes stale. And if a real person could help me if I got confused — I still like being able to call someone.
+**Q5:** If it's connected to the actual state program status, not just general information that goes stale. And if a real person could help me if I got confused - I still like being able to call someone.
 
 **Q6:** If I found out later the eligibility info was wrong and I didn't actually get the rebate I was told I would, I'd never use it again and I'd tell my neighbors not to either.
 
@@ -103,37 +103,37 @@
 
 ---
 
-## 6. Jenna Alvarez & Sam Kim — The Multi-EV Household
+## 6. Jenna Alvarez & Sam Kim - The Multi-EV Household
 
-**Q1 (Jenna):** Right now we just kind of take turns — whoever gets home first plugs in, and we hope the other person's car has enough charge for the next day.
+**Q1 (Jenna):** Right now we just kind of take turns - whoever gets home first plugs in, and we hope the other person's car has enough charge for the next day.
 
 **Q2 (Sam):** The coordination overhead. We've both ended up plugging in around 6pm more than once, which I'm guessing is exactly the wrong time on our rate plan.
 
 **Q3 (Jenna):** We want to set "car needs to be ready by X" for each car separately and just let the system sort out which one charges when, especially if that also means we get the per-EV credit ComEd's offering.
 
-**Q4 (reaction to multi-vehicle smart charging):** Sam: Yes, exactly — as long as it can actually handle two vehicles with different schedules and not just optimize for one and ignore the other.
+**Q4 (reaction to multi-vehicle smart charging):** Sam: Yes, exactly - as long as it can actually handle two vehicles with different schedules and not just optimize for one and ignore the other.
 
-**Q5:** Jenna: If it's clear about trade-offs — like if it can't fully charge both by our requested times, tell us that upfront rather than silently falling short.
+**Q5:** Jenna: If it's clear about trade-offs - like if it can't fully charge both by our requested times, tell us that upfront rather than silently falling short.
 
 **Q6:** Sam: If one of the kids needed the car for an emergency and it wasn't ready because the app deprioritized it for cost savings, that would be a dealbreaker.
 
-**Q7:** Jenna: We'd pay for this — we're already paying for two EVs, a small subscription for actually optimizing that spend is an easy yes for us.
+**Q7:** Jenna: We'd pay for this - we're already paying for two EVs, a small subscription for actually optimizing that spend is an easy yes for us.
 
 ---
 
 ## Cross-persona synthesis
 
-**Scope correction reflected below:** Flexy's MVP only automates EV charging — no other household device (dishwasher, thermostat, etc.) is actually controlled, since that would require per-appliance smart-plug/API integrations well beyond MVP scope. Real-time consumption is informational only. Devon's interview (and this synthesis) has been revised to reflect that boundary honestly rather than implying broader device automation.
+**Scope correction reflected below:** Flexy's MVP only automates EV charging - no other household device (dishwasher, thermostat, etc.) is actually controlled, since that would require per-appliance smart-plug/API integrations well beyond MVP scope. Real-time consumption is informational only. Devon's interview (and this synthesis) has been revised to reflect that boundary honestly rather than implying broader device automation.
 
-**Consistent theme — trust requires transparency, not just automation.** Every persona who reacted positively to EV automation (Marcus, Devon, Jenna & Sam) still wanted some form of visibility into *why* a decision was made or *what* it saved — not a fully opaque black box. This should shape the roadmap: EV automation is the headline feature, but a lightweight "here's what we did and why" surface is likely a retention requirement, not a nice-to-have.
+**Consistent theme - trust requires transparency, not just automation.** Every persona who reacted positively to EV automation (Marcus, Devon, Jenna & Sam) still wanted some form of visibility into *why* a decision was made or *what* it saved - not a fully opaque black box. This should shape the roadmap: EV automation is the headline feature, but a lightweight "here's what we did and why" surface is likely a retention requirement, not a nice-to-have.
 
-**Consistent theme — the failure mode that kills trust is availability, not cost.** Marcus, Sam, and Jenna all independently raised the same fear: the car not being ready when actually needed. This suggests "readiness guarantee" should outrank "maximum savings" as the default optimization priority, with aggressive savings as an opt-in mode rather than the default.
+**Consistent theme - the failure mode that kills trust is availability, not cost.** Marcus, Sam, and Jenna all independently raised the same fear: the car not being ready when actually needed. This suggests "readiness guarantee" should outrank "maximum savings" as the default optimization priority, with aggressive savings as an opt-in mode rather than the default.
 
-**Divergent theme — willingness to pay varies by how painful the status quo already is.** Devon (highest pain, highest tech comfort) and Carla (highest financial stakes) both said they'd pay directly. Marcus, Bob, and the Alvarez-Kim household leaned toward "only if ComEd provides it free/bundled." This supports the B2B2C model in the product brief — utility distribution removes the willingness-to-pay barrier for the personas who wouldn't seek out a paid app on their own.
+**Divergent theme - willingness to pay varies by how painful the status quo already is.** Devon (highest pain, highest tech comfort) and Carla (highest financial stakes) both said they'd pay directly. Marcus, Bob, and the Alvarez-Kim household leaned toward "only if ComEd provides it free/bundled." This supports the B2B2C model in the product brief - utility distribution removes the willingness-to-pay barrier for the personas who wouldn't seek out a paid app on their own.
 
-**Consistent theme — credibility concerns are different for financial-decision features vs. day-to-day automation.** For EV charging (Marcus, Jenna & Sam), trust is built through it "just working" over a few weeks. For solar (Carla) and heat pump (Bob), trust requires showing assumptions and being demonstrably independent from any contractor or sales interest — a much higher trust bar, since the stakes are a five-figure decision rather than a daily convenience.
+**Consistent theme - credibility concerns are different for financial-decision features vs. day-to-day automation.** For EV charging (Marcus, Jenna & Sam), trust is built through it "just working" over a few weeks. For solar (Carla) and heat pump (Bob), trust requires showing assumptions and being demonstrably independent from any contractor or sales interest - a much higher trust bar, since the stakes are a five-figure decision rather than a daily convenience.
 
-**Flag — genuinely uncertain vs. plausible-sounding:** the specific dollar figures, county names, and exact quotes above are illustrative, generated to be consistent with each persona's brief — not independently verified against real ComEd customers. The *themes* (transparency requirement, readiness-over-savings default, B2B2C willingness-to-pay split, differing trust bars by stakes) are the actual output to carry forward; the individual lines of dialogue should not be cited as if they were real quotes.
+**Flag - genuinely uncertain vs. plausible-sounding:** the specific dollar figures, county names, and exact quotes above are illustrative, generated to be consistent with each persona's brief - not independently verified against real ComEd customers. The *themes* (transparency requirement, readiness-over-savings default, B2B2C willingness-to-pay split, differing trust bars by stakes) are the actual output to carry forward; the individual lines of dialogue should not be cited as if they were real quotes.
 
 ## Status
-Draft v2 — synthetic interviews complete for all 6 personas. Devon's interview corrected to reflect that Flexy's MVP automates EV charging only (not general appliance control); consumption view is informational. Cross-persona synthesis identifies 4 themes to carry into Week 3 roadmap prioritization: transparency-as-trust-requirement, readiness-over-savings default, B2B2C willingness-to-pay split, and stakes-dependent trust bar. Next: Week 3 roadmap, prioritized against these themes and the JTBD statements already in the personas doc.
+Draft v2 - synthetic interviews complete for all 6 personas. Devon's interview corrected to reflect that Flexy's MVP automates EV charging only (not general appliance control); consumption view is informational. Cross-persona synthesis identifies 4 themes to carry into Week 3 roadmap prioritization: transparency-as-trust-requirement, readiness-over-savings default, B2B2C willingness-to-pay split, and stakes-dependent trust bar. Next: Week 3 roadmap, prioritized against these themes and the JTBD statements already in the personas doc.

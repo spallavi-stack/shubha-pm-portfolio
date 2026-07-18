@@ -1,4 +1,4 @@
-# Groundtruth — Product Brief
+# Groundtruth - Product Brief
 
 ## Grounding facts
 

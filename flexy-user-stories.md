@@ -1,4 +1,4 @@
-# Flexy — User Stories & Use Cases
+# Flexy - User Stories & Use Cases
 
 Jobs to Be Done describe the underlying motivation. User stories break that motivation into sprint-sized, testable pieces with acceptance criteria. Use cases go a level further and walk through what happens when something doesn't go as planned, including the paths a user story alone wouldn't surface.
 

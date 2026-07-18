@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Real Data Integration Guide — Flexy | Shubha's PM Portfolio</title>
+<title>Price Integration Guide - Flexy | Shubha's PM Portfolio</title>
 <style>
   :root{
     --teal:#C2790E; --teal-dark:#96600A; --navy:#1C1712;
@@ -49,7 +49,7 @@
   </div>
 </nav>
 <article class="wrap">
-<h1>Flexy — Real Data Integration Guide</h1>
+<h1>Flexy- Price Integration Guide</h1>
 <p>Written for a future engineering team: how the prototype's ComEd price data works today, why it works, and what changes to serve real customers at scale.</p>
 <h2>Why the prototype can fetch real prices at all</h2>
 <p>The prototype's Price &amp; Cost screen calls ComEd's actual public Hourly Pricing API and displays the actual returned prices. This works because of a distinction worth stating plainly: CORS (Cross-Origin Resource Sharing) is a restriction browsers enforce on requests made from a web page's own JavaScript. It has no effect on a server calling an API directly, or on the fetch used to build this documentation. A production backend calling ComEd's API is never subject to it.</p>
@@ -57,9 +57,9 @@
 <h2>The endpoints actually used</h2>
 <p>ComEd's Hourly Pricing program (hourlypricing.comed.com) publishes a free, public API with no key required:</p>
 <ul>
-<li><code>type=day&amp;date=YYYYMMDD</code> — full day of hourly prices for one date. Functional but undocumented. Returns a JavaScript array-literal format (<code>[Date.UTC(year,month,day,hour,0,0), price]</code>), which the prototype parses with a regex rather than <code>eval()</code>, since evaluating a remote response as code is a real security risk regardless of how trusted the source seems.</li>
-<li><code>type=5minutefeed&amp;datestart=...&amp;dateend=...</code> — documented, supports custom date ranges, used to build the Week/Month/Year averages baked into the prototype.</li>
-<li><code>type=currenthouraverage</code> — the single current hour's average price.</li>
+<li><code>type=day&amp;date=YYYYMMDD</code> - full day of hourly prices for one date. Functional but undocumented. Returns a JavaScript array-literal format (<code>[Date.UTC(year,month,day,hour,0,0), price]</code>), which the prototype parses with a regex rather than <code>eval()</code>, since evaluating a remote response as code is a real security risk regardless of how trusted the source seems.</li>
+<li><code>type=5minutefeed&amp;datestart=...&amp;dateend=...</code> - documented, supports custom date ranges, used to build the Week/Month/Year averages baked into the prototype.</li>
+<li><code>type=currenthouraverage</code> - the single current hour's average price.</li>
 </ul>
 <p>One real gotcha worth flagging: <code>Date.UTC()</code> uses zero-indexed months (0 = January), so a response date-stamped month <code>6</code> is actually July. The parser only ever extracts the hour field, so this ambiguity doesn't actually affect what the prototype displays, but it's worth knowing if someone builds a date-display feature off this data later.</p>
 <h2>The scaling insight: fetch once, serve everyone</h2>

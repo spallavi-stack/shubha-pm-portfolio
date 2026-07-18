@@ -1,4 +1,4 @@
-# Flexy — Technical Feasibility & Architecture
+# Flexy - Technical Feasibility & Architecture
 
 What each core feature actually needs to be built for real, which real APIs and data sources exist to support it, and where the genuine feasibility risk sits.
 
@@ -32,16 +32,16 @@ What each core feature actually needs to be built for real, which real APIs and 
 
 ## Cross-cutting risk: staleness and failure handling
 
-Every external data source above can fail or go stale in a way that's invisible unless it's designed for explicitly: ComEd's feed can have an outage, Smartcar's state-of-charge report can lag, program data (SREC, HEAR) can be out of date. Flexy's UI needs to distinguish live data from fallback data visibly across all three cases; the price feed is currently the only one with that pattern built into the prototype. See the Real Data Integration Guide for how that's implemented for pricing specifically.
+Every external data source above can fail or go stale in a way that's invisible unless it's designed for explicitly: ComEd's feed can have an outage, Smartcar's state-of-charge report can lag, program data (SREC, HEAR) can be out of date. Flexy's UI needs to distinguish live data from fallback data visibly across all three cases; the price feed is currently the only one with that pattern built into the prototype. See the Price Integration Guide for how that's implemented for pricing specifically.
 
 ## What's proven versus assumed, honestly
 
 | Claim | Status |
 |---|---|
-| ComEd's price data is real and fetchable without a partnership | Proven — fetched directly against the live API during prototype build |
-| Smartcar can expose state of charge across multiple EV brands | Proven — Smartcar is a real, public product; not yet tested against a live Flexy integration |
-| Flexy can receive and parse real smart meter (interval usage) data | Not yet proven — Green Button "Download My Data" is a real, real self-service export, but no parser or ingestion path has been built and tested against it yet |
-| Flexy is hardware-agnostic for EV charging | Partially proven — true in the sense that Smartcar itself is multi-brand; not yet tested against more than one real brand's account |
+| ComEd's price data is real and fetchable without a partnership | Proven - fetched directly against the live API during prototype build |
+| Smartcar can expose state of charge across multiple EV brands | Proven - Smartcar is a real, public product; not yet tested against a live Flexy integration |
+| Flexy can receive and parse real smart meter (interval usage) data | Not yet proven - Green Button "Download My Data" is a real, real self-service export, but no parser or ingestion path has been built and tested against it yet |
+| Flexy is hardware-agnostic for EV charging | Partially proven - true in the sense that Smartcar itself is multi-brand; not yet tested against more than one real brand's account |
 
 ## Status
 

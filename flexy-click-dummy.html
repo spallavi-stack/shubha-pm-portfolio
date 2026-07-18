@@ -1283,7 +1283,7 @@ function updateLegend(){
 }
 
 // Every 4th bar gets an hour label along the bottom, sized to fit a 24-bar mobile chart
-// without crowding (0, 4, 8, 12, 16, 20 — six labels across the width).
+// without crowding (0, 4, 8, 12, 16, 20 - six labels across the width).
 function xAxisLabels(n, bw, h){
   let out = '';
   for(let i=0; i<n; i+=4){
@@ -1420,10 +1420,10 @@ function toggleTOU(){
 }
 
 // Live data: ComEd's public 5-minute feed (hourlypricing.comed.com/api?type=5minutefeed).
-// It's a genuinely public, no-key, CORS-open JSON endpoint — confirmed working directly from a
+// It's a genuinely public, no-key, CORS-open JSON endpoint - confirmed working directly from a
 // browser on this deployed site, so no proxy is needed (an earlier draft of this function routed
 // through a third-party CORS proxy against a different, day-array endpoint; that approach was
-// flakier — the day endpoint is incomplete until the calendar day ends, which meant "today" almost
+// flakier - the day endpoint is incomplete until the calendar day ends, which meant "today" almost
 // always fell back to the captured snapshot below).
 //
 // The feed returns 5-minute readings for roughly the trailing 24 hours, newest first. We bucket

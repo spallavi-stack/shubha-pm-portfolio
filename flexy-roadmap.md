@@ -44,7 +44,7 @@ Both modes require a ready-by time. That was a deliberate correction from an ear
    - **Charging speed limit (amperage cap):** lets a household cap the current draw, for example reducing from 48A to 32A or 16A when sharing circuit capacity with another EV or a large appliance. Directly relevant to Jenna and Sam's two-EV household, and something Tesla's own app already exposes, so it's a realistic ask from a tech-savvy user rather than an invented feature.
    - **Home-only automation:** restricts smart scheduling to when the car is actually at the home charger, since Flexy's ComEd price data doesn't apply to a public or workplace charger. This is a correctness feature as much as a preference, borrowed from Ohme's location-aware charging.
    - **Achievable-at-setup check:** when the user saves their settings, Flexy immediately checks whether the target is physically reachable in the time available given the charger's speed, and says so on the spot. This replaced an earlier idea of an ongoing "at-risk of missing target" notification, which doesn't actually apply here: because the deadline is a hard constraint, Flexy will charge through expensive hours if needed to hit it, so price conditions never put the target at risk. The only real risk is a physical one (plugged in too late, or an unreachable target given charging speed), which is a one-time check, not an ongoing monitor.
-2. **Max savings.** For someone who doesn't want to configure anything beyond the deadline. The user sets only a ready-by time; Flexy defaults to charging to 100 percent with a safe floor and picks the cheapest available hours to get there, using more expensive hours only if that's what it takes to hit the deadline. This fits Devon, whose JTBD was explicitly "I want the awareness without the labor" — fewer inputs is the point, not a missing feature.
+2. **Max savings.** For someone who doesn't want to configure anything beyond the deadline. The user sets only a ready-by time; Flexy defaults to charging to 100 percent with a safe floor and picks the cheapest available hours to get there, using more expensive hours only if that's what it takes to hit the deadline. This fits Devon, whose JTBD was explicitly "I want the awareness without the labor" - fewer inputs is the point, not a missing feature.
 
 Both modes combine today's and tomorrow's ComEd price data once tomorrow's prices are available, so an overnight session isn't artificially cut off at midnight, the same pattern the Home Assistant project uses with Tibber's day-ahead prices.
 
@@ -61,7 +61,7 @@ The budget cap lets a user set a monthly dollar ceiling for EV charging specific
 
 The transparency digest is unchanged in rationale from the prior version of this roadmap: high confidence but lower ease, since it depends on carrying accurate savings data over time rather than a one-time build.
 
-Solar and heat-pump savings calculators, and a solar-aware charging mode paired with them, were cut from this roadmap along with the two personas built around them (see flexy-personas.md and flexy-product-brief.md) — outside a realistic MVP-plus-Next scope for a portfolio piece centered on price visibility and EV charging.
+Solar and heat-pump savings calculators, and a solar-aware charging mode paired with them, were cut from this roadmap along with the two personas built around them (see flexy-personas.md and flexy-product-brief.md) - outside a realistic MVP-plus-Next scope for a portfolio piece centered on price visibility and EV charging.
 
 ---
 

@@ -1,4 +1,4 @@
-# Flexy — Jobs to Be Done
+# Flexy - Jobs to Be Done
 
 Consolidates the JTBD statement from each persona (see Personas doc) into one reference, adds the situation/motivation/outcome breakdown behind each statement, and maps every job to the Flexy feature that serves it.
 
@@ -43,8 +43,8 @@ Consolidates the JTBD statement from each persona (see Personas doc) into one re
 | Feature | Persona(s) served |
 |---|---|
 | Price & Cost view | Priya (rate comparison), Devon (consumption visibility) |
-| Smart EV charging — Max Savings | Marcus, Devon |
-| Smart EV charging — Custom Settings | Jenna & Sam |
+| Smart EV charging - Max Savings | Marcus, Devon |
+| Smart EV charging - Custom Settings | Jenna & Sam |
 
 ## What this doesn't cover
 

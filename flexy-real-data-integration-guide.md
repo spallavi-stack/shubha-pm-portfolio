@@ -1,4 +1,4 @@
-# Flexy — Real Data Integration Guide
+# Flexy- Price Integration Guide
 
 Written for a future engineering team: how the prototype's ComEd price data works today, why it works, and what changes to serve real customers at scale.
 
@@ -12,9 +12,9 @@ The prototype itself runs client-side in a browser preview, which is exactly the
 
 ComEd's Hourly Pricing program (hourlypricing.comed.com) publishes a free, public API with no key required:
 
-- `type=day&date=YYYYMMDD` — full day of hourly prices for one date. Functional but undocumented. Returns a JavaScript array-literal format (`[Date.UTC(year,month,day,hour,0,0), price]`), which the prototype parses with a regex rather than `eval()`, since evaluating a remote response as code is a real security risk regardless of how trusted the source seems.
-- `type=5minutefeed&datestart=...&dateend=...` — documented, supports custom date ranges, used to build the Week/Month/Year averages baked into the prototype.
-- `type=currenthouraverage` — the single current hour's average price.
+- `type=day&date=YYYYMMDD` - full day of hourly prices for one date. Functional but undocumented. Returns a JavaScript array-literal format (`[Date.UTC(year,month,day,hour,0,0), price]`), which the prototype parses with a regex rather than `eval()`, since evaluating a remote response as code is a real security risk regardless of how trusted the source seems.
+- `type=5minutefeed&datestart=...&dateend=...` - documented, supports custom date ranges, used to build the Week/Month/Year averages baked into the prototype.
+- `type=currenthouraverage` - the single current hour's average price.
 
 One real gotcha worth flagging: `Date.UTC()` uses zero-indexed months (0 = January), so a response date-stamped month `6` is actually July. The parser only ever extracts the hour field, so this ambiguity doesn't actually affect what the prototype displays, but it's worth knowing if someone builds a date-display feature off this data later.
 

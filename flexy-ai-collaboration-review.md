@@ -1,4 +1,4 @@
-# Flexy — AI Collaboration Review
+# Flexy - AI Collaboration Review
 
 **What this is:** what "AI drafted, I directed" actually meant on this project, shown through three real cases from the work itself, rather than asserted as a general claim.
 
