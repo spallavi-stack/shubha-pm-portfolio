@@ -49,7 +49,7 @@
   /* Hero */
   header.hero{
     background:linear-gradient(160deg, var(--navy) 0%, #2F6B4F 55%, var(--peach) 130%);
-    color:#fff;padding:60px 0 56px;
+    color:#fff;padding:40px 0 34px;
   }
   .eyebrow{
     display:inline-block;font-size:12px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;
@@ -58,7 +58,7 @@
   }
   h1.title{font-size:42px;line-height:1.1;margin:0 0 14px;letter-spacing:-0.02em;}
   .subtitle{font-size:18px;color:#D9DEEF;max-width:640px;margin:0 0 28px;}
-  .hero-meta{display:flex;flex-wrap:wrap;gap:28px;margin-top:32px;}
+  .hero-meta{display:flex;flex-wrap:wrap;gap:28px;margin-top:16px;}
   .hero-meta div{font-size:12.5px;color:#B9C0DD;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:4px;}
   .hero-meta strong{display:block;font-size:15px;color:#fff;text-transform:none;letter-spacing:0;font-weight:600;}
 
@@ -69,11 +69,11 @@
   .disclaimer strong{color:#4A3D10;}
 
   /* TL;DR */
-  section{padding:36px 0;}
+  section{padding:22px 0;}
   section.alt{background:var(--paper-soft);}
   h2.section-title{font-size:26px;letter-spacing:-0.01em;margin:0 0 8px;}
   .section-kicker{font-size:12.5px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--teal-dark);margin-bottom:10px;}
-  .lede{color:var(--ink-soft);font-size:15.5px;max-width:680px;margin-bottom:28px;}
+  .lede{color:var(--ink-soft);font-size:15.5px;max-width:680px;margin-bottom:16px;}
 
   .tldr-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:24px;}
   @media(max-width:760px){.tldr-grid{grid-template-columns:repeat(2,1fr);}}
@@ -177,15 +177,15 @@
   ul.plain{padding-left:20px;margin:8px 0;}
   ul.plain li{font-size:14px;margin-bottom:6px;color:var(--ink);}
 
-  details.section-collapse summary{cursor:pointer;list-style:none;display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:4px 0;}
+  details.section-collapse summary{cursor:pointer;list-style:none;display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:2px 0;}
   details.section-collapse summary::-webkit-details-marker{display:none;}
   details.section-collapse summary .summary-head{flex:1;}
-  details.section-collapse summary .section-kicker{margin-bottom:2px;}
+  details.section-collapse summary .section-kicker{margin-bottom:0;}
   details.section-collapse summary .section-title{margin-bottom:0;}
-  details.section-collapse summary .toggle-ic{font-size:13px;color:var(--teal-dark);font-weight:600;white-space:nowrap;padding-top:6px;}
+  details.section-collapse summary .toggle-ic{font-size:13px;color:var(--teal-dark);font-weight:600;white-space:nowrap;padding-top:4px;}
   details.section-collapse[open] summary .toggle-ic::before{content:"Hide ▾";}
   details.section-collapse:not([open]) summary .toggle-ic::before{content:"Show more ▸";}
-  details.section-collapse[open] > *:not(summary){margin-top:14px;}
+  details.section-collapse[open] > *:not(summary){margin-top:10px;}
 
   .tam-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:16px;}
   @media(max-width:760px){.tam-grid{grid-template-columns:1fr;}}
@@ -276,8 +276,6 @@
       </div>
       <span class="toggle-ic"></span>
     </summary>
-    <p class="lede">Dynamic and time-of-use electricity pricing is spreading across the US, but it only saves people money if they can act on it in real time, something almost no household actually does unaided.</p>
-
     <div class="grid-2">
       <div class="card">
         <h3 class="subhead" style="margin-top:0;">The market signal</h3>
@@ -353,8 +351,6 @@
       </div>
       <span class="toggle-ic"></span>
     </summary>
-    <p class="lede">Every persona is grounded in real ComEd/Illinois program details. Each one maps to a Jobs-to-be-Done statement and a specific Flexy feature, and each is deliberately scoped to what Flexy can actually promise: EV charging is the only device Flexy automates; everything else is informational or advisory.</p>
-
     <div class="persona-grid">
       <div class="persona">
         <div class="name">Marcus Webb</div>
@@ -415,8 +411,6 @@
       </div>
       <span class="toggle-ic"></span>
     </summary>
-    <p class="lede">Scored on Impact, Confidence, and Ease rather than RICE, since Reach isn't meaningfully estimable pre-launch with no real user base. Every score is tied back to a specific persona, JTBD, or interview theme, not a gut call. The roadmap is dependency-aware, not just sorted by score.</p>
-
     <div class="roadmap-cols">
       <div class="roadmap-col">
         <h4><span class="horizon-tag tag-now">NOW</span> MVP</h4>
