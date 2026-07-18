@@ -52,4 +52,4 @@ This doc maps jobs to features at the MVP-scope level. It doesn't restate the ac
 
 ## Status
 
-Frozen. Grounded in the four personas in flexy-personas.md and the MVP/Next feature split in flexy-roadmap.md. Carla (SREC Skeptic) and Bob (HEAR Rebate Chaser) and their solar/heat-pump JTBDs were cut along with the calculator features they justified.
+Frozen. Grounded in the four personas in flexy-personas.md and the MVP/Next feature split in flexy-roadmap.md.
