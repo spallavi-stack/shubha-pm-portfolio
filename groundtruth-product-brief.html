@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Product Brief — Groundtruth</title>
+<style>
+  :root{
+    --teal:#1B7A4C; --teal-dark:#145C3A; --navy:#16241F;
+    --ink:#1C2B24; --ink-soft:#57685F; --paper:#FFFFFF; --paper-soft:#F3F7F4; --border:#DCE6E0;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;color:var(--ink);background:var(--paper);line-height:1.7;}
+  .wrap{max-width:760px;margin:0 auto;padding:0 24px;}
+  nav{position:sticky;top:0;z-index:50;background:rgba(255,255,255,0.95);backdrop-filter:blur(8px);border-bottom:1px solid var(--border);}
+  nav .navwrap{max-width:920px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:14px 24px;}
+  nav .brand{color:var(--navy);font-weight:700;font-size:15px;}
+  nav .brand span{color:var(--teal);}
+  article{padding:48px 0 64px;}
+  article h1{font-size:30px;letter-spacing:-0.01em;color:var(--navy);margin:0 0 8px;}
+  article h1 + p{color:var(--ink-soft);font-size:14px;margin-top:0;}
+  article h2{font-size:20px;margin:36px 0 12px;padding-bottom:8px;border-bottom:2px solid var(--teal);color:var(--navy);}
+  article h3{font-size:16px;margin:24px 0 8px;color:var(--navy);}
+  article p{font-size:15px;color:var(--ink);margin:0 0 14px;}
+  article ul, article ol{padding-left:22px;margin:0 0 14px;}
+  article li{font-size:15px;margin-bottom:6px;}
+  article strong{color:var(--navy);}
+  article blockquote{margin:16px 0;padding:10px 18px;border-left:3px solid var(--teal);background:var(--paper-soft);color:var(--navy);font-style:italic;}
+  article hr{border:none;border-top:1px solid var(--border);margin:32px 0;}
+  article table{width:100%;border-collapse:collapse;margin:16px 0;font-size:13.5px;}
+  article th, article td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--border);}
+  article th{font-size:11px;text-transform:uppercase;letter-spacing:0.04em;color:var(--ink-soft);}
+  article code{background:var(--paper-soft);padding:1px 5px;border-radius:4px;font-size:13px;}
+  article svg{max-width:100%;height:auto;display:block;margin:20px 0;border:1px solid var(--border);border-radius:12px;padding:10px;background:#fff;}
+  .doc-footer{margin-top:40px;padding-top:20px;border-top:1px solid var(--border);font-size:13px;color:var(--ink-soft);}
+  footer{background:var(--navy);color:#C9D9CE;padding:32px 0;text-align:center;font-size:13px;}
+</style>
+</head>
+<body>
+<nav>
+  <div class="navwrap">
+    <span class="brand">Groundtruth<span>.</span> Documentation</span>
+  </div>
+</nav>
+<article class="wrap">
+<h1>Groundtruth — Product Brief</h1>
+<h2>Grounding facts</h2>
+<ol>
+<li>
+<p><strong>Most early-stage solar projects fail before they reach construction.</strong> Paces, a company building AI-driven development-risk tools, cites failure rates in the 70–90% range for clean-energy projects between initial site identification and notice-to-proceed, with real capital lost at each stage (site option payments, interconnection study fees) regardless of outcome. Source: Paces' published whitepaper on early-stage development risk.</p>
+</li>
+<li>
+<p><strong>P50 and P90 are the two standard ways lenders and developers describe expected energy yield.</strong> P50 is the median-case estimate: there's a 50% chance actual output exceeds it. P90 is the conservative case: a 90% chance actual output exceeds it, used by lenders to size debt because it represents a number the project is very likely to hit or beat. The P50/P90 ratio typically runs about 1.10–1.20x for a given site. Source: SurgePV, a solar-industry publication.</p>
+</li>
+<li>
+<p><strong>NREL's PVWatts is a real, free, public API for modeled energy output.</strong> It takes a latitude/longitude and system parameters and returns modeled AC/DC output (monthly and annual) plus capacity factor. It's rate-limited to 1,000 requests/hour and requires a free API key. I verified this directly by fetching NREL's own developer documentation (developer.nrel.gov) rather than relying on a secondary source.</p>
+</li>
+<li>
+<p><strong>The federal solar Investment Tax Credit (Section 48E) is set at 30% for projects that begin construction by a mid-2026 deadline</strong>, per current secondary tax-guidance sources. I have not verified this against the primary IRS text, so I'm flagging it as secondary-sourced and worth re-checking before it's used in any real financial model, since ITC rules and deadlines are exactly the kind of thing that changes.</p>
+</li>
+<li>
+<p><strong>A real competitor, RatedPower, explicitly markets against PVcase's financial modeling gap.</strong> In its own comparison content, RatedPower states: "PVcase is not a bankable software since it has limited feasibility and financial information," positioning its own product around built-in NPV/IRR/ROI/LCOE and P75/P90/P95/P99 modeling. This is a direct quote, preserved as such. It's marketing language from a competitor, so it should be read as a positioning claim rather than a neutral third-party assessment. Even so, it's a real, findable, public claim that the financial/bankability layer is a recognized gap in this product category.</p>
+</li>
+<li>
+<p><strong>Interconnection and permitting risk is the hardest part of this problem to model, and the people building in this space say so themselves.</strong> Paces' own published methodology describes interconnection and permitting risk assessment as relying on regional expert input and historical pattern data rather than a clean public API. There's no equivalent to PVWatts for "will this project clear interconnection review."</p>
+</li>
+</ol>
+<h2>The problem</h2>
+<p>An early-stage solar developer or analyst who wants to know whether a site is worth pursuing today has two options: a full engineering-grade design tool (PVcase, RatedPower, Helioscope) that assumes the site is already past initial screening, or a spreadsheet built in-house that has to be re-derived and re-trusted every time someone new joins the team. Neither answers the actual first question, which is: given basic site inputs, is this worth the cost of a site option payment and an interconnection study, or should the team pass and look at the next parcel.</p>
+<p>That first-pass financial screening step, before CAD-level design work starts, is where a real gap exists. RatedPower's own marketing names it directly when describing what PVcase lacks. Paces is building toward it from the risk-modeling side. The specific combination of real yield modeling (P50/P90) with real financial output (LCOE/IRR) in a fast, pre-design screening tool is the space Groundtruth targets.</p>
+<h2>What Groundtruth is</h2>
+<p>A feasibility and ROI screening tool for early-stage solar development. Given a site's location and basic system assumptions, it returns a P50/P90 energy yield estimate, a real-formula LCOE and IRR calculation, and a risk-adjustment layer that reflects the specific, named risks (site control, interconnection, permitting, environmental, design) a project faces before it reaches construction.</p>
+<h2>Who it's for</h2>
+<p>A development analyst or associate at a solar developer, screening 10–30 candidate sites a month, deciding which ones are worth an option payment and an interconnection study fee, both real, non-refundable costs in the $10k–25k range each per the sourced figures above. Their current tool is usually a spreadsheet, and their current problem is that the spreadsheet's assumptions live in one person's head.</p>
+<h2>MVP scope</h2>
+<p>One flow: enter a site (latitude/longitude and basic system size), get back a P50/P90 yield estimate (via NREL PVWatts, a real primary-source API), a real-formula LCOE and IRR calculation using that yield plus user-entered cost assumptions, and a risk-adjustment layer that flags the specific development-stage risks named above rather than folding them into a single opaque score.</p>
+<h2>What Groundtruth is not</h2>
+<p>It is not a CAD or single-line-diagram design tool. It is not a construction-stage project management tool. It does not attempt to predict interconnection approval or permitting timelines with a model, because no reliable public data source for that exists yet; see the note below.</p>
+<h2>The part that's genuinely hard, named honestly</h2>
+<p>Yield modeling has a real public API behind it. Financial modeling is standard formula work once yield and cost assumptions exist. Interconnection and permitting risk does not have an equivalent clean data source; the developers building dedicated tools for this (Paces) describe relying on regional expert input and historical pattern data rather than an API. Any version of Groundtruth that claims to score interconnection or permitting risk should say plainly that it's a heuristic, until a real data source for that exists.</p>
+<h2>Status</h2>
+<p>Draft. Grounding research complete for yield methodology, financial modeling approach, and competitive positioning. Not yet built: persona and discovery interviews, a thin prototype of the core flow, a roadmap slice, and a technical feasibility doc.</p>
+<p><strong>A note on sourcing:</strong> solar development is a domain I have no prior hands-on experience in, so every technical or industry claim in this brief is sourced. Primary sources (NREL, direct API docs) are cited as such. Secondary sources (industry blogs, vendor marketing, tax-guidance summaries) are flagged as secondary rather than stated as settled fact. Where I couldn't find a reliable source, I said so instead of guessing.</p>
+<div class="doc-footer">Part of the Groundtruth case study documentation set, a fictional early-stage solar feasibility product built independently of any named company.</div>
+</article>
+<footer>
+  <div class="wrap">Groundtruth is a fictional case study built for portfolio purposes. Market research is real and cited.</div>
+</footer>
+</body>
+</html>

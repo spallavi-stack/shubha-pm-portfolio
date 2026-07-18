@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Personas — Flexy | Shubha's PM Portfolio</title>
+<style>
+  :root{
+    --teal:#C2790E; --teal-dark:#96600A; --navy:#1C1712;
+    --ink:#201A12; --ink-soft:#5C5445; --paper:#FFFFFF; --paper-soft:#F7F4EC; --border:#E5DFD2;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;color:var(--ink);background:var(--paper);line-height:1.7;}
+  .wrap{max-width:760px;margin:0 auto;padding:0 24px;}
+  nav{position:sticky;top:0;z-index:50;background:rgba(255,255,255,0.95);backdrop-filter:blur(8px);border-bottom:1px solid var(--border);}
+  nav .navwrap{max-width:920px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:14px 24px;}
+  nav a{color:var(--teal-dark);text-decoration:none;font-size:13.5px;font-weight:600;}
+  nav .brand{color:var(--navy);font-weight:700;font-size:15px;}
+  nav .brand span{color:var(--teal);}
+  article{padding:48px 0 64px;}
+  article h1{font-size:30px;letter-spacing:-0.01em;color:var(--navy);margin:0 0 8px;}
+  article h1 + p{color:var(--ink-soft);font-size:14px;margin-top:0;}
+  article h2{font-size:20px;margin:36px 0 12px;padding-bottom:8px;border-bottom:2px solid var(--teal);color:var(--navy);}
+  article h3{font-size:16px;margin:24px 0 8px;color:var(--navy);}
+  article p{font-size:15px;color:var(--ink);margin:0 0 14px;}
+  article ul, article ol{padding-left:22px;margin:0 0 14px;}
+  article li{font-size:15px;margin-bottom:6px;}
+  article strong{color:var(--navy);}
+  article blockquote{margin:16px 0;padding:10px 18px;border-left:3px solid var(--teal);background:var(--paper-soft);color:var(--navy);font-style:italic;}
+  article hr{border:none;border-top:1px solid var(--border);margin:32px 0;}
+  article table{width:100%;border-collapse:collapse;margin:16px 0;font-size:13.5px;}
+  article th, article td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--border);}
+  article th{font-size:11px;text-transform:uppercase;letter-spacing:0.04em;color:var(--ink-soft);}
+  article code{background:var(--paper-soft);padding:1px 5px;border-radius:4px;font-size:13px;}
+  article svg{max-width:100%;height:auto;display:block;margin:20px 0;border:1px solid var(--border);border-radius:12px;padding:10px;background:#fff;}
+  .doc-footer{margin-top:40px;padding-top:20px;border-top:1px solid var(--border);font-size:13px;color:var(--ink-soft);}
+  footer{background:var(--navy);color:#C9BBA0;padding:32px 0;text-align:center;font-size:13px;}
+  footer a{color:#F6D9A0;}
+</style>
+</head>
+<body>
+<nav>
+  <div class="navwrap">
+    <span class="brand">Flexy<span>.</span> Documentation</span>
+    <div style="display:flex;gap:18px;">
+      <a href="flexy-case-study.html">← Case study</a>
+      <a href="index.html">Portfolio</a>
+    </div>
+  </div>
+</nav>
+<article class="wrap">
+<h1>Flexy — Personas (v2, frozen)</h1>
+<p>Grounded in real ComEd/Illinois specifics: ComEd's Residential Real-Time Pricing (hourly wholesale-tracking rate, live today), ComEd's TOU rate rollout finalizing for 2026 (steep afternoon/evening delivery charge, cheap overnight, +$2/month per EV up to 2 EVs for 2 years), Illinois Shines / Adjustable Block Program (upfront lump-sum SREC payment, ~25-40% of system cost even with no federal credit), and the Illinois EPA HEAR heat pump rebate (up to $8,000, income-qualified under 80% AMI, rolling out in phases by county — not yet universally live).</p>
+<p>Template per persona: identity, quote, goal, pain point, current behavior/workaround, desired solution (in their own words), tech-savviness, JTBD statement, Flexy feature, grounding fact.</p>
+<hr />
+<h2>1. Marcus Webb — The Accidental Peak Charger</h2>
+<p><strong>Age/gender:</strong> 42, male · <strong>Location:</strong> Naperville, IL · <strong>Occupation:</strong> Sales manager · <strong>Household:</strong> Homeowner, married, two kids · <strong>Income:</strong> ~$110k</p>
+<blockquote>
+<p>"I plug in when I get home. I don't have time to think about electricity prices."</p>
+</blockquote>
+<p><strong>Goal:</strong> Keep his EV charged without any extra mental effort.
+<strong>Pain point:</strong> On Real-Time Pricing, but charges the moment he plugs in after work — often exactly during the hot summer afternoon/early-evening price spike.
+<strong>Current behavior:</strong> Ignores ComEd's hourly price alert emails; only notices the cost impact when the bill arrives.
+<strong>Desired solution (his words):</strong> "Just tell the app when I need the car ready, and let it figure out the cheapest time — I don't want to check prices myself."
+<strong>Tech-savviness:</strong> Moderate — comfortable with scheduling apps, not interested in manually optimizing anything.
+<strong>JTBD:</strong> When I plug in my EV after work, I want it charged by the time I need it the next day at the lowest possible cost, so I can save money without thinking about electricity pricing.
+<strong>Flexy feature:</strong> Smart EV charging (auto-schedule to cheapest hours, "ready by 8am" preference).
+<strong>Grounding fact:</strong> ComEd explicitly flags hot summer afternoons as the highest-value shifting window.</p>
+<hr />
+<h2>2. Priya Raman — The TOU Skeptic</h2>
+<p><strong>Age/gender:</strong> 55, female · <strong>Location:</strong> Oak Park, IL · <strong>Occupation:</strong> High school teacher · <strong>Household:</strong> Homeowner, empty nester · <strong>Income:</strong> ~$75k</p>
+<blockquote>
+<p>"I don't want to gamble on a new rate plan and end up paying more."</p>
+</blockquote>
+<p><strong>Goal:</strong> Decide confidently whether switching to ComEd's new TOU rate will actually save her money.
+<strong>Pain point:</strong> She's often home doing laundry in the afternoon — exactly the window the proposed TOU rate charges the most for.
+<strong>Current behavior:</strong> Stuck on her current rate; found ComEd's rate-comparison PDF confusing and gave up trying to model it herself.
+<strong>Desired solution (her words):</strong> "Just show me, based on how I actually use electricity, whether I'd save money or lose money if I switched."
+<strong>Tech-savviness:</strong> Low-to-moderate — comfortable with basic apps, not a spreadsheet person.
+<strong>JTBD:</strong> When ComEd's TOU rate becomes available, I want a clear before/after comparison based on my real usage, so I can decide without guessing.
+<strong>Flexy feature:</strong> Price graph (today/tomorrow/monthly/annual views) to compare her real usage against both rate structures.
+<strong>Grounding fact:</strong> ComEd's proposed TOU plan pairs a steep peak delivery charge with a significant overnight discount, per the 2026 filing before state regulators.</p>
+<hr />
+<h2>3. Devon Michaels — The Overwhelmed Watcher</h2>
+<p><strong>Age/gender:</strong> 34, non-binary · <strong>Location:</strong> Evanston, IL · <strong>Occupation:</strong> Software QA tester · <strong>Household:</strong> Renter, lives alone, owns one EV (a used Chevy Bolt) · <strong>Income:</strong> ~$65k</p>
+<blockquote>
+<p>"I signed up for real-time pricing to save money, but now checking prices feels like a part-time job."</p>
+</blockquote>
+<p><strong>Goal:</strong> Benefit from Real-Time Pricing without daily manual monitoring.
+<strong>Pain point:</strong> Checks the live price page for a week or two, then quietly gives up — anxious about missing a high-price window but unwilling to keep checking forever. Would like more of their usage to shift automatically, but realistically the only thing that actually can shift automatically is EV charging — everything else in the house still requires them to notice and act manually.
+<strong>Current behavior:</strong> Set a phone reminder to check ComEd's hourly prices; abandoned it after about two weeks. Still manually decides when to run the dishwasher/laundry based on vague memory of "prices are usually better at night," with no real feedback on whether that's accurate.
+<strong>Desired solution (their words):</strong> "I know you probably can't control my dishwasher, but at minimum, just handle my car charging automatically, and show me clearly what my usage looks like so I stop having to guess about the rest."
+<strong>Tech-savviness:</strong> High — comfortable with smart-home automation, wants set-and-forget by default, understands the difference between "informational" and "automated" features without needing it over-explained.
+<strong>JTBD:</strong> When electricity prices spike, I want my EV charging to automatically shift away from those hours, and I want clear visibility into my broader usage, so I can benefit from real-time pricing without actively monitoring prices myself.
+<strong>Flexy feature:</strong> Real-time consumption view (informational) + smart EV charging (the one device Flexy actually automates in the MVP).
+<strong>Grounding fact:</strong> ComEd's own program guide relies on customers manually watching price alerts and responding in real time — exactly the burden Flexy's EV automation removes, even though it can't yet extend that to other appliances.</p>
+<hr />
+<h2>4. Carla Jimenez — The SREC Skeptic</h2>
+<p><strong>Age/gender:</strong> 47, female · <strong>Location:</strong> Aurora, IL · <strong>Occupation:</strong> Small business owner (bakery) · <strong>Household:</strong> Homeowner, married · <strong>Income:</strong> ~$130k</p>
+<blockquote>
+<p>"Solar salespeople keep throwing numbers at me. I want the real math for my house."</p>
+</blockquote>
+<p><strong>Goal:</strong> Get an honest, personalized payback estimate for rooftop solar now that the federal credit is gone.
+<strong>Pain point:</strong> Three solar company quotes, three different sets of assumptions — she can't tell what's real and what's a sales pitch.
+<strong>Current behavior:</strong> Collected quotes eight months ago; hasn't signed anything since, stuck in analysis paralysis.
+<strong>Desired solution (her words):</strong> "I want to just put in my actual electric bills and get a straight answer — payback period, real annual savings — without a sales pitch attached."
+<strong>Tech-savviness:</strong> Moderate — comfortable uploading bills or photos to an app.
+<strong>JTBD:</strong> When I'm evaluating a rooftop solar quote, I want to see a real projected payback using my actual usage and Illinois Shines incentives, so I can decide without relying on a salesperson's numbers.
+<strong>Flexy feature:</strong> Solar savings calculator, using her actual usage plus real Illinois Shines SREC economics.
+<strong>Grounding fact:</strong> Illinois Shines pays 25-40% of system cost upfront via SRECs (e.g. ~$11-12k on a typical 8.5kW system at current ~$78/credit pricing) — even with no federal credit.</p>
+<hr />
+<h2>5. Bob Thornton — The HEAR Rebate Chaser</h2>
+<p><strong>Age/gender:</strong> 63, male · <strong>Location:</strong> Rockford, IL · <strong>Occupation:</strong> Retired factory worker · <strong>Household:</strong> Homeowner, lives with spouse · <strong>Income:</strong> ~$48k (fixed)</p>
+<blockquote>
+<p>"I heard there's free money for a heat pump, but I can't figure out if it applies to me."</p>
+</blockquote>
+<p><strong>Goal:</strong> Find out definitively whether he qualifies for HEAR funding before committing to a purchase.
+<strong>Pain point:</strong> The rebate rolls out by county and by measure type; two contractors gave him conflicting answers about whether it's available where he lives.
+<strong>Current behavior:</strong> Called two local HVAC contractors, got contradictory information, and stalled on the decision entirely.
+<strong>Desired solution (his words):</strong> "Just tell me straight — am I eligible, is it available in my county right now, and how much would I actually get?"
+<strong>Tech-savviness:</strong> Low — prefers phone calls, but will use a simple app if someone walks him through it once.
+<strong>JTBD:</strong> When I'm considering a heat pump, I want to know clearly whether I qualify for HEAR funding in my county right now, so I can decide with confidence instead of guessing.
+<strong>Flexy feature:</strong> Heat pump savings calculator, flagging eligibility and county rollout status alongside the savings number.
+<strong>Grounding fact:</strong> Illinois EPA's HEAR program is phased by county/measure type and currently prioritized for households under 80% AMI — not yet universally available statewide as of mid-2026.</p>
+<hr />
+<h2>6. Jenna Alvarez &amp; Sam Kim — The Multi-EV Household</h2>
+<p><strong>Age/gender:</strong> Jenna, 39, female; Sam, 41, male · <strong>Location:</strong> Schaumburg, IL · <strong>Occupation:</strong> Both work in tech (hybrid) · <strong>Household:</strong> Homeowners, two kids, two EVs · <strong>Income:</strong> ~$180k (combined)</p>
+<blockquote>
+<p>"Coordinating two cars' charging schedules around one price feed is like a logistics puzzle we didn't sign up for." — Jenna</p>
+</blockquote>
+<p><strong>Goal:</strong> Charge both EVs cheaply without manually coordinating who charges when.
+<strong>Pain point:</strong> Juggling two cars' overnight readiness needs against a single shared price signal, plus wanting to capture ComEd's per-EV sign-up incentive.
+<strong>Current behavior:</strong> Manually alternates which car charges each night; occasionally both end up plugged in during peak hours by accident.
+<strong>Desired solution (their words):</strong> "Let us set individual charge-by times for each car, and have the app figure out how to sequence or split charging between them at the lowest total cost."
+<strong>Tech-savviness:</strong> High — both comfortable with smart-home tech and scheduling apps.
+<strong>JTBD:</strong> When we have two EVs needing charge on the same night, we want the app to sequence and optimize both against live pricing and our schedules, so we minimize total cost without manual coordination.
+<strong>Flexy feature:</strong> Smart EV charging with multiple vehicles and per-vehicle preferences.
+<strong>Grounding fact:</strong> ComEd's proposed TOU program includes a $2/month per-EV bill credit, capped at two vehicles for up to two years — directly relevant to a two-EV household deciding whether to enroll.</p>
+<hr />
+<h2>Coverage check</h2>
+<ul>
+<li>Price graph: Persona 2 (Priya)</li>
+<li>Real-time consumption: Persona 3 (Devon)</li>
+<li>Smart EV charging: Personas 1 (Marcus), 6 (Jenna &amp; Sam)</li>
+<li>Solar savings calculator: Persona 4 (Carla)</li>
+<li>Heat pump savings calculator: Persona 5 (Bob)</li>
+</ul>
+<h2>Status</h2>
+<p><strong>Frozen v3</strong> — 6 personas in full brief format. Devon's persona (v3) corrected to match actual MVP feasibility: Flexy automates EV charging only in the MVP (device-level control of dishwashers/thermostats/etc. would require per-appliance smart-plug/API integrations well beyond MVP scope); real-time consumption remains informational. Next: synthetic interviews (Week 2), one per persona.</p>
+<div class="doc-footer">Part of the Flexy case study documentation set. For the short version, see the <a href="flexy-case-study.html">case study page</a>.</div>
+</article>
+<footer>
+  <div class="wrap">Flexy is a fictional case study built for portfolio purposes. Market research is real and cited; personas, interviews, and user data are synthetic.</div>
+</footer>
+</body>
+</html>

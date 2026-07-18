@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Collaboration Review — Flexy | Shubha's PM Portfolio</title>
+<style>
+  :root{
+    --teal:#C2790E; --teal-dark:#96600A; --navy:#1C1712;
+    --ink:#201A12; --ink-soft:#5C5445; --paper:#FFFFFF; --paper-soft:#F7F4EC; --border:#E5DFD2;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;color:var(--ink);background:var(--paper);line-height:1.7;}
+  .wrap{max-width:760px;margin:0 auto;padding:0 24px;}
+  nav{position:sticky;top:0;z-index:50;background:rgba(255,255,255,0.95);backdrop-filter:blur(8px);border-bottom:1px solid var(--border);}
+  nav .navwrap{max-width:920px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:14px 24px;}
+  nav a{color:var(--teal-dark);text-decoration:none;font-size:13.5px;font-weight:600;}
+  nav .brand{color:var(--navy);font-weight:700;font-size:15px;}
+  nav .brand span{color:var(--teal);}
+  article{padding:48px 0 64px;}
+  article h1{font-size:30px;letter-spacing:-0.01em;color:var(--navy);margin:0 0 8px;}
+  article h1 + p{color:var(--ink-soft);font-size:14px;margin-top:0;}
+  article h2{font-size:20px;margin:36px 0 12px;padding-bottom:8px;border-bottom:2px solid var(--teal);color:var(--navy);}
+  article h3{font-size:16px;margin:24px 0 8px;color:var(--navy);}
+  article p{font-size:15px;color:var(--ink);margin:0 0 14px;}
+  article ul, article ol{padding-left:22px;margin:0 0 14px;}
+  article li{font-size:15px;margin-bottom:6px;}
+  article strong{color:var(--navy);}
+  article blockquote{margin:16px 0;padding:10px 18px;border-left:3px solid var(--teal);background:var(--paper-soft);color:var(--navy);font-style:italic;}
+  article hr{border:none;border-top:1px solid var(--border);margin:32px 0;}
+  article table{width:100%;border-collapse:collapse;margin:16px 0;font-size:13.5px;}
+  article th, article td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--border);}
+  article th{font-size:11px;text-transform:uppercase;letter-spacing:0.04em;color:var(--ink-soft);}
+  article code{background:var(--paper-soft);padding:1px 5px;border-radius:4px;font-size:13px;}
+  article svg{max-width:100%;height:auto;display:block;margin:20px 0;border:1px solid var(--border);border-radius:12px;padding:10px;background:#fff;}
+  .doc-footer{margin-top:40px;padding-top:20px;border-top:1px solid var(--border);font-size:13px;color:var(--ink-soft);}
+  footer{background:var(--navy);color:#C9BBA0;padding:32px 0;text-align:center;font-size:13px;}
+  footer a{color:#F6D9A0;}
+</style>
+</head>
+<body>
+<nav>
+  <div class="navwrap">
+    <span class="brand">Flexy<span>.</span> Documentation</span>
+    <div style="display:flex;gap:18px;">
+      <a href="flexy-case-study.html">← Case study</a>
+      <a href="index.html">Portfolio</a>
+    </div>
+  </div>
+</nav>
+<article class="wrap">
+<h1>Flexy — AI Collaboration Review</h1>
+<p><strong>What this is:</strong> what "AI drafted, I directed" actually meant on this project, shown through three real cases from the work itself, rather than asserted as a general claim.</p>
+<p><strong>What this isn't:</strong> an eval in the ML sense. There's no repeatable test set or scoring script here, just a documented review of decisions with evidence attached.</p>
+<h2>Case 1: the Time-of-Use pricing model was wrong, and I caught it</h2>
+<p><strong>Drafted:</strong> An early version of the Price &amp; Cost screen modeled ComEd's proposed Time-of-Use rate as a multiplier applied to the whole real-time price curve.</p>
+<p><strong>Caught by:</strong> A direct question during review: "I was under the assumption that TOU applies to the price curve, and not that it has its own price curve. Was I incorrect?"</p>
+<p><strong>Verified:</strong> Researched ComEd's actual filed TOU rate proposal. The real structure is a flat delivery-charge premium during a defined peak window (10.7¢/kWh peak vs. 5.9¢/kWh standard, a 4.8¢/kWh delta from 1–7pm), stacked on top of the real-time supply price rather than a multiplier scaling the entire curve.</p>
+<p><strong>Changed:</strong> Rebuilt the chart and calculation logic from a multiplicative model to an additive, stacked model, with the TOU premium drawn as a visually distinct stacked segment on top of the base price bars.</p>
+<p><strong>Verify it yourself:</strong> ComEd's 2026 TOU rate filing is public record with the Illinois Commerce Commission.</p>
+<h2>Case 2: a date-format concern that turned out to be a non-issue, verified rather than dismissed</h2>
+<p><strong>Drafted:</strong> ComEd's API returns dates using JavaScript's <code>Date.UTC(year, month, day, ...)</code> format.</p>
+<p><strong>Caught by:</strong> A review question flagging what looked like a June/July mislabeling in a captured response.</p>
+<p><strong>Verified:</strong> Re-fetched the exact URL live and confirmed, via JavaScript's own documented convention, that months in <code>Date.UTC()</code> are zero-indexed (0 = January), so a month value of <code>6</code> correctly represents July. Also confirmed the parser only ever extracts the hour field from each entry, so the date component was never actually used in a way the ambiguity could affect.</p>
+<p><strong>Changed:</strong> No code change was needed. The verification itself, re-fetching and checking against source, was the outcome, and it's documented here because "I checked and it's actually fine" is still a real, evidence-backed answer, and a legitimate outcome of a review, rather than a shortcut past the question.</p>
+<p><strong>Verify it yourself:</strong> Fetch <code>hourlypricing.comed.com/api?type=day&amp;date=YYYYMMDD</code> for any date and inspect the returned <code>Date.UTC()</code> array.</p>
+<h2>Case 3: Week/Month/Year tabs showed the same chart with disconnected numbers</h2>
+<p><strong>Drafted:</strong> An early version of the Price &amp; Cost screen's Week, Month, and Year tabs displayed the same chart shape as Today, with separate hardcoded summary numbers that didn't derive from that chart.</p>
+<p><strong>Caught by:</strong> A direct catch during review that the tabs weren't internally consistent, the visual and the numbers weren't telling the same story.</p>
+<p><strong>Verified:</strong> First attempt used a mathematical smoothing model, dampening a single real day's shape toward its mean, which I flagged myself as still limited (the average price stayed mathematically identical across ranges, since smoothing preserves the mean by construction). A follow-up question, "why can we not use a broader set of data," led to researching ComEd's <code>type=5minutefeed</code> endpoint, which supports real custom date ranges. That made it possible to fetch and aggregate genuinely real multi-day ComEd data instead of smoothing a single day.</p>
+<p><strong>Changed:</strong> Replaced the smoothing approach entirely with real, baked-in Week/Month/Year price arrays, a real 5-day average for the week view and real multi-month samples for month and year, each independently fetched and aggregated from ComEd's live API rather than derived from Today's chart.</p>
+<p><strong>Verify it yourself:</strong> Fetch <code>hourlypricing.comed.com/api?type=5minutefeed&amp;datestart=...&amp;dateend=...</code> for the same date ranges used in the prototype and compare.</p>
+<h2>What this doesn't cover</h2>
+<p>This review documents three specific, citable corrections from this project. It's a targeted sample rather than a general audit of every AI-assisted decision made across it. It also doesn't cover writing-quality edits (tone, repeated phrasing patterns); those were real and frequent, but they're a different kind of correction than a factual or technical error, and are addressed separately.</p>
+<h2>Status</h2>
+<p>Three cases, each with what was drafted, what caught it, how it was verified, what changed, and a way to check the underlying claim independently.</p>
+<div class="doc-footer">Part of the Flexy case study documentation set. For the short version, see the <a href="flexy-case-study.html">case study page</a>.</div>
+</article>
+<footer>
+  <div class="wrap">Flexy is a fictional case study built for portfolio purposes. Market research is real and cited; personas, interviews, and user data are synthetic.</div>
+</footer>
+</body>
+</html>

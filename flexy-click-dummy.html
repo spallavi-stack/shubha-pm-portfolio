@@ -1,0 +1,1442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Flexy Click Dummy</title>
+<style>
+  :root{
+    --comed-blue:#0059A4;
+    --comed-navy:#180D67;
+    --flexy-teal:#0F9D8F;
+    --flexy-teal-dark:#0B7A70;
+    --flexy-ink:#1B2430;
+    --flexy-bg:#F4FBFA;
+    --cheap:#34C759;
+    --moderate:#F5A623;
+    --expensive:#FF6B6B;
+    --gray:#8A94A6;
+    --line:#E3E8EE;
+    --tou-cheap:#0F9D8F;
+    --tou-moderate:#F5A623;
+    --tou-expensive:#D64545;
+    --tou-premium:#33267A;
+  }
+  .data-badge{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:700;padding:3px 8px;border-radius:20px;letter-spacing:0.2px;}
+  .data-badge.live{background:#E6F7EE;color:#12805C;}
+  .data-badge.fallback{background:#FDF3E3;color:#96600A;}
+  .data-badge.modeled{background:#EDEFF3;color:#5C5445;}
+  .verify-link{font-size:10.5px;color:var(--flexy-teal-dark);text-decoration:none;font-weight:600;}
+  .verify-link:hover{text-decoration:underline;}
+  .data-footnote{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 4px 0;flex-wrap:wrap;}
+  .chart-card{padding:12px 10px 10px;}
+  .chart-title{font-size:12px;font-weight:700;color:var(--flexy-ink);padding:0 4px;margin-bottom:4px;display:flex;justify-content:space-between;align-items:baseline;}
+  .chart-title .tag{font-weight:800;color:var(--flexy-teal-dark);}
+  .axis-tag{font-size:9.5px;color:var(--gray);}
+  .chart-legend-line{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--flexy-ink);}
+  .line-swatch{width:14px;height:2.5px;background:var(--flexy-ink);border-radius:2px;display:inline-block;}
+  .chart-footnote{font-size:11px;color:var(--gray);padding:6px 4px 0;line-height:1.4;}
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:#EDEFF3;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    min-height:100vh;
+    padding:24px;
+  }
+  .phone{
+    width:390px;
+    height:844px;
+    background:#fff;
+    border-radius:40px;
+    box-shadow:0 20px 60px rgba(0,0,0,.25);
+    overflow:hidden;
+    position:relative;
+    border:8px solid #111;
+  }
+  .screen{
+    display:none;
+    flex-direction:column;
+    height:100%;
+    width:100%;
+  }
+  .screen.active{display:flex;}
+  .statusbar{
+    height:28px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 20px;
+    font-size:12px;
+    font-weight:600;
+    flex-shrink:0;
+  }
+  .content{
+    flex:1;
+    overflow-y:auto;
+    padding:20px 20px 100px 20px;
+  }
+  .content::-webkit-scrollbar{display:none;}
+
+  /* --- ComEd-styled screens --- */
+  .comed-bg{background:linear-gradient(180deg,#ffffff 0%,#EAF2FA 100%);}
+  .comed-header{
+    padding:36px 24px 16px 24px;
+  }
+  .comed-wordmark{
+    font-size:26px;
+    font-weight:800;
+    color:var(--comed-blue);
+    letter-spacing:-0.5px;
+  }
+  .comed-wordmark span{color:var(--comed-navy);}
+  .flexy-tag{
+    display:inline-block;
+    margin-top:6px;
+    font-size:11px;
+    color:var(--gray);
+    background:#F0F2F5;
+    padding:3px 8px;
+    border-radius:20px;
+  }
+  .comed-title{
+    font-size:20px;
+    font-weight:700;
+    color:var(--comed-navy);
+    margin:18px 24px 4px 24px;
+  }
+  .comed-sub{
+    font-size:13px;
+    color:var(--gray);
+    margin:0 24px 24px 24px;
+    line-height:1.4;
+  }
+  .field{
+    margin:0 24px 14px 24px;
+  }
+  .field label{
+    font-size:12px;
+    color:var(--gray);
+    font-weight:600;
+    display:block;
+    margin-bottom:6px;
+  }
+  .field input{
+    width:100%;
+    padding:12px 14px;
+    border:1.5px solid var(--line);
+    border-radius:10px;
+    font-size:15px;
+    color:var(--flexy-ink);
+  }
+  .btn-comed{
+    margin:10px 24px 0 24px;
+    background:var(--comed-blue);
+    color:#fff;
+    border:none;
+    padding:14px;
+    border-radius:10px;
+    font-size:15px;
+    font-weight:700;
+    cursor:pointer;
+  }
+  .btn-comed-outline{
+    margin:10px 24px 0 24px;
+    background:transparent;
+    color:var(--comed-blue);
+    border:1.5px solid var(--comed-blue);
+    padding:14px;
+    border-radius:10px;
+    font-size:14px;
+    font-weight:600;
+    cursor:pointer;
+  }
+  .link-muted{
+    text-align:center;
+    font-size:12px;
+    color:var(--gray);
+    margin-top:18px;
+  }
+
+  .consent-list{margin:0 24px;}
+  .consent-item{
+    display:flex;
+    align-items:flex-start;
+    gap:10px;
+    padding:12px 0;
+    border-bottom:1px solid var(--line);
+  }
+  .consent-check{
+    width:20px;height:20px;border-radius:50%;
+    background:var(--comed-blue);
+    color:#fff;font-size:12px;
+    display:flex;align-items:center;justify-content:center;
+    flex-shrink:0;margin-top:1px;
+  }
+  .consent-text b{display:block;font-size:14px;color:var(--flexy-ink);}
+  .consent-text span{font-size:12px;color:var(--gray);}
+
+  /* --- car manufacturer auth (via Smartcar) --- */
+  .carauth-bg{background:#161B22;color:#fff;}
+  .carauth-header{padding:36px 24px 6px 24px;}
+  .carauth-brand{font-size:22px;font-weight:800;letter-spacing:-0.3px;}
+  .smartcar-badge{
+    display:inline-block;margin-top:8px;font-size:10.5px;color:#9AA4B2;
+    background:#232A34;padding:3px 9px;border-radius:20px;
+  }
+  .carauth-title{font-size:19px;font-weight:700;margin:16px 24px 4px 24px;}
+  .carauth-sub{font-size:12.5px;color:#9AA4B2;margin:0 24px 22px 24px;line-height:1.45;}
+  .field-dark label{font-size:12px;color:#9AA4B2;font-weight:600;display:block;margin-bottom:6px;}
+  .field-dark input{
+    width:100%;padding:12px 14px;border:1.5px solid #2C3644;border-radius:10px;
+    font-size:15px;background:#1E252F;color:#fff;
+  }
+  .btn-carauth{
+    margin:10px 24px 0 24px;background:#0F9D8F;color:#fff;border:none;
+    padding:14px;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;
+  }
+  .link-muted-dark{text-align:center;font-size:12px;color:#6B7684;margin-top:18px;}
+  .carauth-permlist{margin:0 24px;}
+  .carauth-perm{
+    display:flex;align-items:flex-start;gap:10px;padding:12px 0;border-bottom:1px solid #232A34;
+  }
+  .carauth-check{
+    width:20px;height:20px;border-radius:50%;background:#0F9D8F;color:#fff;font-size:12px;
+    display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;
+  }
+  .carauth-perm-text b{display:block;font-size:14px;color:#fff;}
+  .carauth-perm-text span{font-size:12px;color:#9AA4B2;}
+
+  /* --- transition --- */
+  .transition-screen{
+    background:linear-gradient(135deg,var(--comed-blue) 0%, var(--flexy-teal) 100%);
+    align-items:center;justify-content:center;color:#fff;text-align:center;
+  }
+  .spinner{
+    width:40px;height:40px;border-radius:50%;
+    border:4px solid rgba(255,255,255,.35);
+    border-top-color:#fff;
+    animation:spin 1s linear infinite;
+    margin:0 auto 20px auto;
+  }
+  @keyframes spin{to{transform:rotate(360deg);}}
+
+  /* --- Flexy white-label --- */
+  .flexy-bg{background:var(--flexy-bg);}
+  .flexy-header{
+    padding:20px 20px 0 20px;
+  }
+  .flexy-logo{
+    font-size:22px;font-weight:800;color:var(--flexy-teal-dark);letter-spacing:-0.5px;
+  }
+  .center-flow{
+    flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    text-align:center;padding:0 32px;
+  }
+  .check-badge{
+    width:64px;height:64px;border-radius:50%;
+    background:var(--flexy-teal);color:#fff;
+    display:flex;align-items:center;justify-content:center;
+    font-size:30px;margin-bottom:18px;
+  }
+  .h1{font-size:21px;font-weight:800;color:var(--flexy-ink);margin:0 0 8px 0;}
+  .p-muted{font-size:13.5px;color:var(--gray);line-height:1.5;margin:0 0 26px 0;}
+  .btn-primary{
+    background:var(--flexy-teal);color:#fff;border:none;
+    padding:14px 22px;border-radius:12px;font-size:15px;font-weight:700;
+    cursor:pointer;width:100%;
+  }
+  .btn-secondary{
+    background:transparent;color:var(--flexy-teal-dark);border:1.5px solid var(--flexy-teal);
+    padding:14px 22px;border-radius:12px;font-size:14px;font-weight:700;
+    cursor:pointer;width:100%;margin-top:10px;
+  }
+  .btn-skip{
+    background:none;border:none;color:var(--gray);font-size:13px;margin-top:16px;cursor:pointer;
+  }
+
+  .ev-grid{
+    display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px;
+  }
+  .ev-card{
+    border:1.5px solid var(--line);border-radius:14px;padding:16px 10px;
+    text-align:center;cursor:pointer;background:#fff;
+  }
+  .ev-card:hover{border-color:var(--flexy-teal);}
+  .ev-card .emoji{font-size:26px;display:block;margin-bottom:8px;}
+  .ev-card .name{font-size:13px;font-weight:700;color:var(--flexy-ink);}
+
+  .card{
+    background:#fff;border-radius:16px;padding:16px;margin-bottom:16px;
+    box-shadow:0 2px 10px rgba(20,30,40,.05);
+  }
+  .row{display:flex;align-items:center;justify-content:space-between;}
+  .slider-label{font-size:13px;font-weight:600;color:var(--flexy-ink);margin-bottom:6px;display:flex;justify-content:space-between;}
+  input[type=range]{width:100%;accent-color:var(--flexy-teal);}
+  .seg{
+    display:flex;background:#EDEFF3;border-radius:12px;padding:4px;margin-bottom:16px;
+  }
+  .seg button{
+    flex:1;border:none;background:none;padding:10px 4px;border-radius:9px;font-size:13px;font-weight:700;color:var(--gray);cursor:pointer;
+  }
+  .seg button.active{background:#fff;color:var(--flexy-ink);box-shadow:0 1px 4px rgba(0,0,0,.08);}
+
+  /* --- main app --- */
+  .app-header{
+    padding:20px 20px 8px 20px;display:flex;justify-content:space-between;align-items:flex-start;
+  }
+  .greet{font-size:18px;font-weight:800;color:var(--flexy-ink);}
+  .loc{font-size:12px;color:var(--gray);margin-top:2px;}
+  .avatar{width:34px;height:34px;border-radius:50%;background:var(--flexy-teal);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;}
+
+  .stat-row{display:flex;gap:10px;margin:14px 0;}
+  .stat{flex:1;background:#fff;border-radius:14px;padding:12px;box-shadow:0 2px 10px rgba(20,30,40,.05);}
+  .stat .val{font-size:17px;font-weight:800;color:var(--flexy-ink);}
+  .stat .lbl{font-size:10.5px;color:var(--gray);margin-top:2px;line-height:1.3;}
+
+  .tou-toggle{
+    display:flex;align-items:center;justify-content:space-between;
+    background:#fff;border-radius:14px;padding:12px 14px;margin-bottom:14px;
+    box-shadow:0 2px 10px rgba(20,30,40,.05);
+  }
+  .tou-toggle .lab{font-size:13px;font-weight:700;color:var(--flexy-ink);}
+  .tou-toggle .sub{font-size:11px;color:var(--gray);margin-top:1px;}
+  .switch{position:relative;width:44px;height:26px;flex-shrink:0;}
+  .switch input{opacity:0;width:0;height:0;}
+  .slider-toggle{
+    position:absolute;cursor:pointer;inset:0;background:#CCD2DA;border-radius:26px;transition:.2s;
+  }
+  .slider-toggle:before{
+    content:"";position:absolute;height:20px;width:20px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s;
+  }
+  input:checked + .slider-toggle{background:var(--flexy-teal);}
+  input:checked + .slider-toggle:before{transform:translateX(18px);}
+
+  .legend{display:flex;gap:14px;font-size:10.5px;color:var(--gray);margin:8px 2px 14px 2px;}
+  .legend span{display:flex;align-items:center;gap:4px;}
+  .dot{width:8px;height:8px;border-radius:50%;display:inline-block;}
+
+  .bottomnav{
+    position:absolute;bottom:0;left:0;right:0;height:78px;
+    background:#fff;border-top:1px solid var(--line);
+    display:flex;padding:10px 6px 20px 6px;
+  }
+  .navitem{
+    flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;
+    font-size:10px;color:var(--gray);cursor:pointer;
+  }
+  .navitem.active{color:var(--flexy-teal-dark);font-weight:700;}
+  .navitem.disabled{opacity:.4;cursor:not-allowed;}
+  .navicon{font-size:18px;}
+
+  .charge-ring-wrap{display:flex;justify-content:center;margin:10px 0 4px 0;}
+
+  .settings-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--line);}
+  .settings-row:last-child{border-bottom:none;}
+  .settings-row .k{font-size:13px;color:var(--gray);}
+  .settings-row .v{font-size:13.5px;font-weight:700;color:var(--flexy-ink);}
+
+  .banner{
+    background:#EAF7F5;border:1px solid #CDEDE8;border-radius:12px;padding:12px 14px;font-size:12.5px;color:var(--flexy-teal-dark);margin-bottom:14px;line-height:1.5;
+  }
+  .override-btn{
+    width:100%;background:var(--flexy-ink);color:#fff;border:none;border-radius:12px;padding:14px;font-size:14px;font-weight:700;cursor:pointer;margin-top:6px;
+  }
+  .demo-nav{
+    position:fixed;bottom:16px;left:50%;transform:translateX(-50%);
+    background:#111;color:#fff;padding:8px 14px;border-radius:20px;font-size:11px;
+    display:flex;gap:10px;align-items:center;
+  }
+  .demo-nav button{background:none;border:1px solid #555;color:#fff;border-radius:14px;padding:4px 10px;font-size:11px;cursor:pointer;}
+
+  /* --- ComEd account screen + promo card (discovery) --- */
+  .comed-account-header{
+    padding:34px 24px 10px 24px;display:flex;justify-content:space-between;align-items:center;
+  }
+  .comed-account-title{font-size:13px;color:var(--gray);}
+  .comed-account-name{font-size:17px;font-weight:800;color:var(--comed-navy);margin-top:2px;}
+  .promo-card{
+    margin:18px 20px 0 20px;background:linear-gradient(135deg,var(--flexy-teal) 0%, var(--flexy-teal-dark) 100%);
+    border-radius:16px;padding:20px;color:#fff;
+  }
+  .promo-tag{
+    display:inline-block;font-size:10px;font-weight:700;letter-spacing:.4px;
+    background:rgba(255,255,255,.22);padding:4px 9px;border-radius:20px;margin-bottom:10px;
+  }
+  .promo-title{font-size:17px;font-weight:800;margin-bottom:6px;}
+  .promo-sub{font-size:12.5px;line-height:1.5;opacity:.92;margin-bottom:16px;}
+  .promo-btn{
+    background:#fff;color:var(--flexy-teal-dark);border:none;padding:11px 18px;border-radius:10px;
+    font-size:13.5px;font-weight:800;cursor:pointer;
+  }
+  .comed-tile{
+    margin:16px 20px 0 20px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 16px;
+  }
+  .comed-tile .k{font-size:11px;color:var(--gray);}
+  .comed-tile .v{font-size:19px;font-weight:800;color:var(--comed-navy);margin-top:2px;}
+
+  /* --- email client mockup --- */
+  .email-topbar{
+    padding:14px 18px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--line);
+    font-size:13px;color:var(--flexy-ink);background:#fff;
+  }
+  .email-topbar .back{font-size:18px;color:var(--gray);}
+  .email-body{padding:20px;background:#fff;}
+  .email-sender-row{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+  .email-avatar{
+    width:36px;height:36px;border-radius:50%;background:var(--comed-blue);color:#fff;
+    display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;flex-shrink:0;
+  }
+  .email-sender-name{font-size:13.5px;font-weight:700;color:var(--flexy-ink);}
+  .email-sender-addr{font-size:11px;color:var(--gray);}
+  .email-subject{font-size:16px;font-weight:800;color:var(--flexy-ink);margin:4px 0 18px 0;line-height:1.35;}
+  .email-amount-block{
+    background:#F7F9FB;border-radius:14px;padding:18px;margin-bottom:16px;
+  }
+  .email-amount-k{font-size:11.5px;color:var(--gray);}
+  .email-amount-v{font-size:26px;font-weight:800;color:var(--comed-navy);margin:4px 0;}
+  .email-due{font-size:12px;color:var(--gray);}
+  .btn-comed-email{
+    width:100%;background:var(--comed-blue);color:#fff;border:none;padding:13px;border-radius:10px;
+    font-size:14px;font-weight:700;cursor:pointer;margin-top:6px;
+  }
+  .email-divider{height:1px;background:var(--line);margin:22px 0;}
+  .email-promo-label{font-size:10.5px;color:var(--gray);letter-spacing:.4px;margin-bottom:10px;font-weight:700;}
+  .email-logo{margin:2px 0 22px 0;}
+  .email-logo .comed-wordmark{font-size:20px;}
+  .email-greeting{font-size:13.5px;color:var(--flexy-ink);margin-bottom:4px;}
+  .email-intro{font-size:12.5px;color:#5B6675;line-height:1.55;margin-bottom:20px;}
+  .bill-table{border-top:1px solid var(--line);margin-bottom:18px;}
+  .bill-row{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:11px 0;border-bottom:1px solid var(--line);font-size:12.5px;
+  }
+  .bill-row .k{color:#5B6675;}
+  .bill-row .v{color:var(--flexy-ink);font-weight:600;}
+  .bill-row.total .v{font-size:17px;font-weight:800;color:var(--comed-navy);}
+  .email-footer{font-size:10.5px;color:#98A1AD;line-height:1.6;margin-top:22px;}
+  .email-footer a{color:#98A1AD;}
+
+  /* --- App Store listing --- */
+  .store-topbar{
+    padding:14px 18px;font-size:13px;font-weight:700;color:var(--flexy-ink);
+    display:flex;align-items:center;gap:10px;
+  }
+  .store-topbar .back{font-size:18px;color:var(--gray);font-weight:400;}
+  .store-header{display:flex;gap:14px;padding:6px 20px 18px 20px;align-items:flex-start;}
+  .store-icon{
+    width:76px;height:76px;border-radius:18px;background:linear-gradient(135deg,var(--flexy-teal) 0%, var(--flexy-teal-dark) 100%);
+    color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:26px;flex-shrink:0;
+  }
+  .store-name{font-size:19px;font-weight:800;color:var(--flexy-ink);}
+  .store-dev{font-size:12px;color:var(--gray);margin-top:2px;}
+  .store-rating{font-size:11.5px;color:var(--gray);margin-top:8px;}
+  .store-get-btn{
+    margin-top:10px;background:var(--flexy-teal);color:#fff;border:none;padding:8px 22px;
+    border-radius:20px;font-size:13px;font-weight:800;cursor:pointer;
+  }
+  .store-stats-row{
+    display:flex;padding:16px 20px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+    margin:0 0 18px 0;
+  }
+  .store-stat{flex:1;text-align:center;border-right:1px solid var(--line);}
+  .store-stat:last-child{border-right:none;}
+  .store-stat .v{font-size:14px;font-weight:800;color:var(--flexy-ink);}
+  .store-stat .k{font-size:10px;color:var(--gray);margin-top:2px;}
+  .store-shots{display:flex;gap:10px;padding:0 20px 18px 20px;overflow-x:auto;}
+  .store-shot{
+    flex-shrink:0;width:110px;height:200px;border-radius:14px;background:var(--flexy-bg);
+    border:1px solid var(--line);display:flex;align-items:center;justify-content:center;
+    font-size:10.5px;color:var(--gray);text-align:center;padding:8px;
+  }
+  .store-desc-label{font-size:14px;font-weight:800;color:var(--flexy-ink);padding:0 20px;margin-bottom:8px;}
+  .store-desc{font-size:12.5px;color:#5B6675;line-height:1.55;padding:0 20px;}
+
+  /* --- Home energy flow diagram --- */
+  .flow-wrap{display:flex;align-items:flex-start;justify-content:center;gap:0;margin:6px 0 22px 0;}
+  .flow-node{display:flex;flex-direction:column;align-items:center;gap:6px;width:64px;}
+  .flow-circle{
+    width:50px;height:50px;border-radius:50%;background:#fff;border:2px solid var(--flexy-teal);
+    display:flex;align-items:center;justify-content:center;font-size:21px;
+    box-shadow:0 2px 8px rgba(20,30,40,.06);
+  }
+  .flow-label{font-size:9.5px;color:var(--gray);font-weight:700;text-align:center;line-height:1.2;}
+  .flow-line{
+    width:24px;height:2px;margin-top:24px;
+    background-image:linear-gradient(90deg, var(--flexy-teal) 60%, transparent 40%);
+    background-size:8px 2px;background-repeat:repeat-x;flex-shrink:0;
+  }
+
+  /* --- app install transition (neutral) --- */
+  .install-screen{
+    background:#F4F5F7;align-items:center;justify-content:center;text-align:center;
+  }
+  .install-icon{
+    width:72px;height:72px;border-radius:20px;background:var(--flexy-teal);
+    display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:26px;
+    margin:0 auto 16px auto;
+  }
+  .install-bar-track{width:180px;height:6px;background:#E2E5EA;border-radius:6px;margin:16px auto 0 auto;overflow:hidden;}
+  .install-bar-fill{width:0%;height:100%;background:var(--flexy-teal);border-radius:6px;transition:width 1.4s linear;}
+
+  /* --- Flexy intro carousel --- */
+  .carousel-icon{
+    width:90px;height:90px;border-radius:50%;background:#E4F5F3;color:var(--flexy-teal-dark);
+    display:flex;align-items:center;justify-content:center;font-size:38px;margin-bottom:22px;
+  }
+  .recommended-tag{
+    display:inline-block;font-size:10.5px;font-weight:700;color:var(--flexy-teal-dark);
+    background:#E4F5F3;padding:4px 10px;border-radius:20px;margin-bottom:14px;
+  }
+  .soon-tag{
+    display:inline-block;font-size:10.5px;font-weight:700;color:#8A6D1D;
+    background:#FCF1D8;padding:5px 12px;border-radius:20px;margin-top:16px;
+  }
+  .dots{display:flex;gap:6px;justify-content:center;margin:20px 0 4px 0;}
+  .dot-ind{width:7px;height:7px;border-radius:50%;background:#D5DAE1;}
+  .dot-ind.on{background:var(--flexy-teal);width:18px;border-radius:5px;}
+  .carousel-skip{
+    position:absolute;top:22px;right:20px;font-size:12.5px;color:var(--gray);background:none;border:none;cursor:pointer;
+  }
+</style>
+</head>
+<body>
+
+<div class="phone">
+
+  <!-- SCREEN 0: Email, monthly bill notification with Flexy promo -->
+  <div class="screen active flexy-bg" id="s0" style="background:#fff;">
+    <div class="statusbar"><span>9:41</span><span>●●●● 🔋</span></div>
+    <div class="email-topbar">
+      <span class="back">&#8592;</span>
+      <span style="font-weight:700;">Inbox</span>
+    </div>
+    <div class="content" style="padding-top:16px;">
+      <div class="email-sender-row">
+        <div class="email-avatar">CE</div>
+        <div>
+          <div class="email-sender-name">ComEd</div>
+          <div class="email-sender-addr">billing@comed.com</div>
+        </div>
+      </div>
+      <div class="email-subject">Your March bill is ready</div>
+
+      <div class="email-logo"><div class="comed-wordmark">com<span>Ed</span></div></div>
+
+      <div class="email-greeting">Hello Marcus,</div>
+      <div class="email-intro">Your electric bill for the period below is ready. A detailed PDF is attached to this email.</div>
+
+      <div class="bill-table">
+        <div class="bill-row"><span class="k">Billing period</span><span class="v">Feb 16 &#8211; Mar 15, 2026</span></div>
+        <div class="bill-row"><span class="k">Rate plan</span><span class="v">Residential Real-Time Pricing</span></div>
+        <div class="bill-row"><span class="k">Payment method</span><span class="v">Autopay: Off</span></div>
+        <div class="bill-row"><span class="k">Due date</span><span class="v">March 15, 2026</span></div>
+        <div class="bill-row total"><span class="k">Amount due</span><span class="v">$84.12</span></div>
+      </div>
+
+      <button class="btn-comed-email" onclick="alert('This would open your full ComEd bill and usage detail. Not part of this click dummy.')">View Bill</button>
+
+      <div class="email-footer">
+        Thank you for being a ComEd customer.<br>
+        Questions about your bill? Contact us at <a href="#">support@comed.com</a>.<br><br>
+        Commonwealth Edison Company &middot; 3 Lincoln Centre, Oakbrook Terrace, IL 60181
+      </div>
+
+      <div class="email-divider"></div>
+
+      <div class="email-promo-label">A MESSAGE FROM COMED</div>
+      <div class="promo-card">
+        <div class="promo-tag">NEW · FREE FOR COMED CUSTOMERS</div>
+        <div class="promo-title">Meet Flexy</div>
+        <div class="promo-sub">A free companion app that helps you get more out of your dynamic tariff. Clear pricing. Cheaper charging. Zero effort.</div>
+        <button class="promo-btn" onclick="go('s0store')">Get Flexy</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCREEN 0store: App Store listing -->
+  <div class="screen flexy-bg" id="s0store" style="background:#fff;">
+    <div class="statusbar"><span>9:41</span><span>●●●● 🔋</span></div>
+    <div class="store-topbar"><span class="back">&#8592;</span><span>App Store</span></div>
+    <div class="content" style="padding-top:4px;">
+      <div class="store-header">
+        <div class="store-icon">flx</div>
+        <div>
+          <div class="store-name">Flexy</div>
+          <div class="store-dev">Flexy, Inc. &middot; Utilities</div>
+          <div class="store-rating">★★★★★ 4.8 &middot; 2.3K Ratings</div>
+          <button class="store-get-btn" onclick="installFlexy()">GET</button>
+        </div>
+      </div>
+
+      <div class="store-stats-row">
+        <div class="store-stat"><div class="v">4.8</div><div class="k">★ 2.3K Ratings</div></div>
+        <div class="store-stat"><div class="v">Free</div><div class="k">In-App Purchases: None</div></div>
+        <div class="store-stat"><div class="v">4+</div><div class="k">Age</div></div>
+        <div class="store-stat"><div class="v">33 MB</div><div class="k">Size</div></div>
+      </div>
+
+      <div class="store-shots">
+        <div class="store-shot">Price &amp; Cost view screenshot</div>
+        <div class="store-shot">Smart EV charging screenshot</div>
+        <div class="store-shot">Custom settings screenshot</div>
+      </div>
+
+      <div class="store-desc-label">About this app</div>
+      <div class="store-desc">
+        Flexy helps ComEd customers on Real-Time Pricing and Time-of-Use rates get more out of their plan. See clear, simple pricing and cost, charge your EV automatically in the cheapest hours, and always have your car ready when you need it. Solar and heat pump savings tools coming soon.<br><br>
+        Works with your ComEd account and most major EV brands.
+      </div>
+    </div>
+  </div>
+
+  <!-- SCREEN 0b: App install transition -->
+  <div class="screen install-screen" id="s0b">
+    <div>
+      <div class="install-icon">flx</div>
+      <div style="font-weight:700;font-size:15px;color:var(--flexy-ink);">Installing Flexy…</div>
+      <div class="install-bar-track"><div class="install-bar-fill" id="installBar"></div></div>
+    </div>
+  </div>
+
+  <!-- SCREEN 0c: Intro carousel 1 -->
+  <div class="screen flexy-bg" id="s0c" style="position:relative;">
+    <button class="carousel-skip" onclick="go('s1')">Skip</button>
+    <div class="center-flow">
+      <div class="recommended-tag">✓ Recommended by ComEd</div>
+      <div class="carousel-icon">👋</div>
+      <div class="h1">Meet Flexy</div>
+      <div class="p-muted">A free companion app that helps you get more out of your dynamic tariff. Clear pricing. Cheaper charging. Zero effort.</div>
+      <div class="dots"><span class="dot-ind on"></span><span class="dot-ind"></span><span class="dot-ind"></span><span class="dot-ind"></span></div>
+      <button class="btn-primary" style="margin-top:22px;" onclick="go('s0d')">Next</button>
+    </div>
+  </div>
+
+  <!-- SCREEN 0d: Intro carousel 2 -->
+  <div class="screen flexy-bg" id="s0d" style="position:relative;">
+    <button class="carousel-skip" onclick="go('s1')">Skip</button>
+    <div class="center-flow">
+      <div class="carousel-icon">💵</div>
+      <div class="h1">See exactly what you're paying</div>
+      <div class="p-muted">A clear, simple view of your price and cost, hour by hour, today, this week, this month, and this year. No spreadsheets required.</div>
+      <div class="dots"><span class="dot-ind"></span><span class="dot-ind on"></span><span class="dot-ind"></span><span class="dot-ind"></span></div>
+      <button class="btn-primary" style="margin-top:22px;" onclick="go('s0e')">Next</button>
+    </div>
+  </div>
+
+  <!-- SCREEN 0e: Intro carousel 3 -->
+  <div class="screen flexy-bg" id="s0e" style="position:relative;">
+    <button class="carousel-skip" onclick="go('s1')">Skip</button>
+    <div class="center-flow">
+      <div class="carousel-icon">🔌</div>
+      <div class="h1">Charge your EV for less, automatically</div>
+      <div class="p-muted">Flexy schedules your charging into the cheapest available hours, and always gets your car ready by the time you set.</div>
+      <div class="dots"><span class="dot-ind"></span><span class="dot-ind"></span><span class="dot-ind on"></span><span class="dot-ind"></span></div>
+      <button class="btn-primary" style="margin-top:22px;" onclick="go('s0f')">Next</button>
+    </div>
+  </div>
+
+  <!-- SCREEN 0f: Intro carousel 4, solar & heat pump teaser + connect CTA -->
+  <div class="screen flexy-bg" id="s0f" style="position:relative;">
+    <div class="center-flow">
+      <div class="carousel-icon">☀️</div>
+      <div class="h1">Know if solar or a heat pump is worth it</div>
+      <div class="p-muted">Concrete savings for your home, before you talk to a contractor.</div>
+      <div class="soon-tag">Coming soon</div>
+      <div class="dots"><span class="dot-ind"></span><span class="dot-ind"></span><span class="dot-ind"></span><span class="dot-ind on"></span></div>
+      <button class="btn-primary" style="margin-top:22px;" onclick="go('s1')">Get Started</button>
+      <div class="p-muted" style="margin-top:14px;margin-bottom:0;font-size:11.5px;">Next, we'll securely connect your ComEd account. You'll log in directly with ComEd &#8212; Flexy never sees your password.</div>
+    </div>
+  </div>
+
+  <!-- SCREEN 1: ComEd Login -->
+  <div class="screen comed-bg" id="s1">
+    <div class="statusbar"><span>9:41</span><span>●●●● 🔋</span></div>
+    <div class="comed-header">
+      <div class="comed-wordmark">com<span>Ed</span></div>
+      <div class="flexy-tag">Connecting with Flexy</div>
+    </div>
+    <div class="comed-title">Connect your ComEd account</div>
+    <div class="comed-sub">Sign in to securely link your ComEd account with Flexy. Your ComEd password is never shared with Flexy.</div>
+    <div class="field">
+      <label>Email or Account Number</label>
+      <input type="text" value="marcus.webb@email.com">
+    </div>
+    <div class="field">
+      <label>Password</label>
+      <input type="password" value="••••••••">
+    </div>
+    <button class="btn-comed" onclick="go('s2')">Log In</button>
+    <button class="btn-comed-outline" onclick="go('s2')">Use Face ID</button>
+    <div class="link-muted">New to ComEd? Register &nbsp;|&nbsp; Forgot password?</div>
+  </div>
+
+  <!-- SCREEN 2: ComEd Consent -->
+  <div class="screen comed-bg" id="s2">
+    <div class="statusbar"><span>9:41</span><span>●●●● 🔋</span></div>
+    <div class="comed-header">
+      <div class="comed-wordmark">com<span>Ed</span></div>
+      <div class="flexy-tag">Connecting with Flexy</div>
+    </div>
+    <div class="comed-title">Flexy is requesting access to:</div>
+    <div class="consent-list">
+      <div class="consent-item">
+        <div class="consent-check">✓</div>
+        <div class="consent-text"><b>Account & rate plan info</b><span>Your current rate plan (e.g. Residential Real-Time Pricing)</span></div>
+      </div>
+      <div class="consent-item">
+        <div class="consent-check">✓</div>
+        <div class="consent-text"><b>Hourly usage data</b><span>From your smart meter, updated hourly</span></div>
+      </div>
+      <div class="consent-item">
+        <div class="consent-check">✓</div>
+        <div class="consent-text"><b>Billing history</b><span>Past bills, to calculate your real savings</span></div>
+      </div>
+    </div>
+    <div style="flex:1"></div>
+    <button class="btn-comed" onclick="connectToComEd()">Allow</button>
+    <div class="link-muted">Cancel</div>
+  </div>
+
+  <!-- SCREEN 3: Transition -->
+  <div class="screen transition-screen" id="s3">
+    <div>
+      <div class="spinner"></div>
+      <div style="font-weight:700;font-size:15px;">Connecting to ComEd…</div>
+      <button class="btn-secondary" style="border-color:#fff;color:#fff;margin-top:26px;" onclick="go('s4')">Continue</button>
+    </div>
+  </div>
+
+  <!-- SCREEN 4: Flexy Welcome (white-label starts) -->
+  <div class="screen flexy-bg" id="s4">
+    <div class="statusbar"><span>9:41</span><span>●●●● 🔋</span></div>
+    <div class="flexy-header"><div class="flexy-logo">flexy</div></div>
+    <div class="center-flow">
+      <div class="check-badge">✓</div>
+      <div class="h1">You're connected to ComEd</div>
+      <div class="p-muted">Naperville, IL · Residential Real-Time Pricing<br>We'll start tracking your price and usage right away.</div>
+      <button class="btn-primary" onclick="goHome()">Continue</button>
+    </div>
+  </div>
+
+  <!-- SCREEN Home -->
+  <div class="screen flexy-bg" id="sHome">
+    <div class="statusbar"><span>9:41</span><span>●●●● 🔋</span></div>
+    <div class="app-header">
+      <div><div class="greet">Good afternoon, Marcus</div><div class="loc">Naperville, IL</div></div>
+      <div class="avatar">MW</div>
+    </div>
+    <div class="content" style="padding-top:2px;">
+
+      <div class="flow-wrap">
+        <div class="flow-node"><div class="flow-circle">⚡</div><div class="flow-label">ComEd Grid</div></div>
+        <div class="flow-line"></div>
+        <div class="flow-node"><div class="flow-circle">🏠</div><div class="flow-label">Your Home</div></div>
+        <div class="flow-line" id="flowLineCar" style="display:none;"></div>
+        <div class="flow-node" id="flowCarNode" style="display:none;"><div class="flow-circle">🚗</div><div class="flow-label">Your EV</div></div>
+      </div>
+
+      <div class="card">
+        <div class="row" style="margin-bottom:10px;">
+          <div style="font-size:13px;font-weight:700;color:var(--flexy-ink);">Today so far</div>
+          <a href="#" onclick="go('s8');return false;" style="font-size:11.5px;color:var(--flexy-teal-dark);font-weight:700;text-decoration:none;">See full breakdown &rarr;</a>
+        </div>
+        <div class="stat-row" style="margin:0;">
+          <div class="stat" style="box-shadow:none;background:var(--flexy-bg);"><div class="val">$2.64</div><div class="lbl">Cost today</div></div>
+          <div class="stat" style="box-shadow:none;background:var(--flexy-bg);"><div class="val">21.4&cent;</div><div class="lbl">Avg price paid / kWh</div></div>
+        </div>
+      </div>
+
+      <div class="card" onclick="goSmartCharging()" style="cursor:pointer;">
+        <div class="row">
+          <div>
+            <div id="homeChargingTitle" style="font-size:13px;font-weight:700;color:var(--flexy-ink);">🔌 Set up smart charging</div>
+            <div id="homeChargingSub" style="font-size:11.5px;color:var(--gray);margin-top:3px;max-width:250px;">Connect your EV and Flexy will charge it in the cheapest hours, ready when you need it.</div>
+          </div>
+          <span style="font-size:18px;color:var(--gray);">&rsaquo;</span>
+        </div>
+      </div>
+
+      <div class="card" onclick="go('sCalc')" style="cursor:pointer;">
+        <div class="row">
+          <div>
+            <div style="font-size:13px;font-weight:700;color:var(--flexy-ink);">☀️ Solar & heat pump calculator</div>
+            <div style="font-size:11.5px;color:var(--gray);margin-top:3px;max-width:220px;">Concrete savings for your home, before you talk to a contractor.</div>
+          </div>
+          <span class="soon-tag" style="margin:0;">Soon</span>
+        </div>
+      </div>
+
+    </div>
+    <div class="bottomnav">
+      <div class="navitem active" onclick="goHome()"><span class="navicon">🏠</span>Home</div>
+      <div class="navitem" onclick="go('s8')"><span class="navicon">💵</span>Analytics</div>
+      <div class="navitem" onclick="goSmartCharging()"><span class="navicon">🔌</span>Smart Charging</div>
+      <div class="navitem" onclick="go('sCalc')"><span class="navicon">🧮</span>Calculator</div>
+    </div>
+  </div>
+
+  <!-- SCREEN Calculator -->
+  <div class="screen flexy-bg" id="sCalc">
+    <div class="statusbar"><span>9:41</span><span>●●●● 🔋</span></div>
+    <div class="app-header">
+      <div><div class="greet">Calculator</div><div class="loc">Solar & heat pump</div></div>
+      <div class="avatar">MW</div>
+    </div>
+    <div class="center-flow" style="padding-bottom:78px;">
+      <div class="carousel-icon">☀️</div>
+      <div class="h1">Know if solar or a heat pump is worth it</div>
+      <div class="p-muted">Concrete savings for your home, before you talk to a contractor.</div>
+      <div class="soon-tag">Coming soon</div>
+    </div>
+    <div class="bottomnav">
+      <div class="navitem" onclick="goHome()"><span class="navicon">🏠</span>Home</div>
+      <div class="navitem" onclick="go('s8')"><span class="navicon">💵</span>Analytics</div>
+      <div class="navitem" onclick="goSmartCharging()"><span class="navicon">🔌</span>Smart Charging</div>
+      <div class="navitem active"><span class="navicon">🧮</span>Calculator</div>
+    </div>
+  </div>
+
+  <!-- SCREEN 5: Connect EV -->
+  <div class="screen flexy-bg" id="s5">
+    <div class="statusbar"><span>9:41</span><span>●●●● 🔋</span></div>
+    <div class="flexy-header"><div class="flexy-logo">flexy</div></div>
+    <div class="content">
+      <div class="h1" style="margin-top:14px;">Connect your EV</div>
+      <div class="p-muted">Flexy uses Smartcar to securely connect to your car, across most major brands.</div>
+      <div class="ev-grid">
+        <div class="ev-card" onclick="selectBrand('Chevrolet')"><span class="emoji">🚗</span><span class="name">Chevrolet</span></div>
+        <div class="ev-card" onclick="selectBrand('Tesla')"><span class="emoji">🚙</span><span class="name">Tesla</span></div>
+        <div class="ev-card" onclick="selectBrand('Ford')"><span class="emoji">🚘</span><span class="name">Ford</span></div>
+        <div class="ev-card" onclick="selectBrand('BMW')"><span class="emoji">🚗</span><span class="name">BMW</span></div>
+        <div class="ev-card" onclick="selectBrand('Rivian')"><span class="emoji">🚙</span><span class="name">Rivian</span></div>
+        <div class="ev-card" onclick="selectBrand('your vehicle')"><span class="emoji">🔌</span><span class="name">Other</span></div>
+      </div>
+      <button class="btn-skip" onclick="goHome()">I don't have an EV yet, skip this</button>
+    </div>
+    <div class="bottomnav">
+      <div class="navitem" onclick="goHome()"><span class="navicon">🏠</span>Home</div>
+      <div class="navitem" onclick="go('s8')"><span class="navicon">💵</span>Analytics</div>
+      <div class="navitem active"><span class="navicon">🔌</span>Smart Charging</div>
+      <div class="navitem" onclick="go('sCalc')"><span class="navicon">🧮</span>Calculator</div>
+    </div>
+  </div>
+
+  <!-- SCREEN 5b: Sign in to car manufacturer account, via Smartcar -->
+  <div class="screen carauth-bg" id="s5b">
+    <div class="statusbar" style="color:#fff;"><span>9:41</span><span>●●●● 🔋</span></div>
+    <div class="carauth-header">
+      <div class="carauth-brand" id="carAuthBrand">Chevrolet</div>
+      <div class="smartcar-badge">🔒 Secured by Smartcar</div>
+    </div>
+    <div class="carauth-title">Sign in to your <span id="carAuthBrand2">Chevrolet</span> account</div>
+    <div class="carauth-sub">Flexy uses Smartcar to connect. Your <span id="carAuthBrand3">Chevrolet</span> credentials go directly to <span id="carAuthBrand4">Chevrolet</span> and Smartcar &#8212; Flexy never sees your password.</div>
+    <div class="field field-dark">
+      <label>Email</label>
+      <input type="text" value="marcus.webb@email.com">
+    </div>
+    <div class="field field-dark">
+      <label>Password</label>
+      <input type="password" value="••••••••">
+    </div>
+    <button class="btn-carauth" onclick="go('s5c')">Sign In</button>
+    <div class="link-muted-dark">Forgot password? &nbsp;|&nbsp; Don't have an account?</div>
+  </div>
+
+  <!-- SCREEN 5c: Permissions review -->
+  <div class="screen carauth-bg" id="s5c">
+    <div class="statusbar" style="color:#fff;"><span>9:41</span><span>●●●● 🔋</span></div>
+    <div class="carauth-header">
+      <div class="carauth-brand" id="carAuthBrand5">Chevrolet</div>
+      <div class="smartcar-badge">🔒 Secured by Smartcar</div>
+    </div>
+    <div class="carauth-title">Flexy is requesting access to:</div>
+    <div class="carauth-permlist">
+      <div class="carauth-perm">
+        <div class="carauth-check">✓</div>
+        <div class="carauth-perm-text"><b>Battery level & charge status</b><span>To schedule and track charging</span></div>
+      </div>
+      <div class="carauth-perm">
+        <div class="carauth-check">✓</div>
+        <div class="carauth-perm-text"><b>Location</b><span>To know when your car is parked at home</span></div>
+      </div>
+      <div class="carauth-perm">
+        <div class="carauth-check">✓</div>
+        <div class="carauth-perm-text"><b>Charging control</b><span>To start and stop charging automatically</span></div>
+      </div>
+      <div class="carauth-perm">
+        <div class="carauth-check">✓</div>
+        <div class="carauth-perm-text"><b>Odometer</b><span>Used for efficiency tracking, optional</span></div>
+      </div>
+    </div>
+    <div style="flex:1"></div>
+    <button class="btn-carauth" onclick="carConnect()">Allow</button>
+    <div class="link-muted-dark">Cancel</div>
+  </div>
+
+  <!-- SCREEN 5d: Transition -->
+  <div class="screen transition-screen" id="s5d">
+    <div>
+      <div class="spinner"></div>
+      <div style="font-weight:700;font-size:15px;" id="carAuthConnecting">Connecting to Chevrolet…</div>
+      <button class="btn-secondary" style="border-color:#fff;color:#fff;margin-top:26px;" onclick="go('s6')">Continue</button>
+    </div>
+  </div>
+
+  <!-- SCREEN 6: EV connected -->
+  <div class="screen flexy-bg" id="s6">
+    <div class="statusbar"><span>9:41</span><span>●●●● 🔋</span></div>
+    <div class="flexy-header"><div class="flexy-logo">flexy</div></div>
+    <div class="center-flow" style="padding-bottom:78px;">
+      <div class="check-badge">✓</div>
+      <div class="h1">2023 Chevrolet Bolt EUV connected</div>
+      <div class="p-muted">Current charge: 45%<br>Now let's set up how you want it charged.</div>
+      <button class="btn-primary" onclick="go('s7')">Set up charging preferences</button>
+    </div>
+    <div class="bottomnav">
+      <div class="navitem" onclick="goHome()"><span class="navicon">🏠</span>Home</div>
+      <div class="navitem" onclick="go('s8')"><span class="navicon">💵</span>Analytics</div>
+      <div class="navitem active"><span class="navicon">🔌</span>Smart Charging</div>
+      <div class="navitem" onclick="go('sCalc')"><span class="navicon">🧮</span>Calculator</div>
+    </div>
+  </div>
+
+  <!-- SCREEN 7: Charging preferences onboarding -->
+  <div class="screen flexy-bg" id="s7">
+    <div class="statusbar"><span>9:41</span><span>●●●● 🔋</span></div>
+    <div class="flexy-header"><div class="flexy-logo">flexy</div></div>
+    <div class="content">
+      <div class="h1" style="margin-top:14px;">How should Flexy charge your car?</div>
+      <div class="seg">
+        <button class="active" onclick="setOnboardMode(this,true)">Custom settings</button>
+        <button onclick="setOnboardMode(this,false)">Max savings</button>
+      </div>
+
+      <div class="card">
+        <div class="field" style="margin:0;">
+          <label>Ready by</label>
+          <input type="text" value="7:00 AM">
+        </div>
+      </div>
+
+      <div id="onboardCustomPanel">
+        <div class="card">
+          <div class="slider-label"><span>Target charge level</span><span>80%</span></div>
+          <input type="range" min="0" max="100" value="80" style="margin-bottom:16px;">
+          <div class="slider-label"><span>Minimum charge floor</span><span>20%</span></div>
+          <input type="range" min="0" max="100" value="20">
+        </div>
+        <div class="banner">✓ This target is achievable by 7:00 AM given your car's charging speed.</div>
+
+        <div class="card">
+          <div class="row" style="margin-bottom:4px;">
+            <div>
+              <div style="font-size:13px;font-weight:700;color:var(--flexy-ink);">Different time on weekends</div>
+              <div style="font-size:11px;color:var(--gray);margin-top:2px;">Set a separate ready-by time for Saturday and Sunday</div>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="weekendToggle" onchange="toggleWeekendField()">
+              <span class="slider-toggle"></span>
+            </label>
+          </div>
+          <div id="weekendField" style="display:none;margin-top:12px;">
+            <div class="field" style="margin:0;">
+              <label>Weekend ready by</label>
+              <input type="text" value="9:00 AM">
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="slider-label"><span>Charging speed limit</span><span id="ampVal">48A (full speed)</span></div>
+          <input type="range" min="16" max="48" step="16" value="48" oninput="updateAmp(this.value)">
+          <div style="font-size:11px;color:var(--gray);margin-top:6px;">Lower this if you're sharing circuit capacity with another EV or large appliance.</div>
+        </div>
+
+        <div class="card">
+          <div class="row">
+            <div>
+              <div style="font-size:13px;font-weight:700;color:var(--flexy-ink);">Only run smart charging at home</div>
+              <div style="font-size:11px;color:var(--gray);margin-top:2px;">Pauses automation when your car is away from your home charger</div>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="homeOnlyToggle" checked>
+              <span class="slider-toggle"></span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div id="onboardSavingsPanel" style="display:none;">
+        <div class="card">
+          <div style="font-size:13px;font-weight:700;color:var(--flexy-ink);margin-bottom:8px;">To get you the lowest possible cost, Flexy considers:</div>
+          <div class="settings-row"><span class="k">⚡ Live & forecast prices</span><span class="v" style="font-weight:600;font-size:12px;">Today + tomorrow</span></div>
+          <div class="settings-row"><span class="k">🔋 Current battery level</span><span class="v" style="font-weight:600;font-size:12px;">From your car</span></div>
+          <div class="settings-row"><span class="k">🚗 Charging speed</span><span class="v" style="font-weight:600;font-size:12px;">Your car & charger</span></div>
+          <div class="settings-row"><span class="k">⏰ Your ready-by time</span><span class="v" style="font-weight:600;font-size:12px;">Hard deadline</span></div>
+        </div>
+        <div class="banner">✓ Your car will always be ready by 7:00 AM &#8212; Flexy just picks the cheapest hours available to get there, and will use more expensive hours only if that's what it takes to make your deadline.</div>
+      </div>
+
+      <button class="btn-primary" id="s7SaveBtn" onclick="finishEVSetup()">Save & finish setup</button>
+    </div>
+    <div class="bottomnav">
+      <div class="navitem" onclick="goHome()"><span class="navicon">🏠</span>Home</div>
+      <div class="navitem" onclick="go('s8')"><span class="navicon">💵</span>Analytics</div>
+      <div class="navitem active"><span class="navicon">🔌</span>Smart Charging</div>
+      <div class="navitem" onclick="go('sCalc')"><span class="navicon">🧮</span>Calculator</div>
+    </div>
+  </div>
+
+  <!-- SCREEN 8: Main app - Price & Cost -->
+  <div class="screen flexy-bg" id="s8">
+    <div class="statusbar"><span>9:41</span><span>●●●● 🔋</span></div>
+    <div class="app-header">
+      <div><div class="greet">Good afternoon, Marcus</div><div class="loc">Naperville, IL</div></div>
+      <div class="avatar">MW</div>
+    </div>
+    <div class="content" style="padding-top:8px;">
+      <div class="seg">
+        <button class="active" onclick="setRange(this,'today')">Today</button>
+        <button onclick="setRange(this,'week')">Week</button>
+        <button onclick="setRange(this,'month')">Month</button>
+        <button onclick="setRange(this,'year')">Year</button>
+      </div>
+
+      <div class="stat-row">
+        <div class="stat"><div class="val" id="costVal">$2.64</div><div class="lbl" id="costLbl">Cost today</div></div>
+        <div class="stat"><div class="val" id="avgVal">21.4¢</div><div class="lbl">Avg price paid / kWh</div></div>
+        <div class="stat"><div class="val" id="cheapWindowVal">12AM&#8211;5AM</div><div class="lbl">Next cheap window</div></div>
+      </div>
+
+      <div class="tou-toggle">
+        <div class="lab">Time of Use</div>
+        <label class="switch">
+          <input type="checkbox" id="touSwitch" onchange="toggleTOU()">
+          <span class="slider-toggle"></span>
+        </label>
+      </div>
+      <p id="touFootnote" class="chart-footnote" style="display:none;margin:2px 0 10px;">ComEd's filed TOU proposal: +4.8&cent;/kWh delivery, 1&ndash;7pm.</p>
+
+      <div class="legend" id="priceLegend">
+        <span><span class="dot" id="legDot0" style="background:var(--cheap)"></span><span id="legLbl0">Cheap</span></span>
+        <span><span class="dot" id="legDot1" style="background:var(--moderate)"></span><span id="legLbl1">Moderate</span></span>
+        <span><span class="dot" id="legDot2" style="background:var(--expensive)"></span><span id="legLbl2">Expensive</span></span>
+        <span id="legTou" style="display:none;"><span class="dot" style="background:var(--tou-premium)"></span>TOU premium</span>
+      </div>
+
+      <div class="card chart-card">
+        <div class="chart-title"><span id="priceChartTitle">Price, today</span><span class="axis-tag">&cent;/kWh &middot; kWh</span></div>
+        <svg id="chart" viewBox="0 0 320 150" width="100%" height="150"></svg>
+        <div class="chart-legend-line"><span class="line-swatch"></span>Household usage (kWh, right axis)</div>
+      </div>
+
+      <div class="card chart-card" style="margin-top:10px;">
+        <div class="chart-title"><span>Estimated cost by hour</span><span class="tag" id="costTotalTag">$2.64 total</span></div>
+        <svg id="costChart" viewBox="0 0 320 120" width="100%" height="120"></svg>
+      </div>
+
+      <div class="data-footnote">
+        <span id="dataBadge" class="data-badge live">&#9679; Live ComEd data</span>
+        <a id="verifyLink" class="verify-link" href="https://hourlypricing.comed.com/live-prices/" target="_blank" rel="noopener">Verify this yourself &rarr;</a>
+      </div>
+    </div>
+
+    <div class="bottomnav">
+      <div class="navitem" onclick="goHome()"><span class="navicon">🏠</span>Home</div>
+      <div class="navitem active" onclick="go('s8')"><span class="navicon">💵</span>Analytics</div>
+      <div class="navitem" onclick="goSmartCharging()"><span class="navicon">🔌</span>Smart Charging</div>
+      <div class="navitem" onclick="go('sCalc')"><span class="navicon">🧮</span>Calculator</div>
+    </div>
+  </div>
+
+  <!-- SCREEN 9: Main app - Charging -->
+  <div class="screen flexy-bg" id="s9">
+    <div class="statusbar"><span>9:41</span><span>●●●● 🔋</span></div>
+    <div class="app-header">
+      <div><div class="greet">Smart Charging</div><div class="loc">2023 Chevrolet Bolt EUV</div></div>
+      <div class="avatar">MW</div>
+    </div>
+    <div class="content" style="padding-top:8px;">
+      <div class="seg">
+        <button class="active" onclick="setMode(this,true)">Custom settings</button>
+        <button onclick="setMode(this,false)">Max savings</button>
+      </div>
+
+      <div id="customPanel">
+        <div class="charge-ring-wrap">
+          <svg width="120" height="120" viewBox="0 0 120 120">
+            <circle cx="60" cy="60" r="52" fill="none" stroke="#EDEFF3" stroke-width="12"/>
+            <circle cx="60" cy="60" r="52" fill="none" stroke="#0F9D8F" stroke-width="12"
+              stroke-dasharray="326.7" stroke-dashoffset="180" stroke-linecap="round" transform="rotate(-90 60 60)"/>
+            <text x="60" y="56" text-anchor="middle" font-size="20" font-weight="800" fill="#1B2430">45%</text>
+            <text x="60" y="74" text-anchor="middle" font-size="10" fill="#8A94A6">current charge</text>
+          </svg>
+        </div>
+        <div class="banner">Charging will begin at 11:00 PM to hit your 7:00 AM target using the cheapest available hours.</div>
+        <div class="card">
+          <div class="row" style="margin-bottom:2px;">
+            <div style="font-size:13px;font-weight:700;color:var(--flexy-ink);">Your settings</div>
+            <a href="#" onclick="go('s7');return false;" style="font-size:12px;color:var(--flexy-teal-dark);font-weight:700;text-decoration:none;">Edit</a>
+          </div>
+          <div class="settings-row"><span class="k">Ready by</span><span class="v">7:00 AM</span></div>
+          <div class="settings-row"><span class="k">Target charge</span><span class="v">80%</span></div>
+          <div class="settings-row"><span class="k">Minimum floor</span><span class="v">20%</span></div>
+          <div class="settings-row"><span class="k">Weekend schedule</span><span class="v">Same as weekdays</span></div>
+          <div class="settings-row"><span class="k">Charging speed</span><span class="v">48A (full speed)</span></div>
+          <div class="settings-row"><span class="k">Home-only automation</span><span class="v">On</span></div>
+          <div class="settings-row"><span class="k">Vehicle</span><span class="v">Chevrolet Bolt EUV</span></div>
+        </div>
+        <button class="override-btn" onclick="alert('Charging started now, overriding price optimization.')">⚡ Charge now (override)</button>
+      </div>
+
+      <div id="savingsPanel" style="display:none;">
+        <div class="charge-ring-wrap">
+          <svg width="120" height="120" viewBox="0 0 120 120">
+            <circle cx="60" cy="60" r="52" fill="none" stroke="#EDEFF3" stroke-width="12"/>
+            <circle cx="60" cy="60" r="52" fill="none" stroke="#F5A623" stroke-width="12"
+              stroke-dasharray="326.7" stroke-dashoffset="230" stroke-linecap="round" transform="rotate(-90 60 60)"/>
+            <text x="60" y="56" text-anchor="middle" font-size="20" font-weight="800" fill="#1B2430">45%</text>
+            <text x="60" y="74" text-anchor="middle" font-size="10" fill="#8A94A6">current charge</text>
+          </svg>
+        </div>
+        <div class="banner">Paused, waiting for a cheaper hour. Next window: 1:00AM&#8211;4:00AM. Your car will still be ready by 7:00 AM no matter what.</div>
+        <div class="card">
+          <div class="row" style="margin-bottom:2px;">
+            <div style="font-size:13px;font-weight:700;color:var(--flexy-ink);">Your settings</div>
+            <a href="#" onclick="go('s7');return false;" style="font-size:12px;color:var(--flexy-teal-dark);font-weight:700;text-decoration:none;">Edit</a>
+          </div>
+          <div class="settings-row"><span class="k">Ready by</span><span class="v">7:00 AM</span></div>
+          <div class="settings-row"><span class="k">Target charge</span><span class="v">Flexy decides</span></div>
+          <div class="settings-row"><span class="k">Vehicle</span><span class="v">Chevrolet Bolt EUV</span></div>
+        </div>
+        <button class="override-btn" onclick="alert('Charging started now, overriding price optimization.')">⚡ Charge now (override)</button>
+      </div>
+
+      <div style="font-size:13px;font-weight:700;color:var(--flexy-ink);margin:20px 0 10px 0;">Charging history</div>
+
+      <div class="card" style="padding:14px 16px;">
+        <div style="font-size:10.5px;color:var(--gray);margin-bottom:2px;">Last night &middot; 11:00 PM&#8211;6:40 AM</div>
+        <div style="font-size:22px;font-weight:800;color:var(--flexy-ink);">$1.82</div>
+        <div style="font-size:11px;color:var(--gray);margin-top:2px;">7.6 kWh &middot; avg 8.1&cent;/kWh &middot; saved $2.40 vs. peak rate</div>
+      </div>
+      <div class="card" style="padding:14px 16px;">
+        <div style="font-size:10.5px;color:var(--gray);margin-bottom:2px;">Tuesday &middot; 12:15 AM&#8211;5:50 AM</div>
+        <div style="font-size:22px;font-weight:800;color:var(--flexy-ink);">$2.05</div>
+        <div style="font-size:11px;color:var(--gray);margin-top:2px;">8.9 kWh &middot; avg 9.0&cent;/kWh &middot; saved $2.15 vs. peak rate</div>
+      </div>
+      <div class="card" style="padding:14px 16px;">
+        <div style="font-size:10.5px;color:var(--gray);margin-bottom:2px;">Sunday &middot; 1:00 AM&#8211;6:20 AM</div>
+        <div style="font-size:22px;font-weight:800;color:var(--flexy-ink);">$1.64</div>
+        <div style="font-size:11px;color:var(--gray);margin-top:2px;">7.1 kWh &middot; avg 7.8&cent;/kWh &middot; saved $2.68 vs. peak rate</div>
+      </div>
+    </div>
+
+    <div class="bottomnav">
+      <div class="navitem" onclick="goHome()"><span class="navicon">🏠</span>Home</div>
+      <div class="navitem" onclick="go('s8')"><span class="navicon">💵</span>Analytics</div>
+      <div class="navitem active" onclick="goSmartCharging()"><span class="navicon">🔌</span>Smart Charging</div>
+      <div class="navitem" onclick="go('sCalc')"><span class="navicon">🧮</span>Calculator</div>
+    </div>
+  </div>
+
+</div>
+
+<div class="demo-nav">
+  <span>Click dummy &#8212; MVP scope only</span>
+  <button onclick="restart()">Restart flow</button>
+</div>
+
+<script>
+let connectTimer = null;
+function go(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  if(id !== 's3' && connectTimer){ clearTimeout(connectTimer); connectTimer = null; }
+  if(id !== 's5d' && carConnectTimer){ clearTimeout(carConnectTimer); carConnectTimer = null; }
+  if(id !== 's0b' && installTimer){ clearTimeout(installTimer); installTimer = null; }
+  if(id === 's7'){
+    const btn = document.getElementById('s7SaveBtn');
+    if(btn) btn.textContent = evConnected ? 'Save changes' : 'Save & finish setup';
+  }
+}
+function connectToComEd(){
+  go('s3');
+  connectTimer = setTimeout(()=>go('s4'), 1600);
+}
+function selectBrand(brand){
+  ['carAuthBrand','carAuthBrand2','carAuthBrand3','carAuthBrand4','carAuthBrand5'].forEach(id=>{
+    document.getElementById(id).textContent = brand;
+  });
+  go('s5b');
+}
+let carConnectTimer = null;
+function carConnect(){
+  const brand = document.getElementById('carAuthBrand').textContent;
+  document.getElementById('carAuthConnecting').textContent = 'Connecting to ' + brand + '…';
+  go('s5d');
+  carConnectTimer = setTimeout(()=>go('s6'), 1600);
+}
+function restart(){ evConnected = false; go('s0'); }
+
+let installTimer = null;
+function installFlexy(){
+  go('s0b');
+  const bar = document.getElementById('installBar');
+  bar.style.width = '0%';
+  requestAnimationFrame(()=>{ requestAnimationFrame(()=>{ bar.style.width = '100%'; }); });
+  installTimer = setTimeout(()=>go('s0c'), 1500);
+}
+
+function setOnboardMode(btn,isCustom){
+  document.querySelectorAll('#s7 .seg button').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('onboardCustomPanel').style.display = isCustom ? 'block' : 'none';
+  document.getElementById('onboardSavingsPanel').style.display = isCustom ? 'none' : 'block';
+}
+function toggleWeekendField(){
+  const on = document.getElementById('weekendToggle').checked;
+  document.getElementById('weekendField').style.display = on ? 'block' : 'none';
+}
+function updateAmp(v){
+  const labels = {16:'16A (reduced)', 32:'32A (medium)', 48:'48A (full speed)'};
+  document.getElementById('ampVal').textContent = labels[v];
+}
+
+// ---- Home / Smart Charging state ----
+let evConnected = false;
+
+function goHome(){
+  renderFlowDiagram();
+  updateHomeChargingCard();
+  go('sHome');
+}
+function goSmartCharging(){
+  go(evConnected ? 's9' : 's5');
+}
+function finishEVSetup(){
+  evConnected = true;
+  go('s9');
+}
+function renderFlowDiagram(){
+  const line = document.getElementById('flowLineCar');
+  const node = document.getElementById('flowCarNode');
+  if(!line || !node) return;
+  line.style.display = evConnected ? 'block' : 'none';
+  node.style.display = evConnected ? 'flex' : 'none';
+}
+function updateHomeChargingCard(){
+  const t = document.getElementById('homeChargingTitle');
+  const s = document.getElementById('homeChargingSub');
+  if(!t || !s) return;
+  if(evConnected){
+    t.textContent = '🔌 Smart Charging is on';
+    s.textContent = 'Ready by 7:00 AM. Charging tonight in the cheapest hours.';
+  } else {
+    t.textContent = '🔌 Set up smart charging';
+    s.textContent = 'Connect your EV and Flexy will charge it in the cheapest hours, ready when you need it.';
+  }
+}
+
+function setMode(btn,isCustom){
+  document.querySelectorAll('#s9 .seg button').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('customPanel').style.display = isCustom ? 'block' : 'none';
+  document.getElementById('savingsPanel').style.display = isCustom ? 'none' : 'block';
+}
+
+// ==== Real ComEd data engine ====
+// Real 24-hour ComEd Hourly Pricing snapshot, captured Jul 16, 2026 (hourlypricing.comed.com/api?type=day&date=20260716)
+const FALLBACK_COMED_PRICES = [5.5,5.6,3.5,3.4,3.3,3.5,3.7,4.2,3.6,4.3,3.3,7.5,5.0,5.1,7.3,10.0,7.8,13.5,14.5,35.9,16.2,9.6,8.6,6.1];
+const FALLBACK_LABEL = 'ComEd Hourly Pricing, Jul 16 2026 (captured snapshot)';
+const consumption = [0.3,0.2,0.2,0.2,0.3,0.4,0.9,1.1,0.6,0.4,0.3,0.3,0.4,0.5,0.4,0.3,0.9,1.6,1.8,1.2,0.8,0.5,0.4,0.3];
+
+// Real ComEd's filed TOU proposal: 10.7c/kWh super-peak delivery (1-7pm) vs 5.9c/kWh standard = +4.8c/kWh, additive, not a multiplier.
+const TOU_PEAK_DELTA_CENTS = 4.8;
+function touDeltaCents(hour){ return (hour >= 13 && hour < 19) ? TOU_PEAK_DELTA_CENTS : 0; }
+
+// Real 5-day (week) and multi-month-sampled (month/year) ComEd averages, fetched and aggregated during prototype build.
+const RANGE_DAYS = { week: 5, month: 30, year: 365 };
+const RANGE_LABEL = { week: 'this week', month: 'this month', year: 'this year' };
+const RANGE_SOURCE_LABEL = {
+  week: 'ComEd Hourly Pricing, 5-day avg Jul 13–17 2026',
+  month: 'ComEd Hourly Pricing, avg of Jun 15 + Jul 16 2026',
+  year: 'ComEd Hourly Pricing, avg of 5 sampled days across 2026'
+};
+const RANGE_VERIFY_DATE = { week: '20260716', month: '20260716', year: '20260115' };
+const RANGE_PRICES = {
+  week:  [4.55,3.26,3.12,3.05,3.19,3.43,3.7,3.42,3.73,3.51,6.77,5.99,5.58,7.95,10.05,12.24,17.54,19.04,44.18,29.04,16.1,9.66,6.79,4.7],
+  month: [4.05,4.15,2.9,2.75,2.95,3.05,3.1,3.3,2.8,3.25,2.95,5.05,3.75,3.8,4.9,6.25,5.2,8.05,8.9,19.8,10.05,6.65,5.55,4.0],
+  year:  [2.64,2.92,2.44,2.18,2.02,3.12,2.2,2.72,2.92,2.22,1.88,3.04,2.26,2.3,2.9,3.7,3.44,4.94,5.18,10.12,5.8,3.76,3.06,2.52]
+};
+
+let priceState = { hours: FALLBACK_COMED_PRICES, source: 'fallback', label: FALLBACK_LABEL, dateStr: '20260716', touMode: false };
+let currentRange = 'today';
+
+function hourLabel(h){ const ampm = h<12 ? 'AM':'PM'; let hr=h%12; if(hr===0)hr=12; return hr+ampm; }
+function priceTier(price, sorted){
+  const n = sorted.length;
+  const lowCut = sorted[Math.floor(n*0.33)], highCut = sorted[Math.floor(n*0.67)];
+  if(price <= lowCut) return 0; if(price <= highCut) return 1; return 2;
+}
+function updateLegend(){
+  const touOn = priceState.touMode;
+  document.getElementById('legTou').style.display = touOn ? 'inline-flex' : 'none';
+  document.getElementById('touFootnote').style.display = touOn ? 'block' : 'none';
+  document.getElementById('priceChartTitle').textContent = touOn ? ('Price, ' + (currentRange==='today'?'today':RANGE_LABEL[currentRange]) + ' (TOU)') : ('Price, ' + (currentRange==='today'?'today':RANGE_LABEL[currentRange]));
+}
+
+function drawChart(basePrices, loadCurve){
+  loadCurve = loadCurve || consumption;
+  const svg = document.getElementById('chart');
+  const w=320,h=150,n=basePrices.length,bw=w/n;
+  const touOn = priceState.touMode;
+  const totals = basePrices.map((p,i)=> p + (touOn ? touDeltaCents(i) : 0));
+  const sorted = [...basePrices].sort((a,b)=>a-b);
+  const maxTotal = Math.max(...totals), maxC = Math.max(...loadCurve);
+  const priceColors = ['var(--tou-cheap)','var(--tou-moderate)','var(--tou-expensive)'];
+  let bars='', pts='';
+  basePrices.forEach((p,i)=>{
+    const tier = priceTier(p, sorted);
+    const baseH = (p/maxTotal)*(h-10);
+    const x = i*bw;
+    bars += `<rect x="${x}" y="${h-baseH}" width="${bw-1}" height="${baseH}" fill="${priceColors[tier]}" opacity="0.75"><title>${hourLabel(i)}: ${p.toFixed(1)}¢/kWh</title></rect>`;
+    if(touOn){
+      const delta = touDeltaCents(i);
+      if(delta>0){
+        const premH = (delta/maxTotal)*(h-10);
+        bars += `<rect x="${x}" y="${h-baseH-premH}" width="${bw-1}" height="${premH}" fill="var(--tou-premium)" opacity="0.85"><title>${hourLabel(i)} TOU premium: +${delta.toFixed(1)}¢/kWh</title></rect>`;
+      }
+    }
+  });
+  loadCurve.forEach((c,i)=>{
+    const x = i*bw + bw/2;
+    const y = h - (c/maxC)*(h-14) - 6;
+    pts += (i===0?'M':'L') + x + ',' + y + ' ';
+  });
+  svg.innerHTML = bars + `<path d="${pts}" fill="none" stroke="#1B2430" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>`;
+}
+
+function drawCostChart(basePrices, loadCurve){
+  loadCurve = loadCurve || consumption;
+  const svg = document.getElementById('costChart');
+  const w=320,h=120,n=basePrices.length,bw=w/n;
+  const touOn = priceState.touMode;
+  const baseCosts = basePrices.map((p,i)=> (p/100)*loadCurve[i]);
+  const premCosts = basePrices.map((p,i)=> touOn ? (touDeltaCents(i)/100)*loadCurve[i] : 0);
+  const totalCosts = baseCosts.map((c,i)=> c + premCosts[i]);
+  const maxCost = Math.max(...totalCosts, 0.01);
+  let bars='';
+  baseCosts.forEach((c,i)=>{
+    const x = i*bw, baseH = (c/maxCost)*(h-10);
+    bars += `<rect x="${x}" y="${h-baseH}" width="${bw-1}" height="${baseH}" fill="var(--flexy-teal)" opacity="0.8"><title>${hourLabel(i)}: $${c.toFixed(2)}</title></rect>`;
+    if(premCosts[i]>0){
+      const premH = (premCosts[i]/maxCost)*(h-10);
+      bars += `<rect x="${x}" y="${h-baseH-premH}" width="${bw-1}" height="${premH}" fill="var(--tou-premium)" opacity="0.85"><title>${hourLabel(i)} TOU premium: $${premCosts[i].toFixed(2)}</title></rect>`;
+    }
+  });
+  svg.innerHTML = bars;
+  const total = totalCosts.reduce((a,b)=>a+b,0);
+  const tag = document.getElementById('costTotalTag');
+  tag.textContent = currentRange==='today' ? ('$'+total.toFixed(2)+' total') : ('$'+total.toFixed(2)+'/day avg');
+}
+
+function setBadge(mode, label){
+  const el = document.getElementById('dataBadge');
+  el.className = 'data-badge ' + mode;
+  el.innerHTML = '&#9679; ' + (mode==='live' ? 'Live ComEd data' : mode==='fallback' ? label : label);
+}
+
+function renderTodayStats(){
+  currentRange = 'today';
+  document.querySelectorAll('#s8 .seg button').forEach(b=>b.classList.remove('active'));
+  document.querySelector('#s8 .seg button').classList.add('active');
+  document.getElementById('costLbl').textContent = 'Cost today';
+  const prices = priceState.hours;
+  const touOn = priceState.touMode;
+  const totals = prices.map((p,i)=> p + (touOn? touDeltaCents(i):0));
+  const totalCost = totals.reduce((sum,p,i)=> sum + (p/100)*consumption[i], 0);
+  const avgPrice = totals.reduce((a,b)=>a+b,0)/totals.length;
+  document.getElementById('costVal').textContent = '$'+totalCost.toFixed(2);
+  document.getElementById('avgVal').textContent = avgPrice.toFixed(1)+'¢';
+  const minIdx = prices.indexOf(Math.min(...prices));
+  document.getElementById('cheapWindowVal').textContent = hourLabel(minIdx) + '–' + hourLabel((minIdx+3)%24);
+  updateLegend();
+  drawChart(prices, consumption);
+  drawCostChart(prices, consumption);
+  if(priceState.source === 'live'){
+    setBadge('live', 'Live ComEd data');
+  } else {
+    setBadge('fallback', priceState.label);
+  }
+  document.getElementById('verifyLink').href = 'https://hourlypricing.comed.com/api?type=day&date=' + priceState.dateStr;
+}
+
+function setRange(btn, range){
+  document.querySelectorAll('#s8 .seg button').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  if(range === 'today'){ renderTodayStats(); return; }
+  currentRange = range;
+  const prices = RANGE_PRICES[range];
+  const touOn = priceState.touMode;
+  const totals = prices.map((p,i)=> p + (touOn? touDeltaCents(i):0));
+  const avgPrice = totals.reduce((a,b)=>a+b,0)/totals.length;
+  const dailyCost = totals.reduce((sum,p,i)=> sum + (p/100)*consumption[i], 0);
+  const periodCost = dailyCost * RANGE_DAYS[range];
+  document.getElementById('costLbl').textContent = 'Avg cost / day';
+  document.getElementById('costVal').textContent = '$'+dailyCost.toFixed(2);
+  document.getElementById('avgVal').textContent = avgPrice.toFixed(1)+'¢';
+  const minIdx = prices.indexOf(Math.min(...prices));
+  document.getElementById('cheapWindowVal').textContent = hourLabel(minIdx) + '–' + hourLabel((minIdx+3)%24);
+  updateLegend();
+  drawChart(prices, consumption);
+  drawCostChart(prices, consumption);
+  setBadge('fallback', RANGE_SOURCE_LABEL[range] + ' (load profile still modeled, real usage needs Green Button Connect)');
+  document.getElementById('verifyLink').href = 'https://hourlypricing.comed.com/api?type=day&date=' + RANGE_VERIFY_DATE[range];
+}
+
+function toggleTOU(){
+  priceState.touMode = document.getElementById('touSwitch').checked;
+  if(currentRange === 'today'){ renderTodayStats(); }
+  else { setRange(document.querySelector('#s8 .seg button.active'), currentRange); }
+}
+
+// Regex-based parser for ComEd's `Date.UTC(...)` array-literal response, not eval().
+function parseComedDayResponse(text){
+  const re = /Date\.UTC\(\d+,\d+,\d+,(\d+),\d+,\d+\),\s*([\d.]+)\]/g;
+  const out = new Array(24).fill(null);
+  let m;
+  while((m = re.exec(text)) !== null){
+    out[parseInt(m[1],10)] = parseFloat(m[2]);
+  }
+  return out.every(v=>v!==null) ? out : null;
+}
+
+// Server-side fetches aren't subject to CORS; the public proxy below is only needed because this
+// prototype runs client-side in a browser preview. A real backend would call ComEd's API directly.
+async function loadRealComedData(){
+  const today = new Date();
+  const dateStr = today.getFullYear() + String(today.getMonth()+1).padStart(2,'0') + String(today.getDate()).padStart(2,'0');
+  try{
+    const url = 'https://hourlypricing.comed.com/api?type=day&date=' + dateStr;
+    const proxied = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(url);
+    const res = await fetch(proxied, {cache:'no-store'});
+    if(!res.ok) throw new Error('fetch failed');
+    const text = await res.text();
+    const parsed = parseComedDayResponse(text);
+    if(!parsed) throw new Error('parse failed or incomplete day');
+    priceState = { hours: parsed, source: 'live', label: 'Live ComEd data', dateStr, touMode: priceState.touMode };
+  } catch(e){
+    priceState = { hours: FALLBACK_COMED_PRICES, source: 'fallback', label: FALLBACK_LABEL, dateStr: '20260716', touMode: priceState.touMode };
+  }
+  if(currentRange === 'today') renderTodayStats();
+}
+
+renderTodayStats();
+loadRealComedData();
+</script>
+
+</body>
+</html>

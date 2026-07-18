@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Roadmap — Flexy | Shubha's PM Portfolio</title>
+<style>
+  :root{
+    --teal:#C2790E; --teal-dark:#96600A; --navy:#1C1712;
+    --ink:#201A12; --ink-soft:#5C5445; --paper:#FFFFFF; --paper-soft:#F7F4EC; --border:#E5DFD2;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;color:var(--ink);background:var(--paper);line-height:1.7;}
+  .wrap{max-width:760px;margin:0 auto;padding:0 24px;}
+  nav{position:sticky;top:0;z-index:50;background:rgba(255,255,255,0.95);backdrop-filter:blur(8px);border-bottom:1px solid var(--border);}
+  nav .navwrap{max-width:920px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:14px 24px;}
+  nav a{color:var(--teal-dark);text-decoration:none;font-size:13.5px;font-weight:600;}
+  nav .brand{color:var(--navy);font-weight:700;font-size:15px;}
+  nav .brand span{color:var(--teal);}
+  article{padding:48px 0 64px;}
+  article h1{font-size:30px;letter-spacing:-0.01em;color:var(--navy);margin:0 0 8px;}
+  article h1 + p{color:var(--ink-soft);font-size:14px;margin-top:0;}
+  article h2{font-size:20px;margin:36px 0 12px;padding-bottom:8px;border-bottom:2px solid var(--teal);color:var(--navy);}
+  article h3{font-size:16px;margin:24px 0 8px;color:var(--navy);}
+  article p{font-size:15px;color:var(--ink);margin:0 0 14px;}
+  article ul, article ol{padding-left:22px;margin:0 0 14px;}
+  article li{font-size:15px;margin-bottom:6px;}
+  article strong{color:var(--navy);}
+  article blockquote{margin:16px 0;padding:10px 18px;border-left:3px solid var(--teal);background:var(--paper-soft);color:var(--navy);font-style:italic;}
+  article hr{border:none;border-top:1px solid var(--border);margin:32px 0;}
+  article table{width:100%;border-collapse:collapse;margin:16px 0;font-size:13.5px;}
+  article th, article td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--border);}
+  article th{font-size:11px;text-transform:uppercase;letter-spacing:0.04em;color:var(--ink-soft);}
+  article code{background:var(--paper-soft);padding:1px 5px;border-radius:4px;font-size:13px;}
+  article svg{max-width:100%;height:auto;display:block;margin:20px 0;border:1px solid var(--border);border-radius:12px;padding:10px;background:#fff;}
+  .doc-footer{margin-top:40px;padding-top:20px;border-top:1px solid var(--border);font-size:13px;color:var(--ink-soft);}
+  footer{background:var(--navy);color:#C9BBA0;padding:32px 0;text-align:center;font-size:13px;}
+  footer a{color:#F6D9A0;}
+</style>
+</head>
+<body>
+<nav>
+  <div class="navwrap">
+    <span class="brand">Flexy<span>.</span> Documentation</span>
+    <div style="display:flex;gap:18px;">
+      <a href="flexy-case-study.html">← Case study</a>
+      <a href="index.html">Portfolio</a>
+    </div>
+  </div>
+</nav>
+<article class="wrap">
+<h1>Flexy, Roadmap (v2)</h1>
+<h2>Prioritization framework: ICE</h2>
+<p>Using ICE (Impact, Confidence, Ease) rather than RICE. Reach isn't meaningfully estimable yet since Flexy has no real user base or ComEd partnership in place, so ICE fits a pre-launch, research-grounded prioritization better. Each scored 1-10; ICE score is the average of the three. Every score is justified against a specific persona, JTBD statement, or interview-synthesis theme, not a gut feeling.</p>
+<p><strong>Legend:</strong> Impact = how much this moves the needle on the core problem. Confidence = how sure we are, based on persona/interview evidence or real-world precedent, that this is the right feature. Ease = technical/data feasibility given known constraints.</p>
+<hr />
+<h2>NOW (MVP, build first)</h2>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Tied to</th>
+<th>Impact</th>
+<th>Confidence</th>
+<th>Ease</th>
+<th>ICE</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Price &amp; Cost view (combined, redesigned)</td>
+<td>Priya's and Marcus's JTBDs, Core Problem #1 (bill shock)</td>
+<td>9</td>
+<td>8</td>
+<td>7</td>
+<td>8.0</td>
+</tr>
+<tr>
+<td>Smart EV charging, two modes: Custom settings and Max-savings</td>
+<td>Marcus, Devon, Jenna and Sam JTBDs; interview theme on readiness vs. savings trust</td>
+<td>9</td>
+<td>9</td>
+<td>6</td>
+<td>8.0</td>
+</tr>
+</tbody>
+</table>
+<h3>Price &amp; Cost view: what changed and why</h3>
+<p>We looked at a real Tibber + Home Assistant community dashboard for inspiration (dual-axis bars and line, four time-range tabs, a separate Aktuell/Statistik split). It's a genuinely useful data model, consumption and price on one timeline plus a derived cost figure, but it's a power-user pattern built by and for Home Assistant hobbyists. For personas like Bob or Priya, a dual-axis chart with multiple tabs would be a barrier, not a feature.</p>
+<p>So instead of copying that layout, Flexy takes the underlying idea (show consumption and price together, and surface the actual cost) and presents it more simply:</p>
+<ul>
+<li>One chart, not two axes: price shown as color-coded bands in the background (cheap, moderate, expensive) rather than a second numeric axis; the household's own consumption overlaid as a simple shape rather than competing bars.</li>
+<li>Three headline numbers above the chart: today's cost so far, the average price actually paid per kWh, and the next cheap window coming up. This is the "actual cost paid" metric from the reference dashboard, elevated to a first-class number rather than buried in a second chart, since it's the most direct answer to bill shock.</li>
+<li>A single time-range control (Today, Week, Month, Year) instead of a separate Aktuell/Statistik split. Collapsing those two into one continuous view removes a navigation decision that didn't add real value for our personas.</li>
+<li>A "See this on Time-of-Use" toggle: flips the background price bands to ComEd's proposed TOU rate structure, replayed against the household's actual historical usage. This directly answers Priya's ask, "show me based on how I actually use electricity whether I'd save money or lose money if I switched," without needing a separate feature or a manual PDF comparison.</li>
+</ul>
+<h3>Smart EV charging: what changed and why</h3>
+<p>Two real-world references shaped this. Octopus Intelligent Go (UK) validates a simple two-mode pattern: a guaranteed custom deadline as the default, with a savings-maximizing option for people who don't have a hard deadline. A Home Assistant community project (Tibber plus a go-eCharger wallbox plus BMW CarData) goes further: it schedules charging based on actual current battery state of charge and a target state of charge rather than blindly charging for a fixed number of hours, and it stitches together today's and tomorrow's prices to find the cheapest continuous window across midnight.</p>
+<p>Flexy's MVP adopts both ideas, with one structural advantage over the DIY project: that Home Assistant setup is hard-wired to one specific car brand (BMW CarData) and one specific wallbox (go-eCharger), so it only works for that exact hardware combination. Flexy would use an aggregator like Smartcar instead, which exposes battery state of charge across many EV brands through one API. That means state-of-charge-aware scheduling can be a cross-brand MVP feature for Flexy rather than a per-brand integration project, which is a real differentiator worth stating plainly in the pitch.</p>
+<p>Both modes require a ready-by time. That was a deliberate correction from an earlier draft of this roadmap, which had Max savings running with no fixed deadline at all. In practice a household always knows what time they need to leave, and the interview finding that a car not being ready is the number one trust-breaker applies regardless of which mode someone picks. So the real difference between the two modes isn't whether readiness is guaranteed, it's how much the user configures:</p>
+<ol>
+<li><strong>Custom settings.</strong> For someone who wants precise control and is willing to set it up. Flexy treats every field below as a hard constraint and only optimizes for cost within them. This is the default for Marcus and for Jenna and Sam, who each described specific numbers they wanted control over. The settings panel includes:
+   - <strong>Ready by:</strong> the time the car needs to be ready (for example, 7am).
+   - <strong>Target charge level:</strong> most EV owners don't want 100 percent every night, many keep it around 80 percent for daily use and only charge to full before a longer trip. Without this, Flexy either overcharges or breaks the readiness promise.
+   - <strong>Minimum charge floor:</strong> a safety net independent of the deadline, for example never letting the battery drop below 20 percent, in case the car is needed unexpectedly mid-optimization.
+   - <strong>One-tap override:</strong> a "charge now, ignore price" button for when someone needs the car sooner than planned. This preserves trust in the moments the automation would otherwise get in the way.
+   - <strong>Per-vehicle settings:</strong> each connected EV gets its own ready-by time, target charge, and floor, since a two-car household needs independent settings rather than one shared configuration.
+   - <strong>Day-of-week variation:</strong> a toggle for a separate weekend ready-by time, since a single fixed time doesn't fit most schedules. Standard across Optiwatt and Tesla's own scheduled departure feature.
+   - <strong>Charging speed limit (amperage cap):</strong> lets a household cap the current draw, for example reducing from 48A to 32A or 16A when sharing circuit capacity with another EV or a large appliance. Directly relevant to Jenna and Sam's two-EV household, and something Tesla's own app already exposes, so it's a realistic ask from a tech-savvy user rather than an invented feature.
+   - <strong>Home-only automation:</strong> restricts smart scheduling to when the car is actually at the home charger, since Flexy's ComEd price data doesn't apply to a public or workplace charger. This is a correctness feature as much as a preference, borrowed from Ohme's location-aware charging.
+   - <strong>Achievable-at-setup check:</strong> when the user saves their settings, Flexy immediately checks whether the target is physically reachable in the time available given the charger's speed, and says so on the spot. This replaced an earlier idea of an ongoing "at-risk of missing target" notification, which doesn't actually apply here: because the deadline is a hard constraint, Flexy will charge through expensive hours if needed to hit it, so price conditions never put the target at risk. The only real risk is a physical one (plugged in too late, or an unreachable target given charging speed), which is a one-time check, not an ongoing monitor.</li>
+<li><strong>Max savings.</strong> For someone who doesn't want to configure anything beyond the deadline. The user sets only a ready-by time; Flexy defaults to charging to 100 percent with a safe floor and picks the cheapest available hours to get there, using more expensive hours only if that's what it takes to hit the deadline. This fits Devon, whose JTBD was explicitly "I want the awareness without the labor" — fewer inputs is the point, not a missing feature.</li>
+</ol>
+<p>Both modes combine today's and tomorrow's ComEd price data once tomorrow's prices are available, so an overnight session isn't artificially cut off at midnight, the same pattern the Home Assistant project uses with Tibber's day-ahead prices.</p>
+<hr />
+<h2>NEXT (build once MVP is validated)</h2>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Tied to</th>
+<th>Impact</th>
+<th>Confidence</th>
+<th>Ease</th>
+<th>ICE</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Monthly EV charging budget cap</td>
+<td>Inspired directly by the go-eCharger project's budget feature; general cost-conscious households</td>
+<td>7</td>
+<td>6</td>
+<td>6</td>
+<td>6.3</td>
+</tr>
+<tr>
+<td>"Here's what we did and why" transparency and savings digest</td>
+<td>Cross-persona interview theme: automation is only trusted alongside visibility</td>
+<td>8</td>
+<td>7</td>
+<td>6</td>
+<td>7.0</td>
+</tr>
+<tr>
+<td>Solar savings calculator</td>
+<td>Carla's JTBD</td>
+<td>8</td>
+<td>6</td>
+<td>5</td>
+<td>6.3</td>
+</tr>
+<tr>
+<td>Heat pump savings calculator, with eligibility flag</td>
+<td>Bob's JTBD</td>
+<td>8</td>
+<td>5</td>
+<td>4</td>
+<td>5.7</td>
+</tr>
+<tr>
+<td>Solar-aware EV charging (charge from solar first, grid as top-up)</td>
+<td>Borrowed from Ohme's Solar Boost and Solar Only modes; natural pairing with our own solar savings calculator</td>
+<td>6</td>
+<td>5</td>
+<td>4</td>
+<td>5.0</td>
+</tr>
+</tbody>
+</table>
+<p>The budget cap lets a user set a monthly dollar ceiling for EV charging specifically, tracked separately from the rest of the household's electricity cost, and pauses charging if the cap is hit. This is a real feature from the Home Assistant project worth borrowing, but it's Next rather than Now because it depends on the core charging engine already running reliably, and because it adds a second constraint (budget) on top of the two modes above that's easier to reason about once those are proven.</p>
+<p>Solar-aware charging is Next rather than Now for a data reason, not a demand reason: it needs a live solar production feed, which assumes the household already has solar installed and connected, a data source Flexy's MVP doesn't have. It's a genuinely nice pairing with the solar savings calculator above (a household deciding whether to install solar can later see it actually working with their EV charging), which is why it's grouped here rather than in Later.</p>
+<p>The transparency digest and the two calculators are unchanged in rationale from the prior version of this roadmap: high confidence but lower ease, since the calculators depend on carrying accurate, current program data (SREC pricing, HEAR county-by-county rollout status) that changes over time rather than a one-time build.</p>
+<hr />
+<h2>LATER (roadmap-level vision, not built in this portfolio)</h2>
+<table>
+<thead>
+<tr>
+<th>Item</th>
+<th>Rationale</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Negative-price handling</td>
+<td>Edge case seen in the Home Assistant project (Tibber's wholesale-linked pricing can occasionally go negative); ComEd's retail hourly pricing rarely does, so this is a nice-to-have rather than a core need for our MVP market.</td>
+</tr>
+<tr>
+<td>Charging efficiency and loss tracking</td>
+<td>Compares power delivered by the charger against power actually received by the battery, a trust-building detail from the reference project, but not essential for an MVP demonstration.</td>
+</tr>
+<tr>
+<td>Voltage and capacity protection for multi-EV households</td>
+<td>A real technical constraint, two EVs charging at once can strain a home's electrical capacity, directly relevant to Jenna and Sam's persona, but genuinely deferred past MVP scope rather than glossed over.</td>
+</tr>
+<tr>
+<td>General appliance and device automation (smart plugs, thermostats)</td>
+<td>Explicitly descoped from MVP. Requires per-appliance API or hardware integrations Flexy can't promise yet.</td>
+</tr>
+<tr>
+<td>Multi-utility and multi-state expansion</td>
+<td>Natural next client-acquisition motion once the ComEd relationship is proven.</td>
+</tr>
+<tr>
+<td>Pan-European expansion (UK, Netherlands, and so on)</td>
+<td>The original multi-market vision, sequenced as future scope once the US model is validated.</td>
+</tr>
+<tr>
+<td>Household benchmarking and social proof features</td>
+<td>Appears in comparable products (Tibber, Emporia) but wasn't requested by any of our six personas, so it's deprioritized.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>Competitive grounding for the smart charging design</h2>
+<ul>
+<li><strong>Octopus Intelligent Go (UK):</strong> validates the custom-deadline-plus-savings-default pattern, and the idea of a manual "boost" override for when the default schedule isn't enough.</li>
+<li><strong>go-eCharger, Tibber, and BMW CarData (Home Assistant community project):</strong> validates state-of-charge-aware scheduling, day-ahead price stitching across midnight, and a monthly budget cap as real, working ideas, while also showing the limitation of building this per specific hardware brand rather than through an aggregator.</li>
+<li><strong>Ohme, Optiwatt:</strong> validate that hardware-agnostic, cross-brand charging control is buildable at product scale, reinforcing that Flexy's Smartcar-based approach is the more scalable path than the DIY single-brand pattern above.</li>
+</ul>
+<h2>What this roadmap deliberately does not do</h2>
+<p>It doesn't rank purely by highest ICE score. The calculator features score respectably but are sequenced into Next specifically because they depend on infrastructure (accurate usage data, a working EV charging engine) that Now builds first. This is a dependency-aware roadmap, not a sorted list, which is closer to how a real roadmap gets built and defended to stakeholders.</p>
+<h2>Status</h2>
+<p>Draft v4. Price and consumption merged into one redesigned Price and Cost view with a Time-of-Use comparison toggle. Smart EV charging expanded into two explicit modes, custom settings and max savings, both now requiring a ready-by time; the differentiator between them is depth of configuration, not presence of a deadline. Custom settings mode fully specified: ready-by time, target charge level, minimum floor, one-tap override, per-vehicle settings, weekend-specific scheduling, charging speed limit (amperage cap), home-only automation, and a one-time achievable-at-setup check rather than an ongoing at-risk notification. Max savings simplified to a single ready-by input with sensible defaults for everything else. Solar-aware EV charging added to Next, paired with the solar savings calculator, deferred because it needs a live solar production feed the MVP doesn't have. Monthly budget cap remains in Next. Negative-price handling, efficiency tracking, and multi-EV voltage protection remain in Later as named, deliberate deferrals. Click dummy (Weeks 4 to 5) updated to match all of the above.</p>
+<div class="doc-footer">Part of the Flexy case study documentation set. For the short version, see the <a href="flexy-case-study.html">case study page</a>.</div>
+</article>
+<footer>
+  <div class="wrap">Flexy is a fictional case study built for portfolio purposes. Market research is real and cited; personas, interviews, and user data are synthetic.</div>
+</footer>
+</body>
+</html>

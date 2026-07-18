@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Real Data Integration Guide — Flexy | Shubha's PM Portfolio</title>
+<style>
+  :root{
+    --teal:#C2790E; --teal-dark:#96600A; --navy:#1C1712;
+    --ink:#201A12; --ink-soft:#5C5445; --paper:#FFFFFF; --paper-soft:#F7F4EC; --border:#E5DFD2;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;color:var(--ink);background:var(--paper);line-height:1.7;}
+  .wrap{max-width:760px;margin:0 auto;padding:0 24px;}
+  nav{position:sticky;top:0;z-index:50;background:rgba(255,255,255,0.95);backdrop-filter:blur(8px);border-bottom:1px solid var(--border);}
+  nav .navwrap{max-width:920px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:14px 24px;}
+  nav a{color:var(--teal-dark);text-decoration:none;font-size:13.5px;font-weight:600;}
+  nav .brand{color:var(--navy);font-weight:700;font-size:15px;}
+  nav .brand span{color:var(--teal);}
+  article{padding:48px 0 64px;}
+  article h1{font-size:30px;letter-spacing:-0.01em;color:var(--navy);margin:0 0 8px;}
+  article h1 + p{color:var(--ink-soft);font-size:14px;margin-top:0;}
+  article h2{font-size:20px;margin:36px 0 12px;padding-bottom:8px;border-bottom:2px solid var(--teal);color:var(--navy);}
+  article h3{font-size:16px;margin:24px 0 8px;color:var(--navy);}
+  article p{font-size:15px;color:var(--ink);margin:0 0 14px;}
+  article ul, article ol{padding-left:22px;margin:0 0 14px;}
+  article li{font-size:15px;margin-bottom:6px;}
+  article strong{color:var(--navy);}
+  article blockquote{margin:16px 0;padding:10px 18px;border-left:3px solid var(--teal);background:var(--paper-soft);color:var(--navy);font-style:italic;}
+  article hr{border:none;border-top:1px solid var(--border);margin:32px 0;}
+  article table{width:100%;border-collapse:collapse;margin:16px 0;font-size:13.5px;}
+  article th, article td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--border);}
+  article th{font-size:11px;text-transform:uppercase;letter-spacing:0.04em;color:var(--ink-soft);}
+  article code{background:var(--paper-soft);padding:1px 5px;border-radius:4px;font-size:13px;}
+  article svg{max-width:100%;height:auto;display:block;margin:20px 0;border:1px solid var(--border);border-radius:12px;padding:10px;background:#fff;}
+  .doc-footer{margin-top:40px;padding-top:20px;border-top:1px solid var(--border);font-size:13px;color:var(--ink-soft);}
+  footer{background:var(--navy);color:#C9BBA0;padding:32px 0;text-align:center;font-size:13px;}
+  footer a{color:#F6D9A0;}
+</style>
+</head>
+<body>
+<nav>
+  <div class="navwrap">
+    <span class="brand">Flexy<span>.</span> Documentation</span>
+    <div style="display:flex;gap:18px;">
+      <a href="flexy-case-study.html">← Case study</a>
+      <a href="index.html">Portfolio</a>
+    </div>
+  </div>
+</nav>
+<article class="wrap">
+<h1>Flexy — Real Data Integration Guide</h1>
+<p>Written for a future engineering team: how the prototype's ComEd price data works today, why it works, and what changes to serve real customers at scale.</p>
+<h2>Why the prototype can fetch real prices at all</h2>
+<p>The prototype's Price &amp; Cost screen calls ComEd's actual public Hourly Pricing API and displays the actual returned prices. This works because of a distinction worth stating plainly: CORS (Cross-Origin Resource Sharing) is a restriction browsers enforce on requests made from a web page's own JavaScript. It has no effect on a server calling an API directly, or on the fetch used to build this documentation. A production backend calling ComEd's API is never subject to it.</p>
+<p>The prototype itself runs client-side in a browser preview, which is exactly the situation CORS restricts. To make the live fetch work anyway in this preview context, it routes through a public CORS proxy (<code>api.allorigins.win</code>). That proxy is real but not reliable, it returned empty responses during testing more than once, which is why the prototype always falls back to a captured real snapshot (ComEd data from July 16, 2026) rather than showing an error or a blank chart. A real backend removes the need for a proxy entirely.</p>
+<h2>The endpoints actually used</h2>
+<p>ComEd's Hourly Pricing program (hourlypricing.comed.com) publishes a free, public API with no key required:</p>
+<ul>
+<li><code>type=day&amp;date=YYYYMMDD</code> — full day of hourly prices for one date. Functional but undocumented. Returns a JavaScript array-literal format (<code>[Date.UTC(year,month,day,hour,0,0), price]</code>), which the prototype parses with a regex rather than <code>eval()</code>, since evaluating a remote response as code is a real security risk regardless of how trusted the source seems.</li>
+<li><code>type=5minutefeed&amp;datestart=...&amp;dateend=...</code> — documented, supports custom date ranges, used to build the Week/Month/Year averages baked into the prototype.</li>
+<li><code>type=currenthouraverage</code> — the single current hour's average price.</li>
+</ul>
+<p>One real gotcha worth flagging: <code>Date.UTC()</code> uses zero-indexed months (0 = January), so a response date-stamped month <code>6</code> is actually July. The parser only ever extracts the hour field, so this ambiguity doesn't actually affect what the prototype displays, but it's worth knowing if someone builds a date-display feature off this data later.</p>
+<h2>The scaling insight: fetch once, serve everyone</h2>
+<p>ComEd's Real-Time Pricing feed is one shared, system-wide price series rather than a per-customer feed. Every ComEd residential customer on the real-time rate sees the same hourly price. That means a production backend needs to poll ComEd's API once (on a schedule, e.g. hourly) and serve that same cached data to every Flexy user, rather than each user's app hitting ComEd's API independently. This is different from usage data (Green Button, per-customer) and vehicle telemetry (Smartcar, per-customer, OAuth-based), both of which genuinely need a per-user data path.</p>
+<h2>A production architecture sketch</h2>
+<pre><code>ComEd Hourly Pricing API
+        │  (polled hourly, server-side, no CORS concern)
+        ▼
+  Ingestion job  ──▶  comed_price_ticks (raw, append-only)
+        │
+        ▼
+  Aggregation job ──▶ comed_hourly_avg (one row per hour, per day)
+        │
+        ▼
+   API layer  ──▶  served to every Flexy client from cache
+</code></pre>
+<p>Suggested schema sketch:</p>
+<pre><code>comed_price_ticks
+  id, captured_at, price_cents_kwh, source_url
+
+comed_hourly_avg
+  date, hour, price_cents_kwh, is_estimated (true if backfilled from a gap)
+</code></pre>
+<h2>Reliability handling</h2>
+<p>ComEd's feed itself can go down, and the broader PJM wholesale feed it tracks has had real, publicly visible outage banners during this project's research. A production ingestion job needs to: retry with backoff, alert if no successful fetch has landed in over an hour, and serve the most recent successfully cached data with a visible "not current" indicator rather than presenting stale data as live, the same pattern the prototype already uses for its badge/fallback logic, just moved server-side.</p>
+<h2>Migration checklist, prototype to production</h2>
+<ol>
+<li>Stand up a scheduled ingestion job hitting ComEd's API directly (no proxy needed server-side).</li>
+<li>Store raw ticks and an hourly aggregate table.</li>
+<li>Build a thin API layer serving cached data to clients, replacing the prototype's direct-to-ComEd browser fetch.</li>
+<li>Add alerting for ingestion gaps.</li>
+<li>Replace the prototype's single captured fallback snapshot with "most recent successfully cached hour" as the fallback.</li>
+<li>For usage data (the real-time consumption view) and vehicle data (smart EV charging), build genuinely per-customer OAuth flows, Green Button Connect and Smartcar respectively, since those aren't shared feeds and can't use this same fetch-once pattern.</li>
+</ol>
+<h2>Status</h2>
+<p>Reflects how the prototype's Price &amp; Cost screen is actually wired today: live fetch attempted first, real captured ComEd data (Jul 16, 2026) as fallback, with a visible badge distinguishing the two, and real (not smoothed) multi-day ComEd averages behind the Week/Month/Year tabs.</p>
+<div class="doc-footer">Part of the Flexy case study documentation set. For the short version, see the <a href="flexy-case-study.html">case study page</a>.</div>
+</article>
+<footer>
+  <div class="wrap">Flexy is a fictional case study built for portfolio purposes. Market research is real and cited; personas, interviews, and user data are synthetic.</div>
+</footer>
+</body>
+</html>

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jobs to Be Done — Flexy | Shubha's PM Portfolio</title>
+<style>
+  :root{
+    --teal:#C2790E; --teal-dark:#96600A; --navy:#1C1712;
+    --ink:#201A12; --ink-soft:#5C5445; --paper:#FFFFFF; --paper-soft:#F7F4EC; --border:#E5DFD2;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;color:var(--ink);background:var(--paper);line-height:1.7;}
+  .wrap{max-width:760px;margin:0 auto;padding:0 24px;}
+  nav{position:sticky;top:0;z-index:50;background:rgba(255,255,255,0.95);backdrop-filter:blur(8px);border-bottom:1px solid var(--border);}
+  nav .navwrap{max-width:920px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:14px 24px;}
+  nav a{color:var(--teal-dark);text-decoration:none;font-size:13.5px;font-weight:600;}
+  nav .brand{color:var(--navy);font-weight:700;font-size:15px;}
+  nav .brand span{color:var(--teal);}
+  article{padding:48px 0 64px;}
+  article h1{font-size:30px;letter-spacing:-0.01em;color:var(--navy);margin:0 0 8px;}
+  article h1 + p{color:var(--ink-soft);font-size:14px;margin-top:0;}
+  article h2{font-size:20px;margin:36px 0 12px;padding-bottom:8px;border-bottom:2px solid var(--teal);color:var(--navy);}
+  article h3{font-size:16px;margin:24px 0 8px;color:var(--navy);}
+  article p{font-size:15px;color:var(--ink);margin:0 0 14px;}
+  article ul, article ol{padding-left:22px;margin:0 0 14px;}
+  article li{font-size:15px;margin-bottom:6px;}
+  article strong{color:var(--navy);}
+  article blockquote{margin:16px 0;padding:10px 18px;border-left:3px solid var(--teal);background:var(--paper-soft);color:var(--navy);font-style:italic;}
+  article hr{border:none;border-top:1px solid var(--border);margin:32px 0;}
+  article table{width:100%;border-collapse:collapse;margin:16px 0;font-size:13.5px;}
+  article th, article td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--border);}
+  article th{font-size:11px;text-transform:uppercase;letter-spacing:0.04em;color:var(--ink-soft);}
+  article code{background:var(--paper-soft);padding:1px 5px;border-radius:4px;font-size:13px;}
+  article svg{max-width:100%;height:auto;display:block;margin:20px 0;border:1px solid var(--border);border-radius:12px;padding:10px;background:#fff;}
+  .doc-footer{margin-top:40px;padding-top:20px;border-top:1px solid var(--border);font-size:13px;color:var(--ink-soft);}
+  footer{background:var(--navy);color:#C9BBA0;padding:32px 0;text-align:center;font-size:13px;}
+  footer a{color:#F6D9A0;}
+</style>
+</head>
+<body>
+<nav>
+  <div class="navwrap">
+    <span class="brand">Flexy<span>.</span> Documentation</span>
+    <div style="display:flex;gap:18px;">
+      <a href="flexy-case-study.html">← Case study</a>
+      <a href="index.html">Portfolio</a>
+    </div>
+  </div>
+</nav>
+<article class="wrap">
+<h1>Flexy — Jobs to Be Done</h1>
+<p>Consolidates the JTBD statement from each persona (see Personas doc) into one reference, adds the situation/motivation/outcome breakdown behind each statement, and maps every job to the Flexy feature that serves it.</p>
+<h2>1. Marcus Webb (Accidental Peak Charger)</h2>
+<p><strong>JTBD:</strong> When I plug in my EV after work, I want it charged by the time I need it the next day at the lowest possible cost, so I can save money without thinking about electricity pricing.</p>
+<ul>
+<li><strong>Situation:</strong> Comes home, plugs in immediately, on Real-Time Pricing but not watching it.</li>
+<li><strong>Motivation:</strong> Wants the savings ComEd's rate structure makes possible, without the ongoing attention it currently requires.</li>
+<li><strong>Outcome he actually wants:</strong> A charged car at the time he needs it, at a lower cost than charging the moment he plugs in.</li>
+<li><strong>Feature:</strong> Smart EV charging, Max Savings mode. A ready-by time is the only input required.</li>
+</ul>
+<h2>2. Priya Raman (TOU Skeptic)</h2>
+<p><strong>JTBD:</strong> When ComEd's TOU rate becomes available, I want a clear before/after comparison based on my real usage, so I can decide without guessing.</p>
+<ul>
+<li><strong>Situation:</strong> Home in the afternoon, exactly the window ComEd's proposed TOU rate prices highest.</li>
+<li><strong>Motivation:</strong> Doesn't want to switch rate plans on a guess and end up paying more.</li>
+<li><strong>Outcome she actually wants:</strong> A concrete answer, grounded in her own usage pattern rather than a generic rate comparison.</li>
+<li><strong>Feature:</strong> Price &amp; Cost view, "See this on Time-of-Use" toggle, replaying her actual historical usage against the TOU rate structure.</li>
+</ul>
+<h2>3. Devon Michaels (Overwhelmed Watcher)</h2>
+<p><strong>JTBD:</strong> When electricity prices spike, I want my EV charging to automatically shift away from those hours, and I want clear visibility into my broader usage, so I can benefit from real-time pricing without actively monitoring prices myself.</p>
+<ul>
+<li><strong>Situation:</strong> Tried manually watching ComEd's price page, abandoned it after about two weeks.</li>
+<li><strong>Motivation:</strong> Wants the benefit of Real-Time Pricing without the ongoing labor of tracking it.</li>
+<li><strong>Outcome they actually want:</strong> Awareness without the work. Automation where it's possible (EV charging), visibility where it isn't yet (everything else).</li>
+<li><strong>Feature:</strong> Smart EV charging, Max Savings mode, plus the Price &amp; Cost view's real-time consumption display.</li>
+</ul>
+<h2>4. Carla Jimenez (SREC Skeptic)</h2>
+<p><strong>JTBD:</strong> When I'm evaluating a rooftop solar quote, I want to see a real projected payback using my actual usage and Illinois Shines incentives, so I can decide without relying on a salesperson's numbers.</p>
+<ul>
+<li><strong>Situation:</strong> Three solar quotes with three different assumptions, no way to tell which is realistic.</li>
+<li><strong>Motivation:</strong> Wants a number she can trust that isn't coming from someone trying to sell her something.</li>
+<li><strong>Outcome she actually wants:</strong> A payback period and annual savings figure calculated from her own bills instead of a salesperson's model.</li>
+<li><strong>Feature:</strong> Solar savings calculator (roadmap: Next), using her real usage plus Illinois Shines SREC economics.</li>
+</ul>
+<h2>5. Bob Thornton (HEAR Rebate Chaser)</h2>
+<p><strong>JTBD:</strong> When I'm considering a heat pump, I want to know clearly whether I qualify for HEAR funding in my county right now, so I can decide with confidence instead of guessing.</p>
+<ul>
+<li><strong>Situation:</strong> Two contractors gave him conflicting answers about HEAR eligibility in his county.</li>
+<li><strong>Motivation:</strong> Doesn't want to commit to a purchase based on unreliable information.</li>
+<li><strong>Outcome he actually wants:</strong> A direct eligibility answer, tied to his specific county and the program's current rollout status.</li>
+<li><strong>Feature:</strong> Heat pump savings calculator (roadmap: Next), flagging eligibility and county rollout status alongside the savings estimate.</li>
+</ul>
+<h2>6. Jenna Alvarez &amp; Sam Kim (Multi-EV Household)</h2>
+<p><strong>JTBD:</strong> When we have two EVs needing charge on the same night, we want the app to sequence and optimize both against live pricing and our schedules, so we minimize total cost without manual coordination.</p>
+<ul>
+<li><strong>Situation:</strong> Manually alternating which car charges each night; both cars have occasionally ended up charging during peak hours by accident.</li>
+<li><strong>Motivation:</strong> Wants the per-EV ComEd sign-up incentive captured, without turning charging into a household coordination task.</li>
+<li><strong>Outcome they actually want:</strong> Independent settings per car, with the app doing the sequencing math.</li>
+<li><strong>Feature:</strong> Smart EV charging, Custom Settings mode, with per-vehicle ready-by time, target charge, and amperage cap.</li>
+</ul>
+<h2>Coverage map</h2>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Persona(s) served</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Price &amp; Cost view</td>
+<td>Priya (rate comparison), Devon (consumption visibility)</td>
+</tr>
+<tr>
+<td>Smart EV charging — Max Savings</td>
+<td>Marcus, Devon</td>
+</tr>
+<tr>
+<td>Smart EV charging — Custom Settings</td>
+<td>Jenna &amp; Sam</td>
+</tr>
+<tr>
+<td>Solar savings calculator</td>
+<td>Carla</td>
+</tr>
+<tr>
+<td>Heat pump savings calculator</td>
+<td>Bob</td>
+</tr>
+</tbody>
+</table>
+<h2>What this doesn't cover</h2>
+<p>This doc maps jobs to features at the MVP-scope level. It doesn't restate the acceptance-criteria-level detail (what "done" looks like for each feature); that lives in the User Stories &amp; Use Cases doc.</p>
+<h2>Status</h2>
+<p>Frozen. Grounded in the six personas in flexy-personas.md and the MVP/Next feature split in flexy-roadmap.md.</p>
+<div class="doc-footer">Part of the Flexy case study documentation set. For the short version, see the <a href="flexy-case-study.html">case study page</a>.</div>
+</article>
+<footer>
+  <div class="wrap">Flexy is a fictional case study built for portfolio purposes. Market research is real and cited; personas, interviews, and user data are synthetic.</div>
+</footer>
+</body>
+</html>

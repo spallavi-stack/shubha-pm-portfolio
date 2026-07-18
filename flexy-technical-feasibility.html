@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Technical Feasibility & Architecture — Flexy | Shubha's PM Portfolio</title>
+<style>
+  :root{
+    --teal:#C2790E; --teal-dark:#96600A; --navy:#1C1712;
+    --ink:#201A12; --ink-soft:#5C5445; --paper:#FFFFFF; --paper-soft:#F7F4EC; --border:#E5DFD2;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;color:var(--ink);background:var(--paper);line-height:1.7;}
+  .wrap{max-width:760px;margin:0 auto;padding:0 24px;}
+  nav{position:sticky;top:0;z-index:50;background:rgba(255,255,255,0.95);backdrop-filter:blur(8px);border-bottom:1px solid var(--border);}
+  nav .navwrap{max-width:920px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:14px 24px;}
+  nav a{color:var(--teal-dark);text-decoration:none;font-size:13.5px;font-weight:600;}
+  nav .brand{color:var(--navy);font-weight:700;font-size:15px;}
+  nav .brand span{color:var(--teal);}
+  article{padding:48px 0 64px;}
+  article h1{font-size:30px;letter-spacing:-0.01em;color:var(--navy);margin:0 0 8px;}
+  article h1 + p{color:var(--ink-soft);font-size:14px;margin-top:0;}
+  article h2{font-size:20px;margin:36px 0 12px;padding-bottom:8px;border-bottom:2px solid var(--teal);color:var(--navy);}
+  article h3{font-size:16px;margin:24px 0 8px;color:var(--navy);}
+  article p{font-size:15px;color:var(--ink);margin:0 0 14px;}
+  article ul, article ol{padding-left:22px;margin:0 0 14px;}
+  article li{font-size:15px;margin-bottom:6px;}
+  article strong{color:var(--navy);}
+  article blockquote{margin:16px 0;padding:10px 18px;border-left:3px solid var(--teal);background:var(--paper-soft);color:var(--navy);font-style:italic;}
+  article hr{border:none;border-top:1px solid var(--border);margin:32px 0;}
+  article table{width:100%;border-collapse:collapse;margin:16px 0;font-size:13.5px;}
+  article th, article td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--border);}
+  article th{font-size:11px;text-transform:uppercase;letter-spacing:0.04em;color:var(--ink-soft);}
+  article code{background:var(--paper-soft);padding:1px 5px;border-radius:4px;font-size:13px;}
+  article svg{max-width:100%;height:auto;display:block;margin:20px 0;border:1px solid var(--border);border-radius:12px;padding:10px;background:#fff;}
+  .doc-footer{margin-top:40px;padding-top:20px;border-top:1px solid var(--border);font-size:13px;color:var(--ink-soft);}
+  footer{background:var(--navy);color:#C9BBA0;padding:32px 0;text-align:center;font-size:13px;}
+  footer a{color:#F6D9A0;}
+</style>
+</head>
+<body>
+<nav>
+  <div class="navwrap">
+    <span class="brand">Flexy<span>.</span> Documentation</span>
+    <div style="display:flex;gap:18px;">
+      <a href="flexy-case-study.html">← Case study</a>
+      <a href="index.html">Portfolio</a>
+    </div>
+  </div>
+</nav>
+<article class="wrap">
+<h1>Flexy — Technical Feasibility &amp; Architecture</h1>
+<p>What each core feature actually needs to be built for real, which real APIs and data sources exist to support it, and where the genuine feasibility risk sits.</p>
+<h2>Price &amp; Cost view</h2>
+<p><strong>Data source:</strong> ComEd's Hourly Pricing program publishes a real, public API. Two endpoints matter for this feature: <code>type=5minutefeed</code> (documented, supports custom date ranges via <code>datestart</code>/<code>dateend</code>) for granular pricing, and <code>type=day&amp;date=YYYYMMDD</code> (functional but undocumented) for a full day's prices in one call. Both are free and require no API key.</p>
+<p><strong>Feasibility:</strong> High. This is the one piece of Flexy's data stack that's genuinely a solved problem today, ComEd already publishes exactly the data this feature needs, at no cost, with no partnership required.</p>
+<p><strong>Real constraint worth naming:</strong> the price feed is one shared series for the entire ComEd territory rather than a per-customer feed. That's actually a scaling advantage (fetch once, serve to every user) but it also means the "See this on Time-of-Use" toggle can't show a household's real TOU bill, since ComEd's TOU rate isn't live yet; it can only replay the household's real historical usage against ComEd's proposed TOU rate structure from the 2026 filing.</p>
+<h2>Real-time consumption view</h2>
+<p><strong>Data source:</strong> this is genuinely harder. ComEd customers can access their own interval usage data two ways: Green Button "Download My Data," a self-service manual export (CSV/XML, ESPI/Atom format) available directly on ComEd's own site with no partnership required, or Green Button Connect, a formal OAuth-based data-sharing mechanism that requires a partnership agreement with the utility.</p>
+<p><strong>Feasibility:</strong> Medium. Download My Data proves the data exists and is real, but it's a manual export that requires a customer to re-download a file rather than something Flexy can pull live. Green Button Connect is the real path to a live feed, but it requires a business relationship with ComEd beyond a simple API key. This is the reason Flexy's positioning leads with the utility-partnership (B2B2C) model rather than assuming direct API access on day one.</p>
+<h2>Smart EV charging</h2>
+<p><strong>Data source:</strong> Smartcar, a real third-party API that exposes battery state of charge, charging status, and remote start/stop across many EV brands (GM, Ford, Tesla, Hyundai/Kia, and others) through one integration, rather than building a separate integration per automaker.</p>
+<p><strong>Feasibility:</strong> Medium-high. Smartcar is a real, commercially available product other companies (including Optiwatt, per its own public integration docs) already build on. The genuine constraint: Smartcar's remote charging control depends on what each automaker's own API exposes, and coverage and reliability vary by brand. A cross-brand promise is realistic; a promise that works identically across every brand is not.</p>
+<p><strong>Real constraint worth naming:</strong> the achievable-at-setup check (does the target charge level fit in the time available) is pure math once state of charge and charging speed are known, genuinely low technical risk. The harder problem is state of charge reliability itself: some vehicles report it with a delay, or don't report it at all while off and unplugged from a network connection.</p>
+<h2>Solar / heat pump savings calculator (roadmap: Next)</h2>
+<p><strong>Data source:</strong> Illinois Shines / Adjustable Block Program publishes SREC pricing; Illinois EPA publishes HEAR rebate rollout status by county. Neither is a live API in the way ComEd's pricing feed is; both are published program data that changes periodically and would need to be tracked and updated rather than fetched fresh per request.</p>
+<p><strong>Feasibility:</strong> Medium. The math (payback period, annual savings) is straightforward once inputs are current. The real ongoing cost is upkeep, someone has to keep SREC pricing and HEAR county rollout status current, since both are exactly the kind of number that goes stale silently if untracked.</p>
+<h2>Cross-cutting risk: staleness and failure handling</h2>
+<p>Every external data source above can fail or go stale in a way that's invisible unless it's designed for explicitly: ComEd's feed can have an outage, Smartcar's state-of-charge report can lag, program data (SREC, HEAR) can be out of date. Flexy's UI needs to distinguish live data from fallback data visibly across all three cases; the price feed is currently the only one with that pattern built into the prototype. See the Real Data Integration Guide for how that's implemented for pricing specifically.</p>
+<h2>What's proven versus assumed, honestly</h2>
+<table>
+<thead>
+<tr>
+<th>Claim</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ComEd's price data is real and fetchable without a partnership</td>
+<td>Proven — fetched directly against the live API during prototype build</td>
+</tr>
+<tr>
+<td>Smartcar can expose state of charge across multiple EV brands</td>
+<td>Proven — Smartcar is a real, public product; not yet tested against a live Flexy integration</td>
+</tr>
+<tr>
+<td>Flexy can receive and parse real smart meter (interval usage) data</td>
+<td>Not yet proven — Green Button "Download My Data" is a real, real self-service export, but no parser or ingestion path has been built and tested against it yet</td>
+</tr>
+<tr>
+<td>Flexy is hardware-agnostic for EV charging</td>
+<td>Partially proven — true in the sense that Smartcar itself is multi-brand; not yet tested against more than one real brand's account</td>
+</tr>
+</tbody>
+</table>
+<h2>Status</h2>
+<p>Drafted to give an honest, source-backed feasibility read on each MVP feature, distinguishing what's a solved problem (ComEd pricing) from what's a real but partnership-gated path (usage data) from what's genuinely untested (multi-brand EV coverage, smart meter parsing).</p>
+<div class="doc-footer">Part of the Flexy case study documentation set. For the short version, see the <a href="flexy-case-study.html">case study page</a>.</div>
+</article>
+<footer>
+  <div class="wrap">Flexy is a fictional case study built for portfolio purposes. Market research is real and cited; personas, interviews, and user data are synthetic.</div>
+</footer>
+</body>
+</html>

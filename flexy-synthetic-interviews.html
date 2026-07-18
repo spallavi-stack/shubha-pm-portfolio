@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Synthetic Interviews — Flexy | Shubha's PM Portfolio</title>
+<style>
+  :root{
+    --teal:#C2790E; --teal-dark:#96600A; --navy:#1C1712;
+    --ink:#201A12; --ink-soft:#5C5445; --paper:#FFFFFF; --paper-soft:#F7F4EC; --border:#E5DFD2;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;color:var(--ink);background:var(--paper);line-height:1.7;}
+  .wrap{max-width:760px;margin:0 auto;padding:0 24px;}
+  nav{position:sticky;top:0;z-index:50;background:rgba(255,255,255,0.95);backdrop-filter:blur(8px);border-bottom:1px solid var(--border);}
+  nav .navwrap{max-width:920px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:14px 24px;}
+  nav a{color:var(--teal-dark);text-decoration:none;font-size:13.5px;font-weight:600;}
+  nav .brand{color:var(--navy);font-weight:700;font-size:15px;}
+  nav .brand span{color:var(--teal);}
+  article{padding:48px 0 64px;}
+  article h1{font-size:30px;letter-spacing:-0.01em;color:var(--navy);margin:0 0 8px;}
+  article h1 + p{color:var(--ink-soft);font-size:14px;margin-top:0;}
+  article h2{font-size:20px;margin:36px 0 12px;padding-bottom:8px;border-bottom:2px solid var(--teal);color:var(--navy);}
+  article h3{font-size:16px;margin:24px 0 8px;color:var(--navy);}
+  article p{font-size:15px;color:var(--ink);margin:0 0 14px;}
+  article ul, article ol{padding-left:22px;margin:0 0 14px;}
+  article li{font-size:15px;margin-bottom:6px;}
+  article strong{color:var(--navy);}
+  article blockquote{margin:16px 0;padding:10px 18px;border-left:3px solid var(--teal);background:var(--paper-soft);color:var(--navy);font-style:italic;}
+  article hr{border:none;border-top:1px solid var(--border);margin:32px 0;}
+  article table{width:100%;border-collapse:collapse;margin:16px 0;font-size:13.5px;}
+  article th, article td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--border);}
+  article th{font-size:11px;text-transform:uppercase;letter-spacing:0.04em;color:var(--ink-soft);}
+  article code{background:var(--paper-soft);padding:1px 5px;border-radius:4px;font-size:13px;}
+  article svg{max-width:100%;height:auto;display:block;margin:20px 0;border:1px solid var(--border);border-radius:12px;padding:10px;background:#fff;}
+  .doc-footer{margin-top:40px;padding-top:20px;border-top:1px solid var(--border);font-size:13px;color:var(--ink-soft);}
+  footer{background:var(--navy);color:#C9BBA0;padding:32px 0;text-align:center;font-size:13px;}
+  footer a{color:#F6D9A0;}
+</style>
+</head>
+<body>
+<nav>
+  <div class="navwrap">
+    <span class="brand">Flexy<span>.</span> Documentation</span>
+    <div style="display:flex;gap:18px;">
+      <a href="flexy-case-study.html">← Case study</a>
+      <a href="index.html">Portfolio</a>
+    </div>
+  </div>
+</nav>
+<article class="wrap">
+<h1>Flexy — Synthetic User Interviews (Week 2)</h1>
+<p><strong>Method note (read this first):</strong> These are synthetic interviews — each persona's answers are generated in character, grounded strictly in what's already established in their persona brief (goals, pain points, current behavior, tech-savviness) plus the real ComEd/Illinois facts documented in the product brief. Nothing below is real user data. Treat this as a rehearsal pass that sharpens our questions and surfaces likely themes — not a substitute for eventually talking to real ComEd customers. Where an answer feels like a genuinely useful insight vs. a plausible-but-unverified guess, I've flagged it in the synthesis section.</p>
+<p><strong>Interview guide (same 7 questions asked of every persona):</strong>
+1. Walk me through what you do today about [their specific problem area].
+2. What's the most frustrating part of that?
+3. If you had a magic wand, what would you want the solution to actually do?
+4. Here's Flexy's idea: [relevant feature]. What's your gut reaction?
+5. What would make you trust an app to make decisions like this automatically?
+6. What would make you <em>not</em> trust it, or turn it off?
+7. Would you pay for this, and if so, how — subscription, one-time, or would you only use it if ComEd gave it to you for free?</p>
+<hr />
+<h2>1. Marcus Webb — The Accidental Peak Charger</h2>
+<p><strong>Q1:</strong> I plug my car in whenever I get home from work. I don't really check anything, I just plug it in and go inside.</p>
+<p><strong>Q2:</strong> Honestly not knowing what I'm actually paying until the bill shows up. I signed up for real-time pricing because someone said it saves money, but I have no idea if it's actually working for me.</p>
+<p><strong>Q3:</strong> I want it to just charge at the cheapest time without me having to do anything. Like, I plug in, and it figures out the rest.</p>
+<p><strong>Q4 (reaction to smart EV charging):</strong> Yeah, that's exactly it. As long as I can tell it "I need the car by 7am" and trust it'll have it ready, I don't care what happens in between.</p>
+<p><strong>Q5:</strong> If it just works for a few weeks and my bill actually goes down, that's enough for me. I don't need to see the math every day.</p>
+<p><strong>Q6:</strong> If I ever needed the car urgently and it wasn't charged because it was "waiting for a cheaper hour," that would kill it instantly for me.</p>
+<p><strong>Q7:</strong> I'd rather it just come from ComEd or be bundled in somehow. I'm not going to go find a separate app and pay a subscription for something this small.</p>
+<hr />
+<h2>2. Priya Raman — The TOU Skeptic</h2>
+<p><strong>Q1:</strong> Right now I'm just on my regular rate. I looked at the ComEd PDF about the new time-of-use plan and honestly couldn't tell if it would help or hurt me.</p>
+<p><strong>Q2:</strong> Not knowing my own usage well enough to do the math myself. I do laundry and run the dishwasher in the afternoon, and the flyer made it sound like that's exactly the expensive time under the new plan.</p>
+<p><strong>Q3:</strong> I want someone to just tell me, based on what I actually use and when, whether switching makes sense for me specifically — not a generic example household.</p>
+<p><strong>Q4 (reaction to price graph):</strong> That's helpful, but what I really want is the comparison — show me what I'd have paid last month under each plan, not just the graph of prices.</p>
+<p><strong>Q5:</strong> If it used my real ComEd data, not estimates, and showed its work rather than just giving me a yes/no.</p>
+<p><strong>Q6:</strong> If it felt like it was trying to sell me on switching rather than giving me a neutral answer, I'd stop trusting it.</p>
+<p><strong>Q7:</strong> I might pay a small one-time fee for a clear answer, but not an ongoing subscription just for this one decision.</p>
+<hr />
+<h2>3. Devon Michaels — The Overwhelmed Watcher</h2>
+<p><strong>Q1:</strong> I check the ComEd hourly price page some mornings, then forget about it for two weeks, then feel guilty and check again. For the dishwasher and laundry I just go on vibes — I think nighttime's cheaper, but I've never actually confirmed that.</p>
+<p><strong>Q2:</strong> The mental overhead. I know I'm supposed to be saving money by watching prices, but watching prices constantly isn't actually saving me anything if I never act on what I see.</p>
+<p><strong>Q3:</strong> I want the awareness without the labor for the stuff you genuinely can't automate, and full automation for the one thing you can actually reach into — my car.</p>
+<p><strong>Q4 (reaction to EV charging automation + informational consumption view):</strong> Honestly, I appreciate that you're not overpromising here. I don't expect an app to reach into my dishwasher — that'd be a little much. But if my car just handles itself, and I get a clear picture of the rest of my usage instead of a guess, that's already most of what I wanted.</p>
+<p><strong>Q5:</strong> Transparency after the fact on the EV side — show me weekly "here's what we shifted and here's what it saved" — and for the rest of my usage, just make the consumption view genuinely clear, not a wall of numbers.</p>
+<p><strong>Q6:</strong> If the EV automation required daily check-ins or manual approval for every charge, I'd abandon it exactly like I abandoned checking prices manually. And if the consumption view was just raw data with no interpretation, I'd stop opening the app.</p>
+<p><strong>Q7:</strong> I'd pay a modest subscription for this specifically, because it's solving a "my willpower keeps failing, at least for the one thing you can actually fix" problem, and that's worth money to me.</p>
+<hr />
+<h2>4. Carla Jimenez — The SREC Skeptic</h2>
+<p><strong>Q1:</strong> I've gotten three solar quotes over the last eight months. Each one has different assumptions about savings, and I can't tell which one is being straight with me.</p>
+<p><strong>Q2:</strong> Feeling like every number I'm given is designed to get me to sign, not to inform me. I run a business — I know a sales pitch when I see one, but I still can't independently verify their math.</p>
+<p><strong>Q3:</strong> I want to put in my actual bills and get an honest payback number, with the SREC lump sum and no federal credit already factored in, without anyone trying to close a sale on me.</p>
+<p><strong>Q4 (reaction to solar savings calculator):</strong> Yes — that's what's missing. If it uses my real usage instead of a "typical household," I'd trust it more than any of the three contractors I've talked to.</p>
+<p><strong>Q5:</strong> If it shows its assumptions — SREC price, system size, my actual annual usage — rather than a black-box number.</p>
+<p><strong>Q6:</strong> If the numbers were suspiciously close to what one of the solar companies quoted me, I'd wonder if it was secretly built to favor a specific installer.</p>
+<p><strong>Q7:</strong> I'd use it for free if ComEd offered it, but honestly I'd also pay a flat fee just to get an independent number I can trust before signing an $18k contract.</p>
+<hr />
+<h2>5. Bob Thornton — The HEAR Rebate Chaser</h2>
+<p><strong>Q1:</strong> I called two HVAC guys. One said I could get the $8,000 rebate, the other said it's not available in Winnebago County yet. I don't know who's right.</p>
+<p><strong>Q2:</strong> Not having anywhere neutral to check. The contractors have a reason to tell me what gets me to sign, so I don't fully trust either answer.</p>
+<p><strong>Q3:</strong> I just want someone to tell me straight — am I eligible, is the money actually available where I live right now, and how much would I get. That's it.</p>
+<p><strong>Q4 (reaction to heat pump savings calculator with eligibility flag):</strong> That'd solve my whole problem. If it just told me yes or no on eligibility before I even talk to a contractor, I wouldn't be going back and forth like this.</p>
+<p><strong>Q5:</strong> If it's connected to the actual state program status, not just general information that goes stale. And if a real person could help me if I got confused — I still like being able to call someone.</p>
+<p><strong>Q6:</strong> If I found out later the eligibility info was wrong and I didn't actually get the rebate I was told I would, I'd never use it again and I'd tell my neighbors not to either.</p>
+<p><strong>Q7:</strong> I wouldn't pay for an app myself, but I wouldn't mind if my utility offered it as part of my account.</p>
+<hr />
+<h2>6. Jenna Alvarez &amp; Sam Kim — The Multi-EV Household</h2>
+<p><strong>Q1 (Jenna):</strong> Right now we just kind of take turns — whoever gets home first plugs in, and we hope the other person's car has enough charge for the next day.</p>
+<p><strong>Q2 (Sam):</strong> The coordination overhead. We've both ended up plugging in around 6pm more than once, which I'm guessing is exactly the wrong time on our rate plan.</p>
+<p><strong>Q3 (Jenna):</strong> We want to set "car needs to be ready by X" for each car separately and just let the system sort out which one charges when, especially if that also means we get the per-EV credit ComEd's offering.</p>
+<p><strong>Q4 (reaction to multi-vehicle smart charging):</strong> Sam: Yes, exactly — as long as it can actually handle two vehicles with different schedules and not just optimize for one and ignore the other.</p>
+<p><strong>Q5:</strong> Jenna: If it's clear about trade-offs — like if it can't fully charge both by our requested times, tell us that upfront rather than silently falling short.</p>
+<p><strong>Q6:</strong> Sam: If one of the kids needed the car for an emergency and it wasn't ready because the app deprioritized it for cost savings, that would be a dealbreaker.</p>
+<p><strong>Q7:</strong> Jenna: We'd pay for this — we're already paying for two EVs, a small subscription for actually optimizing that spend is an easy yes for us.</p>
+<hr />
+<h2>Cross-persona synthesis</h2>
+<p><strong>Scope correction reflected below:</strong> Flexy's MVP only automates EV charging — no other household device (dishwasher, thermostat, etc.) is actually controlled, since that would require per-appliance smart-plug/API integrations well beyond MVP scope. Real-time consumption is informational only. Devon's interview (and this synthesis) has been revised to reflect that boundary honestly rather than implying broader device automation.</p>
+<p><strong>Consistent theme — trust requires transparency, not just automation.</strong> Every persona who reacted positively to EV automation (Marcus, Devon, Jenna &amp; Sam) still wanted some form of visibility into <em>why</em> a decision was made or <em>what</em> it saved — not a fully opaque black box. This should shape the roadmap: EV automation is the headline feature, but a lightweight "here's what we did and why" surface is likely a retention requirement, not a nice-to-have.</p>
+<p><strong>Consistent theme — the failure mode that kills trust is availability, not cost.</strong> Marcus, Sam, and Jenna all independently raised the same fear: the car not being ready when actually needed. This suggests "readiness guarantee" should outrank "maximum savings" as the default optimization priority, with aggressive savings as an opt-in mode rather than the default.</p>
+<p><strong>Divergent theme — willingness to pay varies by how painful the status quo already is.</strong> Devon (highest pain, highest tech comfort) and Carla (highest financial stakes) both said they'd pay directly. Marcus, Bob, and the Alvarez-Kim household leaned toward "only if ComEd provides it free/bundled." This supports the B2B2C model in the product brief — utility distribution removes the willingness-to-pay barrier for the personas who wouldn't seek out a paid app on their own.</p>
+<p><strong>Consistent theme — credibility concerns are different for financial-decision features vs. day-to-day automation.</strong> For EV charging (Marcus, Jenna &amp; Sam), trust is built through it "just working" over a few weeks. For solar (Carla) and heat pump (Bob), trust requires showing assumptions and being demonstrably independent from any contractor or sales interest — a much higher trust bar, since the stakes are a five-figure decision rather than a daily convenience.</p>
+<p><strong>Flag — genuinely uncertain vs. plausible-sounding:</strong> the specific dollar figures, county names, and exact quotes above are illustrative, generated to be consistent with each persona's brief — not independently verified against real ComEd customers. The <em>themes</em> (transparency requirement, readiness-over-savings default, B2B2C willingness-to-pay split, differing trust bars by stakes) are the actual output to carry forward; the individual lines of dialogue should not be cited as if they were real quotes.</p>
+<h2>Status</h2>
+<p>Draft v2 — synthetic interviews complete for all 6 personas. Devon's interview corrected to reflect that Flexy's MVP automates EV charging only (not general appliance control); consumption view is informational. Cross-persona synthesis identifies 4 themes to carry into Week 3 roadmap prioritization: transparency-as-trust-requirement, readiness-over-savings default, B2B2C willingness-to-pay split, and stakes-dependent trust bar. Next: Week 3 roadmap, prioritized against these themes and the JTBD statements already in the personas doc.</p>
+<div class="doc-footer">Part of the Flexy case study documentation set. For the short version, see the <a href="flexy-case-study.html">case study page</a>.</div>
+</article>
+<footer>
+  <div class="wrap">Flexy is a fictional case study built for portfolio purposes. Market research is real and cited; personas, interviews, and user data are synthetic.</div>
+</footer>
+</body>
+</html>

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Product Brief — Flexy | Shubha's PM Portfolio</title>
+<style>
+  :root{
+    --teal:#C2790E; --teal-dark:#96600A; --navy:#1C1712;
+    --ink:#201A12; --ink-soft:#5C5445; --paper:#FFFFFF; --paper-soft:#F7F4EC; --border:#E5DFD2;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;color:var(--ink);background:var(--paper);line-height:1.7;}
+  .wrap{max-width:760px;margin:0 auto;padding:0 24px;}
+  nav{position:sticky;top:0;z-index:50;background:rgba(255,255,255,0.95);backdrop-filter:blur(8px);border-bottom:1px solid var(--border);}
+  nav .navwrap{max-width:920px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:14px 24px;}
+  nav a{color:var(--teal-dark);text-decoration:none;font-size:13.5px;font-weight:600;}
+  nav .brand{color:var(--navy);font-weight:700;font-size:15px;}
+  nav .brand span{color:var(--teal);}
+  article{padding:48px 0 64px;}
+  article h1{font-size:30px;letter-spacing:-0.01em;color:var(--navy);margin:0 0 8px;}
+  article h1 + p{color:var(--ink-soft);font-size:14px;margin-top:0;}
+  article h2{font-size:20px;margin:36px 0 12px;padding-bottom:8px;border-bottom:2px solid var(--teal);color:var(--navy);}
+  article h3{font-size:16px;margin:24px 0 8px;color:var(--navy);}
+  article p{font-size:15px;color:var(--ink);margin:0 0 14px;}
+  article ul, article ol{padding-left:22px;margin:0 0 14px;}
+  article li{font-size:15px;margin-bottom:6px;}
+  article strong{color:var(--navy);}
+  article blockquote{margin:16px 0;padding:10px 18px;border-left:3px solid var(--teal);background:var(--paper-soft);color:var(--navy);font-style:italic;}
+  article hr{border:none;border-top:1px solid var(--border);margin:32px 0;}
+  article table{width:100%;border-collapse:collapse;margin:16px 0;font-size:13.5px;}
+  article th, article td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--border);}
+  article th{font-size:11px;text-transform:uppercase;letter-spacing:0.04em;color:var(--ink-soft);}
+  article code{background:var(--paper-soft);padding:1px 5px;border-radius:4px;font-size:13px;}
+  article svg{max-width:100%;height:auto;display:block;margin:20px 0;border:1px solid var(--border);border-radius:12px;padding:10px;background:#fff;}
+  .doc-footer{margin-top:40px;padding-top:20px;border-top:1px solid var(--border);font-size:13px;color:var(--ink-soft);}
+  footer{background:var(--navy);color:#C9BBA0;padding:32px 0;text-align:center;font-size:13px;}
+  footer a{color:#F6D9A0;}
+</style>
+</head>
+<body>
+<nav>
+  <div class="navwrap">
+    <span class="brand">Flexy<span>.</span> Documentation</span>
+    <div style="display:flex;gap:18px;">
+      <a href="flexy-case-study.html">← Case study</a>
+      <a href="index.html">Portfolio</a>
+    </div>
+  </div>
+</nav>
+<article class="wrap">
+<h1>Flexy — Product Brief</h1>
+<h2>One-liner</h2>
+<p>Flexy is a plug-in companion to your utility's app that turns a dynamic tariff plus time-of-use pricing — too many variables for a regular person to track — into simple, automatic savings: cheaper EV charging, clear price and usage visibility, and honest answers on whether solar or a heat pump is worth it.</p>
+<h2>Positioning statement</h2>
+<p>For ComEd customers on a real-time or time-of-use rate, Flexy is the plug-in that watches the price on their behalf — showing what electricity costs right now and over time, automating EV charging into the cheapest hours, and calculating what solar or a heat pump would actually save them. Flexy is not a utility and does not compete with one; it's a layer on top of a utility's existing smart-tariff program, built first for ComEd customers in Illinois, and designed to plug into any utility in any state offering a comparable dynamic or TOU tariff.</p>
+<h2>Why Illinois, and why now</h2>
+<p>Illinois is the strongest available anchor for a true dynamic-tariff story in the US. ComEd (and Ameren Illinois) run a genuine hourly Residential Real-Time Pricing program — supply rates track the actual wholesale market price hour by hour, not a fixed morning/evening split — and ComEd is finalizing a rollout of time-of-use rates in 2026 after a four-year pilot that cut participants' peak demand 6.5-9.7% each summer. That's the closest US equivalent to what Octopus Agile does in the UK or Tibber does in the Nordics: a tariff volatile and complex enough that a regular household genuinely cannot track it unaided, which is exactly the gap Flexy is built to close.</p>
+<p>This sits inside the broader 2025-2026 US shift covered earlier in this brief: the federal solar tax credit and heat pump credits expired December 31, 2025, net metering is now the main driver of solar ROI and varies state by state, and average electric bills are up 26% in five years. Illinois gives us a concrete, well-documented tariff to build against, while the underlying bill-shock, solar-ROI, and heat-pump-decision problems are the same ones facing households nationally.</p>
+<p><strong>MVP scope:</strong> single utility client (ComEd), single state (Illinois), homeowners on — or eligible for — ComEd's real-time or time-of-use rate. Other utilities and states (any offering a comparable smart tariff) are the natural expansion path, treated as a client-acquisition and rollout question on the roadmap rather than built into the MVP.</p>
+<p><strong>Business model:</strong> B2B2C. Flexy's paying/partner relationship is with the utility (ComEd first), which distributes or recommends Flexy to its rate-plan customers; the end user is the ComEd customer. This is a deliberate structural choice — it's the same model WeaveGrid and Optiwatt use with US utilities, and it avoids Flexy having to acquire individual households cold.</p>
+<p><strong>Future expansion (roadmap-level, not MVP):</strong> other US utilities with dynamic/TOU tariffs, and eventually the pan-European vision (UK, Netherlands, and other EU markets) discussed earlier in this brief, sequenced later as explicit "market/client expansion" workstreams.</p>
+<h2>Core features (MVP)</h2>
+<ol>
+<li><strong>Price information</strong> — price graph views for yesterday, today, tomorrow, plus monthly-average and annual views, so users can see both the immediate decision window and the longer trend.</li>
+<li><strong>Real-time consumption</strong> — live household usage pulled from the smart meter / utility data feed. <strong>Informational only in the MVP</strong> — Flexy does not attempt to control other household devices (dishwasher, thermostat, etc.); that would require per-appliance smart-plug/API integrations well beyond MVP scope. EV charging is the one device category Flexy actually automates, because EV charging APIs (Smartcar, ChargePoint, automaker APIs) already exist and are what Optiwatt/WeaveGrid build on — general appliance control is a possible later roadmap item, not an MVP promise.</li>
+<li><strong>Smart EV charging</strong> — connect one or more EVs; Flexy charges automatically in the cheapest available hours against the live tariff, with user-set preferences (e.g. "charge by 8am tomorrow," minimum charge level, cost-vs-readiness priority — patterned on how Octopus/Ohme and Optiwatt let users balance savings against having enough range when they need it).</li>
+<li><strong>Solar / heat pump savings calculator</strong> — "what if" modeling: how much would this household save annually by adding rooftop solar, or by switching to a heat pump, given their actual usage and ComEd's real tariff data.</li>
+</ol>
+<h2>Core problems Flexy addresses</h2>
+<ol>
+<li><strong>Bill shock &amp; rate distrust</strong> — households don't understand what they're paying or why; average bills up 26% in five years, with continued rate increases into 2026.</li>
+<li><strong>Smart meter data going unused</strong> — ~70-73% of US residential meters are already smart, but the data rarely turns into action.</li>
+<li><strong>EV home charging cost/scheduling</strong> — people charge at peak-price hours by accident, missing overnight TOU windows that can be 30-60% cheaper.</li>
+<li><strong>Solar + battery ROI paralysis</strong> — federal tax credit gone as of 2026, net metering compensation now the main driver of payback, and it varies dramatically by state.</li>
+<li><strong>Heat pump retrofit decision fatigue</strong> — federal credit gone (except geothermal), replaced by a patchwork of state rebate programs with uneven funding and rollout.</li>
+</ol>
+<h2>Household journey (the narrative spine)</h2>
+<ol>
+<li>Understand what you're paying → price graph (yesterday/today/tomorrow/monthly/annual)</li>
+<li>Understand your usage → real-time consumption view</li>
+<li>Optimize day-to-day → smart EV charging against the live tariff</li>
+<li>Decide on a big investment → solar savings calculator</li>
+<li>Decide on a big investment, part 2 → heat pump savings calculator</li>
+</ol>
+<p>Each portfolio mini-project (research, roadmap, prototype, PMF analysis, funnel analysis, AI-assisted feedback synthesis) attaches to this same journey, product, and set of personas — so the portfolio reads as one coherent product story rather than six disconnected exercises.</p>
+<h2>Personas (to be developed in Week 1)</h2>
+<p>Placeholder for now — to be built from real Illinois/ComEd rate and program data:
+- The Accidental Peak Charger — ComEd customer with an EV, on the Residential Real-Time Pricing or upcoming TOU rate, but still charges whenever's convenient rather than when it's cheap
+- The Rate-Curious but Overwhelmed — knows ComEd's hourly pricing exists, finds the live-price page confusing, defaults back to not thinking about it
+- The Solar/Heat-Pump Fence-Sitter — has priced out solar or a heat pump, can't get a straight answer on real annual savings given their own usage and Illinois incentives</p>
+<h2>Competitive analysis</h2>
+<p><strong>Direct inspiration (EU) — the "Tibber model" Flexy is adapting for a US, utility-partnered context:</strong>
+- <strong>Tibber</strong> (Norway, Sweden, Germany, Netherlands) — sells dynamic-price electricity directly plus the Tibber Pulse device for real-time consumption and app-based smart EV charging. Closest functional model to Flexy's price + consumption + EV charging combination, but Tibber <em>is</em> the retail energy supplier — a B2C model, not a plug-in to someone else's utility.
+- <strong>Octopus Energy / Kraken platform</strong> (UK) — Intelligent Octopus Go auto-schedules EV charging within a guaranteed cheap overnight window; customers on it saved an average of £771/year (May 2025-April 2026) vs. the standard variable tariff. Again, Octopus is the supplier, not a third-party layer.
+- <strong>Ohme</strong> (UK) — EV charging hardware + app that works across suppliers (not tied to one utility), scheduling charging around whichever tariff the user is on. Structurally closer to Flexy's "plug-in, not the utility" model, but scoped to EV charging only — no price-graph, consumption, or solar/heat-pump calculator features.
+- <strong>Jedlix</strong> (Netherlands) — B2B2C smart EV charging platform that partners with automakers and utilities/suppliers, optimizing charging against dynamic tariffs like Octopus Agile, Tibber, and Frank Energie. Structurally the closest match to Flexy's business model (utility/OEM partner, not the retail brand) — but again, EV charging only, no broader household energy decision support.</p>
+<p><strong>US market — where Flexy would actually compete or partner:</strong>
+- <strong>Optiwatt</strong> — consumer app and "energy management platform for utilities," integrates a household's exact utility rate plan to auto-schedule EV charging and HVAC for the cheapest hours (avg. claimed savings ~$388/year); explicitly offers a utility-partnership/white-label model, making it the closest direct US competitor to Flexy's plug-in positioning. Gap: no solar or heat-pump savings calculator surfaced in its consumer offering.
+- <strong>WeaveGrid</strong> — partners directly with utilities (e.g. PG&amp;E, BGE) for managed EV charging: real-time charge status, rate information, optimal charging windows, utility program/rewards enrollment (e.g. ChargePerks in California). Very close to Flexy's B2B2C-with-a-utility model. Gap: focused on EV charging and utility program enrollment, not price-graph/consumption visualization or solar/heat-pump modeling.
+- <strong>Emporia</strong> — free app plus hardware (Vue energy monitor, EV chargers, smart plugs) that shows real-time circuit-level consumption, schedules devices to the cheapest utility rate windows or to match solar production, and includes an AI assistant for usage questions. Closest US competitor on the consumption + savings-insight side. Gap: requires buying hardware; not positioned as a utility-distributed plug-in, and EV smart charging is tied to owning an Emporia charger specifically.
+- <strong>Span / Sense</strong> — Span is a premium smart electrical panel (hardware-heavy, $3,500-5,000 installed) aimed at solar/battery/EV households already renovating. Sense discontinued consumer hardware sales at the end of 2025 and is pivoting toward licensing its software directly to utilities — itself a signal that the "utility-distributed software layer" model Flexy is proposing is where this market is heading.</p>
+<p><strong>The gap Flexy targets:</strong> no single US player currently combines (a) live dynamic/TOU price visibility, (b) real-time consumption, (c) hardware-agnostic smart EV charging, and (d) a solar/heat-pump savings calculator, delivered as a plug-in a utility can hand to its own customers rather than a separate hardware purchase or a competing energy supplier. Optiwatt and WeaveGrid validate the business model; Tibber, Jedlix, and Emporia validate pieces of the feature set. Flexy's bet is that stitching all four into one utility-distributed layer is the differentiated position.</p>
+<h2>Status</h2>
+<p>Draft v3 — MVP re-scoped to a single utility client (ComEd) and state (Illinois), assuming a dynamic + TOU tariff; Flexy repositioned as a B2B2C plug-in rather than a standalone utility or app. Core feature set defined (price graph, real-time consumption, smart EV charging with user preferences, solar/heat-pump savings calculator). Competitive analysis added (EU: Tibber, Octopus/Kraken, Ohme, Jedlix; US: Optiwatt, WeaveGrid, Emporia, Span/Sense). Next: build out personas and feature detail with real ComEd rate and program data (Week 1).</p>
+<div class="doc-footer">Part of the Flexy case study documentation set. For the short version, see the <a href="flexy-case-study.html">case study page</a>.</div>
+</article>
+<footer>
+  <div class="wrap">Flexy is a fictional case study built for portfolio purposes. Market research is real and cited; personas, interviews, and user data are synthetic.</div>
+</footer>
+</body>
+</html>

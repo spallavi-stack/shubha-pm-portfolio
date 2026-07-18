@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>User Stories & Use Cases — Flexy | Shubha's PM Portfolio</title>
+<style>
+  :root{
+    --teal:#C2790E; --teal-dark:#96600A; --navy:#1C1712;
+    --ink:#201A12; --ink-soft:#5C5445; --paper:#FFFFFF; --paper-soft:#F7F4EC; --border:#E5DFD2;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;color:var(--ink);background:var(--paper);line-height:1.7;}
+  .wrap{max-width:760px;margin:0 auto;padding:0 24px;}
+  nav{position:sticky;top:0;z-index:50;background:rgba(255,255,255,0.95);backdrop-filter:blur(8px);border-bottom:1px solid var(--border);}
+  nav .navwrap{max-width:920px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:14px 24px;}
+  nav a{color:var(--teal-dark);text-decoration:none;font-size:13.5px;font-weight:600;}
+  nav .brand{color:var(--navy);font-weight:700;font-size:15px;}
+  nav .brand span{color:var(--teal);}
+  article{padding:48px 0 64px;}
+  article h1{font-size:30px;letter-spacing:-0.01em;color:var(--navy);margin:0 0 8px;}
+  article h1 + p{color:var(--ink-soft);font-size:14px;margin-top:0;}
+  article h2{font-size:20px;margin:36px 0 12px;padding-bottom:8px;border-bottom:2px solid var(--teal);color:var(--navy);}
+  article h3{font-size:16px;margin:24px 0 8px;color:var(--navy);}
+  article p{font-size:15px;color:var(--ink);margin:0 0 14px;}
+  article ul, article ol{padding-left:22px;margin:0 0 14px;}
+  article li{font-size:15px;margin-bottom:6px;}
+  article strong{color:var(--navy);}
+  article blockquote{margin:16px 0;padding:10px 18px;border-left:3px solid var(--teal);background:var(--paper-soft);color:var(--navy);font-style:italic;}
+  article hr{border:none;border-top:1px solid var(--border);margin:32px 0;}
+  article table{width:100%;border-collapse:collapse;margin:16px 0;font-size:13.5px;}
+  article th, article td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--border);}
+  article th{font-size:11px;text-transform:uppercase;letter-spacing:0.04em;color:var(--ink-soft);}
+  article code{background:var(--paper-soft);padding:1px 5px;border-radius:4px;font-size:13px;}
+  article svg{max-width:100%;height:auto;display:block;margin:20px 0;border:1px solid var(--border);border-radius:12px;padding:10px;background:#fff;}
+  .doc-footer{margin-top:40px;padding-top:20px;border-top:1px solid var(--border);font-size:13px;color:var(--ink-soft);}
+  footer{background:var(--navy);color:#C9BBA0;padding:32px 0;text-align:center;font-size:13px;}
+  footer a{color:#F6D9A0;}
+</style>
+</head>
+<body>
+<nav>
+  <div class="navwrap">
+    <span class="brand">Flexy<span>.</span> Documentation</span>
+    <div style="display:flex;gap:18px;">
+      <a href="flexy-case-study.html">← Case study</a>
+      <a href="index.html">Portfolio</a>
+    </div>
+  </div>
+</nav>
+<article class="wrap">
+<h1>Flexy — User Stories &amp; Use Cases</h1>
+<p>Jobs to Be Done describe the underlying motivation. User stories break that motivation into sprint-sized, testable pieces with acceptance criteria. Use cases go a level further and walk through what happens when something doesn't go as planned, including the paths a user story alone wouldn't surface.</p>
+<h2>User stories: Price &amp; Cost view</h2>
+<p><strong>US1.</strong> As Priya, I want to see my TOU-mode cost side by side with my real-time-pricing cost, using my own usage history, so I can decide whether to switch rate plans without guessing.
+- Acceptance criteria: toggling "See this on Time-of-Use" replays the household's actual historical consumption against ComEd's TOU rate structure; both figures are visible without navigating away.</p>
+<p><strong>US2.</strong> As Devon, I want to see today's cost so far and my average price paid per kWh without digging through a settings menu, so I get the awareness I want without the manual tracking I gave up on.
+- Acceptance criteria: today's running cost and average price paid are both headline numbers, visible on load, no additional taps required.</p>
+<p><strong>US3.</strong> As any Price &amp; Cost view user, I want to see when the next cheap window is coming, so I can decide whether to delay a discretionary task like laundry.
+- Acceptance criteria: a "next cheap window" figure is shown alongside today's cost and average price.</p>
+<h2>User stories: Smart EV charging</h2>
+<p><strong>US4.</strong> As Marcus, I want to set only a ready-by time and trust Flexy to find the cheapest way to hit it, so I don't have to configure anything else.
+- Acceptance criteria: Max Savings mode requires only a ready-by time as input; Flexy charges to a safe default floor and full charge using the cheapest available hours, using more expensive hours only if needed to hit the deadline.</p>
+<p><strong>US5.</strong> As Jenna or Sam, I want independent ready-by times, target charge levels, and amperage caps for each of our two cars, so the app can sequence both without us coordinating manually.
+- Acceptance criteria: Custom Settings mode supports per-vehicle configuration; two vehicles can have different ready-by times, target charge levels, and amperage caps simultaneously.</p>
+<p><strong>US6.</strong> As a Custom Settings user, I want Flexy to tell me immediately if my target is unreachable, so I can adjust before it's too late rather than finding out at the deadline.
+- Acceptance criteria: on saving Custom Settings, Flexy checks whether the target charge level is physically reachable given charger speed and time available, and surfaces a clear pass/fail result immediately at save time.</p>
+<p><strong>US7.</strong> As any Smart EV charging user, I want a one-tap override to charge immediately regardless of price, so I'm not blocked by the automation when my plans change.
+- Acceptance criteria: an override control is available at all times during an active charging session and takes effect immediately when used.</p>
+<h2>Use cases</h2>
+<p>Use cases describe what happens on a path where something doesn't go as expected. None of the flows below are built into the click-dummy prototype today; they're documented here as the acceptance criteria the eventual build needs to satisfy.</p>
+<p><strong>UC1: ComEd price connection fails.</strong>
+Trigger: Flexy's price feed can't reach ComEd's API (outage, rate limit, network failure).
+Expected flow: Flexy falls back to the most recent successfully fetched price data, labels it clearly as not live, and does not silently present stale data as current. Smart EV charging continues operating on the last known price pattern rather than stopping entirely, since a charging deadline still needs to be met.</p>
+<p><strong>UC2: Connected vehicle reports a charge level below the safety floor mid-session.</strong>
+Trigger: A GM or Chevy vehicle connected through Smartcar reports state of charge has dropped below the user's configured minimum floor (for example during an unplanned trip) while a scheduled optimization is in progress.
+Expected flow: Flexy treats the floor as a hard constraint and begins charging immediately regardless of price, overriding the cost-optimization schedule, since the safety floor exists precisely for this situation.</p>
+<p><strong>UC3: Price data is stale or unavailable when a user opens the Price &amp; Cost view.</strong>
+Trigger: The most recent successful price fetch is older than a defined freshness window.
+Expected flow: The view shows the last known data with a visible timestamp and a clear "not current" indicator, rather than presenting an old number as if it were live.</p>
+<p><strong>UC4: The achievable-at-setup check fails.</strong>
+Trigger: A user sets a Custom Settings target that isn't reachable given the charger's speed and the time available before the ready-by deadline.
+Expected flow: Flexy flags this at the moment of saving, states specifically what's not reachable (for example, "80% by 6am isn't reachable at this charging speed, the earliest full charge is 7:40am"), and lets the user adjust the ready-by time, target level, or accept a later completion, rather than silently under-delivering at the deadline.</p>
+<h2>Status</h2>
+<p>Drafted from the roadmap's Custom Settings / Max Savings detail and the six personas' JTBD statements. Acceptance criteria are written to be testable once a real build exists; none of the use-case failure flows are implemented in the click-dummy prototype yet.</p>
+<div class="doc-footer">Part of the Flexy case study documentation set. For the short version, see the <a href="flexy-case-study.html">case study page</a>.</div>
+</article>
+<footer>
+  <div class="wrap">Flexy is a fictional case study built for portfolio purposes. Market research is real and cited; personas, interviews, and user data are synthetic.</div>
+</footer>
+</body>
+</html>
