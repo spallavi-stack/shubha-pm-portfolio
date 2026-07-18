@@ -69,7 +69,7 @@
   .disclaimer strong{color:#4A3D10;}
 
   /* TL;DR */
-  section{padding:52px 0;}
+  section{padding:36px 0;}
   section.alt{background:var(--paper-soft);}
   h2.section-title{font-size:26px;letter-spacing:-0.01em;margin:0 0 8px;}
   .section-kicker{font-size:12.5px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--teal-dark);margin-bottom:10px;}
@@ -177,12 +177,15 @@
   ul.plain{padding-left:20px;margin:8px 0;}
   ul.plain li{font-size:14px;margin-bottom:6px;color:var(--ink);}
 
-  details.section-collapse summary{cursor:pointer;list-style:none;display:flex;align-items:baseline;justify-content:space-between;gap:12px;}
+  details.section-collapse summary{cursor:pointer;list-style:none;display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:4px 0;}
   details.section-collapse summary::-webkit-details-marker{display:none;}
   details.section-collapse summary .summary-head{flex:1;}
-  details.section-collapse summary .toggle-ic{font-size:13px;color:var(--ink-soft);font-weight:600;white-space:nowrap;padding-top:6px;}
+  details.section-collapse summary .section-kicker{margin-bottom:2px;}
+  details.section-collapse summary .section-title{margin-bottom:0;}
+  details.section-collapse summary .toggle-ic{font-size:13px;color:var(--teal-dark);font-weight:600;white-space:nowrap;padding-top:6px;}
   details.section-collapse[open] summary .toggle-ic::before{content:"Hide ▾";}
-  details.section-collapse:not([open]) summary .toggle-ic::before{content:"Show ▸";}
+  details.section-collapse:not([open]) summary .toggle-ic::before{content:"Show more ▸";}
+  details.section-collapse[open] > *:not(summary){margin-top:14px;}
 
   .tam-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:16px;}
   @media(max-width:760px){.tam-grid{grid-template-columns:1fr;}}
@@ -265,7 +268,7 @@
 
 <section class="alt" id="problem">
   <div class="wrap">
-    <details class="section-collapse" open>
+    <details class="section-collapse">
     <summary>
       <div class="summary-head">
         <div class="section-kicker">Problem &amp; market</div>
@@ -342,7 +345,7 @@
 
 <section id="research">
   <div class="wrap">
-    <details class="section-collapse" open>
+    <details class="section-collapse">
     <summary>
       <div class="summary-head">
         <div class="section-kicker">Research</div>
@@ -404,7 +407,7 @@
 
 <section class="alt" id="roadmap">
   <div class="wrap">
-    <details class="section-collapse" open>
+    <details class="section-collapse">
     <summary>
       <div class="summary-head">
         <div class="section-kicker">Prioritization</div>
@@ -507,7 +510,7 @@
 
 <footer>
   <div class="wrap">
-    Flexy is a fictional case study built by Shubha for a product management portfolio.<br>
+    Flexy is a fictional case study built for a product management portfolio.<br>
     Market research is real and cited from public program data; personas and interviews are synthetic.
   </div>
 </footer>
