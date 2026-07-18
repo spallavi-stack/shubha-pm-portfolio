@@ -7,19 +7,22 @@
   :root{
     --comed-blue:#0059A4;
     --comed-navy:#180D67;
-    --flexy-teal:#0F9D8F;
-    --flexy-teal-dark:#0B7A70;
+    --flexy-teal:#2F6B4F;
+    --flexy-teal-dark:#1E4B3B;
+    --flexy-gold:#E7B23A;
+    --flexy-green-light:#9AC55C;
+    --flexy-peach:#F0AE8C;
     --flexy-ink:#1B2430;
-    --flexy-bg:#F4FBFA;
+    --flexy-bg:#F7FAF4;
     --cheap:#34C759;
     --moderate:#F5A623;
     --expensive:#FF6B6B;
     --gray:#8A94A6;
     --line:#E3E8EE;
-    --tou-cheap:#0F9D8F;
-    --tou-moderate:#F5A623;
+    --tou-cheap:#2F6B4F;
+    --tou-moderate:#E7B23A;
     --tou-expensive:#D64545;
-    --tou-premium:#33267A;
+    --tou-premium:#8A5A2E;
   }
   .data-badge{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:700;padding:3px 8px;border-radius:20px;letter-spacing:0.2px;}
   .data-badge.live{background:#E6F7EE;color:#12805C;}
@@ -194,7 +197,7 @@
     font-size:15px;background:#1E252F;color:#fff;
   }
   .btn-carauth{
-    margin:10px 24px 0 24px;background:#0F9D8F;color:#fff;border:none;
+    margin:10px 24px 0 24px;background:var(--flexy-teal);color:#fff;border:none;
     padding:14px;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;
   }
   .link-muted-dark{text-align:center;font-size:12px;color:#6B7684;margin-top:18px;}
@@ -203,7 +206,7 @@
     display:flex;align-items:flex-start;gap:10px;padding:12px 0;border-bottom:1px solid #232A34;
   }
   .carauth-check{
-    width:20px;height:20px;border-radius:50%;background:#0F9D8F;color:#fff;font-size:12px;
+    width:20px;height:20px;border-radius:50%;background:var(--flexy-teal);color:#fff;font-size:12px;
     display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;
   }
   .carauth-perm-text b{display:block;font-size:14px;color:#fff;}
@@ -339,7 +342,7 @@
   .settings-row .v{font-size:13.5px;font-weight:700;color:var(--flexy-ink);}
 
   .banner{
-    background:#EAF7F5;border:1px solid #CDEDE8;border-radius:12px;padding:12px 14px;font-size:12.5px;color:var(--flexy-teal-dark);margin-bottom:14px;line-height:1.5;
+    background:#F0F6EC;border:1px solid #DCEACB;border-radius:12px;padding:12px 14px;font-size:12.5px;color:var(--flexy-teal-dark);margin-bottom:14px;line-height:1.5;
   }
   .override-btn{
     width:100%;background:var(--flexy-ink);color:#fff;border:none;border-radius:12px;padding:14px;font-size:14px;font-weight:700;cursor:pointer;margin-top:6px;
@@ -565,13 +568,13 @@
           <svg viewBox="0 0 64 64" width="76" height="76" role="img" aria-label="Flexy logo">
             <defs>
               <linearGradient id="flexyLogoGradStore" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0" stop-color="#0F9D8F"/>
-                <stop offset="1" stop-color="#180D67"/>
+                <stop offset="0" stop-color="#1E4B3B"/>
+                <stop offset="1" stop-color="#F0AE8C"/>
               </linearGradient>
               <clipPath id="flexyLogoClipStore"><rect x="0" y="0" width="64" height="64" rx="16"/></clipPath>
             </defs>
             <rect x="0" y="0" width="64" height="64" rx="16" fill="url(#flexyLogoGradStore)"/>
-            <g clip-path="url(#flexyLogoClipStore)"><circle cx="44" cy="34" r="13" fill="#FFD166"/></g>
+            <g clip-path="url(#flexyLogoClipStore)"><circle cx="44" cy="34" r="13" fill="#E7B23A"/></g>
             <path d="M10 24 L24 34 L36 30 L54 48" fill="none" stroke="#ffffff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
             <circle cx="10" cy="24" r="3.5" fill="#ffffff"/>
             <circle cx="54" cy="48" r="3.5" fill="#ffffff"/>
@@ -1083,7 +1086,7 @@
         <div class="charge-ring-wrap">
           <svg width="120" height="120" viewBox="0 0 120 120">
             <circle cx="60" cy="60" r="52" fill="none" stroke="#EDEFF3" stroke-width="12"/>
-            <circle cx="60" cy="60" r="52" fill="none" stroke="#0F9D8F" stroke-width="12"
+            <circle cx="60" cy="60" r="52" fill="none" stroke="#2F6B4F" stroke-width="12"
               stroke-dasharray="326.7" stroke-dashoffset="180" stroke-linecap="round" transform="rotate(-90 60 60)"/>
             <text x="60" y="56" text-anchor="middle" font-size="20" font-weight="800" fill="#1B2430">45%</text>
             <text x="60" y="74" text-anchor="middle" font-size="10" fill="#8A94A6">current charge</text>
