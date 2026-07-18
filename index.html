@@ -75,6 +75,11 @@
   .tag-status-soon{background:#EDEFF3;color:var(--ink-soft);}
   .case-card h3{font-size:17px;margin:0 0 6px;}
   .case-card p.thesis{font-size:13.5px;color:var(--ink-soft);margin:0 0 14px;flex:1;}
+  .thesis-facts{margin:0 0 14px;flex:1;}
+  .fact{display:flex;gap:8px;font-size:13px;padding:5px 0;border-bottom:1px solid #EEE;}
+  .fact:last-child{border-bottom:none;}
+  .fact-label{color:var(--ink-soft);font-weight:600;min-width:64px;flex-shrink:0;}
+  .fact-val{color:var(--ink);}
   .case-card .cta{font-size:13px;font-weight:700;color:var(--teal-dark);}
   .case-card.disabled .cta{color:var(--ink-soft);}
 
@@ -106,18 +111,17 @@
   <div class="wrap">
     <span class="eyebrow">AI-Forward Product Case Studies</span>
     <h1 class="title">Real problems, working prototypes, built faster with AI.</h1>
-    <p class="subtitle">A growing collection of fictional, deeply-researched 0-to-1 product case studies across climate tech and energy. Each one runs the same real process: problem research, personas, synthetic user interviews, an ICE-prioritized roadmap, and a working prototype.</p>
   </div>
 </header>
 
 <section>
   <div class="wrap">
     <div class="section-kicker">How I work</div>
-    <h2 class="section-title">What "AI-forward" means here</h2>
-    <p class="lede">Every case study is fictional by design, so I can go deep on process without waiting on a real company's data or timeline. But the market research behind each one is real, and every AI-assisted step is one I directed, reviewed, and corrected myself.</p>
+    <h2 class="section-title">What this is</h2>
+    <p class="lede">A growing collection of fictional, deeply-researched 0-to-1 product case studies across Climate and Energy Tech. Each one runs the same real process: problem research, personas, synthetic user interviews, an ICE-prioritized roadmap, and a working prototype.</p>
     <div class="pillars">
       <div class="pillar"><span class="ic">🔍</span><h3>Real research, fictional product</h3><p>Market sizing, competitors, and regulatory/program data are researched and cited, not invented. Personas and interviews are clearly labeled synthetic.</p></div>
-      <div class="pillar"><span class="ic">🤝</span><h3>AI as collaborator, not autopilot</h3><p>AI drafts research and prototype code; I scope, prioritize, catch mistakes, and make the calls that would actually matter as a PM.</p></div>
+      <div class="pillar"><span class="ic">🤝</span><h3>AI as collaborator</h3><p>AI drafts research and prototype code; I scope, prioritize, catch mistakes, and make the calls that would actually matter as a PM.</p></div>
       <div class="pillar"><span class="ic">🛠️</span><h3>Full 0-to-1 cycle</h3><p>Problem framing → personas → interviews → prioritized roadmap → clickable prototype, with buildability and PMF thinking layered in over time.</p></div>
     </div>
   </div>
@@ -138,7 +142,11 @@
             <span class="tag tag-status-shipped">Complete</span>
           </div>
           <h3>Cheaper EV charging, honest energy answers</h3>
-          <p class="thesis">A B2B2C companion app a utility hands to its own dynamic/TOU-rate customers: live price visibility, automated smart EV charging, and solar/heat pump payback calculators. Grounded in real ComEd/Illinois program data.</p>
+          <div class="thesis-facts">
+            <div class="fact"><span class="fact-label">What</span><span class="fact-val">A B2B2C companion app for ComEd's dynamic/TOU-rate customers: live price visibility, automated smart EV charging, solar/heat pump payback calculators.</span></div>
+            <div class="fact"><span class="fact-label">Why</span><span class="fact-val">Real-time and time-of-use electricity pricing is too complex for most households to track and act on manually.</span></div>
+            <div class="fact"><span class="fact-label">For whom</span><span class="fact-val">ComEd customers in Illinois on, or eligible for, a real-time or time-of-use rate.</span></div>
+          </div>
           <div class="cta">View full case study →</div>
         </div>
       </a>
