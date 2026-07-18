@@ -427,8 +427,7 @@
   .store-topbar .back{font-size:18px;color:var(--gray);font-weight:400;}
   .store-header{display:flex;gap:14px;padding:6px 20px 18px 20px;align-items:flex-start;}
   .store-icon{
-    width:76px;height:76px;border-radius:18px;background:linear-gradient(135deg,var(--flexy-teal) 0%, var(--flexy-teal-dark) 100%);
-    color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:26px;flex-shrink:0;
+    width:76px;height:76px;border-radius:18px;flex-shrink:0;overflow:hidden;
   }
   .store-name{font-size:19px;font-weight:800;color:var(--flexy-ink);}
   .store-dev{font-size:12px;color:var(--gray);margin-top:2px;}
@@ -562,7 +561,22 @@
     <div class="store-topbar"><span class="back">&#8592;</span><span>App Store</span></div>
     <div class="content" style="padding-top:4px;">
       <div class="store-header">
-        <div class="store-icon">flx</div>
+        <div class="store-icon">
+          <svg viewBox="0 0 64 64" width="76" height="76" role="img" aria-label="Flexy logo">
+            <defs>
+              <linearGradient id="flexyLogoGradStore" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#0F9D8F"/>
+                <stop offset="1" stop-color="#180D67"/>
+              </linearGradient>
+              <clipPath id="flexyLogoClipStore"><rect x="0" y="0" width="64" height="64" rx="16"/></clipPath>
+            </defs>
+            <rect x="0" y="0" width="64" height="64" rx="16" fill="url(#flexyLogoGradStore)"/>
+            <g clip-path="url(#flexyLogoClipStore)"><circle cx="44" cy="34" r="13" fill="#FFD166"/></g>
+            <path d="M10 24 L24 34 L36 30 L54 48" fill="none" stroke="#ffffff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="10" cy="24" r="3.5" fill="#ffffff"/>
+            <circle cx="54" cy="48" r="3.5" fill="#ffffff"/>
+          </svg>
+        </div>
         <div>
           <div class="store-name">Flexy</div>
           <div class="store-dev">Flexy, Inc. &middot; Utilities</div>

@@ -66,7 +66,8 @@
   }
   .case-card.live:hover{transform:translateY(-3px);box-shadow:0 10px 26px rgba(0,0,0,0.08);}
   .case-card.disabled{opacity:0.6;cursor:default;}
-  .case-banner{height:88px;display:flex;align-items:center;padding:0 22px;font-size:26px;font-weight:800;color:#fff;letter-spacing:-0.02em;}
+  .case-banner{height:88px;display:flex;align-items:center;gap:12px;padding:0 22px;font-size:26px;font-weight:800;color:#fff;letter-spacing:-0.02em;}
+  .case-banner .logo-mark{flex-shrink:0;display:block;}
   .case-body{padding:20px 22px 22px;flex:1;display:flex;flex-direction:column;}
   .case-tags{display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;}
   .tag{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;padding:3px 9px;border-radius:999px;}
@@ -135,7 +136,23 @@
 
     <div class="case-grid">
       <a class="case-card live" href="flexy-case-study.html">
-        <div class="case-banner banner-flexy">Flexy</div>
+        <div class="case-banner banner-flexy">
+          <svg class="logo-mark" viewBox="0 0 64 64" width="34" height="34" role="img" aria-label="Flexy logo">
+            <defs>
+              <linearGradient id="flexyLogoGradHub" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#0F9D8F"/>
+                <stop offset="1" stop-color="#180D67"/>
+              </linearGradient>
+              <clipPath id="flexyLogoClipHub"><rect x="0" y="0" width="64" height="64" rx="16"/></clipPath>
+            </defs>
+            <rect x="0" y="0" width="64" height="64" rx="16" fill="url(#flexyLogoGradHub)"/>
+            <g clip-path="url(#flexyLogoClipHub)"><circle cx="44" cy="34" r="13" fill="#FFD166"/></g>
+            <path d="M10 24 L24 34 L36 30 L54 48" fill="none" stroke="#ffffff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="10" cy="24" r="3.5" fill="#ffffff"/>
+            <circle cx="54" cy="48" r="3.5" fill="#ffffff"/>
+          </svg>
+          Flexy
+        </div>
         <div class="case-body">
           <div class="case-tags">
             <span class="tag tag-industry">Energy Flexibility</span>

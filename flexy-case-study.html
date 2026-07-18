@@ -37,7 +37,7 @@
     border-bottom:1px solid var(--border);
   }
   nav .wrap{display:flex;align-items:center;justify-content:space-between;padding:14px 24px;max-width:920px;}
-  nav .brand{font-weight:700;letter-spacing:-0.02em;color:var(--navy);font-size:16px;}
+  nav .brand{font-weight:700;letter-spacing:-0.02em;color:var(--navy);font-size:16px;display:flex;align-items:center;gap:8px;}
   nav .brand span{color:var(--teal);}
   nav ul{list-style:none;display:flex;gap:22px;margin:0;padding:0;}
   nav a{color:var(--ink-soft);text-decoration:none;font-size:13.5px;font-weight:500;}
@@ -180,7 +180,23 @@
 
 <nav>
   <div class="wrap">
-    <div class="brand">Flexy<span>.</span> — PM Case Study</div>
+    <div class="brand">
+      <svg viewBox="0 0 64 64" width="24" height="24" role="img" aria-label="Flexy logo">
+        <defs>
+          <linearGradient id="flexyLogoGradNav" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#0F9D8F"/>
+            <stop offset="1" stop-color="#180D67"/>
+          </linearGradient>
+          <clipPath id="flexyLogoClipNav"><rect x="0" y="0" width="64" height="64" rx="16"/></clipPath>
+        </defs>
+        <rect x="0" y="0" width="64" height="64" rx="16" fill="url(#flexyLogoGradNav)"/>
+        <g clip-path="url(#flexyLogoClipNav)"><circle cx="44" cy="34" r="13" fill="#FFD166"/></g>
+        <path d="M10 24 L24 34 L36 30 L54 48" fill="none" stroke="#ffffff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="10" cy="24" r="3.5" fill="#ffffff"/>
+        <circle cx="54" cy="48" r="3.5" fill="#ffffff"/>
+      </svg>
+      Flexy<span>.</span> — PM Case Study
+    </div>
     <ul>
       <li><a href="#tldr">Summary</a></li>
       <li><a href="#problem">Problem</a></li>
