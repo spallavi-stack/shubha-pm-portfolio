@@ -23,6 +23,8 @@
     --tou-moderate:#E7B23A;
     --tou-expensive:#D64545;
     --tou-premium:#8A5A2E;
+    --cost-bar:#5C6BC0;
+    --axis-label:#8A94A6;
   }
   .data-badge{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:700;padding:3px 8px;border-radius:20px;letter-spacing:0.2px;}
   .data-badge.live{background:#E6F7EE;color:#12805C;}
@@ -35,6 +37,9 @@
   .chart-title{font-size:12px;font-weight:700;color:var(--flexy-ink);padding:0 4px;margin-bottom:4px;display:flex;justify-content:space-between;align-items:baseline;}
   .chart-title .tag{font-weight:800;color:var(--flexy-teal-dark);}
   .axis-tag{font-size:9.5px;color:var(--gray);}
+  .axis-split{display:flex;justify-content:space-between;font-size:9.5px;color:var(--gray);padding:0 4px;margin:-2px 0 4px;}
+  .axis-split .axis-left::before{content:"◀ ";font-size:8px;}
+  .axis-split .axis-right::after{content:" ▶";font-size:8px;}
   .chart-legend-line{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--flexy-ink);}
   .line-swatch{width:14px;height:2.5px;background:var(--flexy-ink);border-radius:2px;display:inline-block;}
   .chart-footnote{font-size:11px;color:var(--gray);padding:6px 4px 0;line-height:1.4;}
@@ -1045,14 +1050,16 @@
       </div>
 
       <div class="card chart-card">
-        <div class="chart-title"><span id="priceChartTitle">Price, today</span><span class="axis-tag">&cent;/kWh &middot; kWh</span></div>
+        <div class="chart-title"><span id="priceChartTitle">Price, today</span></div>
+        <div class="axis-split"><span class="axis-left">&cent;/kWh</span><span class="axis-right">kWh</span></div>
         <svg id="chart" viewBox="0 0 320 150" width="100%" height="150"></svg>
-        <div class="chart-legend-line"><span class="line-swatch"></span>Household usage (kWh, right axis)</div>
+        <div class="chart-legend-line"><span class="line-swatch"></span>Household usage (kWh, right axis, modeled load profile &mdash; dashed since it's not a real meter reading)</div>
       </div>
 
       <div class="card chart-card" style="margin-top:10px;">
         <div class="chart-title"><span>Estimated cost by hour</span><span class="tag" id="costTotalTag">$2.64 total</span></div>
         <svg id="costChart" viewBox="0 0 320 120" width="100%" height="120"></svg>
+        <div class="chart-legend-line"><span class="line-swatch" style="background:var(--cost-bar);border-radius:2px;height:8px;width:14px;"></span>Estimated cost ($), based on modeled usage</div>
       </div>
 
       <div class="data-footnote">
@@ -1312,10 +1319,23 @@ function updateLegend(){
   document.getElementById('priceChartTitle').textContent = 'Price, ' + periodLabel + (touOn ? ' (TOU)' : '');
 }
 
+// Every 4th bar gets an hour label along the bottom, sized to fit a 24-bar mobile chart
+// without crowding (0, 4, 8, 12, 16, 20 — six labels across the width).
+function xAxisLabels(n, bw, h){
+  let out = '';
+  for(let i=0; i<n; i+=4){
+    const x = i*bw + bw/2;
+    out += `<text x="${x}" y="${h-2}" font-size="8" fill="var(--axis-label)" text-anchor="middle">${getLabel(i)}</text>`;
+  }
+  return out;
+}
+
 function drawChart(basePrices, loadCurve){
   loadCurve = loadCurve || consumption;
   const svg = document.getElementById('chart');
   const w=320,h=150,n=basePrices.length,bw=w/n;
+  const axisH = 14; // reserved strip at the bottom for hour labels
+  const plotH = h - axisH;
   const touOn = priceState.touMode;
   const totals = basePrices.map((p,i)=> p + (touOn ? touDeltaCents(i) : 0));
   const sorted = [...basePrices].sort((a,b)=>a-b);
@@ -1324,29 +1344,32 @@ function drawChart(basePrices, loadCurve){
   let bars='', pts='';
   basePrices.forEach((p,i)=>{
     const tier = priceTier(p, sorted);
-    const baseH = (p/maxTotal)*(h-10);
+    const baseH = (p/maxTotal)*(plotH-10);
     const x = i*bw;
-    bars += `<rect x="${x}" y="${h-baseH}" width="${bw-1}" height="${baseH}" fill="${priceColors[tier]}" opacity="0.75"><title>${getLabel(i)}: ${p.toFixed(1)}¢/kWh</title></rect>`;
+    bars += `<rect x="${x}" y="${plotH-baseH}" width="${bw-1}" height="${baseH}" fill="${priceColors[tier]}" opacity="0.75"><title>${getLabel(i)}: ${p.toFixed(1)}¢/kWh</title></rect>`;
     if(touOn){
       const delta = touDeltaCents(i);
       if(delta>0){
-        const premH = (delta/maxTotal)*(h-10);
-        bars += `<rect x="${x}" y="${h-baseH-premH}" width="${bw-1}" height="${premH}" fill="var(--tou-premium)" opacity="0.85"><title>${getLabel(i)} TOU premium: +${delta.toFixed(1)}¢/kWh</title></rect>`;
+        const premH = (delta/maxTotal)*(plotH-10);
+        bars += `<rect x="${x}" y="${plotH-baseH-premH}" width="${bw-1}" height="${premH}" fill="var(--tou-premium)" opacity="0.85"><title>${getLabel(i)} TOU premium: +${delta.toFixed(1)}¢/kWh</title></rect>`;
       }
     }
   });
   loadCurve.forEach((c,i)=>{
     const x = i*bw + bw/2;
-    const y = h - (c/maxC)*(h-14) - 6;
+    const y = plotH - (c/maxC)*(plotH-14) - 6;
     pts += (i===0?'M':'L') + x + ',' + y + ' ';
   });
-  svg.innerHTML = bars + `<path d="${pts}" fill="none" stroke="#1B2430" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>`;
+  // Dashed, not solid: this line is a modeled load profile, not a real meter reading.
+  svg.innerHTML = bars + `<path d="${pts}" fill="none" stroke="#1B2430" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="5,3"/>` + xAxisLabels(n, bw, h);
 }
 
 function drawCostChart(basePrices, loadCurve){
   loadCurve = loadCurve || consumption;
   const svg = document.getElementById('costChart');
   const w=320,h=120,n=basePrices.length,bw=w/n;
+  const axisH = 14;
+  const plotH = h - axisH;
   const touOn = priceState.touMode;
   const baseCosts = basePrices.map((p,i)=> (p/100)*loadCurve[i]);
   const premCosts = basePrices.map((p,i)=> touOn ? (touDeltaCents(i)/100)*loadCurve[i] : 0);
@@ -1354,14 +1377,14 @@ function drawCostChart(basePrices, loadCurve){
   const maxCost = Math.max(...totalCosts, 0.01);
   let bars='';
   baseCosts.forEach((c,i)=>{
-    const x = i*bw, baseH = (c/maxCost)*(h-10);
-    bars += `<rect x="${x}" y="${h-baseH}" width="${bw-1}" height="${baseH}" fill="var(--flexy-teal)" opacity="0.8"><title>${getLabel(i)}: $${c.toFixed(2)}</title></rect>`;
+    const x = i*bw, baseH = (c/maxCost)*(plotH-10);
+    bars += `<rect x="${x}" y="${plotH-baseH}" width="${bw-1}" height="${baseH}" fill="var(--cost-bar)" opacity="0.85"><title>${getLabel(i)}: $${c.toFixed(2)}</title></rect>`;
     if(premCosts[i]>0){
-      const premH = (premCosts[i]/maxCost)*(h-10);
-      bars += `<rect x="${x}" y="${h-baseH-premH}" width="${bw-1}" height="${premH}" fill="var(--tou-premium)" opacity="0.85"><title>${getLabel(i)} TOU premium: $${premCosts[i].toFixed(2)}</title></rect>`;
+      const premH = (premCosts[i]/maxCost)*(plotH-10);
+      bars += `<rect x="${x}" y="${plotH-baseH-premH}" width="${bw-1}" height="${premH}" fill="var(--tou-premium)" opacity="0.85"><title>${getLabel(i)} TOU premium: $${premCosts[i].toFixed(2)}</title></rect>`;
     }
   });
-  svg.innerHTML = bars;
+  svg.innerHTML = bars + xAxisLabels(n, bw, h);
   const total = totalCosts.reduce((a,b)=>a+b,0);
   const tag = document.getElementById('costTotalTag');
   tag.textContent = currentRange==='today' ? ('$'+total.toFixed(2)+' total') : ('$'+total.toFixed(2)+'/day avg');
