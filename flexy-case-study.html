@@ -151,7 +151,10 @@
   .btn-ghost{border:1px solid var(--border);color:var(--ink);}
   .btn-ghost:hover{border-color:var(--teal);color:var(--teal-dark);}
 
-  .doc-links{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:18px;}
+  .doc-category{margin-top:28px;}
+  .doc-category:first-child{margin-top:0;}
+  .doc-category h3{font-size:14.5px;margin:0 0 12px;color:var(--ink);}
+  .doc-links{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;}
   @media(max-width:760px){.doc-links{grid-template-columns:repeat(2,1fr);}}
   .doc-link{
     background:#fff;border:1px solid var(--border);border-radius:10px;padding:14px;text-decoration:none;
@@ -159,6 +162,7 @@
   }
   .doc-link:hover{border-color:var(--teal);color:var(--teal-dark);}
   .doc-link .ic{display:block;font-size:20px;margin-bottom:6px;}
+  .doc-empty{background:var(--paper-soft);border:1px dashed var(--border);border-radius:10px;padding:16px;font-size:13px;color:var(--ink-soft);text-align:center;}
 
   .journey{display:flex;flex-direction:column;gap:0;margin-top:24px;}
   .journey-step{display:flex;gap:16px;padding:14px 0;border-left:2px solid var(--border);position:relative;padding-left:24px;margin-left:10px;}
@@ -494,19 +498,39 @@
 <section id="documents">
   <div class="wrap">
     <div class="section-kicker">Full documentation</div>
-    <h2 class="section-title">Every underlying document</h2>
     <p class="lede">For anyone who wants to go deeper than this page, the full source documents are linked below.</p>
-    <div class="doc-links">
-      <a class="doc-link" href="flexy-product-brief.html"><span class="ic">📄</span>Product Brief</a>
-      <a class="doc-link" href="flexy-personas.html"><span class="ic">🧑‍🤝‍🧑</span>Personas</a>
-      <a class="doc-link" href="flexy-synthetic-interviews.html"><span class="ic">🎙️</span>Interviews</a>
-      <a class="doc-link" href="flexy-jobs-to-be-done.html"><span class="ic">🎯</span>Jobs to Be Done</a>
-      <a class="doc-link" href="flexy-roadmap.html"><span class="ic">🗺️</span>Roadmap</a>
-      <a class="doc-link" href="flexy-user-stories.html"><span class="ic">📋</span>User Stories &amp; Use Cases</a>
-      <a class="doc-link" href="flexy-technical-feasibility.html"><span class="ic">🛠️</span>Technical Feasibility</a>
-      <a class="doc-link" href="flexy-real-data-integration-guide.html"><span class="ic">🔌</span>Real Data Integration Guide</a>
-      <a class="doc-link" href="flexy-ai-collaboration-review.html"><span class="ic">🤝</span>AI Collaboration Review</a>
+
+    <div class="doc-category">
+      <h3>Product development</h3>
+      <div class="doc-links">
+        <a class="doc-link" href="flexy-product-brief.html"><span class="ic">📄</span>Product Brief</a>
+        <a class="doc-link" href="flexy-personas.html"><span class="ic">🧑‍🤝‍🧑</span>Personas</a>
+        <a class="doc-link" href="flexy-synthetic-interviews.html"><span class="ic">🎙️</span>Interviews</a>
+        <a class="doc-link" href="flexy-jobs-to-be-done.html"><span class="ic">🎯</span>Jobs to Be Done</a>
+        <a class="doc-link" href="flexy-roadmap.html"><span class="ic">🗺️</span>Roadmap</a>
+        <a class="doc-link" href="flexy-user-stories.html"><span class="ic">📋</span>User Stories &amp; Use Cases</a>
+      </div>
     </div>
+
+    <div class="doc-category">
+      <h3>Platform &amp; Technical</h3>
+      <div class="doc-links">
+        <a class="doc-link" href="flexy-technical-feasibility.html"><span class="ic">🛠️</span>Technical Feasibility</a>
+        <a class="doc-link" href="flexy-real-data-integration-guide.html"><span class="ic">🔌</span>Real Data Integration Guide</a>
+        <a class="doc-link" href="flexy-ai-collaboration-review.html"><span class="ic">🤝</span>AI Collaboration Review</a>
+      </div>
+    </div>
+
+    <div class="doc-category">
+      <h3>Growth</h3>
+      <div class="doc-empty">Nothing here yet.</div>
+    </div>
+
+    <div class="doc-category">
+      <h3>Product Analytics</h3>
+      <div class="doc-empty">Nothing here yet.</div>
+    </div>
+
   </div>
 </section>
 
