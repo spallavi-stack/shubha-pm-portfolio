@@ -1,6 +1,6 @@
-# Flexy — Personas (v2, frozen)
+# Flexy — Personas (v4, frozen)
 
-Grounded in real ComEd/Illinois specifics: ComEd's Residential Real-Time Pricing (hourly wholesale-tracking rate, live today), ComEd's TOU rate rollout finalizing for 2026 (steep afternoon/evening delivery charge, cheap overnight, +$2/month per EV up to 2 EVs for 2 years), Illinois Shines / Adjustable Block Program (upfront lump-sum SREC payment, ~25-40% of system cost even with no federal credit), and the Illinois EPA HEAR heat pump rebate (up to $8,000, income-qualified under 80% AMI, rolling out in phases by county — not yet universally live).
+Grounded in real ComEd/Illinois specifics: ComEd's Residential Real-Time Pricing (hourly wholesale-tracking rate, live today) and ComEd's TOU rate rollout finalizing for 2026 (steep afternoon/evening delivery charge, cheap overnight, +$2/month per EV up to 2 EVs for 2 years).
 
 Template per persona: identity, quote, goal, pain point, current behavior/workaround, desired solution (in their own words), tech-savviness, JTBD statement, Flexy feature, grounding fact.
 
@@ -54,39 +54,7 @@ Template per persona: identity, quote, goal, pain point, current behavior/workar
 
 ---
 
-## 4. Carla Jimenez — The SREC Skeptic
-**Age/gender:** 47, female · **Location:** Aurora, IL · **Occupation:** Small business owner (bakery) · **Household:** Homeowner, married · **Income:** ~$130k
-
-> "Solar salespeople keep throwing numbers at me. I want the real math for my house."
-
-**Goal:** Get an honest, personalized payback estimate for rooftop solar now that the federal credit is gone.
-**Pain point:** Three solar company quotes, three different sets of assumptions — she can't tell what's real and what's a sales pitch.
-**Current behavior:** Collected quotes eight months ago; hasn't signed anything since, stuck in analysis paralysis.
-**Desired solution (her words):** "I want to just put in my actual electric bills and get a straight answer — payback period, real annual savings — without a sales pitch attached."
-**Tech-savviness:** Moderate — comfortable uploading bills or photos to an app.
-**JTBD:** When I'm evaluating a rooftop solar quote, I want to see a real projected payback using my actual usage and Illinois Shines incentives, so I can decide without relying on a salesperson's numbers.
-**Flexy feature:** Solar savings calculator, using her actual usage plus real Illinois Shines SREC economics.
-**Grounding fact:** Illinois Shines pays 25-40% of system cost upfront via SRECs (e.g. ~$11-12k on a typical 8.5kW system at current ~$78/credit pricing) — even with no federal credit.
-
----
-
-## 5. Bob Thornton — The HEAR Rebate Chaser
-**Age/gender:** 63, male · **Location:** Rockford, IL · **Occupation:** Retired factory worker · **Household:** Homeowner, lives with spouse · **Income:** ~$48k (fixed)
-
-> "I heard there's free money for a heat pump, but I can't figure out if it applies to me."
-
-**Goal:** Find out definitively whether he qualifies for HEAR funding before committing to a purchase.
-**Pain point:** The rebate rolls out by county and by measure type; two contractors gave him conflicting answers about whether it's available where he lives.
-**Current behavior:** Called two local HVAC contractors, got contradictory information, and stalled on the decision entirely.
-**Desired solution (his words):** "Just tell me straight — am I eligible, is it available in my county right now, and how much would I actually get?"
-**Tech-savviness:** Low — prefers phone calls, but will use a simple app if someone walks him through it once.
-**JTBD:** When I'm considering a heat pump, I want to know clearly whether I qualify for HEAR funding in my county right now, so I can decide with confidence instead of guessing.
-**Flexy feature:** Heat pump savings calculator, flagging eligibility and county rollout status alongside the savings number.
-**Grounding fact:** Illinois EPA's HEAR program is phased by county/measure type and currently prioritized for households under 80% AMI — not yet universally available statewide as of mid-2026.
-
----
-
-## 6. Jenna Alvarez & Sam Kim — The Multi-EV Household
+## 4. Jenna Alvarez & Sam Kim — The Multi-EV Household
 **Age/gender:** Jenna, 39, female; Sam, 41, male · **Location:** Schaumburg, IL · **Occupation:** Both work in tech (hybrid) · **Household:** Homeowners, two kids, two EVs · **Income:** ~$180k (combined)
 
 > "Coordinating two cars' charging schedules around one price feed is like a logistics puzzle we didn't sign up for." — Jenna
@@ -105,9 +73,7 @@ Template per persona: identity, quote, goal, pain point, current behavior/workar
 ## Coverage check
 - Price graph: Persona 2 (Priya)
 - Real-time consumption: Persona 3 (Devon)
-- Smart EV charging: Personas 1 (Marcus), 6 (Jenna & Sam)
-- Solar savings calculator: Persona 4 (Carla)
-- Heat pump savings calculator: Persona 5 (Bob)
+- Smart EV charging: Personas 1 (Marcus), 4 (Jenna & Sam)
 
 ## Status
-**Frozen v3** — 6 personas in full brief format. Devon's persona (v3) corrected to match actual MVP feasibility: Flexy automates EV charging only in the MVP (device-level control of dishwashers/thermostats/etc. would require per-appliance smart-plug/API integrations well beyond MVP scope); real-time consumption remains informational. Next: synthetic interviews (Week 2), one per persona.
+**Frozen v4** — 4 personas, all tied directly to the EV-charging and price-visibility MVP. Two earlier personas (a solar-focused and a heat-pump-focused persona) were cut when the solar and heat pump savings calculators were dropped from scope, since a fictional persona built to justify a feature that no longer exists doesn't belong in the set. Devon's persona corrected to match actual MVP feasibility: Flexy automates EV charging only (device-level control of dishwashers/thermostats/etc. would require per-appliance smart-plug/API integrations well beyond MVP scope); real-time consumption remains informational.

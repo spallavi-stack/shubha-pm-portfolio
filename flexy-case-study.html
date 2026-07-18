@@ -176,6 +176,31 @@
   h3.subhead{font-size:17px;margin:26px 0 10px;}
   ul.plain{padding-left:20px;margin:8px 0;}
   ul.plain li{font-size:14px;margin-bottom:6px;color:var(--ink);}
+
+  details.section-collapse summary{cursor:pointer;list-style:none;display:flex;align-items:baseline;justify-content:space-between;gap:12px;}
+  details.section-collapse summary::-webkit-details-marker{display:none;}
+  details.section-collapse summary .summary-head{flex:1;}
+  details.section-collapse summary .toggle-ic{font-size:13px;color:var(--ink-soft);font-weight:600;white-space:nowrap;padding-top:6px;}
+  details.section-collapse[open] summary .toggle-ic::before{content:"Hide ▾";}
+  details.section-collapse:not([open]) summary .toggle-ic::before{content:"Show ▸";}
+
+  .tam-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:16px;}
+  @media(max-width:760px){.tam-grid{grid-template-columns:1fr;}}
+  .tam-card{background:#fff;border:1px solid var(--border);border-radius:12px;padding:18px;}
+  .tam-card .tam-label{font-size:11.5px;text-transform:uppercase;letter-spacing:0.06em;color:var(--teal-dark);font-weight:700;}
+  .tam-card .tam-num{font-size:24px;font-weight:800;margin:6px 0 4px;}
+  .tam-card p{font-size:12.5px;color:var(--ink-soft);margin:0;}
+  .footnotes{font-size:12px;color:var(--ink-soft);margin-top:14px;padding-left:18px;}
+  .footnotes li{margin-bottom:6px;}
+  .footnotes a{color:var(--teal-dark);}
+
+  .limitation-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px;}
+  @media(max-width:720px){.limitation-grid{grid-template-columns:1fr;}}
+  .limitation-card{background:#fff;border:1px solid var(--border);border-radius:12px;padding:20px;}
+  .limitation-card h4{margin:0 0 8px;font-size:14.5px;}
+  .limitation-card p{font-size:13.5px;color:var(--ink-soft);margin:0 0 8px;}
+  .limitation-card .src{font-size:12px;color:var(--ink-soft);}
+  .limitation-card .src a{color:var(--teal-dark);}
 </style>
 </head>
 <body>
@@ -200,45 +225,38 @@
       Flexy<span>.</span> — PM Case Study
     </div>
     <ul>
+      <li><a href="index.html">← Home</a></li>
       <li><a href="#tldr">Summary</a></li>
       <li><a href="#problem">Problem</a></li>
       <li><a href="#research">Research</a></li>
       <li><a href="#roadmap">Roadmap</a></li>
       <li><a href="#prototype">Prototype</a></li>
-      <li><a href="#reflection">Reflection</a></li>
+      <li><a href="#limitations">Limitations</a></li>
     </ul>
   </div>
 </nav>
 
 <header class="hero">
   <div class="wrap">
-    <h1 class="title">Flexy — cheaper EV charging and honest energy answers, built on top of ComEd</h1>
-    <p class="subtitle">An end-to-end PM case study: problem framing, market research, six personas, synthetic user interviews, an ICE-prioritized roadmap, and a working interactive prototype, produced through iterative human-AI collaboration.</p>
+    <h1 class="title">Smart charge your EV using real dynamic prices</h1>
+    <p class="subtitle">An end-to-end PM case study: problem framing, market research, four personas, synthetic user interviews, an ICE-prioritized roadmap, and a working interactive prototype.</p>
     <div class="hero-meta">
-      <div>Role<strong>Product Manager (solo)</strong></div>
-      <div>Market<strong>ComEd / Illinois, USA</strong></div>
-      <div>Method<strong>Human-led, AI-assisted research &amp; prototyping</strong></div>
+      <div>First market<strong>ComEd / Illinois, USA</strong></div>
       <div>Deliverables<strong>Brief · Personas · Interviews · Roadmap · Click-dummy</strong></div>
     </div>
   </div>
 </header>
-
-<div class="wrap">
-  <div class="disclaimer">
-    <strong>What this is:</strong> Flexy is a fictional product built specifically for this portfolio. The market data behind it is real (ComEd's Real-Time Pricing program, the 2026 Time-of-Use filing, Illinois Shines/SREC economics, the Illinois EPA HEAR rebate, and named competitors like Tibber, Octopus, Ohme, Optiwatt, and WeaveGrid were all researched, not invented). The personas, interviews, and user quotes are synthetic, generated to be internally consistent with that research, not real people or real user data. Every synthetic document says so explicitly, and the goal of this project is to demonstrate PM craft: how I frame a problem, structure research, prioritize a roadmap, and turn it into a testable prototype, using AI as a genuine collaborator rather than a copy-paste shortcut.
-  </div>
-</div>
 
 <section id="tldr">
   <div class="wrap">
     <div class="section-kicker">60-second version</div>
     <h2 class="section-title">The short version</h2>
     <div class="summary-box">
-      US electricity bills are up 26% in five years, and households on dynamic or time-of-use rates have no real way to track hour-by-hour prices themselves. Flexy is a B2B2C companion app that a utility (starting with ComEd in Illinois) hands to its own customers: it shows what electricity costs right now, automatically shifts EV charging into the cheapest hours, and gives honest payback numbers on solar and heat pumps before a homeowner talks to a contractor. I scoped the MVP down to what's actually buildable (EV charging is the only device Flexy automates; everything else is informational or advisory), grounded every persona and roadmap decision in real Illinois program data and real competitor behavior, and built a working phone-frame click-dummy of the full flow.
+      Flexy shows what electricity costs right now and automatically shifts EV charging into the cheapest hours.
     </div>
     <div class="tldr-grid">
       <a class="tldr-card" href="#problem"><div class="num">01</div><h3>Problem &amp; positioning</h3><p>Why Illinois, why now, and where Flexy sits against Tibber, Octopus, Ohme, Optiwatt and WeaveGrid.</p></a>
-      <a class="tldr-card" href="#research"><div class="num">02</div><h3>Research</h3><p>Six personas, JTBD statements, and synthetic interviews with a cross-persona synthesis.</p></a>
+      <a class="tldr-card" href="#research"><div class="num">02</div><h3>Research</h3><p>Four personas, JTBD statements, and synthetic interviews with a cross-persona synthesis.</p></a>
       <a class="tldr-card" href="#roadmap"><div class="num">03</div><h3>Roadmap</h3><p>ICE-prioritized Now/Next/Later, with the reasoning behind every score.</p></a>
       <a class="tldr-card" href="#prototype"><div class="num">04</div><h3>Prototype</h3><p>A full interactive click-dummy, from onboarding through the smart charging dashboard.</p></a>
     </div>
@@ -247,8 +265,14 @@
 
 <section class="alt" id="problem">
   <div class="wrap">
-    <div class="section-kicker">Problem &amp; market</div>
-    <h2 class="section-title">Why Illinois, and why now</h2>
+    <details class="section-collapse" open>
+    <summary>
+      <div class="summary-head">
+        <div class="section-kicker">Problem &amp; market</div>
+        <h2 class="section-title">Why Illinois, and why now</h2>
+      </div>
+      <span class="toggle-ic"></span>
+    </summary>
     <p class="lede">Dynamic and time-of-use electricity pricing is spreading across the US, but it only saves people money if they can act on it in real time, something almost no household actually does unaided.</p>
 
     <div class="grid-2">
@@ -263,39 +287,69 @@
       </div>
       <div class="card">
         <h3 class="subhead" style="margin-top:0;">Positioning</h3>
-        <p style="font-size:14px;">Flexy is not a utility and doesn't compete with one. It's a plug-in layer on top of a utility's existing smart-tariff program, distributed by the utility to its own customers (B2B2C), the same model Optiwatt and WeaveGrid already use in the US. ComEd/Illinois is the launch market because it's the closest US equivalent to Octopus Agile in the UK or Tibber in the Nordics: a tariff volatile enough that no household can track it by hand.</p>
+        <p style="font-size:14px;">Flexy is not a utility and doesn't compete with one. It's a white-label plug-in layer a utility can hand to its own customers (B2B2C), the same model Optiwatt and WeaveGrid already use in the US. ComEd/Illinois is the first pilot market, not the only one — it's the closest US equivalent to Octopus Agile in the UK or Tibber in the Nordics: a tariff volatile enough that no household can track it by hand, and a template for any utility running a comparable dynamic or TOU rate.</p>
       </div>
     </div>
+
+    <h3 class="subhead">TAM / SAM / SOM — sized to the pilot</h3>
+    <p style="font-size:13.5px;color:var(--ink-soft);max-width:680px;">Sized tightly to the ComEd pilot rather than a speculative national number, using ComEd's and the Illinois Commerce Commission's own filings where possible.</p>
+    <div class="tam-grid">
+      <div class="tam-card">
+        <div class="tam-label">TAM</div>
+        <div class="tam-num">3.3M</div>
+        <p>ComEd residential customers in Northern Illinois — the full addressable base if Flexy were offered to every ComEd household.<sup>1</sup></p>
+      </div>
+      <div class="tam-card">
+        <div class="tam-label">SAM</div>
+        <div class="tam-num">~38.6K+</div>
+        <p>Residential customers already on ComEd's Hourly (Real-Time) Pricing program as of 2023 — the segment already living with a dynamic tariff, before the mandatory 2026 Time-of-Use rollout expands this pool.<sup>2</sup></p>
+      </div>
+      <div class="tam-card">
+        <div class="tam-label">SOM</div>
+        <div class="tam-num">~1%</div>
+        <p>Of ComEd residential customers currently on a dynamic rate — roughly the realistic early-adopter slice for a first-year pilot cohort within that program.<sup>3</sup></p>
+      </div>
+    </div>
+    <ol class="footnotes">
+      <li>ComEd System Facts Sheet: "3.8 million customers in Northern Illinois, 3.3 million residential, 500,000 business and government." <a href="https://www.comed.com/cdn/assets/v3/assets/blt3ebb3fed6084be2a/blt75a5a762e6a99951/65438a836aec50000acf329d/SystemFactsSheet.pdf?branch=prod_alias" target="_blank" rel="noopener">Source (ComEd, PDF)</a> — primary source, independently fetched and confirmed.</li>
+      <li>"Commonwealth Edison Company's Hourly Pricing 2023 Annual Report," filed with the Illinois Commerce Commission, Docket P2015-0602, reports 38,591 Hourly Pricing participants in 2023. <a href="https://www.icc.illinois.gov/docket/P2015-0602/documents/350023/files/611973.pdf" target="_blank" rel="noopener">Source (ICC docket filing, PDF)</a> — a primary regulatory filing; figure sourced via search summary of the filing rather than independently re-extracted from the PDF text, flagged here for transparency. ICC Docket 24-0378 separately confirms ComEd is required to launch a mandatory residential Time-of-Use rate in 2026, which will substantially expand this SAM.</li>
+      <li>~1% figure per testimony referenced in ICC hourly-pricing proceedings, describing enrollment as a small fraction of the eligible residential base — used here as a conservative, sourced starting point for pilot-year adoption, not a Flexy-specific projection.</li>
+    </ol>
 
     <h3 class="subhead">Competitive landscape</h3>
     <table>
       <tr><th>Company</th><th>Model</th><th>Gap Flexy targets</th></tr>
       <tr><td><strong>Tibber</strong> (EU)</td><td>Retail energy supplier + app</td><td>Is the utility, not a plug-in; Flexy can't and doesn't try to be a supplier</td></tr>
       <tr><td><strong>Octopus / Kraken</strong> (UK)</td><td>Retail supplier, auto-scheduled EV charging</td><td>Same as above; supplier-owned, not partner-distributed</td></tr>
-      <tr><td><strong>Ohme</strong> (UK)</td><td>Hardware + app, cross-supplier</td><td>EV charging only, no price/consumption/solar/heat pump layer</td></tr>
+      <tr><td><strong>Ohme</strong> (UK)</td><td>Hardware + app, cross-supplier</td><td>EV charging only, no price/consumption layer</td></tr>
       <tr><td><strong>Jedlix</strong> (NL)</td><td>B2B2C, partners with automakers/utilities</td><td>Closest business-model match, but EV charging only</td></tr>
-      <tr><td><strong>Optiwatt</strong> (US)</td><td>Utility white-label, EV + HVAC scheduling</td><td>Closest direct US competitor; no solar/heat pump calculator</td></tr>
+      <tr><td><strong>Optiwatt</strong> (US)</td><td>Utility white-label, EV + HVAC scheduling</td><td>Closest direct US competitor; no combined price + consumption view</td></tr>
       <tr><td><strong>WeaveGrid</strong> (US)</td><td>Utility-partnered managed EV charging</td><td>Very close to Flexy's model; EV-focused only</td></tr>
       <tr><td><strong>Emporia</strong> (US)</td><td>Hardware + app, consumption + scheduling</td><td>Requires buying hardware; not utility-distributed</td></tr>
       <tr><td><strong>Span / Sense</strong> (US)</td><td>Premium smart panel hardware</td><td>Sense is pivoting to utility-licensed software, validating Flexy's model</td></tr>
     </table>
-    <p style="font-size:13.5px;color:var(--ink-soft);margin-top:10px;">No single US player currently combines live dynamic-price visibility, real-time consumption, hardware-agnostic EV charging, and a solar/heat-pump calculator in one utility-distributed layer. That combination is Flexy's bet.</p>
+    <p style="font-size:13.5px;color:var(--ink-soft);margin-top:10px;">No single US player currently combines live dynamic-price visibility, real-time consumption, and hardware-agnostic EV charging in one utility-distributed layer. That combination is Flexy's bet.</p>
 
     <h3 class="subhead">The household journey</h3>
     <div class="journey">
       <div class="journey-step"><h4>1. Understand what you're paying</h4><p>Price &amp; Cost view: yesterday / today / tomorrow / monthly / annual</p></div>
       <div class="journey-step"><h4>2. Understand your usage</h4><p>Real-time consumption view (informational only in the MVP)</p></div>
       <div class="journey-step"><h4>3. Optimize day-to-day</h4><p>Smart EV charging against the live ComEd tariff</p></div>
-      <div class="journey-step"><h4>4. Decide on a big investment</h4><p>Solar savings calculator, grounded in Illinois Shines/SREC economics</p></div>
-      <div class="journey-step"><h4>5. Decide on a big investment, part 2</h4><p>Heat pump savings calculator, with HEAR rebate eligibility</p></div>
     </div>
+    </details>
   </div>
 </section>
 
 <section id="research">
   <div class="wrap">
-    <div class="section-kicker">Research</div>
-    <h2 class="section-title">Six personas, one honest MVP scope</h2>
+    <details class="section-collapse" open>
+    <summary>
+      <div class="summary-head">
+        <div class="section-kicker">Research</div>
+        <h2 class="section-title">Four personas, one honest MVP scope</h2>
+      </div>
+      <span class="toggle-ic"></span>
+    </summary>
     <p class="lede">Every persona is grounded in real ComEd/Illinois program details. Each one maps to a Jobs-to-be-Done statement and a specific Flexy feature, and each is deliberately scoped to what Flexy can actually promise: EV charging is the only device Flexy automates; everything else is informational or advisory.</p>
 
     <div class="persona-grid">
@@ -327,24 +381,6 @@
         <p>Smart EV charging (Max Savings) + informational consumption view</p>
       </div>
       <div class="persona">
-        <div class="name">Carla Jimenez</div>
-        <div class="role">47, Aurora IL · The SREC Skeptic</div>
-        <blockquote>"Solar salespeople keep throwing numbers at me. I want the real math for my house."</blockquote>
-        <div class="label">JTBD</div>
-        <p>An honest, personalized solar payback estimate, independent of any installer's pitch.</p>
-        <div class="label">Flexy feature</div>
-        <p>Solar savings calculator (Next horizon)</p>
-      </div>
-      <div class="persona">
-        <div class="name">Bob Thornton</div>
-        <div class="role">63, Rockford IL · The HEAR Rebate Chaser</div>
-        <blockquote>"I heard there's free money for a heat pump, but I can't figure out if it applies to me."</blockquote>
-        <div class="label">JTBD</div>
-        <p>A straight answer on HEAR rebate eligibility in his county, before committing to a purchase.</p>
-        <div class="label">Flexy feature</div>
-        <p>Heat pump savings calculator with eligibility flag (Next horizon)</p>
-      </div>
-      <div class="persona">
         <div class="name">Jenna Alvarez &amp; Sam Kim</div>
         <div class="role">39 &amp; 41, Schaumburg IL · The Multi-EV Household</div>
         <blockquote>"Coordinating two cars' charging schedules around one price feed is like a logistics puzzle we didn't sign up for."</blockquote>
@@ -356,21 +392,27 @@
     </div>
 
     <h3 class="subhead">What synthetic interviews surfaced</h3>
-    <p style="font-size:14px;color:var(--ink-soft);max-width:680px;">All six personas were interviewed with the same 7-question guide (AI-generated, in-character, grounded strictly in each persona's brief and real ComEd/Illinois data, explicitly flagged as synthetic, not real user data). Four cross-cutting themes emerged and directly shaped the roadmap:</p>
+    <p style="font-size:14px;color:var(--ink-soft);max-width:680px;">All four personas were interviewed with the same 7-question guide (AI-generated, in-character, grounded strictly in each persona's brief and real ComEd/Illinois data, explicitly flagged as synthetic, not real user data). Three cross-cutting themes emerged and directly shaped the roadmap:</p>
     <div class="theme-list">
       <div class="theme"><div class="n">01</div><h4>Transparency is required, even when automation is welcomed</h4><p>Every persona who liked EV automation still wanted visibility into why a decision was made, not a black box.</p></div>
       <div class="theme"><div class="n">02</div><h4>Readiness beats savings as the default</h4><p>The trust-killer isn't a missed discount, it's the car not being ready. Readiness had to outrank maximum savings by default.</p></div>
-      <div class="theme"><div class="n">03</div><h4>Willingness to pay splits along B2B2C lines</h4><p>Highest-pain and highest-stakes personas would pay directly; others only if ComEd bundles it for free. This validated the B2B2C model.</p></div>
-      <div class="theme"><div class="n">04</div><h4>Trust bar rises with financial stakes</h4><p>Daily automation (EV charging) earns trust by "just working." Five-figure decisions (solar, heat pump) require showing assumptions and independence from any contractor.</p></div>
+      <div class="theme"><div class="n">03</div><h4>Willingness to pay splits along B2B2C lines</h4><p>Highest-pain personas would pay directly; others only if ComEd bundles it for free. This validated the B2B2C model.</p></div>
     </div>
+    </details>
   </div>
 </section>
 
 <section class="alt" id="roadmap">
   <div class="wrap">
-    <div class="section-kicker">Prioritization</div>
-    <h2 class="section-title">ICE-prioritized roadmap</h2>
-    <p class="lede">Scored on Impact, Confidence, and Ease rather than RICE, since Reach isn't meaningfully estimable pre-launch with no real user base. Every score is tied back to a specific persona, JTBD, or interview theme, not a gut call. The roadmap is dependency-aware, not just sorted by score: the two solar/heat-pump calculators score respectably but sit in Next because they depend on infrastructure Now builds first.</p>
+    <details class="section-collapse" open>
+    <summary>
+      <div class="summary-head">
+        <div class="section-kicker">Prioritization</div>
+        <h2 class="section-title">ICE-prioritized roadmap</h2>
+      </div>
+      <span class="toggle-ic"></span>
+    </summary>
+    <p class="lede">Scored on Impact, Confidence, and Ease rather than RICE, since Reach isn't meaningfully estimable pre-launch with no real user base. Every score is tied back to a specific persona, JTBD, or interview theme, not a gut call. The roadmap is dependency-aware, not just sorted by score.</p>
 
     <div class="roadmap-cols">
       <div class="roadmap-col">
@@ -382,9 +424,6 @@
         <h4><span class="horizon-tag tag-next">NEXT</span> Post-validation</h4>
         <div class="roadmap-item"><div class="feat">"Here's what we did and why" transparency digest</div><div class="ice">ICE 7.0 · trust-requires-transparency theme</div></div>
         <div class="roadmap-item"><div class="feat">Monthly EV charging budget cap</div><div class="ice">ICE 6.3 · borrowed from real Home Assistant/Tibber project</div></div>
-        <div class="roadmap-item"><div class="feat">Solar savings calculator</div><div class="ice">ICE 6.3 · Carla's JTBD</div></div>
-        <div class="roadmap-item"><div class="feat">Heat pump savings calculator + eligibility flag</div><div class="ice">ICE 5.7 · Bob's JTBD</div></div>
-        <div class="roadmap-item"><div class="feat">Solar-aware EV charging</div><div class="ice">ICE 5.0 · pairs with the solar calculator</div></div>
       </div>
       <div class="roadmap-col">
         <h4><span class="horizon-tag tag-later">LATER</span> Vision</h4>
@@ -392,12 +431,13 @@
         <div class="roadmap-item"><div class="feat">Charging efficiency/loss tracking</div><div class="ice">Trust-building, not essential for MVP</div></div>
         <div class="roadmap-item"><div class="feat">Multi-EV voltage/capacity protection</div><div class="ice">Real constraint, deferred past MVP</div></div>
         <div class="roadmap-item"><div class="feat">General appliance automation</div><div class="ice">Requires per-appliance integrations, explicitly descoped</div></div>
-        <div class="roadmap-item"><div class="feat">Multi-utility / pan-European expansion</div><div class="ice">Client-acquisition motion once ComEd is proven</div></div>
+        <div class="roadmap-item"><div class="feat">Multi-utility / multi-market expansion</div><div class="ice">Client-acquisition motion once ComEd is proven</div></div>
       </div>
     </div>
 
     <h3 class="subhead">A product decision worth showing</h3>
     <p style="font-size:14px;color:var(--ink-soft);">The two EV charging modes originally differed by whether a deadline existed at all. That was wrong: every persona interview showed a household always knows when it needs the car. I corrected both modes to require a ready-by time, and redefined the real difference as depth of configuration, full manual control (Custom settings) versus minimal input with sensible defaults (Max savings), validated directly against Marcus and Jenna &amp; Sam (who wanted control) versus Devon (who explicitly wanted the opposite).</p>
+    </details>
   </div>
 </section>
 
@@ -411,36 +451,38 @@
     </div>
     <div class="proto-actions">
       <a class="btn btn-primary" href="flexy-click-dummy.html" target="_blank">Open prototype full-screen</a>
-      <a class="btn btn-ghost" href="#reflection">Read the design decisions</a>
     </div>
   </div>
 </section>
 
-<section class="alt" id="reflection">
+
+<section id="limitations">
   <div class="wrap">
-    <div class="section-kicker">Reflection</div>
-    <h2 class="section-title">What this project demonstrates</h2>
-    <div class="grid-2">
-      <div class="card">
-        <h3 class="subhead" style="margin-top:0;">Product judgment</h3>
-        <ul class="plain">
-          <li>Scoped an MVP down to what's technically honest (EV charging only) instead of overpromising full home automation.</li>
-          <li>Caught and fixed a real prioritization flaw (Max Savings mode having no deadline) using interview evidence.</li>
-          <li>Chose ICE over RICE deliberately, and explained why, rather than defaulting to a familiar framework.</li>
-          <li>Grounded a fictional product in real, current program data (ComEd RTP/TOU filings, Illinois Shines, HEAR) instead of invented numbers.</li>
-        </ul>
+    <div class="section-kicker">Limitations</div>
+    <h2 class="section-title">What this prototype is, and isn't</h2>
+    <p class="lede">Industry commentary on AI-assisted prototypes in 2025-2026 converges on one point: a polished demo and a shippable product are different things, and it's easy to mistake one for the other. A few of the gaps commonly named by product practitioners, applied honestly to Flexy:</p>
+    <div class="limitation-grid">
+      <div class="limitation-card">
+        <h4>A working demo isn't 10% of the way to done</h4>
+        <p>Stakeholders often see a polished AI-built demo and assume it's nearly finished, when the actual engineering (backend, auth, data persistence, real integrations) hasn't started. Flexy's click-dummy is exactly this: a fully coded phone-frame flow with no real backend, no ComEd account connection, and no live Smartcar/EV API behind it — all data is hardcoded or simulated.</p>
+        <span class="src">Source: <a href="https://usekyros.ai/blog/from-prototype-to-production-ai-apps-never-ship" target="_blank" rel="noopener">Kyros, "From Prototype to Production"</a></span>
       </div>
-      <div class="card">
-        <h3 class="subhead" style="margin-top:0;">Working with AI as a collaborator</h3>
-        <ul class="plain">
-          <li>Used AI for research synthesis, synthetic interviews, and rapid prototyping, while directing every scoping and prioritization call myself.</li>
-          <li>Iteratively critiqued and corrected AI output: reworked the energy-flow diagram topology, fixed stale UI copy, and rescoped screens after walking through the flow myself.</li>
-          <li>Kept synthetic research honestly labeled throughout rather than presenting it as real user data.</li>
-        </ul>
+      <div class="limitation-card">
+        <h4>Automated design still needs real users</h4>
+        <p>AI-generated screens can miss subtle hierarchy, spacing, and comprehension issues that only surface with real usability testing. Flexy's personas and interviews are synthetic and internally consistent, but they were never tested against an actual human clicking through the flow — a real usability round would likely surface friction this process can't.</p>
+        <span class="src">Source: <a href="https://www.parallelhq.com/blog/ai-powered-prototyping-tools" target="_blank" rel="noopener">Parallel, "AI-Powered Prototyping for UI/UX Design"</a></span>
+      </div>
+      <div class="limitation-card">
+        <h4>Happy-path only, no edge cases</h4>
+        <p>AI-built prototypes handle the intended flow well but typically skip error states, failed API calls, and concurrent-use conditions. Flexy's click-dummy shows the ideal path (EV connects cleanly, prices load, charging schedules as expected) with no built-out states for a failed ComEd login, a stale price feed, or a car that drops connection mid-session.</p>
+        <span class="src">Source: <a href="https://codeconductor.ai/blog/vibe-coding-for-product-managers/" target="_blank" rel="noopener">CodeConductor, "Vibe Coding for PMs"</a></span>
+      </div>
+      <div class="limitation-card">
+        <h4>Prototype code isn't production code</h4>
+        <p>AI-generated prototypes are typically built isolated from any real codebase and would need to be re-implemented by an engineering team to actually ship — the prototype validates the idea, not the architecture. Flexy's click-dummy is static HTML/CSS/JS built to demonstrate the flow; it has no data layer, no security review, and no compliance pass (relevant here, since a real version would handle utility account data and OAuth tokens to EV manufacturer APIs).</p>
+        <span class="src">Source: <a href="https://monday.com/blog/vibe-coding/vibe-coding-product-managers/" target="_blank" rel="noopener">monday.com, "Vibe coding for product managers"</a></span>
       </div>
     </div>
-    <h3 class="subhead">Open next step</h3>
-    <p style="font-size:14px;color:var(--ink-soft);">The Analytics/Price &amp; Cost screen is mid-rescope: it currently overlaps with the new Home screen and needs its own pass before the prototype is fully polished, a known, named gap rather than a hidden one.</p>
   </div>
 </section>
 

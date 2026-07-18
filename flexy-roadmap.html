@@ -142,35 +142,11 @@
 <td>6</td>
 <td>7.0</td>
 </tr>
-<tr>
-<td>Solar savings calculator</td>
-<td>Carla's JTBD</td>
-<td>8</td>
-<td>6</td>
-<td>5</td>
-<td>6.3</td>
-</tr>
-<tr>
-<td>Heat pump savings calculator, with eligibility flag</td>
-<td>Bob's JTBD</td>
-<td>8</td>
-<td>5</td>
-<td>4</td>
-<td>5.7</td>
-</tr>
-<tr>
-<td>Solar-aware EV charging (charge from solar first, grid as top-up)</td>
-<td>Borrowed from Ohme's Solar Boost and Solar Only modes; natural pairing with our own solar savings calculator</td>
-<td>6</td>
-<td>5</td>
-<td>4</td>
-<td>5.0</td>
-</tr>
 </tbody>
 </table>
 <p>The budget cap lets a user set a monthly dollar ceiling for EV charging specifically, tracked separately from the rest of the household's electricity cost, and pauses charging if the cap is hit. This is a real feature from the Home Assistant project worth borrowing, but it's Next rather than Now because it depends on the core charging engine already running reliably, and because it adds a second constraint (budget) on top of the two modes above that's easier to reason about once those are proven.</p>
-<p>Solar-aware charging is Next rather than Now for a data reason, not a demand reason: it needs a live solar production feed, which assumes the household already has solar installed and connected, a data source Flexy's MVP doesn't have. It's a genuinely nice pairing with the solar savings calculator above (a household deciding whether to install solar can later see it actually working with their EV charging), which is why it's grouped here rather than in Later.</p>
-<p>The transparency digest and the two calculators are unchanged in rationale from the prior version of this roadmap: high confidence but lower ease, since the calculators depend on carrying accurate, current program data (SREC pricing, HEAR county-by-county rollout status) that changes over time rather than a one-time build.</p>
+<p>The transparency digest is unchanged in rationale from the prior version of this roadmap: high confidence but lower ease, since it depends on carrying accurate savings data over time rather than a one-time build.</p>
+<p>Solar and heat-pump savings calculators, and a solar-aware charging mode paired with them, were cut from this roadmap along with the two personas built around them (see flexy-personas.md and flexy-product-brief.md) — outside a realistic MVP-plus-Next scope for a portfolio piece centered on price visibility and EV charging.</p>
 <hr />
 <h2>LATER (roadmap-level vision, not built in this portfolio)</h2>
 <table>
@@ -207,7 +183,7 @@
 </tr>
 <tr>
 <td>Household benchmarking and social proof features</td>
-<td>Appears in comparable products (Tibber, Emporia) but wasn't requested by any of our six personas, so it's deprioritized.</td>
+<td>Appears in comparable products (Tibber, Emporia) but wasn't requested by any of our four personas, so it's deprioritized.</td>
 </tr>
 </tbody>
 </table>
@@ -221,7 +197,7 @@
 <h2>What this roadmap deliberately does not do</h2>
 <p>It doesn't rank purely by highest ICE score. The calculator features score respectably but are sequenced into Next specifically because they depend on infrastructure (accurate usage data, a working EV charging engine) that Now builds first. This is a dependency-aware roadmap, not a sorted list, which is closer to how a real roadmap gets built and defended to stakeholders.</p>
 <h2>Status</h2>
-<p>Draft v4. Price and consumption merged into one redesigned Price and Cost view with a Time-of-Use comparison toggle. Smart EV charging expanded into two explicit modes, custom settings and max savings, both now requiring a ready-by time; the differentiator between them is depth of configuration, not presence of a deadline. Custom settings mode fully specified: ready-by time, target charge level, minimum floor, one-tap override, per-vehicle settings, weekend-specific scheduling, charging speed limit (amperage cap), home-only automation, and a one-time achievable-at-setup check rather than an ongoing at-risk notification. Max savings simplified to a single ready-by input with sensible defaults for everything else. Solar-aware EV charging added to Next, paired with the solar savings calculator, deferred because it needs a live solar production feed the MVP doesn't have. Monthly budget cap remains in Next. Negative-price handling, efficiency tracking, and multi-EV voltage protection remain in Later as named, deliberate deferrals. Click dummy (Weeks 4 to 5) updated to match all of the above.</p>
+<p>Draft v5. Price and consumption merged into one redesigned Price and Cost view with a Time-of-Use comparison toggle. Smart EV charging expanded into two explicit modes, custom settings and max savings, both now requiring a ready-by time; the differentiator between them is depth of configuration, not presence of a deadline. Custom settings mode fully specified: ready-by time, target charge level, minimum floor, one-tap override, per-vehicle settings, weekend-specific scheduling, charging speed limit (amperage cap), home-only automation, and a one-time achievable-at-setup check rather than an ongoing at-risk notification. Max savings simplified to a single ready-by input with sensible defaults for everything else. Solar and heat-pump savings calculators and solar-aware charging removed from Next along with the two personas built around them; Next is now the budget cap and the transparency digest. Negative-price handling, efficiency tracking, and multi-EV voltage protection remain in Later as named, deliberate deferrals. Click dummy (Weeks 4 to 5) updated to match all of the above.</p>
 <div class="doc-footer">Part of the Flexy case study documentation set. For the short version, see the <a href="flexy-case-study.html">case study page</a>.</div>
 </article>
 <footer>

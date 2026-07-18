@@ -56,15 +56,12 @@ Both modes combine today's and tomorrow's ComEd price data once tomorrow's price
 |---|---|---|---|---|---|
 | Monthly EV charging budget cap | Inspired directly by the go-eCharger project's budget feature; general cost-conscious households | 7 | 6 | 6 | 6.3 |
 | "Here's what we did and why" transparency and savings digest | Cross-persona interview theme: automation is only trusted alongside visibility | 8 | 7 | 6 | 7.0 |
-| Solar savings calculator | Carla's JTBD | 8 | 6 | 5 | 6.3 |
-| Heat pump savings calculator, with eligibility flag | Bob's JTBD | 8 | 5 | 4 | 5.7 |
-| Solar-aware EV charging (charge from solar first, grid as top-up) | Borrowed from Ohme's Solar Boost and Solar Only modes; natural pairing with our own solar savings calculator | 6 | 5 | 4 | 5.0 |
 
 The budget cap lets a user set a monthly dollar ceiling for EV charging specifically, tracked separately from the rest of the household's electricity cost, and pauses charging if the cap is hit. This is a real feature from the Home Assistant project worth borrowing, but it's Next rather than Now because it depends on the core charging engine already running reliably, and because it adds a second constraint (budget) on top of the two modes above that's easier to reason about once those are proven.
 
-Solar-aware charging is Next rather than Now for a data reason, not a demand reason: it needs a live solar production feed, which assumes the household already has solar installed and connected, a data source Flexy's MVP doesn't have. It's a genuinely nice pairing with the solar savings calculator above (a household deciding whether to install solar can later see it actually working with their EV charging), which is why it's grouped here rather than in Later.
+The transparency digest is unchanged in rationale from the prior version of this roadmap: high confidence but lower ease, since it depends on carrying accurate savings data over time rather than a one-time build.
 
-The transparency digest and the two calculators are unchanged in rationale from the prior version of this roadmap: high confidence but lower ease, since the calculators depend on carrying accurate, current program data (SREC pricing, HEAR county-by-county rollout status) that changes over time rather than a one-time build.
+Solar and heat-pump savings calculators, and a solar-aware charging mode paired with them, were cut from this roadmap along with the two personas built around them (see flexy-personas.md and flexy-product-brief.md) — outside a realistic MVP-plus-Next scope for a portfolio piece centered on price visibility and EV charging.
 
 ---
 
@@ -78,7 +75,7 @@ The transparency digest and the two calculators are unchanged in rationale from 
 | General appliance and device automation (smart plugs, thermostats) | Explicitly descoped from MVP. Requires per-appliance API or hardware integrations Flexy can't promise yet. |
 | Multi-utility and multi-state expansion | Natural next client-acquisition motion once the ComEd relationship is proven. |
 | Pan-European expansion (UK, Netherlands, and so on) | The original multi-market vision, sequenced as future scope once the US model is validated. |
-| Household benchmarking and social proof features | Appears in comparable products (Tibber, Emporia) but wasn't requested by any of our six personas, so it's deprioritized. |
+| Household benchmarking and social proof features | Appears in comparable products (Tibber, Emporia) but wasn't requested by any of our four personas, so it's deprioritized. |
 
 ---
 
@@ -93,4 +90,4 @@ The transparency digest and the two calculators are unchanged in rationale from 
 It doesn't rank purely by highest ICE score. The calculator features score respectably but are sequenced into Next specifically because they depend on infrastructure (accurate usage data, a working EV charging engine) that Now builds first. This is a dependency-aware roadmap, not a sorted list, which is closer to how a real roadmap gets built and defended to stakeholders.
 
 ## Status
-Draft v4. Price and consumption merged into one redesigned Price and Cost view with a Time-of-Use comparison toggle. Smart EV charging expanded into two explicit modes, custom settings and max savings, both now requiring a ready-by time; the differentiator between them is depth of configuration, not presence of a deadline. Custom settings mode fully specified: ready-by time, target charge level, minimum floor, one-tap override, per-vehicle settings, weekend-specific scheduling, charging speed limit (amperage cap), home-only automation, and a one-time achievable-at-setup check rather than an ongoing at-risk notification. Max savings simplified to a single ready-by input with sensible defaults for everything else. Solar-aware EV charging added to Next, paired with the solar savings calculator, deferred because it needs a live solar production feed the MVP doesn't have. Monthly budget cap remains in Next. Negative-price handling, efficiency tracking, and multi-EV voltage protection remain in Later as named, deliberate deferrals. Click dummy (Weeks 4 to 5) updated to match all of the above.
+Draft v5. Price and consumption merged into one redesigned Price and Cost view with a Time-of-Use comparison toggle. Smart EV charging expanded into two explicit modes, custom settings and max savings, both now requiring a ready-by time; the differentiator between them is depth of configuration, not presence of a deadline. Custom settings mode fully specified: ready-by time, target charge level, minimum floor, one-tap override, per-vehicle settings, weekend-specific scheduling, charging speed limit (amperage cap), home-only automation, and a one-time achievable-at-setup check rather than an ongoing at-risk notification. Max savings simplified to a single ready-by input with sensible defaults for everything else. Solar and heat-pump savings calculators and solar-aware charging removed from Next along with the two personas built around them; Next is now the budget cap and the transparency digest. Negative-price handling, efficiency tracking, and multi-EV voltage protection remain in Later as named, deliberate deferrals. Click dummy (Weeks 4 to 5) updated to match all of the above.

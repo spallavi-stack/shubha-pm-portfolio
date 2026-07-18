@@ -49,8 +49,8 @@
   </div>
 </nav>
 <article class="wrap">
-<h1>Flexy — Personas (v2, frozen)</h1>
-<p>Grounded in real ComEd/Illinois specifics: ComEd's Residential Real-Time Pricing (hourly wholesale-tracking rate, live today), ComEd's TOU rate rollout finalizing for 2026 (steep afternoon/evening delivery charge, cheap overnight, +$2/month per EV up to 2 EVs for 2 years), Illinois Shines / Adjustable Block Program (upfront lump-sum SREC payment, ~25-40% of system cost even with no federal credit), and the Illinois EPA HEAR heat pump rebate (up to $8,000, income-qualified under 80% AMI, rolling out in phases by county — not yet universally live).</p>
+<h1>Flexy — Personas (v4, frozen)</h1>
+<p>Grounded in real ComEd/Illinois specifics: ComEd's Residential Real-Time Pricing (hourly wholesale-tracking rate, live today) and ComEd's TOU rate rollout finalizing for 2026 (steep afternoon/evening delivery charge, cheap overnight, +$2/month per EV up to 2 EVs for 2 years).</p>
 <p>Template per persona: identity, quote, goal, pain point, current behavior/workaround, desired solution (in their own words), tech-savviness, JTBD statement, Flexy feature, grounding fact.</p>
 <hr />
 <h2>1. Marcus Webb — The Accidental Peak Charger</h2>
@@ -95,35 +95,7 @@
 <strong>Flexy feature:</strong> Real-time consumption view (informational) + smart EV charging (the one device Flexy actually automates in the MVP).
 <strong>Grounding fact:</strong> ComEd's own program guide relies on customers manually watching price alerts and responding in real time — exactly the burden Flexy's EV automation removes, even though it can't yet extend that to other appliances.</p>
 <hr />
-<h2>4. Carla Jimenez — The SREC Skeptic</h2>
-<p><strong>Age/gender:</strong> 47, female · <strong>Location:</strong> Aurora, IL · <strong>Occupation:</strong> Small business owner (bakery) · <strong>Household:</strong> Homeowner, married · <strong>Income:</strong> ~$130k</p>
-<blockquote>
-<p>"Solar salespeople keep throwing numbers at me. I want the real math for my house."</p>
-</blockquote>
-<p><strong>Goal:</strong> Get an honest, personalized payback estimate for rooftop solar now that the federal credit is gone.
-<strong>Pain point:</strong> Three solar company quotes, three different sets of assumptions — she can't tell what's real and what's a sales pitch.
-<strong>Current behavior:</strong> Collected quotes eight months ago; hasn't signed anything since, stuck in analysis paralysis.
-<strong>Desired solution (her words):</strong> "I want to just put in my actual electric bills and get a straight answer — payback period, real annual savings — without a sales pitch attached."
-<strong>Tech-savviness:</strong> Moderate — comfortable uploading bills or photos to an app.
-<strong>JTBD:</strong> When I'm evaluating a rooftop solar quote, I want to see a real projected payback using my actual usage and Illinois Shines incentives, so I can decide without relying on a salesperson's numbers.
-<strong>Flexy feature:</strong> Solar savings calculator, using her actual usage plus real Illinois Shines SREC economics.
-<strong>Grounding fact:</strong> Illinois Shines pays 25-40% of system cost upfront via SRECs (e.g. ~$11-12k on a typical 8.5kW system at current ~$78/credit pricing) — even with no federal credit.</p>
-<hr />
-<h2>5. Bob Thornton — The HEAR Rebate Chaser</h2>
-<p><strong>Age/gender:</strong> 63, male · <strong>Location:</strong> Rockford, IL · <strong>Occupation:</strong> Retired factory worker · <strong>Household:</strong> Homeowner, lives with spouse · <strong>Income:</strong> ~$48k (fixed)</p>
-<blockquote>
-<p>"I heard there's free money for a heat pump, but I can't figure out if it applies to me."</p>
-</blockquote>
-<p><strong>Goal:</strong> Find out definitively whether he qualifies for HEAR funding before committing to a purchase.
-<strong>Pain point:</strong> The rebate rolls out by county and by measure type; two contractors gave him conflicting answers about whether it's available where he lives.
-<strong>Current behavior:</strong> Called two local HVAC contractors, got contradictory information, and stalled on the decision entirely.
-<strong>Desired solution (his words):</strong> "Just tell me straight — am I eligible, is it available in my county right now, and how much would I actually get?"
-<strong>Tech-savviness:</strong> Low — prefers phone calls, but will use a simple app if someone walks him through it once.
-<strong>JTBD:</strong> When I'm considering a heat pump, I want to know clearly whether I qualify for HEAR funding in my county right now, so I can decide with confidence instead of guessing.
-<strong>Flexy feature:</strong> Heat pump savings calculator, flagging eligibility and county rollout status alongside the savings number.
-<strong>Grounding fact:</strong> Illinois EPA's HEAR program is phased by county/measure type and currently prioritized for households under 80% AMI — not yet universally available statewide as of mid-2026.</p>
-<hr />
-<h2>6. Jenna Alvarez &amp; Sam Kim — The Multi-EV Household</h2>
+<h2>4. Jenna Alvarez &amp; Sam Kim — The Multi-EV Household</h2>
 <p><strong>Age/gender:</strong> Jenna, 39, female; Sam, 41, male · <strong>Location:</strong> Schaumburg, IL · <strong>Occupation:</strong> Both work in tech (hybrid) · <strong>Household:</strong> Homeowners, two kids, two EVs · <strong>Income:</strong> ~$180k (combined)</p>
 <blockquote>
 <p>"Coordinating two cars' charging schedules around one price feed is like a logistics puzzle we didn't sign up for." — Jenna</p>
@@ -141,12 +113,10 @@
 <ul>
 <li>Price graph: Persona 2 (Priya)</li>
 <li>Real-time consumption: Persona 3 (Devon)</li>
-<li>Smart EV charging: Personas 1 (Marcus), 6 (Jenna &amp; Sam)</li>
-<li>Solar savings calculator: Persona 4 (Carla)</li>
-<li>Heat pump savings calculator: Persona 5 (Bob)</li>
+<li>Smart EV charging: Personas 1 (Marcus), 4 (Jenna &amp; Sam)</li>
 </ul>
 <h2>Status</h2>
-<p><strong>Frozen v3</strong> — 6 personas in full brief format. Devon's persona (v3) corrected to match actual MVP feasibility: Flexy automates EV charging only in the MVP (device-level control of dishwashers/thermostats/etc. would require per-appliance smart-plug/API integrations well beyond MVP scope); real-time consumption remains informational. Next: synthetic interviews (Week 2), one per persona.</p>
+<p><strong>Frozen v4</strong> — 4 personas, all tied directly to the EV-charging and price-visibility MVP. Two earlier personas (a solar-focused and a heat-pump-focused persona) were cut when the solar and heat pump savings calculators were dropped from scope, since a fictional persona built to justify a feature that no longer exists doesn't belong in the set. Devon's persona corrected to match actual MVP feasibility: Flexy automates EV charging only (device-level control of dishwashers/thermostats/etc. would require per-appliance smart-plug/API integrations well beyond MVP scope); real-time consumption remains informational.</p>
 <div class="doc-footer">Part of the Flexy case study documentation set. For the short version, see the <a href="flexy-case-study.html">case study page</a>.</div>
 </article>
 <footer>

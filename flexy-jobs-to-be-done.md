@@ -29,25 +29,7 @@ Consolidates the JTBD statement from each persona (see Personas doc) into one re
 - **Outcome they actually want:** Awareness without the work. Automation where it's possible (EV charging), visibility where it isn't yet (everything else).
 - **Feature:** Smart EV charging, Max Savings mode, plus the Price & Cost view's real-time consumption display.
 
-## 4. Carla Jimenez (SREC Skeptic)
-
-**JTBD:** When I'm evaluating a rooftop solar quote, I want to see a real projected payback using my actual usage and Illinois Shines incentives, so I can decide without relying on a salesperson's numbers.
-
-- **Situation:** Three solar quotes with three different assumptions, no way to tell which is realistic.
-- **Motivation:** Wants a number she can trust that isn't coming from someone trying to sell her something.
-- **Outcome she actually wants:** A payback period and annual savings figure calculated from her own bills instead of a salesperson's model.
-- **Feature:** Solar savings calculator (roadmap: Next), using her real usage plus Illinois Shines SREC economics.
-
-## 5. Bob Thornton (HEAR Rebate Chaser)
-
-**JTBD:** When I'm considering a heat pump, I want to know clearly whether I qualify for HEAR funding in my county right now, so I can decide with confidence instead of guessing.
-
-- **Situation:** Two contractors gave him conflicting answers about HEAR eligibility in his county.
-- **Motivation:** Doesn't want to commit to a purchase based on unreliable information.
-- **Outcome he actually wants:** A direct eligibility answer, tied to his specific county and the program's current rollout status.
-- **Feature:** Heat pump savings calculator (roadmap: Next), flagging eligibility and county rollout status alongside the savings estimate.
-
-## 6. Jenna Alvarez & Sam Kim (Multi-EV Household)
+## 4. Jenna Alvarez & Sam Kim (Multi-EV Household)
 
 **JTBD:** When we have two EVs needing charge on the same night, we want the app to sequence and optimize both against live pricing and our schedules, so we minimize total cost without manual coordination.
 
@@ -63,8 +45,6 @@ Consolidates the JTBD statement from each persona (see Personas doc) into one re
 | Price & Cost view | Priya (rate comparison), Devon (consumption visibility) |
 | Smart EV charging — Max Savings | Marcus, Devon |
 | Smart EV charging — Custom Settings | Jenna & Sam |
-| Solar savings calculator | Carla |
-| Heat pump savings calculator | Bob |
 
 ## What this doesn't cover
 
@@ -72,4 +52,4 @@ This doc maps jobs to features at the MVP-scope level. It doesn't restate the ac
 
 ## Status
 
-Frozen. Grounded in the six personas in flexy-personas.md and the MVP/Next feature split in flexy-roadmap.md.
+Frozen. Grounded in the four personas in flexy-personas.md and the MVP/Next feature split in flexy-roadmap.md. Carla (SREC Skeptic) and Bob (HEAR Rebate Chaser) and their solar/heat-pump JTBDs were cut along with the calculator features they justified.
