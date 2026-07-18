@@ -15,4 +15,4 @@ Every case study runs on an invented company and product. The market research be
 
 ## Live site
 
-Published via GitHub Pages once enabled in repo settings.
+https://spallavi-stack.github.io/shubha-pm-portfolio/
