@@ -7,7 +7,7 @@ Fictional B2B2C product case studies built to demonstrate product management pro
 - `index.html` - portfolio hub
 - `flexy-case-study.html` - Flexy, a plug-in for ComEd customers combining live dynamic-pricing visibility with automated EV charging
 - `flexy-click-dummy.html` - interactive prototype, wired to real ComEd Hourly Pricing data where possible
-- `flexy-*.md` / `flexy-*.html` - supporting documentation (product brief, personas, interviews, jobs to be done, roadmap, user stories, technical feasibility, price integration guide, AI collaboration review)
+- `flexy-*.md` / `flexy-*.html` - supporting documentation (product brief, personas, interviews, jobs to be done, roadmap, user stories, technical feasibility, price integration guide, account connection guide, AI collaboration review)
 - `groundtruth-product-brief.md` / `.html` - Groundtruth, an early-stage solar development feasibility/ROI tool, grounded in real NREL and industry sourcing
 - `build_docs.py` / `build_groundtruth_docs.py` - scripts that render the markdown docs into styled HTML pages
 
