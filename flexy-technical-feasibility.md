@@ -24,12 +24,6 @@ What each core feature actually needs to be built for real, which real APIs and 
 
 **Real constraint worth naming:** the achievable-at-setup check (does the target charge level fit in the time available) is pure math once state of charge and charging speed are known, genuinely low technical risk. The harder problem is state of charge reliability itself: some vehicles report it with a delay, or don't report it at all while off and unplugged from a network connection.
 
-## Solar / heat pump savings calculator (roadmap: Next)
-
-**Data source:** Illinois Shines / Adjustable Block Program publishes SREC pricing; Illinois EPA publishes HEAR rebate rollout status by county. Neither is a live API in the way ComEd's pricing feed is; both are published program data that changes periodically and would need to be tracked and updated rather than fetched fresh per request.
-
-**Feasibility:** Medium. The math (payback period, annual savings) is straightforward once inputs are current. The real ongoing cost is upkeep, someone has to keep SREC pricing and HEAR county rollout status current, since both are exactly the kind of number that goes stale silently if untracked.
-
 ## Cross-cutting risk: staleness and failure handling
 
 Every external data source above can fail or go stale in a way that's invisible unless it's designed for explicitly: ComEd's feed can have an outage, Smartcar's state-of-charge report can lag, program data (SREC, HEAR) can be out of date. Flexy's UI needs to distinguish live data from fallback data visibly across all three cases; the price feed is currently the only one with that pattern built into the prototype. See the Price Integration Guide for how that's implemented for pricing specifically.
