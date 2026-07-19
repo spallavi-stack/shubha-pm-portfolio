@@ -61,6 +61,7 @@
 <h2>Smart EV charging</h2>
 <p><strong>Data source:</strong> Smartcar, a real third-party API that exposes battery state of charge, charging status, and remote start/stop across many EV brands (GM, Ford, Tesla, Hyundai/Kia, and others) through one integration, rather than building a separate integration per automaker.</p>
 <p><strong>Feasibility:</strong> Medium-high. Smartcar is a real, commercially available product other companies (including Optiwatt, per its own public integration docs) already build on. The genuine constraint: Smartcar's remote charging control depends on what each automaker's own API exposes, and coverage and reliability vary by brand. A cross-brand promise is realistic; a promise that works identically across every brand is not.</p>
+<p><strong>Tested live, not just described:</strong> registered a real Smartcar application, connected a simulated Tesla through the actual Connect consent flow, and pulled real API responses (application access token, connection list, vehicle detail) back from Smartcar's live v3 API Authentication endpoints. One real implementation detail worth flagging for a future team: this app is provisioned on Smartcar's newer v3 model, application-level access token via OAuth2 Client Credentials, plus a per-user <code>sc-user-id</code> header, not the older per-vehicle authorization-code exchange most third-party guides (including Optiwatt's) still document. The two aren't interchangeable; picking the wrong one costs real debugging time, as it did here.</p>
 <p><strong>"Hardware-agnostic" is two claims, not one:</strong></p>
 <ul>
 <li><strong>EV-brand agnostic:</strong> one Smartcar integration, works across GM, Ford, Tesla, Hyundai/Kia, and others.</li>
@@ -93,7 +94,7 @@
 </tr>
 <tr>
 <td>Flexy is EV-brand agnostic</td>
-<td>Partially proven - Smartcar is genuinely multi-brand; not yet tested against a live Flexy account</td>
+<td>Proven - real Smartcar app, real Connect flow, real access token and vehicle data pulled from Smartcar's live API (Tesla tested; other brands rely on Smartcar's own multi-brand support, not independently re-tested per brand)</td>
 </tr>
 <tr>
 <td>Flexy is charging-equipment agnostic</td>
