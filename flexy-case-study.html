@@ -3,17 +3,23 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Flexy — Product Case Study | Shubha's PM Portfolio</title>
+<title>Flexy - Product Case Study | Shubha's PM Portfolio</title>
 <style>
   :root{
-    --teal:#C2790E;
-    --teal-dark:#96600A;
-    --navy:#1C1712;
+    --teal:#9AC55C;
+    --teal-dark:#1E4B3B;
+    --navy:#1E4B3B;
+    --gold:#E7B23A;
+    --peach:#F0AE8C;
+    --comed-blue:#0059A4;
     --ink:#1B1F23;
     --ink-soft:#4B5560;
     --paper:#FFFFFF;
-    --paper-soft:#F7F4EC;
-    --border:#E5DFD2;
+    --paper-soft:#F6F8F8;
+    --border:#E3E8E8;
+    --now:#2F6B4F;
+    --next:#E8A33D;
+    --later:#8A93A6;
   }
   *{box-sizing:border-box;}
   body{
@@ -23,75 +29,119 @@
     background:var(--paper);
     line-height:1.6;
   }
-  .wrap{max-width:840px;margin:0 auto;padding:0 24px;}
+  .wrap{max-width:920px;margin:0 auto;padding:0 24px;}
 
-  nav{position:sticky;top:0;z-index:50;background:rgba(255,255,255,0.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--border);}
-  nav .wrap{display:flex;align-items:center;justify-content:space-between;padding:14px 24px;max-width:840px;}
-  nav .brand{font-weight:700;letter-spacing:-0.02em;color:var(--navy);font-size:16px;}
+  /* Nav */
+  nav{
+    position:sticky;top:0;z-index:50;
+    background:rgba(255,255,255,0.92);
+    backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--border);
+  }
+  nav .wrap{display:flex;align-items:center;justify-content:space-between;padding:14px 24px;max-width:920px;}
+  nav .brand{font-weight:700;letter-spacing:-0.02em;color:var(--navy);font-size:16px;display:flex;align-items:center;gap:8px;}
   nav .brand span{color:var(--teal);}
   nav ul{list-style:none;display:flex;gap:22px;margin:0;padding:0;}
   nav a{color:var(--ink-soft);text-decoration:none;font-size:13.5px;font-weight:500;}
   nav a:hover{color:var(--teal-dark);}
-  @media(max-width:640px){ nav ul{display:none;} }
+  @media(max-width:720px){ nav ul{display:none;} }
 
+  /* Hero */
   header.hero{
-    background:linear-gradient(160deg, var(--navy) 0%, #2B2115 55%, var(--teal-dark) 130%);
-    color:#fff;padding:64px 0 48px;
+    background:linear-gradient(160deg, var(--navy) 0%, #2F6B4F 55%, var(--peach) 130%);
+    color:#fff;padding:40px 0 34px;
   }
   .eyebrow{
     display:inline-block;font-size:12px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;
-    color:#F6D9A0;background:rgba(194,121,14,0.25);border:1px solid rgba(246,217,160,0.35);
-    padding:5px 12px;border-radius:999px;margin-bottom:16px;
+    color:#BFF3EC;background:rgba(15,157,143,0.25);border:1px solid rgba(191,243,236,0.35);
+    padding:5px 12px;border-radius:999px;margin-bottom:18px;
   }
-  h1.title{font-size:36px;line-height:1.15;margin:0 0 12px;letter-spacing:-0.02em;max-width:680px;}
-  .subtitle{font-size:16px;color:#E6DCC8;max-width:600px;margin:0 0 24px;}
-  .hero-meta{display:flex;flex-wrap:wrap;gap:26px;margin-top:8px;}
-  .hero-meta div{font-size:11.5px;color:#C9BBA0;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:3px;}
-  .hero-meta strong{display:block;font-size:14px;color:#fff;text-transform:none;letter-spacing:0;font-weight:600;}
+  h1.title{font-size:42px;line-height:1.1;margin:0 0 14px;letter-spacing:-0.02em;}
+  .subtitle{font-size:18px;color:#D9DEEF;max-width:640px;margin:0 0 28px;}
+  .hero-meta{display:flex;flex-wrap:wrap;gap:28px;margin-top:16px;}
+  .hero-meta div{font-size:12.5px;color:#B9C0DD;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:4px;}
+  .hero-meta strong{display:block;font-size:15px;color:#fff;text-transform:none;letter-spacing:0;font-weight:600;}
 
   .disclaimer{
     background:#FFF8E8;border:1px solid #F0D999;color:#6B5A1E;
-    padding:12px 16px;border-radius:10px;font-size:13px;margin:24px 0 0;
+    padding:14px 18px;border-radius:10px;font-size:14px;margin:28px 0;
   }
   .disclaimer strong{color:#4A3D10;}
 
-  section{padding:44px 0;}
+  /* TL;DR */
+  section{padding:22px 0;}
   section.alt{background:var(--paper-soft);}
-  h2.section-title{font-size:22px;letter-spacing:-0.01em;margin:0 0 6px;}
-  .section-kicker{font-size:12px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--teal-dark);margin-bottom:8px;}
-  .lede{color:var(--ink-soft);font-size:15px;max-width:680px;margin-bottom:20px;}
+  h2.section-title{font-size:26px;letter-spacing:-0.01em;margin:0 0 8px;}
+  .section-kicker{font-size:12.5px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--teal-dark);margin-bottom:10px;}
+  .lede{color:var(--ink-soft);font-size:15.5px;max-width:680px;margin-bottom:16px;}
 
-  .summary-box{
-    background:#fff;border:1px solid var(--border);border-left:4px solid var(--teal);
-    border-radius:10px;padding:20px 22px;margin-top:4px;font-size:15px;color:var(--ink);
-  }
-
-  ul.plain{padding-left:20px;margin:8px 0;}
-  ul.plain li{font-size:14px;margin-bottom:6px;color:var(--ink);}
-
-  .doc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:20px;}
-  @media(max-width:680px){.doc-grid{grid-template-columns:1fr;}}
-  .doc-card{
+  .tldr-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:24px;}
+  @media(max-width:760px){.tldr-grid{grid-template-columns:repeat(2,1fr);}}
+  .tldr-card{
     background:#fff;border:1px solid var(--border);border-radius:12px;padding:18px 16px;
     text-decoration:none;color:var(--ink);transition:transform .15s, box-shadow .15s;
   }
-  .doc-card:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(0,0,0,0.06);}
-  .doc-card h3{font-size:14.5px;margin:0 0 5px;}
-  .doc-card p{font-size:12.5px;color:var(--ink-soft);margin:0;}
+  .tldr-card:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(0,0,0,0.06);}
+  .tldr-card .num{font-size:12px;color:var(--teal-dark);font-weight:700;margin-bottom:8px;}
+  .tldr-card h3{font-size:15px;margin:0 0 6px;}
+  .tldr-card p{font-size:13px;color:var(--ink-soft);margin:0;}
+
+  .summary-box{
+    background:#fff;border:1px solid var(--border);border-left:4px solid var(--teal);
+    border-radius:10px;padding:22px 24px;margin-top:24px;font-size:15.5px;color:var(--ink);
+  }
+
+  /* Generic cards / grids */
+  .card{background:#fff;border:1px solid var(--border);border-radius:12px;padding:22px 24px;margin-bottom:16px;}
+  .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  @media(max-width:720px){.grid-2{grid-template-columns:1fr;}}
+
+  .persona-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  @media(max-width:720px){.persona-grid{grid-template-columns:1fr;}}
+  .persona{background:#fff;border:1px solid var(--border);border-radius:12px;padding:20px;}
+  .persona .name{font-weight:700;font-size:15px;margin-bottom:2px;}
+  .persona .role{font-size:12.5px;color:var(--ink-soft);margin-bottom:10px;}
+  .persona blockquote{margin:0 0 12px;font-style:italic;color:var(--navy);font-size:14px;border-left:3px solid var(--teal);padding-left:10px;}
+  .persona .label{font-size:11px;text-transform:uppercase;letter-spacing:0.05em;color:var(--teal-dark);font-weight:700;margin-top:10px;}
+  .persona p{font-size:13.5px;margin:4px 0 0;color:var(--ink);}
+
+  details.persona-more{margin-top:10px;}
+  details.persona-more summary{cursor:pointer;font-size:12.5px;color:var(--teal-dark);font-weight:600;}
+  details.persona-more div{margin-top:8px;}
+
+  table{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:12px;}
+  th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--border);}
+  th{font-size:11.5px;text-transform:uppercase;letter-spacing:0.05em;color:var(--ink-soft);font-weight:700;}
+  tr:last-child td{border-bottom:none;}
+
+  .horizon-tag{display:inline-block;font-size:11px;font-weight:700;padding:2px 9px;border-radius:999px;color:#fff;}
+  .tag-now{background:var(--now);}
+  .tag-next{background:var(--next);}
+  .tag-later{background:var(--later);}
+
+  .roadmap-col h4{display:flex;align-items:center;gap:8px;font-size:14px;margin:0 0 12px;}
+  .roadmap-cols{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;}
+  @media(max-width:760px){.roadmap-cols{grid-template-columns:1fr;}}
+  .roadmap-item{background:#fff;border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin-bottom:10px;font-size:13px;}
+  .roadmap-item .feat{font-weight:600;margin-bottom:3px;}
+  .roadmap-item .ice{color:var(--ink-soft);font-size:12px;}
+
+  .theme-list{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  @media(max-width:720px){.theme-list{grid-template-columns:1fr;}}
+  .theme{background:#fff;border:1px solid var(--border);border-radius:12px;padding:18px;}
+  .theme .n{font-size:22px;font-weight:800;color:var(--teal);opacity:0.5;}
+  .theme h4{margin:4px 0 6px;font-size:14.5px;}
+  .theme p{margin:0;font-size:13.5px;color:var(--ink-soft);}
 
   .proto-frame-wrap{
-    background:#0E1116;border-radius:16px;padding:20px;margin-top:20px;
+    background:#0E1116;border-radius:16px;padding:20px;margin-top:24px;
     display:flex;justify-content:center;
   }
-  .proto-scale-box{
-    width:320px;height:692px;overflow:hidden;border-radius:12px;
+  iframe.proto{
+    width:390px;height:780px;border:0;border-radius:12px;background:#fff;
     box-shadow:0 20px 60px rgba(0,0,0,0.4);
   }
-  iframe.proto{
-    width:390px;height:844px;border:0;background:#fff;
-    transform:scale(0.82);transform-origin:top left;
-  }
-  .proto-actions{display:flex;gap:12px;justify-content:center;margin-top:16px;flex-wrap:wrap;}
+  .proto-actions{display:flex;gap:12px;justify-content:center;margin-top:18px;flex-wrap:wrap;}
   .btn{
     display:inline-block;padding:10px 20px;border-radius:8px;font-size:13.5px;font-weight:600;
     text-decoration:none;border:1px solid transparent;
@@ -101,83 +151,302 @@
   .btn-ghost{border:1px solid var(--border);color:var(--ink);}
   .btn-ghost:hover{border-color:var(--teal);color:var(--teal-dark);}
 
-  .theme-list{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:6px;}
-  @media(max-width:680px){.theme-list{grid-template-columns:1fr;}}
-  .theme{background:#fff;border:1px solid var(--border);border-radius:12px;padding:16px 18px;}
-  .theme .n{font-size:20px;font-weight:800;color:var(--teal);opacity:0.5;}
-  .theme h4{margin:4px 0 5px;font-size:14px;}
-  .theme p{margin:0;font-size:13px;color:var(--ink-soft);}
+  .doc-category{margin-top:28px;}
+  .doc-category:first-child{margin-top:0;}
+  .doc-category h3{font-size:14.5px;margin:0 0 12px;color:var(--ink);}
+  .doc-links{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;}
+  @media(max-width:760px){.doc-links{grid-template-columns:repeat(2,1fr);}}
+  .doc-link{
+    background:#fff;border:1px solid var(--border);border-radius:10px;padding:14px;text-decoration:none;
+    color:var(--ink);font-size:13px;font-weight:600;text-align:center;
+  }
+  .doc-link:hover{border-color:var(--teal);color:var(--teal-dark);}
+  .doc-link .ic{display:block;font-size:20px;margin-bottom:6px;}
+  .doc-empty{background:var(--paper-soft);border:1px dashed var(--border);border-radius:10px;padding:16px;font-size:13px;color:var(--ink-soft);text-align:center;}
 
-  .card{background:#fff;border:1px solid var(--border);border-radius:12px;padding:18px 20px;margin-top:16px;}
-  h3.subhead{font-size:15.5px;margin:0 0 6px;}
+  .journey{display:flex;flex-direction:column;gap:0;margin-top:24px;}
+  .journey-step{display:flex;gap:16px;padding:14px 0;border-left:2px solid var(--border);position:relative;padding-left:24px;margin-left:10px;}
+  .journey-step:last-child{border-left:2px solid transparent;}
+  .journey-step::before{content:"";position:absolute;left:-7px;top:16px;width:12px;height:12px;border-radius:50%;background:var(--teal);}
+  .journey-step h4{margin:0 0 4px;font-size:14.5px;}
+  .journey-step p{margin:0;font-size:13px;color:var(--ink-soft);}
 
-  sup a{color:var(--teal-dark);text-decoration:none;font-size:11px;}
-  .references{background:#2B2115;border-top:1px solid rgba(255,255,255,0.12);padding:26px 0;}
-  .references .wrap{max-width:840px;}
-  .references h4{color:#fff;font-size:12px;text-transform:uppercase;letter-spacing:0.06em;margin:0 0 10px;}
-  .references ol{margin:0;padding-left:20px;color:#C9BBA0;font-size:12.5px;line-height:1.8;}
-  .references ol a{color:#F6D9A0;}
+  .skills-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;}
+  .skill-chip{background:#fff;border:1px solid var(--border);border-radius:999px;padding:6px 14px;font-size:12.5px;color:var(--ink-soft);}
 
-  footer{background:var(--navy);color:#C9BBA0;padding:32px 0;text-align:center;font-size:13px;}
-  footer a{color:#F6D9A0;}
+  footer{background:var(--navy);color:#C6CBE6;padding:40px 0;text-align:center;font-size:13px;}
+  footer a{color:#BFF3EC;}
+
+  h3.subhead{font-size:17px;margin:26px 0 10px;}
+  ul.plain{padding-left:20px;margin:8px 0;}
+  ul.plain li{font-size:14px;margin-bottom:6px;color:var(--ink);}
+
+  details.section-collapse summary{cursor:pointer;list-style:none;display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:2px 0;}
+  details.section-collapse summary::-webkit-details-marker{display:none;}
+  details.section-collapse summary .summary-head{flex:1;}
+  details.section-collapse summary .section-kicker{margin-bottom:0;}
+  details.section-collapse summary .section-title{margin-bottom:0;}
+  details.section-collapse summary .toggle-ic{font-size:13px;color:var(--teal-dark);font-weight:600;white-space:nowrap;padding-top:4px;}
+  details.section-collapse[open] summary .toggle-ic::before{content:"Hide ▾";}
+  details.section-collapse:not([open]) summary .toggle-ic::before{content:"Show more ▸";}
+  details.section-collapse[open] > *:not(summary){margin-top:10px;}
+
+  .tam-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:16px;}
+  @media(max-width:760px){.tam-grid{grid-template-columns:1fr;}}
+  .tam-card{background:#fff;border:1px solid var(--border);border-radius:12px;padding:18px;}
+  .tam-card .tam-label{font-size:11.5px;text-transform:uppercase;letter-spacing:0.06em;color:var(--teal-dark);font-weight:700;}
+  .tam-card .tam-num{font-size:24px;font-weight:800;margin:6px 0 4px;}
+  .tam-card p{font-size:12.5px;color:var(--ink-soft);margin:0;}
+  .footnotes{font-size:12px;color:var(--ink-soft);margin-top:14px;padding-left:18px;}
+  .footnotes li{margin-bottom:6px;}
+  .footnotes a{color:var(--teal-dark);}
+
+  .limitation-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px;}
+  @media(max-width:720px){.limitation-grid{grid-template-columns:1fr;}}
+  .limitation-card{background:#fff;border:1px solid var(--border);border-radius:12px;padding:20px;}
+  .limitation-card h4{margin:0 0 8px;font-size:14.5px;}
+  .limitation-card p{font-size:13.5px;color:var(--ink-soft);margin:0 0 8px;}
+  .limitation-card ul{margin:0 0 10px;padding-left:18px;}
+  .limitation-card li{font-size:13.5px;color:var(--ink-soft);margin-bottom:5px;}
+  .limitation-card .src{font-size:12px;color:var(--ink-soft);}
+  .limitation-card .src a{color:var(--teal-dark);}
 </style>
 </head>
 <body>
 
 <nav>
   <div class="wrap">
-    <div class="brand"><a href="index.html" style="text-decoration:none;color:inherit;">← Portfolio</a> &nbsp;/&nbsp; Flexy<span>.</span></div>
+    <div class="brand">
+      <svg viewBox="0 0 64 64" width="24" height="24" role="img" aria-label="Flexy logo">
+        <defs>
+          <linearGradient id="flexyLogoGradNav" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#1E4B3B"/>
+            <stop offset="1" stop-color="#F0AE8C"/>
+          </linearGradient>
+          <clipPath id="flexyLogoClipNav"><rect x="0" y="0" width="64" height="64" rx="16"/></clipPath>
+        </defs>
+        <rect x="0" y="0" width="64" height="64" rx="16" fill="url(#flexyLogoGradNav)"/>
+        <g clip-path="url(#flexyLogoClipNav)"><circle cx="44" cy="34" r="13" fill="#E7B23A"/></g>
+        <path d="M10 24 L24 34 L36 30 L54 48" fill="none" stroke="#ffffff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="10" cy="24" r="3.5" fill="#ffffff"/>
+        <circle cx="54" cy="48" r="3.5" fill="#ffffff"/>
+      </svg>
+      Flexy<span>.</span> - PM Case Study
+    </div>
     <ul>
-      <li><a href="#summary">Summary</a></li>
+      <li><a href="index.html">← Home</a></li>
+      <li><a href="#tldr">Summary</a></li>
+      <li><a href="#problem">Problem</a></li>
+      <li><a href="#research">Research</a></li>
+      <li><a href="#roadmap">Roadmap</a></li>
       <li><a href="#prototype">Prototype</a></li>
       <li><a href="#limitations">Limitations</a></li>
-      <li><a href="#documents">Full docs</a></li>
     </ul>
   </div>
 </nav>
 
 <header class="hero">
   <div class="wrap">
-    <span class="eyebrow">Product Management Portfolio Piece</span>
-    <h1 class="title">Flexy — transparent pricing and smart EV charging, built on top of ComEd</h1>
-    <p class="subtitle">A B2B2C companion app for utility customers on dynamic pricing, taken from problem to a working prototype through human-led, AI-assisted product work.</p>
+    <h1 class="title">Smart charge your EV using real dynamic prices</h1>
+    <p class="subtitle">An end-to-end PM case study: problem framing, market research, four personas, synthetic user interviews, an ICE-prioritized roadmap, and a working interactive prototype.</p>
     <div class="hero-meta">
-      <div>Market<strong>ComEd / Illinois, USA</strong></div>
-      <div>Status<strong>In progress</strong></div>
+      <div>First market<strong>ComEd / Illinois, USA</strong></div>
+      <div>Deliverables<strong>Brief · Personas · Interviews · Roadmap · Click-dummy</strong></div>
     </div>
   </div>
 </header>
 
-<div class="wrap">
-  <div class="disclaimer">
-    <strong>Note:</strong> Flexy is a fictional product built for this portfolio. The market and program data behind it (ComEd's pricing programs, named competitors) is real and researched. Personas, interviews, and quotes are synthetic, generated to demonstrate process, not real people.
-  </div>
-</div>
-
-<section id="summary" style="padding-top:16px;">
+<section id="tldr">
   <div class="wrap">
     <div class="section-kicker">The short version</div>
-    <h2 class="section-title">What Flexy is</h2>
     <div class="summary-box">
-      US electricity bills are up 26% in five years, and households on dynamic or time-of-use rates have no real way to track hour-by-hour prices themselves. Flexy is an app a utility hands to its own customers, doing two things well: it shows what electricity costs right now, and it automatically shifts EV charging into the cheapest hours. The MVP is scoped to what's actually buildable, EV charging is the only device Flexy automates, and every decision below is grounded in real Illinois program data and real competitor behavior.
+      Flexy shows what electricity costs right now and automatically shifts EV charging into the cheapest hours.
     </div>
-    <div class="doc-grid">
-      <a class="doc-card" href="flexy-product-brief.html"><h3>Problem &amp; market</h3><p>Why Illinois, positioning, and the competitive landscape (Tibber, Octopus, Ohme, Optiwatt, WeaveGrid).</p></a>
-      <a class="doc-card" href="flexy-personas.html"><h3>Research</h3><p>Four personas, jobs to be done, and synthetic interviews with a cross-persona synthesis.</p></a>
-      <a class="doc-card" href="flexy-roadmap.html"><h3>Roadmap</h3><p>ICE-prioritized Now/Next/Later, with the reasoning behind every score.</p></a>
+    <div class="tldr-grid">
+      <a class="tldr-card" href="#problem"><div class="num">01</div><h3>Problem &amp; positioning</h3><p>Why Illinois, why now, and where Flexy sits against Tibber, Octopus, Ohme, Optiwatt and WeaveGrid.</p></a>
+      <a class="tldr-card" href="#research"><div class="num">02</div><h3>Research</h3><p>Four personas, JTBD statements, and synthetic interviews with a cross-persona synthesis.</p></a>
+      <a class="tldr-card" href="#roadmap"><div class="num">03</div><h3>Roadmap</h3><p>ICE-prioritized Now/Next/Later, with the reasoning behind every score.</p></a>
+      <a class="tldr-card" href="#prototype"><div class="num">04</div><h3>Prototype</h3><p>A full interactive click-dummy, from onboarding through the smart charging dashboard.</p></a>
     </div>
   </div>
 </section>
 
-<section class="alt" id="prototype">
+<section class="alt" id="problem">
+  <div class="wrap">
+    <details class="section-collapse">
+    <summary>
+      <div class="summary-head">
+        <div class="section-kicker" style="margin-bottom:0;">Problem &amp; positioning</div>
+      </div>
+      <span class="toggle-ic"></span>
+    </summary>
+    <div class="grid-2">
+      <div class="card">
+        <h3 class="subhead" style="margin-top:0;">The market signal</h3>
+        <ul class="plain">
+          <li>Average US electric bills are up 26% in five years.</li>
+          <li>Bill shock is real and widespread: 68% of Americans say their household finances are strained by home energy costs, and 22% admit they don't even know how their electricity bill is calculated (<a href="https://advocacy.consumerreports.org/press_release/new-survey-from-consumer-reports-finds-majority-of-households-strained-by-energy-bills-concerned-over-data-centerss-impact-on-bills/" target="_blank" rel="noopener">Consumer Reports, Nov. 2025</a>; <a href="https://www.joinarbor.com/resources/power-bill-sticker-shock-22-of-americans-say-they-dont-even-know-what-theyre-paying-for" target="_blank" rel="noopener">Arbor survey, 2025</a>).</li>
+          <li>~70-73% of US residential meters are already smart, but that data rarely turns into action.</li>
+          <li>ComEd runs an hourly Real-Time Pricing program today and is finalizing a Time-of-Use rate for 2026, after a pilot that cut peak demand 6.5-9.7% each summer.</li>
+          <li>Consumer anxiety around TOU is documented: 93% of energy bill payers are loss-averse, meaning they weigh the risk of a higher bill more heavily than the promise of savings - a real psychological barrier to TOU adoption (<a href="https://discovery.ucl.ac.uk/id/eprint/1541213/" target="_blank" rel="noopener">Nicolson et al., Energy Research &amp; Social Science</a>).</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3 class="subhead" style="margin-top:0;">Positioning</h3>
+        <p style="font-size:14px;">Flexy is not a utility and doesn't compete with one. It's a white-label plug-in layer a utility can hand to its own customers (B2B2C), the same model Optiwatt and WeaveGrid already use in the US. ComEd/Illinois is the first pilot market - it's the closest US equivalent to Octopus Agile in the UK or Tibber in the Nordics: a dynamic tariff that has immense potential to benefit its users and reward them for using it, and a template for any utility running a comparable dynamic or TOU rate.</p>
+      </div>
+    </div>
+
+    <h3 class="subhead">TAM / SAM / SOM - sized to the pilot</h3>
+    <p style="font-size:13.5px;color:var(--ink-soft);max-width:680px;">Sized tightly to the ComEd pilot rather than a speculative national number, using ComEd's and the Illinois Commerce Commission's own filings where possible.</p>
+    <div class="tam-grid">
+      <div class="tam-card">
+        <div class="tam-label">TAM</div>
+        <div class="tam-num">3.3M</div>
+        <p>ComEd residential customers in Northern Illinois - the full addressable base if Flexy were offered to every ComEd household.<sup>1</sup></p>
+      </div>
+      <div class="tam-card">
+        <div class="tam-label">SAM</div>
+        <div class="tam-num">~38.6K+</div>
+        <p>Residential customers already on ComEd's Hourly (Real-Time) Pricing program as of 2023 - the segment already living with a dynamic tariff, before the mandatory 2026 Time-of-Use rollout expands this pool.<sup>2</sup></p>
+      </div>
+      <div class="tam-card">
+        <div class="tam-label">SOM</div>
+        <div class="tam-num">~1%</div>
+        <p>Of ComEd residential customers currently on a dynamic rate - roughly the realistic early-adopter slice for a first-year pilot cohort within that program.<sup>3</sup></p>
+      </div>
+    </div>
+    <ol class="footnotes">
+      <li>ComEd System Facts Sheet: "3.8 million customers in Northern Illinois, 3.3 million residential, 500,000 business and government." <a href="https://www.comed.com/cdn/assets/v3/assets/blt3ebb3fed6084be2a/blt75a5a762e6a99951/65438a836aec50000acf329d/SystemFactsSheet.pdf?branch=prod_alias" target="_blank" rel="noopener">Source (ComEd, PDF)</a> - primary source, independently fetched and confirmed.</li>
+      <li>"Commonwealth Edison Company's Hourly Pricing 2023 Annual Report," filed with the Illinois Commerce Commission, Docket P2015-0602, reports 38,591 Hourly Pricing participants in 2023. <a href="https://www.icc.illinois.gov/docket/P2015-0602/documents/350023/files/611973.pdf" target="_blank" rel="noopener">Source (ICC docket filing, PDF)</a> - a primary regulatory filing; figure sourced via search summary of the filing rather than independently re-extracted from the PDF text, flagged here for transparency. ICC Docket 24-0378 separately confirms ComEd is required to launch a mandatory residential Time-of-Use rate in 2026, which will substantially expand this SAM.</li>
+      <li>~1% figure per testimony referenced in ICC hourly-pricing proceedings, describing enrollment as a small fraction of the eligible residential base - used here as a conservative, sourced starting point for pilot-year adoption, not a Flexy-specific projection.</li>
+    </ol>
+
+    <h3 class="subhead">Competitive landscape</h3>
+    <table>
+      <tr><th>Company</th><th>Model</th><th>Gap Flexy targets</th></tr>
+      <tr><td><strong>Tibber</strong> (EU)</td><td>Retail energy supplier + app</td><td>Is the utility, not a plug-in; Flexy can't and doesn't try to be a supplier</td></tr>
+      <tr><td><strong>Octopus / Kraken</strong> (UK)</td><td>Retail supplier, auto-scheduled EV charging</td><td>Same as above; supplier-owned, not partner-distributed</td></tr>
+      <tr><td><strong>Ohme</strong> (UK)</td><td>Hardware + app, cross-supplier</td><td>EV charging only, no price/consumption layer</td></tr>
+      <tr><td><strong>Jedlix</strong> (NL)</td><td>B2B2C, partners with automakers/utilities</td><td>Closest business-model match, but EV charging only</td></tr>
+      <tr><td><strong>Optiwatt</strong> (US)</td><td>Utility white-label, EV + HVAC scheduling</td><td>Closest direct US competitor; no combined price + consumption view</td></tr>
+      <tr><td><strong>WeaveGrid</strong> (US)</td><td>Utility-partnered managed EV charging</td><td>Very close to Flexy's model; EV-focused only</td></tr>
+      <tr><td><strong>Emporia</strong> (US)</td><td>Hardware + app, consumption + scheduling</td><td>Requires buying hardware; not utility-distributed</td></tr>
+      <tr><td><strong>Span / Sense</strong> (US)</td><td>Premium smart panel hardware</td><td>Sense is pivoting to utility-licensed software, validating Flexy's model</td></tr>
+    </table>
+    <p style="font-size:13.5px;color:var(--ink-soft);margin-top:10px;">No single US player currently combines live dynamic-price visibility, real-time consumption, and hardware-agnostic EV charging in one utility-distributed layer. That combination is Flexy's bet.</p>
+
+    <h3 class="subhead">The household journey</h3>
+    <div class="journey">
+      <div class="journey-step"><h4>1. Understand what you're paying</h4><p>Price &amp; Cost view: yesterday / today / tomorrow / monthly / annual</p></div>
+      <div class="journey-step"><h4>2. Understand your usage</h4><p>Real-time consumption view (standard residential load profile for MVP)</p></div>
+      <div class="journey-step"><h4>3. Optimize day-to-day</h4><p>Smart EV charging against the live ComEd tariff</p></div>
+    </div>
+    </details>
+  </div>
+</section>
+
+<section id="research">
+  <div class="wrap">
+    <details class="section-collapse">
+    <summary>
+      <div class="summary-head">
+        <div class="section-kicker" style="margin-bottom:0;">Research</div>
+      </div>
+      <span class="toggle-ic"></span>
+    </summary>
+    <div class="persona-grid">
+      <div class="persona">
+        <div class="name">Marcus Webb</div>
+        <div class="role">42, Naperville IL · The Accidental Peak Charger</div>
+        <blockquote>"I plug in when I get home. I don't have time to think about electricity prices."</blockquote>
+        <div class="label">JTBD</div>
+        <p>Charge his EV at the lowest possible cost without thinking about pricing himself.</p>
+        <div class="label">Flexy feature</div>
+        <p>Smart EV charging, Custom settings mode</p>
+      </div>
+      <div class="persona">
+        <div class="name">Priya Raman</div>
+        <div class="role">55, Oak Park IL · The TOU Skeptic</div>
+        <blockquote>"I don't want to gamble on a new rate plan and end up paying more."</blockquote>
+        <div class="label">JTBD</div>
+        <p>A clear before/after comparison based on her real usage before switching rate plans.</p>
+        <div class="label">Flexy feature</div>
+        <p>Price &amp; Cost view with Time-of-Use comparison toggle</p>
+      </div>
+      <div class="persona">
+        <div class="name">Devon Michaels</div>
+        <div class="role">34, Evanston IL · The Overwhelmed Watcher</div>
+        <blockquote>"Checking prices feels like a part-time job."</blockquote>
+        <div class="label">JTBD</div>
+        <p>Automatic EV charging plus clear usage visibility, without manual price-watching.</p>
+        <div class="label">Flexy feature</div>
+        <p>Smart EV charging (Max Savings) + informational consumption view</p>
+      </div>
+      <div class="persona">
+        <div class="name">Jenna Alvarez &amp; Sam Kim</div>
+        <div class="role">39 &amp; 41, Schaumburg IL · The Multi-EV Household</div>
+        <blockquote>"Coordinating two cars' charging schedules around one price feed is like a logistics puzzle we didn't sign up for."</blockquote>
+        <div class="label">JTBD</div>
+        <p>Sequence and optimize two EVs against live pricing without manual coordination.</p>
+        <div class="label">Flexy feature</div>
+        <p>Smart EV charging with multiple vehicles and per-vehicle preferences</p>
+      </div>
+    </div>
+
+    <h3 class="subhead">What synthetic interviews surfaced</h3>
+    <p style="font-size:14px;color:var(--ink-soft);max-width:680px;">All four personas were interviewed with the same 7-question guide (AI-generated, in-character, grounded strictly in each persona's brief and real ComEd/Illinois data, explicitly flagged as synthetic, not real user data). Three cross-cutting themes emerged and directly shaped the roadmap:</p>
+    <div class="theme-list">
+      <div class="theme"><div class="n">01</div><h4>Transparency is required, even when automation is welcomed</h4><p>Every persona who liked EV automation still wanted visibility into why a decision was made, not a black box.</p></div>
+      <div class="theme"><div class="n">02</div><h4>Readiness beats savings</h4><p>Users are anxious about the car not being ready. Readiness had to outrank maximum savings by default.</p></div>
+      <div class="theme"><div class="n">03</div><h4>Willingness to pay splits along B2B2C lines</h4><p>Highest-pain personas would pay directly; others only if ComEd bundles it for free. This validated the B2B2C model.</p></div>
+    </div>
+    </details>
+  </div>
+</section>
+
+<section class="alt" id="roadmap">
+  <div class="wrap">
+    <details class="section-collapse">
+    <summary>
+      <div class="summary-head">
+        <div class="section-kicker" style="margin-bottom:0;">Prioritized roadmap</div>
+      </div>
+      <span class="toggle-ic"></span>
+    </summary>
+    <div class="roadmap-cols">
+      <div class="roadmap-col">
+        <h4><span class="horizon-tag tag-now">NOW</span> MVP</h4>
+        <div class="roadmap-item"><div class="feat">Price &amp; Cost view (redesigned, combined)</div><div class="ice">ICE 8.0 · Priya &amp; Marcus JTBDs, bill-shock problem</div></div>
+        <div class="roadmap-item"><div class="feat">Smart EV charging - Custom settings &amp; Max savings</div><div class="ice">ICE 8.0 · Marcus, Devon, Jenna &amp; Sam JTBDs</div></div>
+      </div>
+      <div class="roadmap-col">
+        <h4><span class="horizon-tag tag-next">NEXT</span> Post-validation</h4>
+        <div class="roadmap-item"><div class="feat">"Here's what we did and why" transparency digest</div><div class="ice">ICE 7.0 · trust-requires-transparency theme</div></div>
+        <div class="roadmap-item"><div class="feat">Monthly EV charging budget cap</div><div class="ice">ICE 6.3 · borrowed from real Home Assistant/Tibber project</div></div>
+      </div>
+      <div class="roadmap-col">
+        <h4><span class="horizon-tag tag-later">LATER</span> Vision</h4>
+        <div class="roadmap-item"><div class="feat">Negative-price handling</div><div class="ice">Edge case, rare on ComEd's retail pricing</div></div>
+        <div class="roadmap-item"><div class="feat">Charging efficiency/loss tracking</div><div class="ice">Trust-building, not essential for MVP</div></div>
+        <div class="roadmap-item"><div class="feat">Multi-EV voltage/capacity protection</div><div class="ice">Real constraint, deferred past MVP</div></div>
+        <div class="roadmap-item"><div class="feat">General appliance automation</div><div class="ice">Requires per-appliance integrations, explicitly descoped</div></div>
+        <div class="roadmap-item"><div class="feat">Multi-utility / multi-market expansion</div><div class="ice">Client-acquisition motion once ComEd is proven</div></div>
+      </div>
+    </div>
+
+    <h3 class="subhead">A product decision worth showing</h3>
+    <p style="font-size:14px;color:var(--ink-soft);">The two EV charging modes originally differed by whether a deadline existed at all. That was wrong: every persona interview showed a household always knows when it needs the car. I corrected both modes to require a ready-by time, and redefined the real difference as depth of configuration, full manual control (Custom settings) versus minimal input with sensible defaults (Max savings), validated directly against Marcus and Jenna &amp; Sam (who wanted control) versus Devon (who explicitly wanted the opposite).</p>
+    </details>
+  </div>
+</section>
+
+<section id="prototype">
   <div class="wrap">
     <div class="section-kicker">Prototype</div>
-    <h2 class="section-title">Interactive click-dummy</h2>
-    <p class="lede">A full coded phone-frame prototype covering the MVP flow: discovering Flexy through ComEd, connecting an account and an EV, setting charging preferences, and the live Price &amp; Cost and Smart Charging dashboards.</p>
+    <p class="lede">A full coded phone-frame prototype covering the entire MVP flow: discovering Flexy through a ComEd email, installing it, connecting a ComEd account, an intro carousel, connecting an EV (brand selection → manufacturer login → permissions, matching how Smartcar-style integrations actually work), setting charging preferences, and the live Price &amp; Cost and Smart Charging dashboards.</p>
     <div class="proto-frame-wrap">
-      <div class="proto-scale-box">
-        <iframe class="proto" src="flexy-click-dummy.html" title="Flexy interactive prototype"></iframe>
-      </div>
+      <iframe class="proto" src="flexy-click-dummy.html" title="Flexy interactive prototype"></iframe>
     </div>
     <div class="proto-actions">
       <a class="btn btn-primary" href="flexy-click-dummy.html" target="_blank">Open prototype full-screen</a>
@@ -185,75 +454,104 @@
   </div>
 </section>
 
+
 <section id="limitations">
   <div class="wrap">
     <div class="section-kicker">Limitations</div>
-    <h2 class="section-title">What this doesn't prove yet</h2>
-    <p class="lede">A polished clickable prototype can look further along than it actually is. It's a useful tool for thinking through a product and communicating it, but on its own it doesn't prove people would actually use or pay for the thing.<sup><a href="#ref-1">[1]</a></sup></p>
-
-    <div class="theme-list">
-      <div class="theme">
-        <div class="n">01</div>
-        <h4>Mostly scripted, one screen is real</h4>
-        <p>The Price &amp; Cost screen fetches ComEd's actual public hourly pricing data live, or falls back to real captured/averaged ComEd data (including a genuine multi-day Week average and real sampled days across Month and Year) if the live fetch can't reach ComEd from wherever this is opened. The load profile behind the cost math is still a modeled shape, since real usage needs the still-gated Green Button Connect partnership. Every other screen runs on scripted, canned states.</p>
+    <p class="lede">Industry commentary on AI-assisted prototypes in 2025-2026 converges on one point: a polished demo and a shippable product are different things, and it's easy to mistake one for the other. A few of the gaps commonly named by product practitioners, applied honestly to Flexy:</p>
+    <div class="limitation-grid">
+      <div class="limitation-card">
+        <h4>A working demo isn't 10% of the way to done</h4>
+        <ul>
+          <li>Stakeholders often see a polished AI-built demo and assume it's nearly finished, when the actual engineering (backend, auth, data persistence, real integrations) hasn't started.</li>
+          <li>Flexy's Price &amp; Cost screen now pulls real, live prices straight from ComEd's public Hourly Pricing API - but that's the one piece that's real. There's still no real backend, no ComEd account login, and no live Smartcar/EV API, so EV charging control and account data remain simulated.</li>
+        </ul>
+        <span class="src">Source: <a href="https://usekyros.ai/blog/from-prototype-to-production-ai-apps-never-ship" target="_blank" rel="noopener">Kyros, "From Prototype to Production"</a></span>
       </div>
-      <div class="theme">
-        <div class="n">02</div>
-        <h4>No real traffic or usage signal</h4>
-        <p>No A/B test, opt-in pilot, or rollout behind any of these numbers, only research and reasoning.</p>
+      <div class="limitation-card">
+        <h4>Automated design still needs real users</h4>
+        <ul>
+          <li>AI-generated screens can miss subtle hierarchy, spacing, and comprehension issues that only surface with real usability testing.</li>
+          <li>Flexy's personas and interviews are synthetic and internally consistent, but were never tested against an actual human clicking through the flow.</li>
+        </ul>
+        <span class="src">Source: <a href="https://www.parallelhq.com/blog/ai-powered-prototyping-tools" target="_blank" rel="noopener">Parallel, "AI-Powered Prototyping for UI/UX Design"</a></span>
       </div>
-      <div class="theme">
-        <div class="n">03</div>
-        <h4>No real users</h4>
-        <p>Personas and interviews are AI-generated in character, without a single real conversation with a real ComEd customer behind them.</p>
+      <div class="limitation-card">
+        <h4>Happy-path only, no edge cases</h4>
+        <ul>
+          <li>AI-built prototypes handle the intended flow well but typically skip error states, failed API calls, and concurrent-use conditions.</li>
+          <li>Flexy's click-dummy shows the ideal path only - no built-out states for a failed ComEd login, a stale price feed, or a car that drops connection mid-session.</li>
+        </ul>
+        <span class="src">Source: <a href="https://codeconductor.ai/blog/vibe-coding-for-product-managers/" target="_blank" rel="noopener">CodeConductor, "Vibe Coding for PMs"</a></span>
       </div>
-      <div class="theme">
-        <div class="n">04</div>
-        <h4>Home charger control, genuinely unsolved</h4>
-        <p>A real feasibility check found ComEd's pricing API and Smartcar are viable, but no public API surfaced for the home chargers the amperage-cap setting would need. That's a named, open risk now, not an assumption.</p>
+      <div class="limitation-card">
+        <h4>Prototype code isn't production code</h4>
+        <ul>
+          <li>AI-generated prototypes are typically isolated from any real codebase and would need to be re-implemented by an engineering team to actually ship.</li>
+          <li>Flexy's click-dummy is static HTML/CSS/JS with no data layer, no security review, and no compliance pass - relevant since a real version would handle utility account data and OAuth tokens to EV manufacturer APIs.</li>
+        </ul>
+        <span class="src">Source: <a href="https://monday.com/blog/vibe-coding/vibe-coding-product-managers/" target="_blank" rel="noopener">monday.com, "Vibe coding for product managers"</a></span>
       </div>
-    </div>
-
-    <div class="card">
-      <h3 class="subhead">What would close the gap</h3>
-      <p style="font-size:13.5px;color:var(--ink-soft);margin:0;">Isolating the single riskiest assumption (would a household trust automated charging enough to rely on it) and running the smallest real test against it, alongside resolving the home-charger integration question flagged in the <a href="flexy-technical-feasibility.html" style="color:var(--teal-dark);font-weight:600;">technical feasibility doc</a>.<sup><a href="#ref-2">[2]</a></sup> That's the deliberate next phase.</p>
     </div>
   </div>
 </section>
 
-<section class="alt" id="documents">
+<section id="documents">
   <div class="wrap">
     <div class="section-kicker">Full documentation</div>
-    <h2 class="section-title">Every underlying document</h2>
-    <p class="lede">This page is the short version. Everything behind it, full personas, interview transcripts, JTBD statements, and the complete roadmap, lives in these documents.</p>
-    <div class="doc-grid">
-      <a class="doc-card" href="flexy-product-brief.html"><h3>📄 Product Brief</h3><p>Positioning, market, competitive analysis</p></a>
-      <a class="doc-card" href="flexy-personas.html"><h3>🧑‍🤝‍🧑 Personas</h3><p>Four full persona briefs</p></a>
-      <a class="doc-card" href="flexy-synthetic-interviews.html"><h3>🎙️ Interviews</h3><p>Full synthetic interview transcripts</p></a>
-      <a class="doc-card" href="flexy-jobs-to-be-done.html"><h3>🎯 Jobs to Be Done</h3><p>JTBD statements, standalone</p></a>
-      <a class="doc-card" href="flexy-roadmap.html"><h3>🗺️ Roadmap</h3><p>Full ICE scoring and rationale</p></a>
-      <a class="doc-card" href="flexy-user-stories.html"><h3>📋 User Stories &amp; Use Cases</h3><p>Acceptance criteria for both features, plus failure-mode flows</p></a>
-      <a class="doc-card" href="flexy-technical-feasibility.html"><h3>🛠️ Technical Feasibility</h3><p>Real API research, risk register, architecture diagram</p></a>
-      <a class="doc-card" href="flexy-real-data-integration-guide.html"><h3>🔌 Price Integration Guide</h3><p>How the real ComEd data was pulled, and how to scale it to real customers</p></a>
-      <a class="doc-card" href="flexy-ai-collaboration-review.html"><h3>✅ AI Collaboration Review</h3><p>A rubric applied to three real, sourced cases from this project</p></a>
-    </div>
+    <p class="lede">For anyone who wants to go deeper than this page, the full source documents are linked below.</p>
+
+    <details class="section-collapse doc-category">
+    <summary>
+      <div class="summary-head"><h3 style="margin:0;">Product development</h3></div>
+      <span class="toggle-ic"></span>
+    </summary>
+      <div class="doc-links">
+        <a class="doc-link" href="flexy-product-brief.html"><span class="ic">📄</span>Product Brief</a>
+        <a class="doc-link" href="flexy-personas.html"><span class="ic">🧑‍🤝‍🧑</span>Personas</a>
+        <a class="doc-link" href="flexy-synthetic-interviews.html"><span class="ic">🎙️</span>Interviews</a>
+        <a class="doc-link" href="flexy-jobs-to-be-done.html"><span class="ic">🎯</span>Jobs to Be Done</a>
+        <a class="doc-link" href="flexy-roadmap.html"><span class="ic">🗺️</span>Roadmap</a>
+        <a class="doc-link" href="flexy-user-stories.html"><span class="ic">📋</span>User Stories &amp; Use Cases</a>
+      </div>
+    </details>
+
+    <details class="section-collapse doc-category">
+    <summary>
+      <div class="summary-head"><h3 style="margin:0;">Platform &amp; Technical</h3></div>
+      <span class="toggle-ic"></span>
+    </summary>
+      <div class="doc-links">
+        <a class="doc-link" href="flexy-technical-feasibility.html"><span class="ic">🛠️</span>Technical Feasibility</a>
+        <a class="doc-link" href="flexy-real-data-integration-guide.html"><span class="ic">🔌</span>Price Integration Guide</a>
+        <a class="doc-link" href="flexy-account-connection-guide.html"><span class="ic">🔗</span>Account Connection Guide</a>
+        <a class="doc-link" href="flexy-ai-collaboration-review.html"><span class="ic">🤝</span>AI Collaboration Review</a>
+      </div>
+    </details>
+
+    <details class="section-collapse doc-category">
+    <summary>
+      <div class="summary-head"><h3 style="margin:0;">Growth</h3></div>
+      <span class="toggle-ic"></span>
+    </summary>
+      <div class="doc-empty">Nothing here yet.</div>
+    </details>
+
+    <details class="section-collapse doc-category">
+    <summary>
+      <div class="summary-head"><h3 style="margin:0;">Product Analytics</h3></div>
+      <span class="toggle-ic"></span>
+    </summary>
+      <div class="doc-empty">Nothing here yet.</div>
+    </details>
+
   </div>
 </section>
-
-<div class="references">
-  <div class="wrap">
-    <h4>References</h4>
-    <ol>
-      <li id="ref-1">On prototype fidelity and what different types of prototypes can and can't prove: <a href="https://www.svpg.com/flavors-of-prototypes/" target="_blank" rel="noopener">"Flavors of Prototypes," Silicon Valley Product Group</a> and <a href="https://www.svpg.com/high-fidelity-prototypes/" target="_blank" rel="noopener">"High-Fidelity Prototypes," Silicon Valley Product Group</a>.</li>
-      <li id="ref-2">On testing the riskiest assumption cheaply before building further: <a href="https://www.producttalk.org/glossary-discovery-continuous-discovery/" target="_blank" rel="noopener">"What Is Continuous Discovery?," Product Talk</a>.</li>
-      <li>On AI-assisted prototyping as a product management practice: <a href="https://www.lennysnewsletter.com/p/a-guide-to-ai-prototyping-for-product" target="_blank" rel="noopener">"A guide to AI prototyping for product managers," Lenny's Newsletter</a> and <a href="https://www.lennysnewsletter.com/p/microsoft-cpo-on-ai" target="_blank" rel="noopener">"Microsoft CPO: If you aren't prototyping with AI, you're doing it wrong," Lenny's Newsletter</a>.</li>
-    </ol>
-  </div>
-</div>
 
 <footer>
   <div class="wrap">
-    Flexy is a fictional product built for this portfolio. The market and program data behind it (ComEd's pricing programs, named competitors) is real and researched. Personas, interviews, and quotes are synthetic, generated to demonstrate process, not real people.
+    Flexy is a fictional case study built for a product management portfolio.<br>
+    Market research is real and cited from public program data; personas and interviews are synthetic.
   </div>
 </footer>
 

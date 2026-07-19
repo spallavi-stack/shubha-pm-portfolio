@@ -49,84 +49,53 @@
   </div>
 </nav>
 <article class="wrap">
-<h1>Flexy — Real-Time Pricing Integration Guide (For the Engineering Team)</h1>
-<p>This doc exists because the prototype's Price &amp; Cost screen was wired to genuine ComEd pricing data during this project. This is the exact method used, why it worked, and what has to change to serve real pricing to thousands of real customers instead of one demo screen. It's written as a handoff for an engineer picking this up next.</p>
-<hr />
-<h2>How the prototype fetches real data today</h2>
-<p><strong>How I (Claude, building this) pulled real prices during this project:</strong> a plain server-side HTTPS GET request to ComEd's own API, no browser involved. That's the whole trick, and it's the one fact this entire doc is built around.</p>
-<p><strong>ComEd's Hourly Pricing API is public and needs no API key.</strong> Two endpoints were used:</p>
+<h1>Flexy- Price Integration Guide</h1>
+<p>Written for a future engineering team: how the prototype's ComEd price data works today, why it works, and what changes to serve real customers at scale.</p>
+<h2>Why the prototype can fetch real prices at all</h2>
+<p>The prototype's Price &amp; Cost screen calls ComEd's actual public Hourly Pricing API and displays the actual returned prices. This works because of a distinction worth stating plainly: CORS (Cross-Origin Resource Sharing) is a restriction browsers enforce on requests made from a web page's own JavaScript. It has no effect on a server calling an API directly, or on the fetch used to build this documentation. A production backend calling ComEd's API is never subject to it.</p>
+<p>The prototype itself runs client-side in a browser preview, which is exactly the situation CORS restricts. To make the live fetch work anyway in this preview context, it routes through a public CORS proxy (<code>api.allorigins.win</code>). That proxy is real but not reliable, it returned empty responses during testing more than once, which is why the prototype always falls back to a captured real snapshot (ComEd data from July 16, 2026) rather than showing an error or a blank chart. A real backend removes the need for a proxy entirely.</p>
+<h2>The endpoints actually used</h2>
+<p>ComEd's Hourly Pricing program (hourlypricing.comed.com) publishes a free, public API with no key required:</p>
 <ul>
-<li><code>https://hourlypricing.comed.com/api?type=5minutefeed</code> — the documented endpoint. Supports a custom range via <code>&amp;datestart=YYYYMMDDhhmm&amp;dateend=YYYYMMDDhhmm</code>, returned in JSON, plain text, or RSS. This is what pulled a genuine 5-day window (Jul 13–17, 2026) to build the prototype's "Week" average.</li>
-<li><code>https://hourlypricing.comed.com/api?type=day&amp;date=YYYYMMDD</code> — an undocumented but working endpoint that returns a clean 24-value array for a single calendar day. This is what pulled the "Today" fallback and the sampled days (Jan/Mar/May/Jun/Jul 2026) used to build "Month" and "Year."</li>
+<li><code>type=day&amp;date=YYYYMMDD</code> - full day of hourly prices for one date. Functional but undocumented. Returns a JavaScript array-literal format (<code>[Date.UTC(year,month,day,hour,0,0), price]</code>), which the prototype parses with a regex rather than <code>eval()</code>, since evaluating a remote response as code is a real security risk regardless of how trusted the source seems.</li>
+<li><code>type=5minutefeed&amp;datestart=...&amp;dateend=...</code> - documented, supports custom date ranges, used to build the Week/Month/Year averages baked into the prototype.</li>
+<li><code>type=currenthouraverage</code> - the single current hour's average price.</li>
 </ul>
-<p>Full documented options are at <code>https://hourlypricing.comed.com/hp-api/</code>; API terms are at <code>https://hourlypricing.comed.com/comed-hourly-pricing-apis-terms-of-service/</code> and should be reviewed before any production commitment, since this project only tested it at demo scale.</p>
-<p><strong>Why the prototype needs a CORS proxy but I didn't.</strong> CORS (Cross-Origin Resource Sharing) is a restriction browsers enforce on their own. When a browser's JavaScript calls <code>fetch()</code> against a domain that doesn't return an <code>Access-Control-Allow-Origin</code> header, the browser blocks the response, ComEd's API doesn't send that header. A server-side request, what fetched every real number in this project, is exempt: it's a browser-only rule. The shipped prototype is a static HTML file with no backend, so it has to fake having one by routing through a public CORS proxy (<code>allorigins.win</code>). That proxy is genuinely unreliable: it returned empty responses when tested directly during this project. <strong>This is the first thing to fix in production:</strong> put a real backend between the app and ComEd. The CORS problem was always the client's to begin with, and it disappears the moment a server owns the request instead.</p>
-<hr />
-<h2>The one fact that makes this trivial to scale</h2>
-<p>ComEd's Real-Time Pricing feed is a <strong>single, system-wide price series</strong>. Every customer enrolled in Hourly Pricing sees the exact same price at the exact same time, there is no per-customer pricing call. This means serving 10 customers and serving 100,000 customers costs the backend the same one API call. The scaling problem here is not "fetch more," it's "fetch once, store it, and serve it to everyone from your own database." Don't design a per-request-to-ComEd architecture; design a single ingestion pipeline with many readers.</p>
-<p>This is different from the two other data sources Flexy depends on:</p>
-<ul>
-<li><strong>Usage data</strong> (Green Button Connect) genuinely is per-customer and requires individual OAuth-style authorization per household. See <code>flexy-technical-feasibility.md</code> for that integration's access model and risk profile; it isn't duplicated here.</li>
-<li><strong>Vehicle data</strong> (Smartcar) is also per-customer, per-vehicle, OAuth-based. Also covered in the feasibility doc.</li>
-</ul>
-<p>Only the price feed is shared. That's the one worth optimizing hard for reuse.</p>
-<hr />
-<h2>Recommended production architecture</h2>
+<p>One real gotcha worth flagging: <code>Date.UTC()</code> uses zero-indexed months (0 = January), so a response date-stamped month <code>6</code> is actually July. The parser only ever extracts the hour field, so this ambiguity doesn't actually affect what the prototype displays, but it's worth knowing if someone builds a date-display feature off this data later.</p>
+<h2>The scaling insight: fetch once, serve everyone</h2>
+<p>ComEd's Real-Time Pricing feed is one shared, system-wide price series rather than a per-customer feed. Every ComEd residential customer on the real-time rate sees the same hourly price. That means a production backend needs to poll ComEd's API once (on a schedule, e.g. hourly) and serve that same cached data to every Flexy user, rather than each user's app hitting ComEd's API independently. This is different from usage data (Green Button, per-customer) and vehicle telemetry (Smartcar, per-customer, OAuth-based), both of which genuinely need a per-user data path.</p>
+<h2>A production architecture sketch</h2>
 <pre><code>ComEd Hourly Pricing API
-        │  (server-side GET, every 5-15 min)
+        │  (polled hourly, server-side, no CORS concern)
         ▼
- Ingestion job (cron / cloud scheduler)
+  Ingestion job  ──▶  comed_price_ticks (raw, append-only)
         │
         ▼
- Price time-series store (owned by Flexy)
-        │
-        ├─► Hourly/weekly/monthly/yearly rollup tables (precomputed)
+  Aggregation job ──▶ comed_hourly_avg (one row per hour, per day)
         │
         ▼
- Flexy's own internal API
-        │
-        ▼
-   Flexy mobile app  (never talks to ComEd directly)
+   API layer  ──▶  served to every Flexy client from cache
 </code></pre>
-<p><strong>Ingestion job.</strong> A small scheduled job (cron, AWS EventBridge, Cloud Scheduler, whatever's already in the stack) hits <code>type=5minutefeed</code> every 5-15 minutes and appends new ticks to a time-series table. A separate one-time backfill job walks <code>type=day&amp;date=</code> across whatever historical range is needed to seed Week/Month/Year views immediately instead of waiting weeks for organic data to accumulate.</p>
-<p><strong>Storage.</strong> A simple schema is enough to start:</p>
-<pre><code class="language-sql">comed_price_ticks (
-  ts_utc        TIMESTAMPTZ PRIMARY KEY,
-  price_cents   NUMERIC(6,2),
-  source        TEXT  -- '5minutefeed' | 'day-backfill'
-)
+<p>Suggested schema sketch:</p>
+<pre><code>comed_price_ticks
+  id, captured_at, price_cents_kwh, source_url
 
-comed_hourly_avg (
-  date          DATE,
-  hour          SMALLINT,
-  avg_price_c   NUMERIC(6,2),
-  PRIMARY KEY (date, hour)
-)
+comed_hourly_avg
+  date, hour, price_cents_kwh, is_estimated (true if backfilled from a gap)
 </code></pre>
-<p><code>comed_hourly_avg</code> is a materialized rollup refreshed after each ingestion run, that's what actually powers the app's Today/Week/Month/Year views, so no request ever re-aggregates raw 5-minute data on the fly.</p>
-<p><strong>Serving layer.</strong> Flexy's own backend exposes its own internal endpoint (e.g. <code>/v1/pricing/today</code>, <code>/v1/pricing/range?window=week</code>) backed by that store, with a short in-memory or Redis cache on the hot "current price" read. The app talks only to this endpoint. This is also what finally makes "live" mean something real: today's prototype badge honestly says "live" or "fallback" because a static file genuinely can't guarantee freshness; a real backend with its own ingestion job can guarantee it and drop that caveat entirely.</p>
-<hr />
-<h2>Reliability, because ComEd's feed isn't always up</h2>
-<p>During this project's own research, ComEd's live-prices page displayed this exact banner: <em>"PJM, the regional transmission organization, is experiencing technical difficulties with the 5-minute and hourly price feeds."</em> That's a real, observed failure mode. Production ingestion needs to handle it explicitly:</p>
-<ul>
-<li>Retry with backoff on a failed fetch; don't let one missed poll silently create a data gap.</li>
-<li>If a gap persists, serve the last known-good price with an explicit "stale" flag rather than blocking or guessing.</li>
-<li>Alert on ingestion failures past some threshold (e.g. no new tick in 30 minutes during market hours).</li>
-<li>Never let the app silently show fabricated or interpolated numbers as if they were real. The badge/fallback pattern already built into the prototype (live vs. fallback vs. modeled, and a "verify this yourself" link to ComEd's own feed) is a UX pattern worth carrying into production as-is.</li>
-</ul>
-<hr />
-<h2>Migration checklist, prototype → production</h2>
+<h2>Reliability handling</h2>
+<p>ComEd's feed itself can go down, and the broader PJM wholesale feed it tracks has had real, publicly visible outage banners during this project's research. A production ingestion job needs to: retry with backoff, alert if no successful fetch has landed in over an hour, and serve the most recent successfully cached data with a visible "not current" indicator rather than presenting stale data as live, the same pattern the prototype already uses for its badge/fallback logic, just moved server-side.</p>
+<h2>Migration checklist, prototype to production</h2>
 <ol>
-<li>Stand up a minimal backend service (even a single scheduled function is enough to start) that owns the ComEd fetch.</li>
-<li>Point the ingestion job at <code>type=5minutefeed</code> on a schedule; backfill history with <code>type=day&amp;date=</code>.</li>
-<li>Stand up <code>comed_price_ticks</code> and <code>comed_hourly_avg</code> tables (or equivalent).</li>
-<li>Replace the app's CORS-proxy fetch with a call to Flexy's own <code>/v1/pricing/*</code> endpoint.</li>
-<li>Keep the live/fallback/stale badge and "verify against ComEd" pattern; it's honest UX that holds up in production too.</li>
-<li>Layer in Green Button Connect and Smartcar separately once the shared price pipeline is solid, they're per-customer problems and shouldn't block the one piece that scales for free.</li>
-<li>Review ComEd's API Terms of Service against actual expected request volume before committing to production traffic.</li>
+<li>Stand up a scheduled ingestion job hitting ComEd's API directly (no proxy needed server-side).</li>
+<li>Store raw ticks and an hourly aggregate table.</li>
+<li>Build a thin API layer serving cached data to clients, replacing the prototype's direct-to-ComEd browser fetch.</li>
+<li>Add alerting for ingestion gaps.</li>
+<li>Replace the prototype's single captured fallback snapshot with "most recent successfully cached hour" as the fallback.</li>
+<li>For usage data (the real-time consumption view) and vehicle data (smart EV charging), build genuinely per-customer OAuth flows, Green Button Connect and Smartcar respectively, since those aren't shared feeds and can't use this same fetch-once pattern.</li>
 </ol>
 <h2>Status</h2>
-<p>New. Written to hand off the exact method used to pull real ComEd pricing during this project (server-side fetch, no CORS, no API key) into a concrete plan for serving it to real customers at scale. The central finding worth remembering: ComEd's price feed is shared across all customers, so this is a "fetch once, store it, serve it to everyone" problem. Usage and vehicle data are the per-customer integrations that need separate handling.</p>
+<p>Reflects how the prototype's Price &amp; Cost screen is actually wired today: live fetch attempted first, real captured ComEd data (Jul 16, 2026) as fallback, with a visible badge distinguishing the two, and real (not smoothed) multi-day ComEd averages behind the Week/Month/Year tabs.</p>
 <div class="doc-footer">Part of the Flexy case study documentation set. For the short version, see the <a href="flexy-case-study.html">case study page</a>.</div>
 </article>
 <footer>
