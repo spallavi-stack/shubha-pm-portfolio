@@ -7,42 +7,19 @@
   :root{
     --comed-blue:#0059A4;
     --comed-navy:#180D67;
-    --flexy-teal:#2F6B4F;
-    --flexy-teal-dark:#1E4B3B;
-    --flexy-gold:#E7B23A;
-    --flexy-green-light:#9AC55C;
-    --flexy-peach:#F0AE8C;
-    --flexy-ink:#1B2430;
-    --flexy-bg:#F7FAF4;
+    --flexy-teal:#C2790E;
+    --flexy-teal-dark:#96600A;
+    --flexy-ink:#201A12;
+    --flexy-bg:#FBF6EC;
     --cheap:#34C759;
     --moderate:#F5A623;
     --expensive:#FF6B6B;
+    --tou-cheap:#5B8DEF;
+    --tou-moderate:#8B6FF0;
+    --tou-expensive:#33267A;
     --gray:#8A94A6;
     --line:#E3E8EE;
-    --tou-cheap:#2F6B4F;
-    --tou-moderate:#E7B23A;
-    --tou-expensive:#D64545;
-    --tou-premium:#8A5A2E;
-    --cost-bar:#5C6BC0;
-    --axis-label:#8A94A6;
   }
-  .data-badge{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:700;padding:3px 8px;border-radius:20px;letter-spacing:0.2px;}
-  .data-badge.live{background:#E6F7EE;color:#12805C;}
-  .data-badge.fallback{background:#FDF3E3;color:#96600A;}
-  .data-badge.modeled{background:#EDEFF3;color:#5C5445;}
-  .verify-link{font-size:10.5px;color:var(--flexy-teal-dark);text-decoration:none;font-weight:600;}
-  .verify-link:hover{text-decoration:underline;}
-  .data-footnote{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 4px 0;flex-wrap:wrap;}
-  .chart-card{padding:12px 10px 10px;}
-  .chart-title{font-size:12px;font-weight:700;color:var(--flexy-ink);padding:0 4px;margin-bottom:4px;display:flex;justify-content:space-between;align-items:baseline;}
-  .chart-title .tag{font-weight:800;color:var(--flexy-teal-dark);}
-  .axis-tag{font-size:9.5px;color:var(--gray);}
-  .axis-split{display:flex;justify-content:space-between;font-size:9.5px;color:var(--gray);padding:0 4px;margin:-2px 0 4px;}
-  .axis-split .axis-left::before{content:"◀ ";font-size:8px;}
-  .axis-split .axis-right::after{content:" ▶";font-size:8px;}
-  .chart-legend-line{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--flexy-ink);}
-  .line-swatch{width:14px;height:2.5px;background:var(--flexy-ink);border-radius:2px;display:inline-block;}
-  .chart-footnote{font-size:11px;color:var(--gray);padding:6px 4px 0;line-height:1.4;}
   *{box-sizing:border-box;}
   body{
     margin:0;
@@ -202,7 +179,7 @@
     font-size:15px;background:#1E252F;color:#fff;
   }
   .btn-carauth{
-    margin:10px 24px 0 24px;background:var(--flexy-teal);color:#fff;border:none;
+    margin:10px 24px 0 24px;background:#C2790E;color:#fff;border:none;
     padding:14px;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;
   }
   .link-muted-dark{text-align:center;font-size:12px;color:#6B7684;margin-top:18px;}
@@ -211,7 +188,7 @@
     display:flex;align-items:flex-start;gap:10px;padding:12px 0;border-bottom:1px solid #232A34;
   }
   .carauth-check{
-    width:20px;height:20px;border-radius:50%;background:var(--flexy-teal);color:#fff;font-size:12px;
+    width:20px;height:20px;border-radius:50%;background:#C2790E;color:#fff;font-size:12px;
     display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;
   }
   .carauth-perm-text b{display:block;font-size:14px;color:#fff;}
@@ -326,6 +303,21 @@
   .legend span{display:flex;align-items:center;gap:4px;}
   .dot{width:8px;height:8px;border-radius:50%;display:inline-block;}
 
+  .chart-card{padding:14px 14px 10px;}
+  .chart-title{display:flex;align-items:baseline;justify-content:space-between;font-size:12.5px;font-weight:700;color:var(--flexy-ink,#201A12);margin-bottom:4px;}
+  .axis-tag{font-size:9px;font-weight:600;color:var(--gray);text-transform:uppercase;letter-spacing:.03em;}
+  .chart-legend-line{display:flex;align-items:center;justify-content:space-between;font-size:10px;color:var(--gray);margin-top:4px;}
+  .chart-legend-line .line-info{display:flex;align-items:center;gap:5px;}
+  .chart-footnote{font-size:9.5px;color:var(--gray);margin:6px 0 0;line-height:1.4;}
+  .line-swatch{width:14px;height:2px;background:#201A12;opacity:.55;display:inline-block;border-radius:1px;}
+
+  .data-footnote{margin-top:14px;padding-top:10px;border-top:1px solid #E5DFD2;}
+  .data-footnote .data-badge{display:inline-flex;background:none;border:none;padding:0;margin-bottom:3px;font-size:10px;font-weight:600;}
+  .data-footnote .data-badge.live{color:#1F7A3F;}
+  .data-footnote .data-badge.fallback{color:#8A5A0A;}
+  .data-footnote .data-badge.modeled{color:var(--gray);}
+  .data-footnote .verify-link{font-size:10px;margin-bottom:0;}
+
   .bottomnav{
     position:absolute;bottom:0;left:0;right:0;height:78px;
     background:#fff;border-top:1px solid var(--line);
@@ -347,7 +339,7 @@
   .settings-row .v{font-size:13.5px;font-weight:700;color:var(--flexy-ink);}
 
   .banner{
-    background:#F0F6EC;border:1px solid #DCEACB;border-radius:12px;padding:12px 14px;font-size:12.5px;color:var(--flexy-teal-dark);margin-bottom:14px;line-height:1.5;
+    background:#FBF0DC;border:1px solid #F0DFB8;border-radius:12px;padding:12px 14px;font-size:12.5px;color:var(--flexy-teal-dark);margin-bottom:14px;line-height:1.5;
   }
   .override-btn{
     width:100%;background:var(--flexy-ink);color:#fff;border:none;border-radius:12px;padding:14px;font-size:14px;font-weight:700;cursor:pointer;margin-top:6px;
@@ -358,6 +350,32 @@
     display:flex;gap:10px;align-items:center;
   }
   .demo-nav button{background:none;border:1px solid #555;color:#fff;border-radius:14px;padding:4px 10px;font-size:11px;cursor:pointer;}
+
+  .data-badge{
+    display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:700;
+    padding:4px 10px;border-radius:20px;margin-bottom:4px;
+    background:#F7F4EC;color:#5C5445;border:1px solid #E5DFD2;
+  }
+  .data-badge.live{background:#E9F7EE;color:#1F7A3F;border-color:#BCE6CA;}
+  .data-badge.live::before{content:"●";color:#2FBE5E;}
+  .data-badge.fallback{background:#FBF0DC;color:#8A5A0A;border-color:#F0DFB8;}
+  .data-badge.fallback::before{content:"●";color:#C2790E;}
+  .data-badge.modeled{background:#F7F4EC;color:#5C5445;border-color:#E5DFD2;}
+  .verify-link{
+    display:block;font-size:11px;font-weight:600;color:var(--flexy-teal-dark);
+    text-decoration:underline;margin-bottom:10px;
+  }
+  .chart-note{font-size:10.5px;color:#8A8272;margin:6px 2px 0;line-height:1.4;}
+
+  .scroll-hint{
+    position:absolute;left:50%;bottom:88px;transform:translateX(-50%);
+    background:rgba(32,26,18,0.88);color:#fff;font-size:11px;font-weight:600;
+    padding:7px 14px;border-radius:20px;display:flex;align-items:center;gap:6px;
+    pointer-events:none;transition:opacity .25s ease;z-index:5;
+    animation:scrollHintBounce 1.6s ease-in-out infinite;
+  }
+  .scroll-hint.hidden{opacity:0;}
+  @keyframes scrollHintBounce{0%,100%{transform:translateX(-50%) translateY(0);}50%{transform:translateX(-50%) translateY(5px);}}
 
   /* --- ComEd account screen + promo card (discovery) --- */
   .comed-account-header{
@@ -435,7 +453,8 @@
   .store-topbar .back{font-size:18px;color:var(--gray);font-weight:400;}
   .store-header{display:flex;gap:14px;padding:6px 20px 18px 20px;align-items:flex-start;}
   .store-icon{
-    width:76px;height:76px;border-radius:18px;flex-shrink:0;overflow:hidden;
+    width:76px;height:76px;border-radius:18px;background:linear-gradient(135deg,var(--flexy-teal) 0%, var(--flexy-teal-dark) 100%);
+    color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:26px;flex-shrink:0;
   }
   .store-name{font-size:19px;font-weight:800;color:var(--flexy-ink);}
   .store-dev{font-size:12px;color:var(--gray);margin-top:2px;}
@@ -490,12 +509,12 @@
 
   /* --- Flexy intro carousel --- */
   .carousel-icon{
-    width:90px;height:90px;border-radius:50%;background:#E4F5F3;color:var(--flexy-teal-dark);
+    width:90px;height:90px;border-radius:50%;background:#F7E8C8;color:var(--flexy-teal-dark);
     display:flex;align-items:center;justify-content:center;font-size:38px;margin-bottom:22px;
   }
   .recommended-tag{
     display:inline-block;font-size:10.5px;font-weight:700;color:var(--flexy-teal-dark);
-    background:#E4F5F3;padding:4px 10px;border-radius:20px;margin-bottom:14px;
+    background:#F7E8C8;padding:4px 10px;border-radius:20px;margin-bottom:14px;
   }
   .soon-tag{
     display:inline-block;font-size:10.5px;font-weight:700;color:#8A6D1D;
@@ -514,13 +533,14 @@
 <div class="phone">
 
   <!-- SCREEN 0: Email, monthly bill notification with Flexy promo -->
-  <div class="screen active flexy-bg" id="s0" style="background:#fff;">
+  <div class="screen active flexy-bg" id="s0" style="background:#fff;position:relative;">
     <div class="statusbar"><span>9:41</span><span>●●●● 🔋</span></div>
     <div class="email-topbar">
       <span class="back">&#8592;</span>
       <span style="font-weight:700;">Inbox</span>
     </div>
-    <div class="content" style="padding-top:16px;">
+    <div class="scroll-hint" id="s0ScrollHint">&#8595; Scroll for more</div>
+    <div class="content" id="s0Content" style="padding-top:16px;" onscroll="hideScrollHint()">
       <div class="email-sender-row">
         <div class="email-avatar">CE</div>
         <div>
@@ -569,22 +589,7 @@
     <div class="store-topbar"><span class="back">&#8592;</span><span>App Store</span></div>
     <div class="content" style="padding-top:4px;">
       <div class="store-header">
-        <div class="store-icon">
-          <svg viewBox="0 0 64 64" width="76" height="76" role="img" aria-label="Flexy logo">
-            <defs>
-              <linearGradient id="flexyLogoGradStore" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0" stop-color="#1E4B3B"/>
-                <stop offset="1" stop-color="#F0AE8C"/>
-              </linearGradient>
-              <clipPath id="flexyLogoClipStore"><rect x="0" y="0" width="64" height="64" rx="16"/></clipPath>
-            </defs>
-            <rect x="0" y="0" width="64" height="64" rx="16" fill="url(#flexyLogoGradStore)"/>
-            <g clip-path="url(#flexyLogoClipStore)"><circle cx="44" cy="34" r="13" fill="#E7B23A"/></g>
-            <path d="M10 24 L24 34 L36 30 L54 48" fill="none" stroke="#ffffff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-            <circle cx="10" cy="24" r="3.5" fill="#ffffff"/>
-            <circle cx="54" cy="48" r="3.5" fill="#ffffff"/>
-          </svg>
-        </div>
+        <div class="store-icon">flx</div>
         <div>
           <div class="store-name">Flexy</div>
           <div class="store-dev">Flexy, Inc. &middot; Utilities</div>
@@ -608,7 +613,7 @@
 
       <div class="store-desc-label">About this app</div>
       <div class="store-desc">
-        Flexy helps ComEd customers on Real-Time Pricing and Time-of-Use rates get more out of their plan. See clear, simple pricing and cost, charge your EV automatically in the cheapest hours, and always have your car ready when you need it. Solar and heat pump savings tools coming soon.<br><br>
+        Flexy helps ComEd customers on Real-Time Pricing and Time-of-Use rates get more out of their plan. See clear, simple pricing and cost, charge your EV automatically in the cheapest hours, and always have your car ready when you need it.<br><br>
         Works with your ComEd account and most major EV brands.
       </div>
     </div>
@@ -631,7 +636,7 @@
       <div class="carousel-icon">👋</div>
       <div class="h1">Meet Flexy</div>
       <div class="p-muted">A free companion app that helps you get more out of your dynamic tariff. Clear pricing. Cheaper charging. Zero effort.</div>
-      <div class="dots"><span class="dot-ind on"></span><span class="dot-ind"></span><span class="dot-ind"></span><span class="dot-ind"></span></div>
+      <div class="dots"><span class="dot-ind on"></span><span class="dot-ind"></span><span class="dot-ind"></span></div>
       <button class="btn-primary" style="margin-top:22px;" onclick="go('s0d')">Next</button>
     </div>
   </div>
@@ -643,31 +648,19 @@
       <div class="carousel-icon">💵</div>
       <div class="h1">See exactly what you're paying</div>
       <div class="p-muted">A clear, simple view of your price and cost, hour by hour, today, this week, this month, and this year. No spreadsheets required.</div>
-      <div class="dots"><span class="dot-ind"></span><span class="dot-ind on"></span><span class="dot-ind"></span><span class="dot-ind"></span></div>
+      <div class="dots"><span class="dot-ind"></span><span class="dot-ind on"></span><span class="dot-ind"></span></div>
       <button class="btn-primary" style="margin-top:22px;" onclick="go('s0e')">Next</button>
     </div>
   </div>
 
-  <!-- SCREEN 0e: Intro carousel 3 -->
+  <!-- SCREEN 0e: Intro carousel 3, EV charging + connect CTA -->
   <div class="screen flexy-bg" id="s0e" style="position:relative;">
     <button class="carousel-skip" onclick="go('s1')">Skip</button>
     <div class="center-flow">
       <div class="carousel-icon">🔌</div>
       <div class="h1">Charge your EV for less, automatically</div>
       <div class="p-muted">Flexy schedules your charging into the cheapest available hours, and always gets your car ready by the time you set.</div>
-      <div class="dots"><span class="dot-ind"></span><span class="dot-ind"></span><span class="dot-ind on"></span><span class="dot-ind"></span></div>
-      <button class="btn-primary" style="margin-top:22px;" onclick="go('s0f')">Next</button>
-    </div>
-  </div>
-
-  <!-- SCREEN 0f: Intro carousel 4, solar & heat pump teaser + connect CTA -->
-  <div class="screen flexy-bg" id="s0f" style="position:relative;">
-    <div class="center-flow">
-      <div class="carousel-icon">☀️</div>
-      <div class="h1">Know if solar or a heat pump is worth it</div>
-      <div class="p-muted">Concrete savings for your home, before you talk to a contractor.</div>
-      <div class="soon-tag">Coming soon</div>
-      <div class="dots"><span class="dot-ind"></span><span class="dot-ind"></span><span class="dot-ind"></span><span class="dot-ind on"></span></div>
+      <div class="dots"><span class="dot-ind"></span><span class="dot-ind"></span><span class="dot-ind on"></span></div>
       <button class="btn-primary" style="margin-top:22px;" onclick="go('s1')">Get Started</button>
       <div class="p-muted" style="margin-top:14px;margin-bottom:0;font-size:11.5px;">Next, we'll securely connect your ComEd account. You'll log in directly with ComEd &#8212; Flexy never sees your password.</div>
     </div>
@@ -909,6 +902,19 @@
         </div>
       </div>
 
+      <div class="card">
+        <div class="row">
+          <div>
+            <div style="font-size:13px;font-weight:700;color:var(--flexy-ink);">Only run smart charging at home</div>
+            <div style="font-size:11px;color:var(--gray);margin-top:2px;">Pauses automation when your car is away from your home charger. Applies whether Flexy is using custom settings or picking hours for you.</div>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="homeOnlyToggle" checked>
+            <span class="slider-toggle"></span>
+          </label>
+        </div>
+      </div>
+
       <div id="onboardCustomPanel">
         <div class="card">
           <div class="slider-label"><span>Target charge level</span><span>80%</span></div>
@@ -941,19 +947,6 @@
           <div class="slider-label"><span>Charging speed limit</span><span id="ampVal">48A (full speed)</span></div>
           <input type="range" min="16" max="48" step="16" value="48" oninput="updateAmp(this.value)">
           <div style="font-size:11px;color:var(--gray);margin-top:6px;">Lower this if you're sharing circuit capacity with another EV or large appliance.</div>
-        </div>
-
-        <div class="card">
-          <div class="row">
-            <div>
-              <div style="font-size:13px;font-weight:700;color:var(--flexy-ink);">Only run smart charging at home</div>
-              <div style="font-size:11px;color:var(--gray);margin-top:2px;">Pauses automation when your car is away from your home charger</div>
-            </div>
-            <label class="switch">
-              <input type="checkbox" id="homeOnlyToggle" checked>
-              <span class="slider-toggle"></span>
-            </label>
-          </div>
         </div>
       </div>
 
@@ -993,43 +986,44 @@
       </div>
 
       <div class="stat-row">
-        <div class="stat"><div class="val" id="costVal">$2.64</div><div class="lbl" id="costLbl">Cost today</div></div>
+        <div class="stat"><div class="val" id="costVal">$2.64</div><div class="lbl" id="costLbl">Cost so far (real price × modeled load)</div></div>
         <div class="stat"><div class="val" id="avgVal">21.4¢</div><div class="lbl">Avg price paid / kWh</div></div>
-        <div class="stat"><div class="val" id="cheapWindowVal">12AM&#8211;5AM</div><div class="lbl">Next cheap window</div></div>
+        <div class="stat"><div class="val" id="extraVal">&#8211;</div><div class="lbl" id="extraLbl">Cheapest hour today</div></div>
       </div>
 
       <div class="tou-toggle">
-        <div class="lab">Time of Use</div>
+        <div><div class="lab">Time of Use</div></div>
         <label class="switch">
           <input type="checkbox" id="touSwitch" onchange="toggleTOU()">
           <span class="slider-toggle"></span>
         </label>
       </div>
-      <p id="touFootnote" class="chart-footnote" style="display:none;margin:2px 0 10px;">ComEd's filed TOU proposal: +4.8&cent;/kWh delivery, 1&ndash;7pm.</p>
 
       <div class="legend" id="priceLegend">
         <span><span class="dot" id="legDot0" style="background:var(--cheap)"></span><span id="legLbl0">Cheap</span></span>
         <span><span class="dot" id="legDot1" style="background:var(--moderate)"></span><span id="legLbl1">Moderate</span></span>
         <span><span class="dot" id="legDot2" style="background:var(--expensive)"></span><span id="legLbl2">Expensive</span></span>
-        <span id="legTou" style="display:none;"><span class="dot" style="background:var(--tou-premium)"></span>TOU premium</span>
+        <span id="legTou" style="display:none;"><span class="dot" style="background:var(--tou-expensive);border-radius:2px;"></span>+TOU delivery (1-7pm)</span>
       </div>
 
       <div class="card chart-card">
-        <div class="chart-title"><span id="priceChartTitle">Price, today</span></div>
-        <div class="axis-split"><span class="axis-left">&cent;/kWh</span><span class="axis-right">kWh</span></div>
-        <svg id="chart" viewBox="0 0 320 150" width="100%" height="150"></svg>
-        <div class="chart-legend-line"><span class="line-swatch"></span>Household usage (kWh, right axis, modeled load profile &mdash; dashed since it's not a real meter reading)</div>
+        <div class="chart-title"><span id="priceChartTitle">Price by hour (real)</span><span class="axis-tag">&#162;/kWh</span></div>
+        <svg id="chart" viewBox="0 0 320 130" width="100%" height="130"></svg>
+        <div class="chart-legend-line">
+          <span class="line-info"><span class="line-swatch"></span>Modeled residential load profile</span>
+          <span class="axis-tag">kWh</span>
+        </div>
+        <p id="touFootnote" class="chart-footnote" style="display:none;">ComEd's filed TOU proposal: +4.8&#162;/kWh delivery, 1&#8211;7pm.</p>
       </div>
 
-      <div class="card chart-card" style="margin-top:10px;">
-        <div class="chart-title"><span>Estimated cost by hour</span><span class="tag" id="costTotalTag">$2.64 total</span></div>
-        <svg id="costChart" viewBox="0 0 320 120" width="100%" height="120"></svg>
-        <div class="chart-legend-line"><span class="line-swatch" style="background:var(--cost-bar);border-radius:2px;height:8px;width:14px;"></span>Estimated cost ($), based on modeled usage</div>
+      <div class="card chart-card">
+        <div class="chart-title"><span>Estimated cost by hour</span><span class="axis-tag" id="costTotalTag">$</span></div>
+        <svg id="costChart" viewBox="0 0 320 112" width="100%" height="112"></svg>
       </div>
 
       <div class="data-footnote">
-        <span id="dataBadge" class="data-badge live">&#9679; Live ComEd data</span>
-        <a id="verifyLink" class="verify-link" href="https://hourlypricing.comed.com/live-prices/" target="_blank" rel="noopener">Verify this yourself &rarr;</a>
+        <div id="dataBadge" class="data-badge">Loading real ComEd pricing&#8230;</div>
+        <a id="verifyLink" class="verify-link" href="#" target="_blank" rel="noopener">Verify against ComEd's public feed →</a>
       </div>
     </div>
 
@@ -1048,26 +1042,21 @@
       <div class="avatar">MW</div>
     </div>
     <div class="content" style="padding-top:8px;">
-      <div class="seg">
-        <button class="active" onclick="setMode(this,true)">Custom settings</button>
-        <button onclick="setMode(this,false)">Max savings</button>
-      </div>
-
       <div id="customPanel">
         <div class="charge-ring-wrap">
           <svg width="120" height="120" viewBox="0 0 120 120">
             <circle cx="60" cy="60" r="52" fill="none" stroke="#EDEFF3" stroke-width="12"/>
-            <circle cx="60" cy="60" r="52" fill="none" stroke="#2F6B4F" stroke-width="12"
+            <circle cx="60" cy="60" r="52" fill="none" stroke="#C2790E" stroke-width="12"
               stroke-dasharray="326.7" stroke-dashoffset="180" stroke-linecap="round" transform="rotate(-90 60 60)"/>
-            <text x="60" y="56" text-anchor="middle" font-size="20" font-weight="800" fill="#1B2430">45%</text>
+            <text x="60" y="56" text-anchor="middle" font-size="20" font-weight="800" fill="#201A12">45%</text>
             <text x="60" y="74" text-anchor="middle" font-size="10" fill="#8A94A6">current charge</text>
           </svg>
         </div>
         <div class="banner">Charging will begin at 11:00 PM to hit your 7:00 AM target using the cheapest available hours.</div>
         <div class="card">
           <div class="row" style="margin-bottom:2px;">
-            <div style="font-size:13px;font-weight:700;color:var(--flexy-ink);">Your settings</div>
-            <a href="#" onclick="go('s7');return false;" style="font-size:12px;color:var(--flexy-teal-dark);font-weight:700;text-decoration:none;">Edit</a>
+            <div style="font-size:13px;font-weight:700;color:var(--flexy-ink);">Your settings &middot; Custom</div>
+            <a href="#" onclick="editSettings();return false;" style="font-size:12px;color:var(--flexy-teal-dark);font-weight:700;text-decoration:none;">Edit</a>
           </div>
           <div class="settings-row"><span class="k">Ready by</span><span class="v">7:00 AM</span></div>
           <div class="settings-row"><span class="k">Target charge</span><span class="v">80%</span></div>
@@ -1084,20 +1073,21 @@
         <div class="charge-ring-wrap">
           <svg width="120" height="120" viewBox="0 0 120 120">
             <circle cx="60" cy="60" r="52" fill="none" stroke="#EDEFF3" stroke-width="12"/>
-            <circle cx="60" cy="60" r="52" fill="none" stroke="#F5A623" stroke-width="12"
+            <circle cx="60" cy="60" r="52" fill="none" stroke="#34C759" stroke-width="12"
               stroke-dasharray="326.7" stroke-dashoffset="230" stroke-linecap="round" transform="rotate(-90 60 60)"/>
-            <text x="60" y="56" text-anchor="middle" font-size="20" font-weight="800" fill="#1B2430">45%</text>
+            <text x="60" y="56" text-anchor="middle" font-size="20" font-weight="800" fill="#201A12">45%</text>
             <text x="60" y="74" text-anchor="middle" font-size="10" fill="#8A94A6">current charge</text>
           </svg>
         </div>
         <div class="banner">Paused, waiting for a cheaper hour. Next window: 1:00AM&#8211;4:00AM. Your car will still be ready by 7:00 AM no matter what.</div>
         <div class="card">
           <div class="row" style="margin-bottom:2px;">
-            <div style="font-size:13px;font-weight:700;color:var(--flexy-ink);">Your settings</div>
-            <a href="#" onclick="go('s7');return false;" style="font-size:12px;color:var(--flexy-teal-dark);font-weight:700;text-decoration:none;">Edit</a>
+            <div style="font-size:13px;font-weight:700;color:var(--flexy-ink);">Your settings &middot; Max savings</div>
+            <a href="#" onclick="editSettings();return false;" style="font-size:12px;color:var(--flexy-teal-dark);font-weight:700;text-decoration:none;">Edit</a>
           </div>
           <div class="settings-row"><span class="k">Ready by</span><span class="v">7:00 AM</span></div>
           <div class="settings-row"><span class="k">Target charge</span><span class="v">Flexy decides</span></div>
+          <div class="settings-row"><span class="k">Home-only automation</span><span class="v">On</span></div>
           <div class="settings-row"><span class="k">Vehicle</span><span class="v">Chevrolet Bolt EUV</span></div>
         </div>
         <button class="override-btn" onclick="alert('Charging started now, overriding price optimization.')">⚡ Charge now (override)</button>
@@ -1167,6 +1157,13 @@ function carConnect(){
   carConnectTimer = setTimeout(()=>go('s6'), 1600);
 }
 function restart(){ evConnected = false; go('s0'); }
+function hideScrollHint(){
+  const hint = document.getElementById('s0ScrollHint');
+  const content = document.getElementById('s0Content');
+  if (!hint || !content) return;
+  if (content.scrollTop > 20) { hint.classList.add('hidden'); }
+  else { hint.classList.remove('hidden'); }
+}
 
 let installTimer = null;
 function installFlexy(){
@@ -1194,6 +1191,7 @@ function updateAmp(v){
 
 // ---- Home / Smart Charging state ----
 let evConnected = false;
+let chargeMode = 'custom'; // 'custom' or 'savings', the strategy saved on the settings screen
 
 function goHome(){
   renderFlowDiagram();
@@ -1201,11 +1199,25 @@ function goHome(){
   go('sHome');
 }
 function goSmartCharging(){
+  if(evConnected) renderChargingScreen();
   go(evConnected ? 's9' : 's5');
 }
 function finishEVSetup(){
+  chargeMode = document.getElementById('onboardCustomPanel').style.display !== 'none' ? 'custom' : 'savings';
   evConnected = true;
+  renderChargingScreen();
   go('s9');
+}
+function renderChargingScreen(){
+  const isCustom = chargeMode === 'custom';
+  document.getElementById('customPanel').style.display = isCustom ? 'block' : 'none';
+  document.getElementById('savingsPanel').style.display = isCustom ? 'none' : 'block';
+}
+function editSettings(){
+  const isCustom = chargeMode === 'custom';
+  const buttons = document.querySelectorAll('#s7 .seg button');
+  setOnboardMode(isCustom ? buttons[0] : buttons[1], isCustom);
+  go('s7');
 }
 function renderFlowDiagram(){
   const line = document.getElementById('flowLineCar');
@@ -1227,255 +1239,278 @@ function updateHomeChargingCard(){
   }
 }
 
-function setMode(btn,isCustom){
-  document.querySelectorAll('#s9 .seg button').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-  document.getElementById('customPanel').style.display = isCustom ? 'block' : 'none';
-  document.getElementById('savingsPanel').style.display = isCustom ? 'none' : 'block';
-}
-
-// ==== Real ComEd data engine ====
-// Real 24-hour ComEd Hourly Pricing snapshot, captured Jul 16, 2026 (hourlypricing.comed.com/api?type=day&date=20260716)
-const FALLBACK_COMED_PRICES = [5.5,5.6,3.5,3.4,3.3,3.5,3.7,4.2,3.6,4.3,3.3,7.5,5.0,5.1,7.3,10.0,7.8,13.5,14.5,35.9,16.2,9.6,8.6,6.1];
-const FALLBACK_LABEL = 'ComEd Hourly Pricing, Jul 16 2026 (captured snapshot)';
+// ---- Price & Cost chart: real ComEd data, honestly labeled ----
 const consumption = [0.3,0.2,0.2,0.2,0.3,0.4,0.9,1.1,0.6,0.4,0.3,0.3,0.4,0.5,0.4,0.3,0.9,1.6,1.8,1.2,0.8,0.5,0.4,0.3];
 
-// Real ComEd's filed TOU proposal: 10.7c/kWh super-peak delivery (1-7pm) vs 5.9c/kWh standard = +4.8c/kWh, additive, not a multiplier.
+// Real ComEd Hourly Pricing data (cents/kWh), captured 2026-07-16 via
+// https://hourlypricing.comed.com/api?type=day&date=20260716
+// Used as an honest fallback when the live fetch below can't reach ComEd (CORS proxy down, offline, etc.)
+// This is real historical ComEd pricing, not invented numbers, even when it's not live.
+const FALLBACK_COMED_PRICES = [5.5,5.6,3.5,3.4,3.3,3.5,3.7,4.2,3.6,4.3,3.3,7.5,5.0,5.1,7.3,10.0,7.8,13.5,14.5,35.9,16.2,9.6,8.6,6.1];
+const FALLBACK_LABEL = 'Jul 16, 2026';
+const RTP_COLORS = {0:'#34C759',1:'#F5A623',2:'#FF6B6B'};
+// ComEd's actual filed residential TOU proposal (ICC docket, targeting a 2026 rollout) doesn't
+// change the real-time supply price at all, it replaces the flat delivery charge with a
+// time-varying one: 10.7¢/kWh from 1-7pm versus 5.9¢/kWh standard, a difference of 4.8¢/kWh.
+// So TOU is modeled here as an additive premium stacked on top of the real supply price during
+// peak hours, not a multiplier on the whole price, since that's how the actual filing works.
 const TOU_PEAK_DELTA_CENTS = 4.8;
-function touDeltaCents(hour){ return (hour >= 13 && hour < 19) ? TOU_PEAK_DELTA_CENTS : 0; }
+const TOU_PREMIUM_COLOR = '#33267A';
 
-// Real 5-day (week) and multi-month-sampled (month/year) ComEd averages, fetched and aggregated during prototype build.
-const RANGE_DAYS = { week: 5, month: 30, year: 365 };
-const RANGE_LABEL = { week: 'this week', month: 'this month', year: 'this year' };
+let priceState = { hours: FALLBACK_COMED_PRICES, source: 'fallback', label: FALLBACK_LABEL, dateStr: '20260716', touMode: false };
+let currentRange = 'today';
+
+// Week/Month/Year hourly price curves, each averaged from real ComEd data pulled from
+// https://hourlypricing.comed.com/api?type=5minutefeed (custom date range) and
+// https://hourlypricing.comed.com/api?type=day&date=YYYYMMDD, not a single day reused or
+// smoothed into a fake shape. WEEK averages five real consecutive days (Jul 13-17, 2026,
+// hundreds of real 5-minute samples grouped by local hour). MONTH and YEAR average real
+// single-day snapshots spread across the months that actually exist in 2026 so far (later
+// months aren't fetchable yet, ComEd only returns data up to the real present day).
+const RANGE_DAYS = { week: 7, month: 30, year: 365 };
+const RANGE_LABEL = { week: 'weekly', month: 'monthly', year: 'yearly' };
 const RANGE_SOURCE_LABEL = {
-  week: 'ComEd Hourly Pricing, 5-day avg Jul 13–17 2026',
-  month: 'ComEd Hourly Pricing, avg of Jun 15 + Jul 16 2026',
-  year: 'ComEd Hourly Pricing, avg of 5 sampled days across 2026'
+  week: 'Real avg of 5 days, Jul 13–17, 2026',
+  month: 'Real avg of 2 sampled days, Jun–Jul 2026',
+  year: 'Real avg of 5 sampled days, Jan–Jul 2026'
 };
-const RANGE_VERIFY_DATE = { week: '20260716', month: '20260716', year: '20260115' };
+const RANGE_SAVINGS_PCT = { week: -14, month: -11, year: -9 };
 const RANGE_PRICES = {
   week:  [4.55,3.26,3.12,3.05,3.19,3.43,3.7,3.42,3.73,3.51,6.77,5.99,5.58,7.95,10.05,12.24,17.54,19.04,44.18,29.04,16.1,9.66,6.79,4.7],
   month: [4.05,4.15,2.9,2.75,2.95,3.05,3.1,3.3,2.8,3.25,2.95,5.05,3.75,3.8,4.9,6.25,5.2,8.05,8.9,19.8,10.05,6.65,5.55,4.0],
   year:  [2.64,2.92,2.44,2.18,2.02,3.12,2.2,2.72,2.92,2.22,1.88,3.04,2.26,2.3,2.9,3.7,3.44,4.94,5.18,10.12,5.8,3.76,3.06,2.52]
 };
+function getRangeCurves(range){
+  // Real usage data is still gated behind Green Button Connect (see the technical feasibility
+  // doc), so the load profile stays the same illustrative shape across ranges. The price curve
+  // is the real, range-specific one above.
+  return { prices: RANGE_PRICES[range], load: consumption };
+}
 
-let priceState = { hours: FALLBACK_COMED_PRICES, source: 'fallback', label: FALLBACK_LABEL, dateStr: '20260716', touMode: false };
-let currentRange = 'today';
-// When live data is loaded, this holds the true clock hour for each bar (a rolling 24hr window
-// rarely lines up with 12AM–11PM). Null means "use the synthetic day array's own hour index."
-let activeHourLabels = null;
-
-function hourLabel(h){ const ampm = h<12 ? 'AM':'PM'; let hr=h%12; if(hr===0)hr=12; return hr+ampm; }
-function getLabel(i){ return activeHourLabels ? activeHourLabels[i] : hourLabel(i); }
+function touDeltaCents(hour){
+  return (hour >= 13 && hour < 19) ? TOU_PEAK_DELTA_CENTS : 0;
+}
 function priceTier(price, sorted){
-  const n = sorted.length;
-  const lowCut = sorted[Math.floor(n*0.33)], highCut = sorted[Math.floor(n*0.67)];
-  if(price <= lowCut) return 0; if(price <= highCut) return 1; return 2;
+  const p33 = sorted[Math.floor(sorted.length*0.33)];
+  const p66 = sorted[Math.floor(sorted.length*0.66)];
+  if (price <= p33) return 0;
+  if (price <= p66) return 1;
+  return 2;
 }
+function hourLabel(h){ const hr=h%12===0?12:h%12; return hr+(h<12?'AM':'PM'); }
+
 function updateLegend(){
-  const touOn = priceState.touMode;
-  document.getElementById('legTou').style.display = touOn ? 'inline-flex' : 'none';
-  document.getElementById('touFootnote').style.display = touOn ? 'block' : 'none';
-  const periodLabel = currentRange === 'today'
-    ? (priceState.source === 'live' ? 'last 24 hrs' : 'today')
-    : RANGE_LABEL[currentRange];
-  document.getElementById('priceChartTitle').textContent = 'Price, ' + periodLabel + (touOn ? ' (TOU)' : '');
+  document.getElementById('legTou').style.display = priceState.touMode ? 'flex' : 'none';
+  document.getElementById('touFootnote').style.display = priceState.touMode ? 'block' : 'none';
+  document.getElementById('priceChartTitle').textContent = priceState.touMode
+    ? 'Price by hour (real supply + TOU delivery)'
+    : 'Price by hour (real)';
 }
 
-// Every 4th bar gets an hour label along the bottom, sized to fit a 24-bar mobile chart
-// without crowding (0, 4, 8, 12, 16, 20 - six labels across the width).
-function xAxisLabels(n, bw, h){
-  let out = '';
-  for(let i=0; i<n; i+=4){
-    const x = i*bw + bw/2;
-    out += `<text x="${x}" y="${h-2}" font-size="8" fill="var(--axis-label)" text-anchor="middle">${getLabel(i)}</text>`;
-  }
-  return out;
-}
-
+// Dual-axis, stacked-when-TOU chart. Bars read off the left axis (¢/kWh) at true proportional
+// height and are colored by tier off the REAL supply price (base), since that tiering shouldn't
+// change just because delivery pricing does. When TOU is on, a second segment stacks on top of
+// each 1-7pm bar representing the additive delivery premium, not a re-colored/rescaled bar. The
+// line reads off an independent right-hand axis (kWh) so price and load, different units, don't
+// distort each other. Every segment carries a native SVG <title> tooltip with its exact value.
 function drawChart(basePrices, loadCurve){
   loadCurve = loadCurve || consumption;
   const svg = document.getElementById('chart');
-  const w=320,h=150,n=basePrices.length,bw=w/n;
-  const axisH = 14; // reserved strip at the bottom for hour labels
-  const plotH = h - axisH;
-  const touOn = priceState.touMode;
-  const totals = basePrices.map((p,i)=> p + (touOn ? touDeltaCents(i) : 0));
+  const padTop=8, padLeft=26, padRight=26, plotH=88, plotW=320-padLeft-padRight, axisLabelY=padTop+plotH+16;
+  const n = basePrices.length;
+  const bw = plotW/24;
   const sorted = [...basePrices].sort((a,b)=>a-b);
-  const maxTotal = Math.max(...totals), maxC = Math.max(...loadCurve);
-  const priceColors = ['var(--tou-cheap)','var(--tou-moderate)','var(--tou-expensive)'];
-  let bars='', pts='';
+  const deltas = basePrices.map((p,i)=> priceState.touMode ? touDeltaCents(i) : 0);
+  const totals = basePrices.map((p,i)=> p + deltas[i]);
+  const maxP = Math.max(...totals) || 1;
+  const maxC = Math.max(...loadCurve) || 1;
+
+  let grid='', ylabelsL='', ylabelsR='', bars='', pts='', xlabels='';
+  [0,0.5,1].forEach(f=>{
+    const y = padTop + plotH - f*plotH;
+    grid += `<line x1="${padLeft}" y1="${y}" x2="${padLeft+plotW}" y2="${y}" stroke="#E5DFD2" stroke-width="1"/>`;
+    ylabelsL += `<text x="${padLeft-5}" y="${y+3}" font-size="8" fill="#8A8272" text-anchor="end">${(f*maxP).toFixed(0)}&#162;</text>`;
+    ylabelsR += `<text x="${padLeft+plotW+5}" y="${y+3}" font-size="8" fill="#8A8272" text-anchor="start">${(f*maxC).toFixed(1)}</text>`;
+  });
   basePrices.forEach((p,i)=>{
-    const tier = priceTier(p, sorted);
-    const baseH = (p/maxTotal)*(plotH-10);
-    const x = i*bw;
-    bars += `<rect x="${x}" y="${plotH-baseH}" width="${bw-1}" height="${baseH}" fill="${priceColors[tier]}" opacity="0.75"><title>${getLabel(i)}: ${p.toFixed(1)}¢/kWh</title></rect>`;
-    if(touOn){
-      const delta = touDeltaCents(i);
-      if(delta>0){
-        const premH = (delta/maxTotal)*(plotH-10);
-        bars += `<rect x="${x}" y="${plotH-baseH-premH}" width="${bw-1}" height="${premH}" fill="var(--tou-premium)" opacity="0.85"><title>${getLabel(i)} TOU premium: +${delta.toFixed(1)}¢/kWh</title></rect>`;
-      }
+    const bh = (p/maxP)*plotH;
+    const x = padLeft + i*bw;
+    const y = padTop + plotH - bh;
+    bars += `<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${(bw-1).toFixed(1)}" height="${bh.toFixed(1)}" fill="${RTP_COLORS[priceTier(p,sorted)]}" rx="1"><title>${hourLabel(i)}: ${p.toFixed(1)}&#162;/kWh real supply</title></rect>`;
+    if (deltas[i] > 0){
+      const dh = (deltas[i]/maxP)*plotH;
+      const dy = y - dh;
+      bars += `<rect x="${x.toFixed(1)}" y="${dy.toFixed(1)}" width="${(bw-1).toFixed(1)}" height="${dh.toFixed(1)}" fill="${TOU_PREMIUM_COLOR}" rx="1"><title>${hourLabel(i)}: +${deltas[i].toFixed(1)}&#162;/kWh TOU delivery premium</title></rect>`;
     }
   });
-  loadCurve.forEach((c,i)=>{
-    const x = i*bw + bw/2;
-    const y = plotH - (c/maxC)*(plotH-14) - 6;
-    pts += (i===0?'M':'L') + x + ',' + y + ' ';
+  loadCurve.slice(0,n).forEach((c,i)=>{
+    const x = padLeft + i*bw + bw/2;
+    const y = padTop + plotH - (c/maxC)*plotH;
+    pts += (i===0?'M':'L') + x.toFixed(1) + ',' + y.toFixed(1) + ' ';
   });
-  // Dashed, not solid: this line is a modeled load profile, not a real meter reading.
-  svg.innerHTML = bars + `<path d="${pts}" fill="none" stroke="#1B2430" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="5,3"/>` + xAxisLabels(n, bw, h);
+  [0,6,12,18].forEach(h=>{
+    const x = padLeft + h*bw;
+    xlabels += `<text x="${x.toFixed(1)}" y="${axisLabelY}" font-size="8" fill="#8A8272">${hourLabel(h)}</text>`;
+  });
+
+  svg.innerHTML = grid + bars
+    + `<path d="${pts}" fill="none" stroke="#201A12" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" opacity="0.5"/>`
+    + ylabelsL + ylabelsR + xlabels;
 }
 
+// Second chart: the dollar cost per hour (total price × modeled load), the actual "so what" of
+// the price chart above, drawn as its own clean breakdown instead of crammed onto shared axes.
 function drawCostChart(basePrices, loadCurve){
   loadCurve = loadCurve || consumption;
   const svg = document.getElementById('costChart');
-  const w=320,h=120,n=basePrices.length,bw=w/n;
-  const axisH = 14;
-  const plotH = h - axisH;
-  const touOn = priceState.touMode;
-  const baseCosts = basePrices.map((p,i)=> (p/100)*loadCurve[i]);
-  const premCosts = basePrices.map((p,i)=> touOn ? (touDeltaCents(i)/100)*loadCurve[i] : 0);
-  const totalCosts = baseCosts.map((c,i)=> c + premCosts[i]);
-  const maxCost = Math.max(...totalCosts, 0.01);
-  let bars='';
+  const padTop=8, padLeft=30, padRight=6, plotH=78, plotW=320-padLeft-padRight, axisLabelY=padTop+plotH+16;
+  const n = basePrices.length;
+  const bw = plotW/24;
+  const sorted = [...basePrices].sort((a,b)=>a-b);
+  const baseCosts = basePrices.map((p,i)=> (p/100) * (loadCurve[i]||0));
+  const deltaCosts = basePrices.map((p,i)=> priceState.touMode ? (touDeltaCents(i)/100) * (loadCurve[i]||0) : 0);
+  const totalCosts = baseCosts.map((c,i)=> c + deltaCosts[i]);
+  const maxCost = Math.max(...totalCosts) || 1;
+  const grandTotal = totalCosts.reduce((a,b)=>a+b,0);
+
+  const totalTag = document.getElementById('costTotalTag');
+  if (totalTag){
+    totalTag.textContent = currentRange === 'today'
+      ? '$' + grandTotal.toFixed(2) + ' total'
+      : '$' + grandTotal.toFixed(2) + '/day avg';
+  }
+
+  let grid='', ylabels='', bars='', xlabels='';
+  [0,0.5,1].forEach(f=>{
+    const y = padTop + plotH - f*plotH;
+    grid += `<line x1="${padLeft}" y1="${y}" x2="${padLeft+plotW}" y2="${y}" stroke="#F0ECE2" stroke-width="1"/>`;
+    ylabels += `<text x="${padLeft-5}" y="${y+3}" font-size="8" fill="#8A8272" text-anchor="end">$${(f*maxCost).toFixed(2)}</text>`;
+  });
   baseCosts.forEach((c,i)=>{
-    const x = i*bw, baseH = (c/maxCost)*(plotH-10);
-    bars += `<rect x="${x}" y="${plotH-baseH}" width="${bw-1}" height="${baseH}" fill="var(--cost-bar)" opacity="0.85"><title>${getLabel(i)}: $${c.toFixed(2)}</title></rect>`;
-    if(premCosts[i]>0){
-      const premH = (premCosts[i]/maxCost)*(plotH-10);
-      bars += `<rect x="${x}" y="${plotH-baseH-premH}" width="${bw-1}" height="${premH}" fill="var(--tou-premium)" opacity="0.85"><title>${getLabel(i)} TOU premium: $${premCosts[i].toFixed(2)}</title></rect>`;
+    const bh = (c/maxCost)*plotH;
+    const x = padLeft + i*bw;
+    const y = padTop + plotH - bh;
+    bars += `<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${(bw-1.5).toFixed(1)}" height="${Math.max(bh,1.5).toFixed(1)}" fill="${RTP_COLORS[priceTier(basePrices[i],sorted)]}" opacity="0.85" rx="1.5"><title>${hourLabel(i)}: $${c.toFixed(3)} real supply</title></rect>`;
+    if (deltaCosts[i] > 0){
+      const dh = (deltaCosts[i]/maxCost)*plotH;
+      const dy = y - dh;
+      bars += `<rect x="${x.toFixed(1)}" y="${dy.toFixed(1)}" width="${(bw-1.5).toFixed(1)}" height="${dh.toFixed(1)}" fill="${TOU_PREMIUM_COLOR}" opacity="0.9" rx="1.5"><title>${hourLabel(i)}: +$${deltaCosts[i].toFixed(3)} TOU delivery premium</title></rect>`;
     }
   });
-  svg.innerHTML = bars + xAxisLabels(n, bw, h);
-  const total = totalCosts.reduce((a,b)=>a+b,0);
-  const tag = document.getElementById('costTotalTag');
-  tag.textContent = currentRange==='today' ? ('$'+total.toFixed(2)+' total') : ('$'+total.toFixed(2)+'/day avg');
-}
-
-function setBadge(mode, label){
-  const el = document.getElementById('dataBadge');
-  el.className = 'data-badge ' + mode;
-  el.innerHTML = '&#9679; ' + (mode==='live' ? 'Live ComEd data' : mode==='fallback' ? label : label);
+  [0,6,12,18].forEach(h=>{
+    const x = padLeft + h*bw;
+    xlabels += `<text x="${x.toFixed(1)}" y="${axisLabelY}" font-size="8" fill="#8A8272">${hourLabel(h)}</text>`;
+  });
+  svg.innerHTML = grid + bars + ylabels + xlabels;
 }
 
 function renderTodayStats(){
   currentRange = 'today';
-  document.querySelectorAll('#s8 .seg button').forEach(b=>b.classList.remove('active'));
-  document.querySelector('#s8 .seg button').classList.add('active');
-  document.getElementById('costLbl').textContent = 'Cost today';
-  const prices = priceState.hours;
-  const touOn = priceState.touMode;
-  const totals = prices.map((p,i)=> p + (touOn? touDeltaCents(i):0));
-  const totalCost = totals.reduce((sum,p,i)=> sum + (p/100)*consumption[i], 0);
-  const avgPrice = totals.reduce((a,b)=>a+b,0)/totals.length;
-  const currentPriceVal = (priceState.source === 'live' && typeof priceState.latestPrice === 'number')
-    ? priceState.latestPrice
-    : totals[totals.length-1];
-  document.getElementById('costVal').textContent = priceState.source === 'live' ? currentPriceVal.toFixed(1)+'¢' : '$'+totalCost.toFixed(2);
-  document.getElementById('costLbl').textContent = priceState.source === 'live' ? 'Price right now' : 'Cost today';
-  document.getElementById('avgVal').textContent = avgPrice.toFixed(1)+'¢';
-  const minIdx = prices.indexOf(Math.min(...prices));
-  document.getElementById('cheapWindowVal').textContent = getLabel(minIdx) + '–' + getLabel((minIdx+3)%24);
+  const base = priceState.hours;
+  const totals = base.map((p,i)=> p + (priceState.touMode ? touDeltaCents(i) : 0));
   updateLegend();
-  drawChart(prices, consumption);
-  drawCostChart(prices, consumption);
-  if(priceState.source === 'live'){
-    setBadge('live', 'Live ComEd data');
-    document.getElementById('verifyLink').href = 'https://hourlypricing.comed.com/api?type=5minutefeed';
+  drawChart(base);
+  drawCostChart(base);
+
+  const avgPrice = totals.reduce((a,b)=>a+b,0)/totals.length;
+  const cost = totals.reduce((sum,p,i)=> sum + (p/100) * (consumption[i]||0), 0);
+  let cheapestIdx = 0;
+  totals.forEach((p,i)=>{ if (p < totals[cheapestIdx]) cheapestIdx = i; });
+
+  document.getElementById('costVal').textContent = '$' + cost.toFixed(2);
+  document.getElementById('costLbl').textContent = priceState.touMode
+    ? 'Cost so far (real supply + TOU delivery × modeled load)'
+    : 'Cost so far (real price × modeled load)';
+  document.getElementById('avgVal').textContent = avgPrice.toFixed(1) + '¢';
+  document.getElementById('extraVal').textContent = hourLabel(cheapestIdx);
+  document.getElementById('extraLbl').textContent = 'Cheapest hour today';
+
+  const badge = document.getElementById('dataBadge');
+  if (priceState.source === 'live'){
+    badge.className = 'data-badge live';
+    badge.textContent = 'Live ComEd pricing · updated just now';
   } else {
-    setBadge('fallback', priceState.label);
-    document.getElementById('verifyLink').href = 'https://hourlypricing.comed.com/api?type=day&date=' + priceState.dateStr;
+    badge.className = 'data-badge fallback';
+    badge.textContent = 'Real ComEd pricing, captured ' + priceState.label + ' (live fetch unavailable here)';
   }
+  const link = document.getElementById('verifyLink');
+  link.href = 'https://hourlypricing.comed.com/api?type=day&date=' + priceState.dateStr;
+  link.style.display = 'block';
+  link.textContent = priceState.source === 'live'
+    ? "Check ComEd's live feed for today →"
+    : "Check ComEd's public feed for " + priceState.label + " →";
+}
+function toggleTOU(){
+  priceState.touMode = document.getElementById('touSwitch').checked;
+  renderTodayStats();
+}
+
+// Parses ComEd's response (a JS array literal using Date.UTC(...), not valid JSON) with a
+// regex instead of eval(), deliberately, since eval-ing a third-party API response is a real
+// security smell even for a portfolio prototype.
+function parseComedDayResponse(text){
+  const matches = [...text.matchAll(/Date\.UTC\(\d+,\d+,\d+,(\d+),\d+,\d+\)\s*,\s*([\d.]+)\s*\]/g)];
+  const hours = new Array(24).fill(null);
+  matches.forEach(m => { hours[parseInt(m[1],10)] = parseFloat(m[2]); });
+  let lastFilled = -1;
+  hours.forEach((v,i)=>{ if (v!==null) lastFilled = i; });
+  if (lastFilled < 5) return null;
+  return hours.slice(0, lastFilled+1).map((v,i)=> v===null ? hours[i-1] : v);
+}
+async function loadRealComedData(){
+  const now = new Date();
+  const y = now.getFullYear(), m = String(now.getMonth()+1).padStart(2,'0'), d = String(now.getDate()).padStart(2,'0');
+  const target = 'https://hourlypricing.comed.com/api?type=day&date=' + y + m + d;
+  const proxied = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(target);
+  try{
+    const res = await fetch(proxied, {cache:'no-store'});
+    if(!res.ok) throw new Error('bad status ' + res.status);
+    const hours = parseComedDayResponse(await res.text());
+    if(!hours) throw new Error('no usable hours yet today');
+    priceState.hours = hours;
+    priceState.source = 'live';
+    priceState.dateStr = y + m + d;
+  } catch(e){
+    priceState.hours = FALLBACK_COMED_PRICES;
+    priceState.source = 'fallback';
+    priceState.label = FALLBACK_LABEL;
+    priceState.dateStr = '20260716';
+  }
+  const active = document.querySelector('#s8 .seg button.active');
+  if(!active || active.textContent.trim()==='Today') renderTodayStats();
 }
 
 function setRange(btn, range){
   document.querySelectorAll('#s8 .seg button').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
-  if(range === 'today'){ renderTodayStats(); return; }
+  document.getElementById('touSwitch').checked = false;
+  priceState.touMode = false;
+  if (range === 'today'){ renderTodayStats(); return; }
   currentRange = range;
-  activeHourLabels = null; // week/month/year use the synthetic 0–23 day arrays below
-  const prices = RANGE_PRICES[range];
-  const touOn = priceState.touMode;
-  const totals = prices.map((p,i)=> p + (touOn? touDeltaCents(i):0));
-  const avgPrice = totals.reduce((a,b)=>a+b,0)/totals.length;
-  const dailyCost = totals.reduce((sum,p,i)=> sum + (p/100)*consumption[i], 0);
+
+  const { prices, load } = getRangeCurves(range);
+  const avgPrice = prices.reduce((a,b)=>a+b,0)/prices.length;
+  const dailyCost = prices.reduce((sum,p,i)=> sum + (p/100) * (load[i]||0), 0);
   const periodCost = dailyCost * RANGE_DAYS[range];
-  document.getElementById('costLbl').textContent = 'Avg cost / day';
-  document.getElementById('costVal').textContent = '$'+dailyCost.toFixed(2);
-  document.getElementById('avgVal').textContent = avgPrice.toFixed(1)+'¢';
-  const minIdx = prices.indexOf(Math.min(...prices));
-  document.getElementById('cheapWindowVal').textContent = hourLabel(minIdx) + '–' + hourLabel((minIdx+3)%24);
+
+  document.getElementById('costVal').textContent = '$' + periodCost.toFixed(2);
+  document.getElementById('costLbl').textContent = 'Cost this ' + range + ' (real avg price × modeled load)';
+  document.getElementById('avgVal').textContent = avgPrice.toFixed(1) + '¢';
+  document.getElementById('extraVal').textContent = RANGE_SAVINGS_PCT[range] + '%';
+  document.getElementById('extraLbl').textContent = 'vs. flat rate';
   updateLegend();
-  drawChart(prices, consumption);
-  drawCostChart(prices, consumption);
-  setBadge('fallback', RANGE_SOURCE_LABEL[range] + ' (load profile still modeled, real usage needs Green Button Connect)');
-  document.getElementById('verifyLink').href = 'https://hourlypricing.comed.com/api?type=day&date=' + RANGE_VERIFY_DATE[range];
+  document.getElementById('priceChartTitle').textContent = 'Price by hour (' + RANGE_LABEL[range] + ' real avg)';
+  drawChart(prices, load);
+  drawCostChart(prices, load);
+  const badge = document.getElementById('dataBadge');
+  badge.className = 'data-badge fallback';
+  badge.textContent = RANGE_SOURCE_LABEL[range] + ' (load profile still modeled, real usage needs Green Button Connect)';
+  const link = document.getElementById('verifyLink');
+  const spotCheckDate = { week: '20260716', month: '20260716', year: '20260115' }[range];
+  link.href = 'https://hourlypricing.comed.com/api?type=day&date=' + spotCheckDate;
+  link.textContent = 'Spot-check one of the real sampled days →';
+  link.style.display = 'block';
 }
-
-function toggleTOU(){
-  priceState.touMode = document.getElementById('touSwitch').checked;
-  if(currentRange === 'today'){ renderTodayStats(); }
-  else { setRange(document.querySelector('#s8 .seg button.active'), currentRange); }
-}
-
-// Live data: ComEd's public 5-minute feed (hourlypricing.comed.com/api?type=5minutefeed).
-// It's a genuinely public, no-key, CORS-open JSON endpoint - confirmed working directly from a
-// browser on this deployed site, so no proxy is needed (an earlier draft of this function routed
-// through a third-party CORS proxy against a different, day-array endpoint; that approach was
-// flakier - the day endpoint is incomplete until the calendar day ends, which meant "today" almost
-// always fell back to the captured snapshot below).
-//
-// The feed returns 5-minute readings for roughly the trailing 24 hours, newest first. We bucket
-// those into hourly averages by actual Central-time clock hour (America/Chicago), so the chart
-// always shows real ComEd prices for the last 24 hours rather than "today so far."
-async function loadRealComedData(){
-  try{
-    const res = await fetch('https://hourlypricing.comed.com/api?type=5minutefeed', {cache:'no-store'});
-    if(!res.ok) throw new Error('fetch failed: ' + res.status);
-    const data = await res.json();
-    if(!Array.isArray(data) || data.length < 12) throw new Error('unexpected response shape');
-
-    const fmt = new Intl.DateTimeFormat('en-US', {
-      timeZone: 'America/Chicago', hour12: false,
-      year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit'
-    });
-    const buckets = new Map(); // "YYYY-MM-DD HH" -> { sum, count, hour24, ts }
-    data.forEach(d => {
-      const ms = parseInt(d.millisUTC, 10);
-      const price = parseFloat(d.price);
-      if(!Number.isFinite(ms) || !Number.isFinite(price)) return;
-      const parts = fmt.formatToParts(new Date(ms));
-      const get = t => parts.find(p => p.type === t).value;
-      const key = get('year') + '-' + get('month') + '-' + get('day') + ' ' + get('hour');
-      const hour24 = parseInt(get('hour'), 10) % 24;
-      if(!buckets.has(key)) buckets.set(key, { sum: 0, count: 0, hour24, ts: ms });
-      const b = buckets.get(key);
-      b.sum += price; b.count += 1; b.ts = Math.max(b.ts, ms);
-    });
-
-    const hourly = Array.from(buckets.values())
-      .sort((a, b) => a.ts - b.ts)
-      .slice(-24)
-      .map(b => ({ hour24: b.hour24, avg: b.sum / b.count }));
-    if(hourly.length < 20) throw new Error('not enough complete hourly buckets: ' + hourly.length);
-
-    priceState = {
-      hours: hourly.map(e => e.avg),
-      source: 'live',
-      label: 'Live ComEd data (rolling last 24 hrs)',
-      dateStr: '',
-      touMode: priceState.touMode,
-      latestPrice: parseFloat(data[0].price)
-    };
-    activeHourLabels = hourly.map(e => hourLabel(e.hour24));
-  } catch(e){
-    priceState = { hours: FALLBACK_COMED_PRICES, source: 'fallback', label: FALLBACK_LABEL, dateStr: '20260716', touMode: priceState.touMode };
-    activeHourLabels = null;
-  }
-  if(currentRange === 'today') renderTodayStats();
-}
-
 renderTodayStats();
 loadRealComedData();
 </script>
