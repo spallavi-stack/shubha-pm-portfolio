@@ -61,6 +61,12 @@
 <h2>Smart EV charging</h2>
 <p><strong>Data source:</strong> Smartcar, a real third-party API that exposes battery state of charge, charging status, and remote start/stop across many EV brands (GM, Ford, Tesla, Hyundai/Kia, and others) through one integration, rather than building a separate integration per automaker.</p>
 <p><strong>Feasibility:</strong> Medium-high. Smartcar is a real, commercially available product other companies (including Optiwatt, per its own public integration docs) already build on. The genuine constraint: Smartcar's remote charging control depends on what each automaker's own API exposes, and coverage and reliability vary by brand. A cross-brand promise is realistic; a promise that works identically across every brand is not.</p>
+<p><strong>"Hardware-agnostic" is two claims, not one:</strong></p>
+<ul>
+<li><strong>EV-brand agnostic:</strong> one Smartcar integration, works across GM, Ford, Tesla, Hyundai/Kia, and others.</li>
+<li><strong>Charging-equipment agnostic:</strong> works on any charger, dumb or smart, because the SAE J1772/CCS standard puts the start/stop decision inside the vehicle's own battery management system, not the charger. The charger just offers power within a rated limit.</li>
+</ul>
+<p><strong>Boundary:</strong> covers start/stop and target-charge-level control only. Circuit-level load balancing and charger-side demand-response (e.g. OpenADR) need charger-level integration Flexy doesn't have.</p>
 <p><strong>Real constraint worth naming:</strong> the achievable-at-setup check (does the target charge level fit in the time available) is pure math once state of charge and charging speed are known, genuinely low technical risk. The harder problem is state of charge reliability itself: some vehicles report it with a delay, or don't report it at all while off and unplugged from a network connection.</p>
 <h2>Cross-cutting risk: staleness and failure handling</h2>
 <p>Every external data source above can fail or go stale in a way that's invisible unless it's designed for explicitly: ComEd's feed can have an outage, Smartcar's state-of-charge report can lag. Flexy's UI needs to distinguish live data from fallback data visibly across both cases; the price feed is currently the only one with that pattern built into the prototype. See the Price Integration Guide for how that's implemented for pricing specifically.</p>
@@ -86,8 +92,12 @@
 <td>Not yet proven - Green Button "Download My Data" is a real, real self-service export, but no parser or ingestion path has been built and tested against it yet</td>
 </tr>
 <tr>
-<td>Flexy is hardware-agnostic for EV charging</td>
-<td>Partially proven - true in the sense that Smartcar itself is multi-brand; not yet tested against more than one real brand's account</td>
+<td>Flexy is EV-brand agnostic</td>
+<td>Partially proven - Smartcar is genuinely multi-brand; not yet tested against a live Flexy account</td>
+</tr>
+<tr>
+<td>Flexy is charging-equipment agnostic</td>
+<td>Proven by standard - SAE J1772/CCS puts start/stop inside the vehicle, not the charger, so this doesn't depend on Flexy's own build</td>
 </tr>
 </tbody>
 </table>

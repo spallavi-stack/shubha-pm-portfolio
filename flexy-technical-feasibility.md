@@ -22,6 +22,12 @@ What each core feature actually needs to be built for real, which real APIs and 
 
 **Feasibility:** Medium-high. Smartcar is a real, commercially available product other companies (including Optiwatt, per its own public integration docs) already build on. The genuine constraint: Smartcar's remote charging control depends on what each automaker's own API exposes, and coverage and reliability vary by brand. A cross-brand promise is realistic; a promise that works identically across every brand is not.
 
+**"Hardware-agnostic" is two claims, not one:**
+- **EV-brand agnostic:** one Smartcar integration, works across GM, Ford, Tesla, Hyundai/Kia, and others.
+- **Charging-equipment agnostic:** works on any charger, dumb or smart, because the SAE J1772/CCS standard puts the start/stop decision inside the vehicle's own battery management system, not the charger. The charger just offers power within a rated limit.
+
+**Boundary:** covers start/stop and target-charge-level control only. Circuit-level load balancing and charger-side demand-response (e.g. OpenADR) need charger-level integration Flexy doesn't have.
+
 **Real constraint worth naming:** the achievable-at-setup check (does the target charge level fit in the time available) is pure math once state of charge and charging speed are known, genuinely low technical risk. The harder problem is state of charge reliability itself: some vehicles report it with a delay, or don't report it at all while off and unplugged from a network connection.
 
 ## Cross-cutting risk: staleness and failure handling
@@ -35,7 +41,8 @@ Every external data source above can fail or go stale in a way that's invisible 
 | ComEd's price data is real and fetchable without a partnership | Proven - fetched directly against the live API during prototype build |
 | Smartcar can expose state of charge across multiple EV brands | Proven - Smartcar is a real, public product; not yet tested against a live Flexy integration |
 | Flexy can receive and parse real smart meter (interval usage) data | Not yet proven - Green Button "Download My Data" is a real, real self-service export, but no parser or ingestion path has been built and tested against it yet |
-| Flexy is hardware-agnostic for EV charging | Partially proven - true in the sense that Smartcar itself is multi-brand; not yet tested against more than one real brand's account |
+| Flexy is EV-brand agnostic | Partially proven - Smartcar is genuinely multi-brand; not yet tested against a live Flexy account |
+| Flexy is charging-equipment agnostic | Proven by standard - SAE J1772/CCS puts start/stop inside the vehicle, not the charger, so this doesn't depend on Flexy's own build |
 
 ## Status
 
