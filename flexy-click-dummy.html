@@ -481,16 +481,16 @@
   .store-desc{font-size:12.5px;color:#5B6675;line-height:1.55;padding:0 20px;}
 
   /* --- Home energy flow diagram --- */
-  .flow-wrap{display:flex;align-items:flex-start;justify-content:center;gap:0;margin:6px 0 22px 0;}
-  .flow-node{display:flex;flex-direction:column;align-items:center;gap:6px;width:64px;}
+  .flow-wrap{display:flex;align-items:flex-start;justify-content:center;gap:0;margin:18px 0 34px 0;}
+  .flow-node{display:flex;flex-direction:column;align-items:center;gap:8px;width:82px;}
   .flow-circle{
-    width:50px;height:50px;border-radius:50%;background:#fff;border:2px solid var(--flexy-teal);
-    display:flex;align-items:center;justify-content:center;font-size:21px;
-    box-shadow:0 2px 8px rgba(20,30,40,.06);
+    width:68px;height:68px;border-radius:50%;background:#fff;border:2.5px solid var(--flexy-teal);
+    display:flex;align-items:center;justify-content:center;font-size:30px;
+    box-shadow:0 4px 14px rgba(20,30,40,.08);
   }
-  .flow-label{font-size:9.5px;color:var(--gray);font-weight:700;text-align:center;line-height:1.2;}
+  .flow-label{font-size:11.5px;color:var(--gray);font-weight:700;text-align:center;line-height:1.2;}
   .flow-line{
-    width:24px;height:2px;margin-top:24px;
+    width:34px;height:2px;margin-top:33px;
     background-image:linear-gradient(90deg, var(--flexy-teal) 60%, transparent 40%);
     background-size:8px 2px;background-repeat:repeat-x;flex-shrink:0;
   }
@@ -753,24 +753,33 @@
         <div class="flow-node" id="flowCarNode" style="display:none;"><div class="flow-circle">🚗</div><div class="flow-label">Your EV</div></div>
       </div>
 
-      <div class="card">
-        <div class="row" style="margin-bottom:10px;">
-          <div style="font-size:13px;font-weight:700;color:var(--flexy-ink);">Today so far</div>
-          <a href="#" onclick="go('s8');return false;" style="font-size:11.5px;color:var(--flexy-teal-dark);font-weight:700;text-decoration:none;">See full breakdown &rarr;</a>
+      <div class="card" style="padding:20px;">
+        <div class="row" style="margin-bottom:16px;">
+          <div style="font-size:15px;font-weight:800;color:var(--flexy-ink);">Today so far</div>
+          <a href="#" onclick="go('s8');return false;" style="font-size:12.5px;color:var(--flexy-teal-dark);font-weight:700;text-decoration:none;">See full breakdown &rarr;</a>
         </div>
         <div class="stat-row" style="margin:0;">
-          <div class="stat" style="box-shadow:none;background:var(--flexy-bg);"><div class="val">$2.64</div><div class="lbl">Cost today</div></div>
-          <div class="stat" style="box-shadow:none;background:var(--flexy-bg);"><div class="val">21.4&cent;</div><div class="lbl">Avg price paid / kWh</div></div>
+          <div class="stat" style="box-shadow:none;background:var(--flexy-bg);padding:18px 14px;">
+            <div class="val" style="font-size:26px;">$2.64</div>
+            <div class="lbl" style="font-size:12px;margin-top:5px;">Cost today</div>
+          </div>
+          <div class="stat" style="box-shadow:none;background:var(--flexy-bg);padding:18px 14px;">
+            <div class="val" style="font-size:26px;">21.4&cent;</div>
+            <div class="lbl" style="font-size:12px;margin-top:5px;">Avg price paid / kWh</div>
+          </div>
         </div>
       </div>
 
-      <div class="card" onclick="goSmartCharging()" style="cursor:pointer;">
+      <div class="card" onclick="goSmartCharging()" style="cursor:pointer;padding:22px 20px;margin-top:4px;">
         <div class="row">
-          <div>
-            <div id="homeChargingTitle" style="font-size:13px;font-weight:700;color:var(--flexy-ink);">🔌 Set up smart charging</div>
-            <div id="homeChargingSub" style="font-size:11.5px;color:var(--gray);margin-top:3px;max-width:250px;">Connect your EV and Flexy will charge it in the cheapest hours, ready when you need it.</div>
+          <div style="display:flex;align-items:center;gap:14px;">
+            <div style="width:48px;height:48px;border-radius:14px;background:var(--flexy-bg);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;">🔌</div>
+            <div>
+              <div id="homeChargingTitle" style="font-size:15px;font-weight:800;color:var(--flexy-ink);">Set up smart charging</div>
+              <div id="homeChargingSub" style="font-size:12.5px;color:var(--gray);margin-top:4px;max-width:230px;line-height:1.4;">Connect your EV and Flexy will charge it in the cheapest hours, ready when you need it.</div>
+            </div>
           </div>
-          <span style="font-size:18px;color:var(--gray);">&rsaquo;</span>
+          <span style="font-size:22px;color:var(--gray);">&rsaquo;</span>
         </div>
       </div>
 
@@ -903,6 +912,25 @@
       </div>
 
       <div class="card">
+        <div class="row" style="margin-bottom:4px;">
+          <div>
+            <div style="font-size:13px;font-weight:700;color:var(--flexy-ink);">Different time on weekends</div>
+            <div style="font-size:11px;color:var(--gray);margin-top:2px;">Set a separate ready-by time for Saturday and Sunday. Applies whether Flexy is using custom settings or picking hours for you.</div>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="weekendToggle" onchange="toggleWeekendField()">
+            <span class="slider-toggle"></span>
+          </label>
+        </div>
+        <div id="weekendField" style="display:none;margin-top:12px;">
+          <div class="field" style="margin:0;">
+            <label>Weekend ready by</label>
+            <input type="text" value="9:00 AM">
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
         <div class="row">
           <div>
             <div style="font-size:13px;font-weight:700;color:var(--flexy-ink);">Only run smart charging at home</div>
@@ -923,25 +951,6 @@
           <input type="range" min="0" max="100" value="20">
         </div>
         <div class="banner">✓ This target is achievable by 7:00 AM given your car's charging speed.</div>
-
-        <div class="card">
-          <div class="row" style="margin-bottom:4px;">
-            <div>
-              <div style="font-size:13px;font-weight:700;color:var(--flexy-ink);">Different time on weekends</div>
-              <div style="font-size:11px;color:var(--gray);margin-top:2px;">Set a separate ready-by time for Saturday and Sunday</div>
-            </div>
-            <label class="switch">
-              <input type="checkbox" id="weekendToggle" onchange="toggleWeekendField()">
-              <span class="slider-toggle"></span>
-            </label>
-          </div>
-          <div id="weekendField" style="display:none;margin-top:12px;">
-            <div class="field" style="margin:0;">
-              <label>Weekend ready by</label>
-              <input type="text" value="9:00 AM">
-            </div>
-          </div>
-        </div>
 
         <div class="card">
           <div class="slider-label"><span>Charging speed limit</span><span id="ampVal">48A (full speed)</span></div>
@@ -1087,6 +1096,7 @@
           </div>
           <div class="settings-row"><span class="k">Ready by</span><span class="v">7:00 AM</span></div>
           <div class="settings-row"><span class="k">Target charge</span><span class="v">Flexy decides</span></div>
+          <div class="settings-row"><span class="k">Weekend schedule</span><span class="v">Same as weekdays</span></div>
           <div class="settings-row"><span class="k">Home-only automation</span><span class="v">On</span></div>
           <div class="settings-row"><span class="k">Vehicle</span><span class="v">Chevrolet Bolt EUV</span></div>
         </div>
@@ -1231,10 +1241,10 @@ function updateHomeChargingCard(){
   const s = document.getElementById('homeChargingSub');
   if(!t || !s) return;
   if(evConnected){
-    t.textContent = '🔌 Smart Charging is on';
+    t.textContent = 'Smart Charging is on';
     s.textContent = 'Ready by 7:00 AM. Charging tonight in the cheapest hours.';
   } else {
-    t.textContent = '🔌 Set up smart charging';
+    t.textContent = 'Set up smart charging';
     s.textContent = 'Connect your EV and Flexy will charge it in the cheapest hours, ready when you need it.';
   }
 }
