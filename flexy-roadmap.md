@@ -1,10 +1,12 @@
-# Flexy, Roadmap (v2)
+# Flexy — Roadmap
 
 ## Prioritization framework: ICE
 
-Using ICE (Impact, Confidence, Ease) rather than RICE. Reach isn't meaningfully estimable yet since Flexy has no real user base or ComEd partnership in place, so ICE fits a pre-launch, research-grounded prioritization better. Each scored 1-10; ICE score is the average of the three. Every score is justified against a specific persona, JTBD statement, or interview-synthesis theme, not a gut feeling.
+Using ICE (Impact, Confidence, Ease) rather than RICE. Reach isn't meaningfully estimable yet since Flexy has no real user base or ComEd partnership in place, so ICE fits a pre-launch, research-grounded prioritization better. Each scored 1-10; ICE score is the average of the three. Every score is justified against a specific persona, JTBD statement, or interview-synthesis theme.
 
 **Legend:** Impact = how much this moves the needle on the core problem. Confidence = how sure we are, based on persona/interview evidence or real-world precedent, that this is the right feature. Ease = technical/data feasibility given known constraints.
+
+**Scope note:** This roadmap covers Flexy's two shipped features, price/cost transparency and smart EV charging. Solar and heat pump savings calculators, previously scoped here, have moved to a future case study under a separate energy-flexibility umbrella, since they're a different product problem entirely.
 
 ---
 
@@ -44,7 +46,7 @@ Both modes require a ready-by time. That was a deliberate correction from an ear
    - **Charging speed limit (amperage cap):** lets a household cap the current draw, for example reducing from 48A to 32A or 16A when sharing circuit capacity with another EV or a large appliance. Directly relevant to Jenna and Sam's two-EV household, and something Tesla's own app already exposes, so it's a realistic ask from a tech-savvy user rather than an invented feature.
    - **Home-only automation:** restricts smart scheduling to when the car is actually at the home charger, since Flexy's ComEd price data doesn't apply to a public or workplace charger. This is a correctness feature as much as a preference, borrowed from Ohme's location-aware charging.
    - **Achievable-at-setup check:** when the user saves their settings, Flexy immediately checks whether the target is physically reachable in the time available given the charger's speed, and says so on the spot. This replaced an earlier idea of an ongoing "at-risk of missing target" notification, which doesn't actually apply here: because the deadline is a hard constraint, Flexy will charge through expensive hours if needed to hit it, so price conditions never put the target at risk. The only real risk is a physical one (plugged in too late, or an unreachable target given charging speed), which is a one-time check, not an ongoing monitor.
-2. **Max savings.** For someone who doesn't want to configure anything beyond the deadline. The user sets only a ready-by time; Flexy defaults to charging to 100 percent with a safe floor and picks the cheapest available hours to get there, using more expensive hours only if that's what it takes to hit the deadline. This fits Devon, whose JTBD was explicitly "I want the awareness without the labor" - fewer inputs is the point, not a missing feature.
+2. **Max savings.** For someone who doesn't want to configure anything beyond the deadline. The user sets only a ready-by time; Flexy defaults to charging to 100 percent with a safe floor and picks the cheapest available hours to get there, using more expensive hours only if that's what it takes to hit the deadline. This fits Devon, whose JTBD was explicitly "I want the awareness without the labor" — fewer inputs is the point, not a missing feature.
 
 Both modes combine today's and tomorrow's ComEd price data once tomorrow's prices are available, so an overnight session isn't artificially cut off at midnight, the same pattern the Home Assistant project uses with Tibber's day-ahead prices.
 
@@ -59,9 +61,9 @@ Both modes combine today's and tomorrow's ComEd price data once tomorrow's price
 
 The budget cap lets a user set a monthly dollar ceiling for EV charging specifically, tracked separately from the rest of the household's electricity cost, and pauses charging if the cap is hit. This is a real feature from the Home Assistant project worth borrowing, but it's Next rather than Now because it depends on the core charging engine already running reliably, and because it adds a second constraint (budget) on top of the two modes above that's easier to reason about once those are proven.
 
-The transparency digest is unchanged in rationale from the prior version of this roadmap: high confidence but lower ease, since it depends on carrying accurate savings data over time rather than a one-time build.
+The transparency digest is unchanged in rationale: high confidence but lower ease, since it depends on the core charging engine producing clean, explainable decision logs, something worth building once the engine is proven rather than alongside it.
 
-Solar and heat-pump savings calculators, and a solar-aware charging mode paired with them, were cut from this roadmap along with the two personas built around them (see flexy-personas.md and flexy-product-brief.md) - outside a realistic MVP-plus-Next scope for a portfolio piece centered on price visibility and EV charging.
+**Moved out:** solar savings calculator, heat pump savings calculator (with eligibility flag), and solar-aware EV charging (charge from solar first, grid as top-up) were previously scoped here. They've moved to a future case study under a separate energy-flexibility umbrella rather than staying on Flexy's roadmap, since they answer a different product question (should this household invest in solar or a heat pump) than Flexy's two shipped features (is this household's day-to-day electricity use being optimized).
 
 ---
 
@@ -87,7 +89,7 @@ Solar and heat-pump savings calculators, and a solar-aware charging mode paired 
 
 ## What this roadmap deliberately does not do
 
-It doesn't rank purely by highest ICE score. The calculator features score respectably but are sequenced into Next specifically because they depend on infrastructure (accurate usage data, a working EV charging engine) that Now builds first. This is a dependency-aware roadmap, not a sorted list, which is closer to how a real roadmap gets built and defended to stakeholders.
+It doesn't rank purely by highest ICE score. The Next-horizon features are sequenced there specifically because they depend on infrastructure (a working EV charging engine, clean decision logs) that Now builds first. This is closer to how a real roadmap gets built and defended to stakeholders: sequenced by dependency, not sorted by score.
 
 ## Status
-Draft v5. Price and consumption merged into one redesigned Price and Cost view with a Time-of-Use comparison toggle. Smart EV charging expanded into two explicit modes, custom settings and max savings, both now requiring a ready-by time; the differentiator between them is depth of configuration, not presence of a deadline. Custom settings mode fully specified: ready-by time, target charge level, minimum floor, one-tap override, per-vehicle settings, weekend-specific scheduling, charging speed limit (amperage cap), home-only automation, and a one-time achievable-at-setup check rather than an ongoing at-risk notification. Max savings simplified to a single ready-by input with sensible defaults for everything else. Solar and heat-pump savings calculators and solar-aware charging removed from Next along with the two personas built around them; Next is now the budget cap and the transparency digest. Negative-price handling, efficiency tracking, and multi-EV voltage protection remain in Later as named, deliberate deferrals. Click dummy (Weeks 4 to 5) updated to match all of the above.
+Price and consumption merged into one redesigned Price and Cost view with a Time-of-Use comparison toggle. Smart EV charging expanded into two explicit modes, custom settings and max savings, both requiring a ready-by time; the differentiator between them is depth of configuration, not presence of a deadline. Custom settings mode fully specified: ready-by time, target charge level, minimum floor, one-tap override, per-vehicle settings, weekend-specific scheduling, charging speed limit (amperage cap), home-only automation, and a one-time achievable-at-setup check rather than an ongoing at-risk notification. Max savings simplified to a single ready-by input with sensible defaults for everything else. Negative-price handling, efficiency tracking, and multi-EV voltage protection sit in Later as named, deliberate deferrals. Solar savings calculator, heat pump savings calculator, and solar-aware charging moved off this roadmap entirely, to seed a future, separately-researched case study under a broader energy-flexibility umbrella.
