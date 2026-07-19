@@ -22,10 +22,24 @@ What each core feature actually needs to be built for real, which real APIs and 
 
 **Feasibility:** Medium-high. Smartcar is a real, commercially available product other companies (including Optiwatt, per its own public integration docs) already build on. The genuine constraint: Smartcar's remote charging control depends on what each automaker's own API exposes, and coverage and reliability vary by brand. A cross-brand promise is realistic; a promise that works identically across every brand is not.
 
-**Tested live, not just described:** registered a real Smartcar application, connected a simulated Tesla through the actual Connect consent flow, and pulled real API responses (application access token, connection list, vehicle detail) back from Smartcar's live v3 API Authentication endpoints. One real implementation detail worth flagging for a future team: this app is provisioned on Smartcar's newer v3 model, application-level access token via OAuth2 Client Credentials, plus a per-user `sc-user-id` header, not the older per-vehicle authorization-code exchange most third-party guides (including Optiwatt's) still document. The two aren't interchangeable; picking the wrong one costs real debugging time, as it did here.
+**Tested:** registered a real Smartcar application, connected a simulated Tesla through the actual Connect consent flow, and pulled real API responses (application access token, connection list, vehicle detail) back from Smartcar's live v3 API Authentication endpoints. One real implementation detail worth flagging for a future team: this app is provisioned on Smartcar's newer v3 model, application-level access token via OAuth2 Client Credentials, plus a per-user `sc-user-id` header, not the older per-vehicle authorization-code exchange most third-party guides (including Optiwatt's) still document. The two aren't interchangeable; picking the wrong one costs real debugging time, as it did here.
 
-**"Hardware-agnostic" is two claims, not one:**
-- **EV-brand agnostic:** one Smartcar integration, works across GM, Ford, Tesla, Hyundai/Kia, and others.
+**Sequence, high level:**
+
+```
+Register app on Smartcar  ->  User completes Connect consent  ->  App requests
+     dashboard, get                  (simulated Tesla,               access token
+     client ID/secret                grants charge permissions)      (client credentials)
+                                                                            |
+                                                                            v
+                                              Real battery + charge data  <-  App calls
+                                              returned                        Connections/Vehicle
+                                                                               API with token +
+                                                                               user ID
+```
+
+**"Hardware-agnostic" is two claims:**
+- **EV-brand agnostic:** one Smartcar integration, works across every brand it supports. In the US alone, Smartcar's live compatibility data (pulled directly from its public API) currently lists 34 confirmed makes: Acura, Alfa Romeo, Audi, BMW, Buick, Cadillac, Chevrolet, Chrysler, Dodge, Fiat, Ford, GMC, Honda, Hyundai, Infiniti, Jaguar, Jeep, Kia, Land Rover, Lexus, Lincoln, MINI, Mazda, Mercedes-Benz, Nissan, Polestar, Porsche, RAM, Rivian, Subaru, Tesla, Toyota, Volkswagen, and Volvo.
 - **Charging-equipment agnostic:** works on any charger, dumb or smart, because the SAE J1772/CCS standard puts the start/stop decision inside the vehicle's own battery management system, not the charger. The charger just offers power within a rated limit.
 
 **Boundary:** covers start/stop and target-charge-level control only. Circuit-level load balancing and charger-side demand-response (e.g. OpenADR) need charger-level integration Flexy doesn't have.
@@ -41,7 +55,6 @@ Every external data source above can fail or go stale in a way that's invisible 
 | Claim | Status |
 |---|---|
 | ComEd's price data is real and fetchable without a partnership | Proven - fetched directly against the live API during prototype build |
-| Smartcar can expose state of charge across multiple EV brands | Proven - Smartcar is a real, public product; not yet tested against a live Flexy integration |
 | Flexy can receive and parse real smart meter (interval usage) data | Not yet proven - Green Button "Download My Data" is a real, real self-service export, but no parser or ingestion path has been built and tested against it yet |
 | Flexy is EV-brand agnostic | Proven - real Smartcar app, real Connect flow, real access token and vehicle data pulled from Smartcar's live API (Tesla tested; other brands rely on Smartcar's own multi-brand support, not independently re-tested per brand) |
 | Flexy is charging-equipment agnostic | Proven by standard - SAE J1772/CCS puts start/stop inside the vehicle, not the charger, so this doesn't depend on Flexy's own build |
