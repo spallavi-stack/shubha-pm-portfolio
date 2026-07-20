@@ -99,7 +99,7 @@
   .case-card.disabled .cta{color:var(--ink-soft);}
 
   .banner-flexy{background:linear-gradient(120deg,#1E4B3B,#F0AE8C);}
-  .banner-groundtruth{background:linear-gradient(120deg,#1B7A4C,#145C3A);}
+  .banner-groundtruth{background:linear-gradient(120deg,#1092CF,#045097);}
   .banner-placeholder{background:repeating-linear-gradient(135deg,#EDEFF3,#EDEFF3 10px,#E3E8E8 10px,#E3E8E8 20px);}
 
   .approach-list{counter-reset:step;margin-top:24px;}
@@ -184,7 +184,32 @@
       </a>
 
       <a class="case-card live" href="groundtruth-product-brief.html">
-        <div class="case-banner banner-groundtruth">Groundtruth</div>
+        <div class="case-banner banner-groundtruth">
+          <svg class="logo-mark" viewBox="0 0 64 64" width="34" height="34" role="img" aria-label="Groundtruth logo">
+            <defs>
+              <linearGradient id="gtBgHub" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#1092CF"/>
+                <stop offset="1" stop-color="#045097"/>
+              </linearGradient>
+              <linearGradient id="gtSunHub" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#FFFE33"/>
+                <stop offset="1" stop-color="#FFE205"/>
+              </linearGradient>
+              <clipPath id="gtClipHub"><rect x="0" y="0" width="64" height="64" rx="16"/></clipPath>
+            </defs>
+            <rect x="0" y="0" width="64" height="64" rx="16" fill="url(#gtBgHub)"/>
+            <g clip-path="url(#gtClipHub)">
+              <g stroke="#FFE205" stroke-width="3" stroke-linecap="round">
+                <line x1="32" y1="8" x2="32" y2="14"/>
+                <line x1="14" y1="16" x2="19" y2="21"/>
+                <line x1="50" y1="16" x2="45" y2="21"/>
+              </g>
+              <circle cx="32" cy="36" r="15" fill="url(#gtSunHub)"/>
+              <rect x="0" y="46" width="64" height="18" fill="#045097"/>
+            </g>
+          </svg>
+          Groundtruth
+        </div>
         <div class="case-body">
           <div class="case-tags">
             <span class="tag tag-industry">Solar · B2B</span>
@@ -204,11 +229,50 @@
         <div class="case-banner banner-placeholder"></div>
         <div class="case-body">
           <div class="case-tags">
-            <span class="tag tag-industry">Nonprofit Tech · B2B2C</span>
+            <span class="tag tag-industry">Energy Access · P2P</span>
             <span class="tag tag-status-soon">Research next</span>
           </div>
-          <h3>Next case study: Major Giving</h3>
-          <p class="thesis">Not yet started. Sparked by a Senior PM, New Products role at a digital fundraising platform: major donors are the top 1-5% of donors who drive 60-90% of an enterprise nonprofit's revenue, yet they're served almost entirely through relationship-driven CRM and wealth-screening workflows (DonorSearch, Virtuous, Bloomerang) rather than any real digital product. Worth researching whether that gap is real before assuming a product answer.</p>
+          <h3>Next case study: Peer-to-Peer Energy Trading</h3>
+          <p class="thesis">Not yet started. Peer-to-peer energy trading, letting neighbors buy and sell surplus solar or battery power directly, is often pitched as a fix for energy access gaps in underserved and off-grid communities. Before assuming that's the right model, the plan is to research what's actually limiting energy access today: infrastructure, financing, regulation, or something else entirely.</p>
+          <div class="cta">Coming soon</div>
+        </div>
+      </div>
+
+      <div class="case-card disabled">
+        <div class="case-banner banner-placeholder"></div>
+        <div class="case-body">
+          <div class="case-tags">
+            <span class="tag tag-industry">Carbon Accounting · B2B</span>
+            <span class="tag tag-status-soon">Research next</span>
+          </div>
+          <h3>Next case study: Carbon Accounting Software</h3>
+          <p class="thesis">Not yet started. Enterprise tools like Greenly, Cogo, and Zevero automate carbon accounting so businesses can track and audit their energy use and emissions. Before assuming there's still a gap to fill in an increasingly crowded category, the plan is to research where these tools actually fall short for the businesses using them.</p>
+          <div class="cta">Coming soon</div>
+        </div>
+      </div>
+
+      <div class="case-card disabled">
+        <div class="case-banner banner-placeholder"></div>
+        <div class="case-body">
+          <div class="case-tags">
+            <span class="tag tag-industry">Climate NGOs · B2B2C</span>
+            <span class="tag tag-status-soon">Research next</span>
+          </div>
+          <h3>Next case study: FundTheFuture</h3>
+          <p class="thesis">Not yet started. Exploring a donation facilitation app for improving fundraising efforts, focused specifically on the climate change NGO sector: what's actually broken in how these organizations raise money online today, before assuming the product answer.</p>
+          <div class="cta">Coming soon</div>
+        </div>
+      </div>
+
+      <div class="case-card disabled">
+        <div class="case-banner banner-placeholder"></div>
+        <div class="case-body">
+          <div class="case-tags">
+            <span class="tag tag-industry">Climate Adaptation · B2G</span>
+            <span class="tag tag-status-soon">Research next</span>
+          </div>
+          <h3>Next case study: Firstwatch</h3>
+          <p class="thesis">Not yet started. A predictive outreach coordination platform for homeless services NGOs and city agencies: combining NWS forecast data (heat, cold, flood, hurricane) with known encampment locations and HUD's public point-in-time count data, so outreach teams can pre-position blankets, water, and staff before a heat wave or cold snap, not after. The people most exposed to climate extremes are often the least reachable by any consumer app, so this one is built for the outreach coordinator, not the individual.</p>
           <div class="cta">Coming soon</div>
         </div>
       </div>
