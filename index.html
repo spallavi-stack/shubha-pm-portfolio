@@ -184,7 +184,32 @@
       </a>
 
       <div class="case-card disabled">
-        <div class="case-banner banner-placeholder"></div>
+        <div class="case-banner banner-groundtruth">
+          <svg class="logo-mark" viewBox="0 0 64 64" width="34" height="34" role="img" aria-label="Groundtruth logo">
+            <defs>
+              <linearGradient id="gtBgHub2" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#1092CF"/>
+                <stop offset="1" stop-color="#045097"/>
+              </linearGradient>
+              <linearGradient id="gtSunHub2" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#FFFE33"/>
+                <stop offset="1" stop-color="#FFE205"/>
+              </linearGradient>
+              <clipPath id="gtClipHub2"><rect x="0" y="0" width="64" height="64" rx="16"/></clipPath>
+            </defs>
+            <rect x="0" y="0" width="64" height="64" rx="16" fill="url(#gtBgHub2)"/>
+            <g clip-path="url(#gtClipHub2)">
+              <g stroke="#FFE205" stroke-width="3" stroke-linecap="round">
+                <line x1="32" y1="8" x2="32" y2="14"/>
+                <line x1="14" y1="16" x2="19" y2="21"/>
+                <line x1="50" y1="16" x2="45" y2="21"/>
+              </g>
+              <circle cx="32" cy="36" r="15" fill="url(#gtSunHub2)"/>
+              <rect x="0" y="46" width="64" height="18" fill="#045097"/>
+            </g>
+          </svg>
+          Groundtruth
+        </div>
         <div class="case-body">
           <div class="case-tags">
             <span class="tag tag-industry">Solar · B2B</span>
