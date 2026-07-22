@@ -52,4 +52,4 @@ This doc maps jobs to features at the MVP-scope level. It doesn't restate the ac
 
 ## Status
 
-Frozen. Grounded in the four personas in flexy-personas.md and the MVP/Next feature split in flexy-roadmap.md.
+Frozen. Grounded in the four personas in personas.md and the MVP/Next feature split in roadmap.md.

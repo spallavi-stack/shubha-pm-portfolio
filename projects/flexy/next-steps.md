@@ -2,7 +2,7 @@
 
 ## Prototype gaps
 
-- The four use-case failure flows documented in `flexy-user-stories.md` (ComEd connection failure, vehicle below the safety floor, stale price data, achievable-at-setup check failure) are written as acceptance criteria but not built into the click-dummy. Building at least one as a real interactive flow would make the "verify it yourself" story stronger.
+- The four use-case failure flows documented in `user-stories.md` (ComEd connection failure, vehicle below the safety floor, stale price data, achievable-at-setup check failure) are written as acceptance criteria but not built into the click-dummy. Building at least one as a real interactive flow would make the "verify it yourself" story stronger.
 - Custom Settings panel (screen 7) hasn't been audited field-by-field against the roadmap's full list (day-of-week variation, home-only automation, per-vehicle settings for two EVs at once).
 - The Price & Cost view's real-time consumption line uses the same illustrative shape across Today/Week/Month/Year. That's an explicitly documented limitation, but it means the load side of the chart isn't as real as the price side.
 
@@ -32,4 +32,4 @@ Flexy today is entirely B2C-facing, even though the business model is B2B2C. The
 
 ## Status
 
-Living list. Update as items are picked up or new gaps are found. Kept separate from `flexy-case-study.html` and `index.html`; this is a working doc rather than a polished portfolio artifact.
+Living list. Update as items are picked up or new gaps are found. Kept separate from `case-study.html` and `index.html`; this is a working doc rather than a polished portfolio artifact.

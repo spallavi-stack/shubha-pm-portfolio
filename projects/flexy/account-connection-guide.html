@@ -44,8 +44,8 @@
   <div class="navwrap">
     <span class="brand">Flexy<span>.</span> Documentation</span>
     <div style="display:flex;gap:18px;">
-      <a href="flexy-case-study.html">&larr; Case study</a>
-      <a href="index.html">Portfolio</a>
+      <a href="case-study.html">&larr; Case study</a>
+      <a href="../../index.html">Portfolio</a>
     </div>
   </div>
 </nav>
@@ -54,7 +54,7 @@
 <p>Written for a future engineering team: what it would take to replace the fake "Connect to ComEd" step in the prototype with a real one.</p>
 
 <h2>What this covers, and what it doesn't</h2>
-<p>The prototype's account-connection screens (entering a ComEd login, seeing "You're connected to ComEd") are entirely simulated. No real ComEd account is ever contacted. This is a different integration from the one described in the <a href="flexy-real-data-integration-guide.html">Price Integration Guide</a>, which covers the live pricing feed and is already partially real in the prototype today. Account connection would pull a specific customer's own usage and billing data, a per-user, opt-in integration with its own trust model, separate from the shared, public pricing feed.</p>
+<p>The prototype's account-connection screens (entering a ComEd login, seeing "You're connected to ComEd") are entirely simulated. No real ComEd account is ever contacted. This is a different integration from the one described in the <a href="real-data-integration-guide.html">Price Integration Guide</a>, which covers the live pricing feed and is already partially real in the prototype today. Account connection would pull a specific customer's own usage and billing data, a per-user, opt-in integration with its own trust model, separate from the shared, public pricing feed.</p>
 
 <h2>The real integration: Green Button Connect My Data</h2>
 <p>ComEd already operates Green Button Connect My Data (CMD), one of the few utility programs of its kind live in the US today (alongside California's investor-owned utilities). It's an OAuth 2.0-based, opt-in data-sharing standard, not a generic username/password API, and the redirect-to-ComEd pattern already used correctly for the EV-connection step in the prototype is the right shape for this too.</p>
@@ -167,7 +167,7 @@ Header: Authorization: Bearer {access_token}</code></pre>
 </ul>
 
 <h2>Status</h2>
-<p>This documents what a real ComEd account connection would require, replacing the fully simulated login/consent screens in the current prototype. No part of this is implemented; the prototype's "You're connected to ComEd" screen is decorative. See the <a href="flexy-real-data-integration-guide.html">Price Integration Guide</a> for the one integration that is genuinely real today, the public pricing feed.</p>
+<p>This documents what a real ComEd account connection would require, replacing the fully simulated login/consent screens in the current prototype. No part of this is implemented; the prototype's "You're connected to ComEd" screen is decorative. See the <a href="real-data-integration-guide.html">Price Integration Guide</a> for the one integration that is genuinely real today, the public pricing feed.</p>
 
 <h2>Sources</h2>
 <ul>
@@ -178,7 +178,7 @@ Header: Authorization: Bearer {access_token}</code></pre>
 <li><a href="https://www.coned.com/en/accounts-billing/share-energy-usage-data/become-a-third-party" target="_blank" rel="noopener">Register to Receive Customer Data via Green Button Connect My Data, Con Edison</a> (same CMD standard, cited for comparison since ComEd's own program page did not return fetchable text directly)</li>
 </ul>
 
-<div class="doc-footer">Part of the Flexy case study documentation set. For the short version, see the <a href="flexy-case-study.html">case study page</a>.</div>
+<div class="doc-footer">Part of the Flexy case study documentation set. For the short version, see the <a href="case-study.html">case study page</a>.</div>
 </article>
 <footer>
   <div class="wrap">Flexy is a fictional case study built for portfolio purposes. Market research is real and cited; personas, interviews, and user data are synthetic.</div>
