@@ -35,9 +35,9 @@ Markdown docs are rendered to styled HTML via a shared, parameterized script (no
 
 ## Migration status
 
-- **Flexy**: moved into `projects/flexy/` (July 2026) but still uses the *old* flat layout inside that folder (`case-study.html`, `click-dummy.html`, and all docs flat at the project root, prefix-stripped but not yet split into `docs/`). It has **not yet** been migrated to the `index.html` / `prototype.html` / `docs/` / `assets/` convention above. That migration is planned but not executed.
-- **SunnySideUp**: not started (research only so far, per the hub page).
-- The shared, parameterized `build_docs.py` at the repo root doesn't exist yet — only Flexy's own copy does, at `projects/flexy/build_docs.py`.
+- **Flexy**: fully migrated to the `index.html` / `prototype.html` / `docs/` / `assets/` convention above (July 2026).
+- **SunnySideUp**: not started (research only so far, per the hub page). When it starts, follow the structure above from day one.
+- The shared, parameterized build script lives at `scripts/build_docs.py` (repo root). It currently only has a `flexy` entry in its `PROJECTS` dict — add a `sunnysideup` (or other) entry there when that project's docs are ready to render, rather than copying the script into the project folder.
 
 ## Other notes
 
