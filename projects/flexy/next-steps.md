@@ -32,4 +32,4 @@ Flexy today is entirely B2C-facing, even though the business model is B2B2C. The
 
 ## Status
 
-Living list. Update as items are picked up or new gaps are found. Kept separate from `case-study.html` and `index.html`; this is a working doc rather than a polished portfolio artifact.
+Living list. Update as items are picked up or new gaps are found. Kept separate from `index.html` and the portfolio hub; this is a working doc rather than a polished portfolio artifact.
