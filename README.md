@@ -1,6 +1,6 @@
 # Shubha's PM Portfolio
 
-B2B2C product case studies built to demonstrate product management process: research, personas, roadmapping, prototyping, and honest documentation of what's proven versus assumed.
+B2B2C product case studies built to demonstrate product management process: research, personas, roadmapping, prototyping, and documentation.
 
 ## Contents
 
