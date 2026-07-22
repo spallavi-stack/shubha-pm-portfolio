@@ -36,8 +36,20 @@ Markdown docs are rendered to styled HTML via a shared, parameterized script (no
 ## Migration status
 
 - **Flexy**: fully migrated to the `index.html` / `prototype.html` / `docs/` / `assets/` convention above (July 2026).
-- **SunnySideUp**: not started (research only so far, per the hub page). When it starts, follow the structure above from day one.
+- **SunnySideUp**: in progress. `scope.md`, `grounding-research.md`, and `research-audit.md` exist under `projects/sunnysideup/docs/`; product brief, personas, and everything else in the "out of scope for this pass" list in `scope.md` haven't started yet.
 - The shared, parameterized build script lives at `scripts/build_docs.py` (repo root). It currently only has a `flexy` entry in its `PROJECTS` dict — add a `sunnysideup` (or other) entry there when that project's docs are ready to render, rather than copying the script into the project folder.
+
+## Research process (use for every new project)
+
+Three skills in `.claude/skills/` exist to fix three recurring problems with AI-assisted PM research: incomplete coverage, padding with unrequested content, and claims that can't be trusted without independent verification. Run them in sequence for any new case study:
+
+1. **`discovery-scope`** — before any drafting, produces a project-specific checklist of what's needed and what's explicitly out of scope. Saves to `projects/<slug>/docs/scope.md`.
+2. **`grounding-research`** — produces sourced market/regulatory/technical research where every claim is tagged **Fact** (cited), **Inference** (reasoned, shown), or **Assumption** (flagged, unverified). Saves to `projects/<slug>/docs/grounding-research.md`.
+3. **`research-auditor`** — a separate review pass on any drafted doc, checking for unlabeled or unsourced claims without silently rewriting anything. Findings-only; the user decides the fix.
+
+`discovery-scope` and `grounding-research` are adapted from [deanpeters/Product-Manager-Skills](https://github.com/deanpeters/Product-Manager-Skills) (CC BY-NC-SA 4.0). `research-auditor`'s Fact/Inference/Assumption discipline is adapted from the confidence-and-methodology principle in [alirezarezvani/claude-skills](https://github.com/alirezarezvani/claude-skills)' `research-ops-orchestrator` (not its full multi-lane enterprise routing system). Full attribution is in each skill's `SKILL.md`.
+
+First real run (SunnySideUp, July 2026) caught a genuine gap: the initial `grounding-research.md` never researched UK leasehold/tenancy consent law even though `scope.md` named it as a defining constraint — `research-auditor` caught it, a follow-up pass fixed it. That loop working as intended is itself evidence the process is worth keeping.
 
 ## Other notes
 
