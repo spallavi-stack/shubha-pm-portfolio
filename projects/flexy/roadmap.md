@@ -61,7 +61,7 @@ The budget cap lets a user set a monthly dollar ceiling for EV charging specific
 
 The transparency digest is unchanged in rationale from the prior version of this roadmap: high confidence but lower ease, since it depends on carrying accurate savings data over time rather than a one-time build.
 
-Solar and heat-pump savings calculators, and a solar-aware charging mode paired with them, were cut from this roadmap along with the two personas built around them (see flexy-personas.md and flexy-product-brief.md) - outside a realistic MVP-plus-Next scope for a portfolio piece centered on price visibility and EV charging.
+Solar and heat-pump savings calculators, and a solar-aware charging mode paired with them, were cut from this roadmap along with the two personas built around them (see personas.md and product-brief.md) - outside a realistic MVP-plus-Next scope for a portfolio piece centered on price visibility and EV charging.
 
 ---
 

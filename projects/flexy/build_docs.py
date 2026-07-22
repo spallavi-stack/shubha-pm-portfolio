@@ -1,17 +1,18 @@
 import markdown, os, re
 
-SRC_DIR = "/sessions/peaceful-kind-fermat/mnt/outputs"
+SRC_DIR = os.path.dirname(os.path.abspath(__file__))
 
 DOCS = [
-    ("flexy-product-brief.md", "flexy-product-brief.html", "Product Brief"),
-    ("flexy-personas.md", "flexy-personas.html", "Personas"),
-    ("flexy-synthetic-interviews.md", "flexy-synthetic-interviews.html", "Synthetic Interviews"),
-    ("flexy-jobs-to-be-done.md", "flexy-jobs-to-be-done.html", "Jobs to Be Done"),
-    ("flexy-roadmap.md", "flexy-roadmap.html", "Roadmap"),
-    ("flexy-user-stories.md", "flexy-user-stories.html", "User Stories & Use Cases"),
-    ("flexy-technical-feasibility.md", "flexy-technical-feasibility.html", "Technical Feasibility & Architecture"),
-    ("flexy-real-data-integration-guide.md", "flexy-real-data-integration-guide.html", "Real Data Integration Guide"),
-    ("flexy-ai-collaboration-review.md", "flexy-ai-collaboration-review.html", "AI Collaboration Review"),
+    ("product-brief.md", "product-brief.html", "Product Brief"),
+    ("personas.md", "personas.html", "Personas"),
+    ("synthetic-interviews.md", "synthetic-interviews.html", "Synthetic Interviews"),
+    ("jobs-to-be-done.md", "jobs-to-be-done.html", "Jobs to Be Done"),
+    ("roadmap.md", "roadmap.html", "Roadmap"),
+    ("user-stories.md", "user-stories.html", "User Stories & Use Cases"),
+    ("technical-feasibility.md", "technical-feasibility.html", "Technical Feasibility & Architecture"),
+    ("real-data-integration-guide.md", "real-data-integration-guide.html", "Real Data Integration Guide"),
+    ("account-connection-guide.md", "account-connection-guide.html", "Account Connection Guide"),
+    ("ai-collaboration-review.md", "ai-collaboration-review.html", "AI Collaboration Review"),
 ]
 
 TEMPLATE = """<!DOCTYPE html>
@@ -59,14 +60,14 @@ TEMPLATE = """<!DOCTYPE html>
   <div class="navwrap">
     <span class="brand">Flexy<span>.</span> Documentation</span>
     <div style="display:flex;gap:18px;">
-      <a href="flexy-case-study.html">← Case study</a>
-      <a href="index.html">Portfolio</a>
+      <a href="case-study.html">← Case study</a>
+      <a href="../../index.html">Portfolio</a>
     </div>
   </div>
 </nav>
 <article class="wrap">
 {body}
-<div class="doc-footer">Part of the Flexy case study documentation set. For the short version, see the <a href="flexy-case-study.html">case study page</a>.</div>
+<div class="doc-footer">Part of the Flexy case study documentation set. For the short version, see the <a href="case-study.html">case study page</a>.</div>
 </article>
 <footer>
   <div class="wrap">Flexy is a fictional case study built for portfolio purposes. Market research is real and cited; personas, interviews, and user data are synthetic.</div>

@@ -4,7 +4,7 @@ Written for a future engineering team: what it would take to replace the fake "C
 
 ## What this covers, and what it doesn't
 
-The prototype's account-connection screens (entering a ComEd login, seeing "You're connected to ComEd") are entirely simulated. No real ComEd account is ever contacted. This is a different integration from the one described in the [Price Integration Guide](flexy-real-data-integration-guide.html), which covers the live pricing feed and is already partially real in the prototype today. Account connection would pull a specific customer's own usage and billing data, a per-user, opt-in integration with its own trust model, separate from the shared, public pricing feed.
+The prototype's account-connection screens (entering a ComEd login, seeing "You're connected to ComEd") are entirely simulated. No real ComEd account is ever contacted. This is a different integration from the one described in the [Price Integration Guide](real-data-integration-guide.html), which covers the live pricing feed and is already partially real in the prototype today. Account connection would pull a specific customer's own usage and billing data, a per-user, opt-in integration with its own trust model, separate from the shared, public pricing feed.
 
 ## The real integration: Green Button Connect My Data
 
@@ -122,7 +122,7 @@ Beyond the OAuth plumbing itself, a handful of things sit outside the API spec b
 
 ## Status
 
-This documents what a real ComEd account connection would require, replacing the fully simulated login/consent screens in the current prototype. No part of this is implemented; the prototype's "You're connected to ComEd" screen is decorative. See the [Price Integration Guide](flexy-real-data-integration-guide.html) for the one integration that is genuinely real today, the public pricing feed.
+This documents what a real ComEd account connection would require, replacing the fully simulated login/consent screens in the current prototype. No part of this is implemented; the prototype's "You're connected to ComEd" screen is decorative. See the [Price Integration Guide](real-data-integration-guide.html) for the one integration that is genuinely real today, the public pricing feed.
 
 ## Sources
 
