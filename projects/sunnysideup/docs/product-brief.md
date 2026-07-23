@@ -1,7 +1,7 @@
 # SunnySideUp: Product Brief
 
 ## One-line pitch
-*(Placeholder: pitch line to be added. Everything below assumes the one-liner comes last, once the rest of the brief is settled.)*
+SunnySideUp tells UK homeowners, renters, and leaseholders the truth about whether solar makes sense for them, rooftop or plug-in, before or after a sales pitch, without ever getting paid more for saying yes.
 
 ## Problem
 Solar quotes are hard to compare. Installers vary system-size definitions, included services like scaffolding, DNO paperwork, or battery bundling, and financing terms. Because of this, two quotes for a similar job can differ by thousands of pounds with no obvious reason why.[^12] No one in the current market has an incentive to fix that. Installer pricing opacity is a documented regulatory concern: the CMA's own 2022 investigation into this sector specifically flagged "inaccurate and unrealistic headline price information."[^1] Every existing UK solar comparison platform found in research runs a lead-generation or referral-fee model. These tools receive payment per lead, which encourages them to maximize quotes and sales instead of providing clear, direct comparisons.[^2] SunnySideUp avoids this conflict of interest entirely.
