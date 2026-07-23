@@ -58,9 +58,6 @@ A stated GO / PIVOT / KILL call, even for a portfolio piece — this is what mak
 ## Further reading
 Links to `scope.md` and `grounding-research.md` for the full research this brief compresses.
 
-## A note on what this is
-Fictional company/product; research real and cited; personas/interviews synthetic. (Existing portfolio-wide convention, carried forward.)
-
 ## Sources
 Footnote definitions go here, one per cited grounding-research.md section — e.g. `[^1]: grounding-research.md §Market size`. GitHub renders these as clickable footnotes. Don't put citations inline in the prose above.
 ```

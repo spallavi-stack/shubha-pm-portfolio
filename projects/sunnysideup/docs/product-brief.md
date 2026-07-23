@@ -77,9 +77,6 @@ No roadmap, synthetic interviews, clickable prototype, account-connection guide,
 ## Further reading
 Full research: `scope.md`, `grounding-research.md` (same folder).
 
-## A note on what this is
-SunnySideUp is a fictional product built for a product management portfolio. Market research (UK solar regulation, market size, sales-practice complaints, and named competitors) is real and cited. Personas, interviews, and user data are synthetic, generated to stay internally consistent with that research rather than drawn from real people.
-
 ## Sources
 [^1]: `grounding-research.md` §Sales practices and consumer protection
 [^2]: `grounding-research.md` §Competitors
