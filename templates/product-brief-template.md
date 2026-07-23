@@ -1,0 +1,74 @@
+# Product Brief Template
+
+Frozen template for every case study's `docs/product-brief.md`. Don't redesign this per project — the whole point of freezing it is to stop re-deriving structure each time. If a section genuinely doesn't fit a given project, say so explicitly in that section rather than silently dropping it.
+
+Every section that states a researched claim (market size, regulatory status, competitor behavior, etc.) should cite back to where the full sourcing and confidence level live — e.g. "full sourcing: grounding-research.md §Market size." The brief is a compressed, scannable summary; `grounding-research.md` is the permanent, full-depth backing material it's compressed from, and nothing here should read as more certain than what that document actually supports.
+
+---
+
+```markdown
+# [Product] — Product Brief
+
+## One-line pitch
+A single sentence. (Amazon PR/FAQ discipline: if you can't say it in one sentence, you don't know what you're building yet.)
+
+## Problem
+What's broken today, for whom. Cite grounding-research.md for sourced claims. (Cagan Q1 + standard brief "Problem")
+
+## Who it's for
+Named segments — a working sketch, even before the full personas doc exists. (Cagan Q2)
+
+## Why now
+What makes this the right moment — regulatory/market timing, cited. (Cagan Q6)
+
+## Market size & opportunity
+TAM/SAM/SOM or equivalent, sourced from grounding-research.md, with confidence level carried over (don't state a Fact-tier number where the source labeled it an Assumption). (Cagan Q3)
+
+## Competitive landscape & differentiation
+What exists today, why this approach, why us. (Cagan Q4 + Q5)
+
+## Solution
+2-3 sentences, max. Detail lives in the roadmap/prototype once they exist, not here. (Best-practice brief convention)
+
+## Hypothesis
+"We believe that [X] will produce [Y outcome], because [reasoning tied to research/JTBD]." Explicit and falsifiable — this is the sentence the whole case study is testing. (Modern hypothesis-driven brief format)
+
+## Go-to-market
+Even a fictional sketch matters — how does this actually reach the people who need it. (Cagan Q7)
+
+## Success metrics & validation methodology
+The section that makes the brief testable later, not just descriptive now:
+- Leading indicators vs. lagging indicators, explicitly separated.
+- A concrete go/no-go test — adapt a real methodology (e.g. a Sean-Ellis-style "would be very disappointed" signal) to synthetic personas/interviews honestly, stating plainly that it's a synthetic proxy, not real user data.
+- Every item in the riskiest-assumption log (from `scope.md`) gets an explicit "here's the signal that would prove this wrong."
+(Cagan Q8 + the reason this template exists)
+
+## Critical success factors
+What has to hold true for this to work — technical, partnership, regulatory. (Cagan Q9)
+
+## Out of scope
+Restated from `scope.md`, so the brief is self-contained and doesn't require cross-referencing to be understood. (Square PRD's "Non-Goals")
+
+## Open questions
+Tagged, tied back to the riskiest-assumption log.
+
+## Recommendation
+A stated GO / PIVOT / KILL call, even for a portfolio piece — this is what makes it read as product judgment rather than an uncritically presented idea. (Cagan Q10)
+
+## Further reading
+Links to `scope.md` and `grounding-research.md` for the full research this brief compresses.
+
+## A note on what this is
+Fictional company/product; research real and cited; personas/interviews synthetic. (Existing portfolio-wide convention, carried forward.)
+```
+
+---
+
+## Provenance
+
+- **Problem / Who / Why now / Market size / Competitive landscape / Go-to-market / Success metrics / Critical success factors / Recommendation** — structured around Marty Cagan's (SVPG) 10-question Opportunity Assessment, chosen because it's purpose-built for evaluating whether a *new* opportunity is worth pursuing — unlike a standard feature-PRD template, which mostly assumes an existing product, team, and backlog.
+- **One-line pitch** — Amazon's "Working Backwards" PR/FAQ discipline: state the customer-facing outcome in one sentence before anything else.
+- **Solution / Out of scope** — informed by Square's PRD template (Kevin Yien) and its explicit "Non-Goals" section, and Asana's project-brief problem-statement framing, via Lenny's Newsletter, "My favorite product management templates" (issue 37).
+- **Hypothesis** — modern hypothesis-driven brief format ("we believe X will produce Y") rather than a flat "we will build X" statement.
+- **Success metrics & validation methodology** — the section built specifically to answer "how would you actually test this later," per Sean Ellis's product-market-fit survey methodology (the 40%-"very disappointed" test, refined from Dropbox/Eventbrite/LogMeIn data) adapted honestly for a portfolio context with no real users.
+- Everything above evaluated against, and one item (`opportunity-solution-tree`) deliberately excluded because its core mechanics — a pre-existing tracked metric, opportunities sourced from a real customer base, continuous weekly prioritization among many known signals — don't fit 0-to-1 work with no existing product or user base. See conversation history / commit log for the reasoning if this ever needs revisiting.

@@ -1,0 +1,66 @@
+# SunnySideUp — Product Brief
+
+## One-line pitch
+SunnySideUp gives UK homeowners, leaseholders, and renters an honest, plain-English solar viability check — rooftop or plug-in — before or after they talk to a salesperson, from a source that doesn't get paid more when the answer is yes.
+
+## Problem
+UK solar sales are documented as high-pressure and sometimes misleading: a Which? survey of solar-panel owners found more than a third had been cold-called with false claims (mandatory "government-required" checks, fire-risk warnings, unsolicited battery upsells), and the CMA and Ofgem have both run consumer-protection investigations into the sector (full sourcing: `grounding-research.md` §Sales practices and consumer protection). Every existing UK solar comparison platform found in research runs a lead-generation/referral-fee model — the tools consumers currently use to "compare" are paid more when the answer is yes (full sourcing: §Competitors). That's the exact conflict of interest SunnySideUp exists to avoid.
+
+The market has also just shifted underneath this problem, in a way that's genuinely confusing without an independent explainer: BS 7671 Amendment 4 (in force 15 April 2026) legalized *hard-wired* plug-in solar installs by a registered electrician, but true DIY self-install — buying a kit and plugging it into a wall socket yourself, the version that actually matters for a renter with no capital for an electrician — is still not legal, pending a BSI product standard that hadn't been published as of this research (full sourcing: §Plug-in/balcony solar, §Leasehold and tenancy consent requirements). That gap between "legal with an electrician" and "legal to self-install" is exactly the kind of nuance a renter shopping for a £500 kit needs someone honest to explain to them.
+
+## Who it's for
+Two segments, defined by roof access rather than tenure:
+- **Roof-access homeowners** considering rooftop solar — the segment most exposed to direct sales pressure (cold calls, in-home pitches).
+- **No-roof-access renters and leaseholders** considering plug-in/balcony solar. Leaseholders own equity but generally still need freeholder/management-company consent to alter a building's exterior (full sourcing: §Leasehold and tenancy consent requirements) — a genuinely newly-legal, thinly-served category with almost no independent guidance today.
+
+Both segments use the product at one of two moments: **before** any sales conversation (a baseline read), or **after** receiving a quote or pitch (an unbiased second opinion).
+
+## Why now
+The plug-in solar category is mid-transition right now, not settled: BS 7671 Amendment 4 (15 April 2026) legalized electrician-installed plug-in solar, DESNZ's consultation on the consumer self-install product standard closed 30 June 2026, and a government response was expected by ~22 July 2026 but isn't confirmed published as of this research (full sourcing: §Plug-in/balcony solar). That's the window where an independent explainer is most valuable — before the category is fully legal and obvious, while most consumers (and most existing solar sites) haven't caught up to the nuance yet. Separately, 2025 was UK solar's record installation year with 31–37% growth (full sourcing: §Market size and growth), so rooftop demand — and the sales pressure that comes with it — is already at an all-time high.
+
+## Market size & opportunity
+UK solar installations passed 2 million by March 2026, following a record 2025 (Fact, corroborated across independent sources — full sourcing: §Market size and growth). No adoption data exists yet for plug-in/balcony solar specifically — the category is genuinely too new to measure, not a research gap (same section). This brief deliberately doesn't state a TAM/SAM/SOM figure for the plug-in segment: no primary source yet supports one, and inventing a number here would manufacture false precision the research doesn't back. What's defensible: the rooftop segment is large and growing, and the plug-in segment is a real, newly-opened, currently-unquantifiable opportunity.
+
+## Competitive landscape & differentiation
+Every UK solar comparison platform identified in research — CompareMySolar, Uswitch's solar comparison, Solar Selections, Easy PV, Renewable Energy Hub, Solar Planet, Solar PV Quotes Compare — runs a lead-generation/referral-fee model (Fact — full sourcing: §Competitors). None were found to be structurally independent of installer payment. The closest real analog to SunnySideUp's positioning is Energy Saving Trust, a UK body funded by government and private sources providing impartial advice (Fact, same section) — evidence that "independently funded, not referral-funded" is a viable model in this space, not just a hopeful assumption.
+
+## Solution
+A plain-English viability check — postcode plus a few basic details — covering both rooftop and plug-in solar, giving a same-session honest read where "this probably isn't worth it for you" is a valid, non-default answer, without collecting a lead for any installer.
+
+## Hypothesis
+We believe that a genuinely independent (non-referral-funded) viability check will be used by both UK homeowners weighing a sales pitch and renters/leaseholders exploring the newly-legal plug-in category, because the existing market has no structurally independent option and documented sales pressure creates real demand for a source that isn't trying to sell anything.
+
+## Go-to-market
+Leading hypothesis, not yet validated: revenue and distribution come through an institutional partner aligned with SunnySideUp's independence — an Ofgem DNO innovation-funding mechanism (Strategic Innovation Fund or Network Innovation Allowance, both real and currently live — full sourcing: §Funding mechanisms) or a climate/public-interest grant, rather than installer referral fees. No specific funded precedent matching this exact product type was found. This is the least-proven part of the brief — called out again below.
+
+## Success metrics & validation methodology
+- **Leading indicators:** completed viability checks per segment (rooftop vs. plug-in); % of sessions ending in a "not worth it" result — a high honest-no rate is a *trust* signal here, not a failure metric, since a tool that always says yes isn't actually independent.
+- **Lagging indicators:** return usage — someone completing a "before" check and later returning for an "after" second-opinion check would be strong evidence the second-opinion use case is real, not assumed.
+- **Go/no-go test:** adapted from Sean Ellis's product-market-fit methodology — after the synthetic-interview pass (next in sequence), ask personas from both segments a "how would you feel if this didn't exist" question and apply the same 40%-"very disappointed" threshold Ellis validated across real startups. This is a **synthetic proxy, not real user data**, until an actual prototype exists — stated plainly, not implied otherwise.
+- **Riskiest-assumption signals** (from `scope.md`):
+  1. *Renters/leaseholders seek an independent check before buying* → signal: synthetic interviews show this as a real, named step in their process, not skipped.
+  2. *Homeowners mid-sales-conversation pause for a second opinion* → signal: synthetic interviews surface this as plausible persona behavior, not contradicted by their own reasoning.
+  3. *A non-conflicted revenue model exists* → signal: a specific, named funding mechanism (not just a category) gets identified as a plausible fit at the roadmap stage.
+  4. *Plug-in regulatory stability* → signal: the BSI product standard and self-install rules land as currently expected, without another material change.
+
+## Critical success factors
+- The BSI plug-in product safety standard needs to actually publish and legalize DIY self-install — if it stalls, the plug-in segment's pitch shrinks to "get an electrician to install a £500 kit," a materially less compelling product.
+- A funding partner needs to exist willing to fund independent consumer advice rather than requiring a referral/commission structure — currently a hypothesis, not a validated path.
+- The "honest no" has to be genuinely defensible — real payback/viability math, not a marketing claim. This depends on the technical/economic grounding, which `grounding-research.md` itself flags as its weakest-sourced section (no official UK payback dataset exists).
+
+## Out of scope
+No roadmap, synthetic interviews, clickable prototype, account-connection guide, AI-collaboration-review, user-stories, or technical-feasibility docs yet — sequenced next, per `scope.md`.
+
+## Open questions
+- Which specific funding mechanism (SIF, NIA, Innovate UK, Nesta, or something else) actually fits — to be researched at the roadmap stage.
+- Whether renters genuinely need landlord permission for a plug-in kit — flagged in `grounding-research.md` as an unverified, sales-favorable claim from sources with a commercial incentive to say no permission is needed; needs direct verification of the Renters' Rights Act's actual text before it's ever repeated to a real user.
+- How the two use-timings (before/after sales conversation) map to product flow — one flow with a branch, or two distinct entry points.
+
+## Recommendation
+**GO, with one explicit condition.** This brief's honesty depends on the technical/economic grounding (payback math, plug-in generation estimates) getting materially firmer than what currently exists — that's the weakest-sourced part of the research today. Proceed to personas and synthetic interviews next, as scoped, but treat the payback-math gap as something to actively tighten before any success-metrics claim gets tested for real — not something to paper over with placeholder numbers in the meantime.
+
+## Further reading
+Full research: `scope.md`, `grounding-research.md` (same folder).
+
+## A note on what this is
+SunnySideUp is a fictional product built for a product management portfolio. Market research (UK solar regulation, market size, sales-practice complaints, and named competitors) is real and cited; personas, interviews, and user data are synthetic — generated to be internally consistent with that research, not real people or real user data.
