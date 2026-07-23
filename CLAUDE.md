@@ -59,6 +59,16 @@ First real run (SunnySideUp, July 2026) caught a genuine gap: the initial `groun
 
 Frozen at `templates/product-brief-template.md` — every project's `docs/product-brief.md` should follow this structure. Don't redesign it per project; that defeats the point of freezing it. Structured around Cagan's Opportunity Assessment (built for evaluating a *new* opportunity, not spec'ing a feature on an existing product) plus Amazon's PR/FAQ one-line-pitch discipline and a dedicated "Success metrics & validation methodology" section — the part most AI-drafted briefs skip, and the reason this template exists. Full provenance/reasoning for every section, including why `opportunity-solution-tree` was deliberately left out (built for continuous discovery on an existing product with real usage data, not 0-to-1), is in the template file itself.
 
+## Writing style — every potentially public-facing document
+
+Applies to product briefs, case studies, personas, and anything else meant to be read by someone outside this repo (not internal working docs like `grounding-research.md`, though there's no harm in following it there too):
+
+- **No em-dashes.** Use a period, comma, or restructure the sentence instead.
+- **No "it's not X, it's Y" contrastive framing**, or its variants — "X, not Y," "not just X, but Y," and similar. This pattern is everywhere in the current SunnySideUp docs (written before this rule existed) and needs a cleanup pass; don't propagate it into new writing.
+- **No sentences that are grammatically polished but say very little.** Write with actual substance — a plainer sentence that states something specific beats a smoother one that doesn't.
+
+This rule was set explicitly because the docs written so far violate it constantly — check new writing against it deliberately rather than assuming default style is fine.
+
 ## Other notes
 
 - `spallavi-stack/flexy` (the old standalone Flexy repo) has been superseded by `projects/flexy/` here and is being deprecated/deleted. Do not treat it as a source of truth going forward.
