@@ -112,6 +112,15 @@ This brief covers product strategy only. A roadmap, synthetic interviews, a clic
 - Which specific funding mechanism (SIF, NIA, Innovate UK, Nesta, or something else) actually fits: to be researched at the roadmap stage.
 - Whether renters genuinely need landlord permission for a plug-in kit: flagged in `grounding-research.md` as an unverified, sales-favorable claim from sources with a commercial incentive to say no permission is needed. Needs direct verification of the Renters' Rights Act's actual text before it's ever repeated to a real user.
 - How the two use-timings (before/after sales conversation) map to product flow: one flow with a branch, or two distinct entry points.
+- **What data the calculator itself actually needs, and where each input comes from.** This brief describes the output (a green/amber/red read in seconds) but not the data model behind it. `grounding-research.md`'s Payback period section already names self-consumption rate, occupancy, export tariff, and region as the factors that swing the answer[^13] — but nothing yet says how the tool collects them from a real user. Unresolved inputs, in rough order of how much they affect the answer:
+  - Household electricity consumption (kWh/year): drives the self-consumption estimate. Self-reported, a bill upload, or a smart-meter API pull are all plausible; none has been decided.
+  - Gas vs. electric consumption split / heating type: not addressed anywhere in research yet. A household already on a heat pump or electric hot water has a materially different self-consumption case than a gas-heated one, and this shifts over time as electrification spreads.
+  - Occupancy pattern (home during the day vs. out at work): named as a payback sensitivity factor in `grounding-research.md` but never turned into an actual input question.
+  - Current tariff type and rate (price-cap standard variable vs. fixed vs. time-of-use): payback depends on which one the household is actually on, and SEG/export rates are supplier-specific and change roughly monthly per the same document.
+  - Roof orientation/pitch (rooftop) or available socket location and sun exposure (plug-in): self-reported, since structural/shade assessment is explicitly out of scope per the case study's planned Limitations section.
+  - Financing assumption: whether the payback estimate assumes a cash purchase or accounts for financing costs at all.
+
+  None of these has a stated source yet, and several (consumption baseline, occupancy, tariff) directly drive the payback number Critical success factors already flags as this brief's weakest-sourced part. Worth its own resolution pass at the roadmap/prototype stage, but the gap belongs here now rather than staying implicit.
 
 ## Recommendation
 **GO, with two explicit conditions.** First, the technical/economic grounding (payback math, plug-in generation estimates) needs to get materially firmer than what currently exists; that's the weakest-sourced part of the research today, and the "honest no" this product promises depends on it. Second, the renter-permission claim in Open Questions needs to be verified against the Renters' Rights Act's actual text before it's ever stated to a real user; right now it traces only to commercially-motivated sources. The rooftop segment's grounding is solid enough to proceed without additional conditions. Proceed to personas and synthetic interviews next, as scoped, and treat both conditions as active follow-ups to close, not caveats to carry indefinitely.
@@ -132,3 +141,4 @@ Full research: `scope.md`, `grounding-research.md` (same folder).
 [^10]: `grounding-research.md` §Balkonkraftwerke (balcony solar) growth in Germany — the closest comparable-market signal
 [^11]: `grounding-research.md` §Consumer climate-agency and eco-anxiety surveys
 [^12]: `grounding-research.md` §Quote complexity and misaligned incentives — the structural "why"
+[^13]: `grounding-research.md` §Payback period
