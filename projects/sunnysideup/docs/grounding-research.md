@@ -2,7 +2,7 @@
 
 ## Methodology note (read this first)
 
-Direct fetching of primary sources (gov.uk, Ofgem, HMRC, MCS, ENA, Which?) was blocked at the network/proxy level for this entire research session — confirmed both for the research agents and for direct attempts in this session. Everything below is drawn from web search results that name and quote specific real sources (organization, document title, URL, date) rather than from directly reading the primary page.
+Direct fetching of primary sources (gov.uk, Ofgem, HMRC, MCS, ENA, Which?) was blocked at the network/proxy level for this entire research session — confirmed both for the research agents and for direct attempts in this session. Everything below is drawn from web search results that name and quote specific real sources (organization, document title, URL, date) rather than from directly reading the primary page. **Update (23 July 2026):** the Ofgem SEG overview page specifically was later fetched directly and used to confirm the SEG entry below — see that entry's citation for what changed. The rest of this document is unaffected and still carries the original caveat.
 
 This matters for how to read the labels below: **[Fact]** here means "named, real source, corroborated across multiple independent references" — not "personally verified by reading the primary document." Before anything here goes into a product brief as a load-bearing claim, the specific named URLs should be opened and confirmed directly. The plug-in solar section is the least reliable part of this document regardless of label — treat it with extra caution.
 
@@ -12,7 +12,7 @@ This matters for how to read the labels below: **[Fact]** here means "named, rea
 
 ### Smart Export Guarantee (SEG) and dynamic export tariffs
 
-**[Fact]** SEG launched 1 January 2020, replacing the closed Feed-in Tariff. Electricity suppliers with 150,000+ domestic customers must offer at least one SEG export tariff to small-scale generators (up to 5MW) — but suppliers set their own rate, with no government-mandated minimum above zero. (Source: Ofgem, "Smart Export Guarantee (SEG)," ofgem.gov.uk/environmental-and-social-schemes/smart-export-guarantee-seg — verify directly before publishing)
+**[Fact]** SEG launched 1 January 2020, replacing the closed Feed-in Tariff. Electricity suppliers with 150,000+ domestic customers must offer at least one SEG export tariff to small-scale generators (up to 5MW capacity, or 50kW for micro-CHP) using solar PV, wind, micro-CHP, hydro, or anaerobic digestion — suppliers set their own rate and contract terms, but tariffs "must always be above zero." (Source: Ofgem, "Smart Export Guarantee (SEG)," ofgem.gov.uk/environmental-and-social-schemes/smart-export-guarantee-seg — confirmed by direct fetch, 23 July 2026)
 
 **[Fact]** Eligibility requires an MCS-certified installation registered on the MCS database, and a meter capable of recording half-hourly export (typically a SMETS2 smart meter). (Source: Ofgem SEG guidance, as above)
 
