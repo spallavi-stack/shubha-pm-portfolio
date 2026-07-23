@@ -30,8 +30,6 @@ While no single figure captures the total addressable opportunity,[^7] two signa
 
 The opportunity isn't purely financial: UK surveys consistently show a gap between climate concern and felt ability to act, with one 2025 survey finding 93% of respondents felt some degree of eco-anxiety, many describing frustration at caring about climate change while having no way to act on it.[^11]
 
-This brief still deliberately doesn't state a TAM/SAM/SOM figure. The signals above support a real, likely large opportunity, but they don't combine into one number the research can back.
-
 ## Competitive landscape & differentiation
 Every UK solar comparison platform identified in research (CompareMySolar, Uswitch's solar comparison, Solar Selections, Easy PV, Renewable Energy Hub, Solar Planet, Solar PV Quotes Compare) runs a lead-generation/referral-fee model (Fact).[^2] None were found to be structurally independent of installer payment. The closest real analog to SunnySideUp's positioning is Energy Saving Trust, a UK body funded by government and private sources providing impartial advice (Fact).[^2] That's evidence an independently funded model can actually work in this space.
 
