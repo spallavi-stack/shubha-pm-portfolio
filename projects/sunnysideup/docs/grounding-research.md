@@ -142,6 +142,42 @@ This matters for how to read the labels below: **[Fact]** here means "named, rea
 
 ---
 
+## 4. Market opportunity and demand signals
+
+Follow-up research (added after initial product brief review) targeting the addressable-opportunity gap: the original Market size section only had *historical adoption* (installs to date), nothing sizing the *unmet* opportunity or demand.
+
+### Addressable rooftop opportunity — a real gap, reported honestly
+
+**[Assumption — no authoritative figure found]** No government, MCS, or established body publishes a clean "X million UK homes have a viable roof but no solar yet" figure. What search surfaced instead: ~92% of UK homes have a pitched roof (a weak technical-compatibility signal, not a viability assessment — sourced from solar-installer/comparison sites, the same category of source flagged as lower-confidence elsewhere in this document) and a separate claim that ~1.14 million of 1.5 million *planned new-build* homes are estimated solar-suitable (a forward-looking new-build figure, not the existing-housing-stock addressable market this question was actually about).
+
+**[Inference]** Roughly triangulating from Fact-tier numbers elsewhere in this document: England has ~25 million households (§below), UK-wide solar installations total ~2 million. Even allowing generously for homes that are flats, north-facing, shaded, or otherwise unsuitable, the gap between total housing stock and current installs is large — solar is very much not saturated. This is a directional inference (large addressable gap exists), not a specific defensible number — don't state a precise addressable-market figure in the brief; state the direction and flag the absence of a precise source.
+
+### No-roof-access population size (renters + leaseholders)
+
+**[Fact]** England, 2024–25 (ONS): ~25.0 million households total. Owner-occupied 65% (16.2 million); private rented 19% (4.7 million); social rented 16% (4.1 million). (Source: ONS, "Private rented sector statistics from across the UK: 2025," and English Housing Survey 2024–25 headline findings, ons.gov.uk / gov.uk)
+
+**[Fact]** England, 2024–25 (MHCLG, "Leasehold dwellings, 2024 to 2025" — a named, recurring official government statistical release with multi-year editions, the strongest single source found in this whole research effort): ~4.90 million leasehold dwellings, 20% of English housing stock (up from 4.83 million / 19% in 2023–24). Of these, 54% (2.59 million) are owner-occupied by the leaseholder, 41% (1.96 million) are privately rented out by the leaseholder to a tenant, and 6% (277,000) are owned by social landlords. 72% of leasehold dwellings are flats (3.5 million); 28% are houses (1.3 million). (Source: MHCLG via GOV.UK, "Leasehold dwellings, 2024 to 2025," gov.uk)
+
+**[Inference]** Leaseholders and renters are distinct, overlapping populations, easy to double-count carelessly — worth being precise: the "no roof access" segment is roughly *renters of any tenure (private + social, ~8.8 million English households) plus owner-occupying leaseholders (~2.6 million)*, since a socially- or privately-rented leasehold flat's occupant is counted once as a renter, not separately as "the leaseholder" (that's their landlord). Very roughly, this suggests **on the order of 11 million English households** with no direct control over a roof — a rough sum of two real datasets, not a single published "no-roof-access population" statistic, so present it as an approximation with the math shown, not a clean sourced number.
+
+### UK solar capacity trajectory (forward-looking, not just historical)
+
+**[Fact]** The UK government's 2025 Solar Roadmap targets 45–47 GW of installed solar capacity by 2030, up from ~19 GW as of May 2025 — roughly a 2.5x increase in five years. 72 actions are named, overseen by a newly-established Solar Council (co-chaired government/industry). The roadmap explicitly prioritizes rooftop solar — the Energy Secretary has described wanting a "rooftop revolution" — and the most optimistic scenario cited reaches 50 GW by 2030 and 85 GW by 2035. (Source: UK government 2025 Solar Roadmap, corroborated by pv magazine and a named law firm's client briefing, cms.law — reasonably strong corroboration for a policy target figure)
+
+### Balkonkraftwerke (balcony solar) growth in Germany — the closest comparable-market signal
+
+**[Fact]** Germany's plug-in/balcony solar market, the closest real-world comparable to what SunnySideUp's plug-in segment addresses, shows a clear multi-year adoption curve: ~270,000–300,000 units registered in 2023; more than doubled in 2024, surpassing 700,000 by October and ~780,000 (~700 MW) by year-end; surpassed **1 million registered systems** by late June 2025, with 220,000+ added in just the first half of that year. The share of balcony solar sold *with* battery storage rose from 20% (2023) to 40% (2025). Growth was directly driven by two regulatory changes: VDE simplified registration and raised the power cap to 800W in 2023, and in 2024 German renters gained a legal right to install balcony solar, with landlords only able to refuse for genuine safety/structural reasons. (Source: Clean Energy Wire — a genuinely reputable German/EU energy-policy journalism outlet, not a sales site — corroborated by pv-tech.org and ess-news.com, both real energy trade press)
+
+**[Inference — clearly an analog, not UK evidence]** Germany's trajectory is the best available *proxy* for whether real consumer demand exists for plug-in solar once the regulatory path is clear — the UK has no domestic adoption data yet because the category only became partly legal in April 2026 (§Plug-in/balcony solar). Notably, Germany's growth accelerated sharply *after* renters gained an explicit legal right to install (2024) — which is exactly the still-unresolved question for UK renters (§Leasehold and tenancy consent requirements, §Open questions). This is directional evidence a comparable market can scale quickly once that legal friction clears, not proof the UK will follow the same curve.
+
+### Consumer climate-agency and eco-anxiety surveys
+
+**[Fact]** Multiple independent UK surveys document a documented gap between climate concern and felt ability to act: a BT/Livity survey (2021) found almost half of the UK population feels unable to actively tackle climate change, despite ranking it as a top-three societal concern. A more recent Reading Agency survey (2025) found 93% of respondents felt some degree of eco-anxiety (44% "very worried," 49% "fairly worried"), with many describing "frustrated helplessness" from caring about climate change while feeling unable to make a difference. Which?'s Annual Sustainability Report (2023) and an Ofgem-published "Consumer Attitudes to Decarbonisation and net zero" study cover related ground. (Sources: BT/Livity via E&T Magazine; Reading Agency, "Eco Anxiety in the UK: What Our 2025 Survey Reveals"; Which?, Annual Sustainability Report 2023; Ofgem, "Consumer Attitudes to Decarbonisation and net zero")
+
+**[Inference]** This is relevant to *motivation*, not just economics: for the no-roof-access segment especially, plug-in solar may appeal partly as one of the few concrete, achievable climate actions available to someone who can't install rooftop panels or choose their landlord's energy supplier — a documented "I care but have no way to act" gap that a low-cost, low-commitment product could plausibly address. This is a reasonable interpretation of the survey data, not something the surveys directly measured about solar specifically.
+
+---
+
 ## Open questions / lowest-confidence areas
 
 1. **~~Plug-in solar's exact legal status and timeline~~ RESOLVED via follow-up verification.** Cross-checked against NICEIC and multiple independent trade sources: BS 7671 Amendment 4 (15 April 2026) legalized hard-wired-by-electrician installs; true DIY self-install is still pending the BSI product standard, not yet published as of this research. Retailer-name and quote specifics remain unverified, but the core legal-status question is now solidly answered. One residual open item: whether the DESNZ consultation response (expected ~22 July 2026) has actually been published — check gov.uk directly for current status.

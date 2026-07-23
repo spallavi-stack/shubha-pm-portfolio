@@ -19,7 +19,15 @@ Both segments use the product at one of two moments: **before** any sales conver
 The plug-in solar category is mid-transition right now, not settled: BS 7671 Amendment 4 (15 April 2026) legalized electrician-installed plug-in solar, DESNZ's consultation on the consumer self-install product standard closed 30 June 2026, and a government response was expected by ~22 July 2026 but isn't confirmed published as of this research.[^3] That's the window where an independent explainer is most valuable — before the category is fully legal and obvious, while most consumers (and most existing solar sites) haven't caught up to the nuance yet. Separately, 2025 was UK solar's record installation year with 31–37% growth,[^5] so rooftop demand — and the sales pressure that comes with it — is already at an all-time high.
 
 ## Market size & opportunity
-UK solar installations passed 2 million by March 2026, following a record 2025 (Fact, corroborated across independent sources).[^5] No adoption data exists yet for plug-in/balcony solar specifically — the category is too new to measure.[^5]
+UK solar installations passed 2 million by March 2026, following a record 2025.[^5] No adoption data exists yet for plug-in/balcony solar specifically — the category is too new to measure.[^5]
+
+The addressable opportunity is larger than current adoption suggests, though no single authoritative figure sizes it.[^7] Two directional signals: the UK government's 2025 Solar Roadmap targets 45–47GW of installed capacity by 2030, up from ~19GW in May 2025, with an explicit rooftop focus,[^9] and the no-roof-access segment alone is roughly 11 million English households — combining ONS renter data (~8.8M private and social renters) with MHCLG's leaseholder statistics (~2.6M owner-occupied leasehold dwellings).[^8]
+
+Germany's Balkonkraftwerke market is the best available evidence this segment has real demand once the regulatory path clears: from ~270,000 registered units in 2023 to over 1 million by mid-2025, with growth accelerating sharply after German renters gained an explicit legal right to install in 2024 — the same clarity UK renters are still waiting on.[^10] A comparable-market signal, not UK evidence.
+
+The opportunity isn't purely financial: UK surveys consistently show a gap between climate concern and felt ability to act, with one 2025 survey finding 93% of respondents felt some degree of eco-anxiety, many describing frustration at caring about climate change while having no way to act on it.[^11] For renters and leaseholders, plug-in solar may be one of very few concrete actions available to them.
+
+This brief still deliberately doesn't state a TAM/SAM/SOM figure — the signals above support a real, likely large opportunity without combining into one number the research doesn't back.
 
 ## Competitive landscape & differentiation
 Every UK solar comparison platform identified in research — CompareMySolar, Uswitch's solar comparison, Solar Selections, Easy PV, Renewable Energy Hub, Solar Planet, Solar PV Quotes Compare — runs a lead-generation/referral-fee model (Fact).[^2] None were found to be structurally independent of installer payment. The closest real analog to SunnySideUp's positioning is Energy Saving Trust, a UK body funded by government and private sources providing impartial advice (Fact)[^2] — evidence that "independently funded, not referral-funded" is a viable model in this space, not just a hopeful assumption.
@@ -72,3 +80,8 @@ SunnySideUp is a fictional product built for a product management portfolio. Mar
 [^4]: `grounding-research.md` §Leasehold and tenancy consent requirements
 [^5]: `grounding-research.md` §Market size and growth
 [^6]: `grounding-research.md` §Funding mechanisms
+[^7]: `grounding-research.md` §Addressable rooftop opportunity — a real gap, reported honestly
+[^8]: `grounding-research.md` §No-roof-access population size (renters + leaseholders)
+[^9]: `grounding-research.md` §UK solar capacity trajectory (forward-looking, not just historical)
+[^10]: `grounding-research.md` §Balkonkraftwerke (balcony solar) growth in Germany — the closest comparable-market signal
+[^11]: `grounding-research.md` §Consumer climate-agency and eco-anxiety surveys
