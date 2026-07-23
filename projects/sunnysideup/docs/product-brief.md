@@ -33,6 +33,8 @@ The opportunity isn't purely financial: UK surveys consistently show a gap betwe
 ## Competitive landscape & differentiation
 Every UK solar comparison platform identified in research (CompareMySolar, Uswitch's solar comparison, Solar Selections, Easy PV, Renewable Energy Hub, Solar Planet, Solar PV Quotes Compare) runs a lead-generation/referral-fee model (Fact).[^2] None were found to be structurally independent of installer payment. The closest real analog to SunnySideUp's positioning is Energy Saving Trust, a UK body funded by government and private sources providing impartial advice (Fact).[^2] That's evidence an independently funded model can actually work in this space.
 
+Even Energy Saving Trust leaves a real gap. It doesn't sell or install anything itself, and its own solar calculator uses generic assumptions before telling users to check with their installer for a more accurate number.[^2] That final, personalized figure gets handed back to the same installer whose headline pricing the CMA has already flagged as often inaccurate.[^1] SunnySideUp gives that specific, personalized read directly, without sending the user back to the party being evaluated.
+
 ## Solution
 A plain-English viability check, using postcode plus a few basic details, covering both rooftop and plug-in solar. It gives a same-session honest read where "this probably isn't worth it for you" is a valid, non-default answer, without collecting a lead for any installer.
 
