@@ -105,8 +105,8 @@ Adapted from Sean Ellis's product-market-fit methodology. After the synthetic-in
 - The institutional distribution channels named in Go-to-market (local authorities, housing associations, DNOs) need to actually agree to carry a third-party tool in their own portals or handbooks. This partnership model hasn't been researched against any real precedent yet; it's a plausible channel, not a confirmed one.
 - The "honest no" has to be defensible with real payback/viability math. This depends on the technical/economic grounding, which `grounding-research.md` itself flags as its weakest-sourced section (no official UK payback dataset exists).
 
-## Out of scope
-No roadmap, synthetic interviews, clickable prototype, account-connection guide, AI-collaboration-review, user-stories, or technical-feasibility docs yet, sequenced next per `scope.md`.
+## Not yet covered (separate artifacts, sequenced next)
+This brief covers product strategy only. A roadmap, synthetic interviews, a clickable prototype, and dedicated docs for user stories, technical feasibility, account connection, and the AI-collaboration review are separate artifacts, not sections of this document. None of them are excluded from the project; they're sequenced next per `scope.md`'s build-up order (matching Flexy's), starting once personas are drafted.
 
 ## Open questions
 - Which specific funding mechanism (SIF, NIA, Innovate UK, Nesta, or something else) actually fits: to be researched at the roadmap stage.

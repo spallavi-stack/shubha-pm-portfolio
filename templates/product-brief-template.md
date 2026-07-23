@@ -31,7 +31,7 @@ What exists today, why this approach, why us. (Cagan Q4 + Q5)
 2-3 sentences, max. Detail lives in the roadmap/prototype once they exist, not here. (Best-practice brief convention)
 
 ## Hypothesis
-"We believe that [X] will produce [Y outcome], because [reasoning tied to research/JTBD]." Explicit and falsifiable — this is the sentence the whole case study is testing. (Modern hypothesis-driven brief format)
+One belief sentence — "We believe that [X] will be used by/produce [Y outcome]" — plus a small number of named, falsifiable user behaviors it predicts. Don't cite Market size or Problem back into this section: that's been tried, and it produces a citation-dense rehash of numbers already established elsewhere, not an actual hypothesis. Each named behavior should instead map to a concrete metric in Success metrics & validation methodology below — that pairing is what makes this section connect to the rest of the brief. (Modern hypothesis-driven brief format)
 
 ## Go-to-market
 Even a fictional sketch matters — how does this actually reach the people who need it. (Cagan Q7)
@@ -46,8 +46,8 @@ The section that makes the brief testable later, not just descriptive now:
 ## Critical success factors
 What has to hold true for this to work — technical, partnership, regulatory. (Cagan Q9)
 
-## Out of scope
-Restated from `scope.md`, so the brief is self-contained and doesn't require cross-referencing to be understood. (Square PRD's "Non-Goals")
+## Not yet covered (separate artifacts, sequenced next)
+Restated from `scope.md`'s "out of scope for this pass," so the brief is self-contained and doesn't require cross-referencing to be understood. **This is about sequencing, not permanent exclusion.** `scope.md` uses "out of scope" to mean "not part of this round of work" (a roadmap, prototype, and other docs are separate artifacts built later, in order), not "the project will never do this." Don't title this section "Out of scope" alone or frame it like Square's "Non-Goals" — that reads as a permanent cut, which is the wrong signal here and will confuse anyone reading the brief cold. Name what's a separate artifact vs. simply not started yet, and say plainly that neither is excluded from the project.
 
 ## Open questions
 Tagged, tied back to the riskiest-assumption log.
@@ -68,7 +68,7 @@ Footnote definitions go here, one per cited grounding-research.md section — e.
 
 - **Problem / Who / Why now / Market size / Competitive landscape / Go-to-market / Success metrics / Critical success factors / Recommendation** — structured around Marty Cagan's (SVPG) 10-question Opportunity Assessment, chosen because it's purpose-built for evaluating whether a *new* opportunity is worth pursuing — unlike a standard feature-PRD template, which mostly assumes an existing product, team, and backlog.
 - **One-line pitch** — Amazon's "Working Backwards" PR/FAQ discipline: state the customer-facing outcome in one sentence before anything else.
-- **Solution / Out of scope** — informed by Square's PRD template (Kevin Yien) and its explicit "Non-Goals" section, and Asana's project-brief problem-statement framing, via Lenny's Newsletter, "My favorite product management templates" (issue 37).
-- **Hypothesis** — modern hypothesis-driven brief format ("we believe X will produce Y") rather than a flat "we will build X" statement.
+- **Solution / Not yet covered** — informed by Square's PRD template (Kevin Yien) and its explicit "Non-Goals" section, and Asana's project-brief problem-statement framing, via Lenny's Newsletter, "My favorite product management templates" (issue 37). Deliberately not named "Non-Goals" or "Out of scope" here: `scope.md`'s actual content is sequencing (separate artifacts, built later) rather than Square's original permanent-exclusion framing, and the first SunnySideUp brief showed that the borrowed name reads as a decision to cut things that are actually still planned.
+- **Hypothesis** — modern hypothesis-driven brief format ("we believe X will produce Y") rather than a flat "we will build X" statement. An earlier version of this template's guidance called for citing Market size/Problem research directly in this section; that produced a citation-dense rehash on SunnySideUp's first brief and was reverted (see `research-auditor`'s SKILL.md for the matching fix on the audit side) in favor of named, falsifiable behaviors mapped to Success Metrics.
 - **Success metrics & validation methodology** — the section built specifically to answer "how would you actually test this later," per Sean Ellis's product-market-fit survey methodology (the 40%-"very disappointed" test, refined from Dropbox/Eventbrite/LogMeIn data) adapted honestly for a portfolio context with no real users.
 - Everything above evaluated against, and one item (`opportunity-solution-tree`) deliberately excluded because its core mechanics — a pre-existing tracked metric, opportunities sourced from a real customer base, continuous weekly prioritization among many known signals — don't fit 0-to-1 work with no existing product or user base. See conversation history / commit log for the reasoning if this ever needs revisiting.
