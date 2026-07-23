@@ -20,8 +20,8 @@ One real finding, now resolved: this was precisely the failure mode `research-au
 
 ### Flagged claims (sourcing — needs user judgment)
 
-1. **~~DNO go-to-market rationale~~ RESOLVED.** The DNO distribution bullet stated "reduce bad grid-connection paperwork caused by rogue installers" as settled fact; nothing in `grounding-research.md`'s G98/G99 section supports this as a documented DNO pain point. User chose to soften to a stated, explicitly unverified assumption rather than cut or find a source.
-2. **~~Reddit-community advice gap~~ RESOLVED.** The renter-channel bullet claimed plug-in advice is "currently missing" from `r/UKPersonalFinance` and `r/HousingUK` as fact; never checked. User chose to soften to a stated, explicitly unverified assumption.
+1. **~~DNO go-to-market rationale~~ RESOLVED (revised).** The DNO distribution bullet stated "reduce bad grid-connection paperwork caused by rogue installers" as settled fact; nothing in `grounding-research.md`'s G98/G99 section supports this as a documented DNO pain point. First fix softened it to a stated "unverified assumption"; user correctly pushed back that this was dead-weight hedging, since nobody was ever going to go verify a DNO's internal pain points for a portfolio piece, so an unresolved Assumption tag here is padding, not signal, unlike a grounding-research.md Assumption that might actually get checked later. Final fix: cut the unverifiable rationale entirely, keep the channel choice itself.
+2. **~~Reddit-community advice gap~~ RESOLVED (revised).** The renter-channel bullet claimed plug-in advice is "currently missing" from `r/UKPersonalFinance` and `r/HousingUK` as fact; never checked. Same correction as #1: cut the unverifiable rationale, kept the channel.
 
 ### Consistency and padding (editorial — fixed directly)
 

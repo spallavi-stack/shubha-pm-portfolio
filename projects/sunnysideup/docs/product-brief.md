@@ -68,13 +68,13 @@ SunnySideUp relies on low-cost, trust-based acquisition channels targeting users
 
 **Renters & leaseholders (the "can I do this?" flow)**
 - *Content & publisher partnerships:* seed plain-English guides on tenant rights and balcony solar rules with renter advocacy groups (e.g. Generation Rent, Shelter advisory hubs) and eco-living publishers.
-- *Direct-to-community distribution:* reach leaseholders through flat-owner forums, leasehold advisory networks, and Reddit communities (`r/UKPersonalFinance`, `r/HousingUK`). Unverified assumption: legal plug-in advice is likely underserved in these spaces, but that hasn't been directly checked.
+- *Direct-to-community distribution:* reach leaseholders through flat-owner forums, leasehold advisory networks, and Reddit communities (`r/UKPersonalFinance`, `r/HousingUK`).
 
 ### 2. Strategic institutional distribution
 Instead of paying for ads, SunnySideUp distributes through institutional partners who want to protect consumers or hit decarbonization targets without building their own software:
 
 - **Local authorities & housing associations:** provided as a free digital tool in municipal climate-action portals and tenant handbooks.
-- **Distribution Network Operators (DNOs):** offered via DNO customer portals. Unverified assumption: this would plausibly reduce grid-connection paperwork problems tied to poor-quality installer work, but that specific DNO pain point hasn't been researched or confirmed.
+- **Distribution Network Operators (DNOs):** offered via DNO customer portals.
 
 ### 3. Business model & sustainability (distinct from distribution)
 The plan is for core operations to be funded through non-conflicted public interest sources, such as the Ofgem Strategic Innovation Fund (SIF), the Network Innovation Allowance (NIA), or climate-focused grants,[^6] preserving independence from installer lead-generation fees. This is a hypothesis, not a secured funding arrangement (see Critical success factors).
