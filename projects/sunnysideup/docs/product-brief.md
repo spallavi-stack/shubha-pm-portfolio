@@ -39,7 +39,11 @@ Even Energy Saving Trust leaves a real gap. It doesn't sell or install anything 
 A plain-English viability check, using postcode plus a few basic details, covering both rooftop and plug-in solar. It gives a same-session honest read where "this probably isn't worth it for you" is a valid, non-default answer, without collecting a lead for any installer.
 
 ## Hypothesis
-We believe that an independent (non-referral-funded) viability check will be used by both UK homeowners weighing a sales pitch and renters/leaseholders exploring the newly-legal plug-in category, because the existing market has no structurally independent option and documented sales pressure creates real demand for a source that isn't trying to sell anything.
+We believe that an independent (non-referral-funded) viability check will be used by both UK homeowners weighing a rooftop sales pitch and renters/leaseholders exploring the newly-legal plug-in category.
+
+The addressable market supports this. The UK government's own target implies roughly 2.5x growth in national solar capacity by 2030,[^9] and the no-roof-access segment alone is roughly 11 million English households, an audience specifically locked out of rooftop solar and therefore the core plug-in target.[^8] Germany's Balkonkraftwerke market is direct evidence this kind of demand is real once the regulatory path clears: adoption accelerated sharply the moment German renters gained a legal right to install, the same clarity UK renters are still waiting on.[^10]
+
+No existing option actually meets this demand today. Referral-funded comparison platforms have no incentive to simplify a decision that benefits from complexity,[^12] and even Energy Saving Trust, the closest independent analog, hands the real personalized number back to the installer being evaluated.[^2] Documented sales pressure[^1] and a consistent gap between climate concern and felt ability to act[^11] add further reason to expect real demand for a source that isn't trying to sell anything.
 
 ## Go-to-market
 This is a leading hypothesis that hasn't been validated yet: revenue and distribution come through an institutional partner aligned with SunnySideUp's independence, such as an Ofgem DNO innovation-funding mechanism (Strategic Innovation Fund or Network Innovation Allowance, both real and currently live)[^6] or a climate/public-interest grant, instead of installer referral fees. No specific funded precedent matching this exact product type was found. This is the least-proven part of the brief, called out again below.
