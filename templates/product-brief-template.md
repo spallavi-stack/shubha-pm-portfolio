@@ -2,7 +2,7 @@
 
 Frozen template for every case study's `docs/product-brief.md`. Don't redesign this per project — the whole point of freezing it is to stop re-deriving structure each time. If a section genuinely doesn't fit a given project, say so explicitly in that section rather than silently dropping it.
 
-Every section that states a researched claim (market size, regulatory status, competitor behavior, etc.) should cite back to where the full sourcing and confidence level live — e.g. "full sourcing: grounding-research.md §Market size." The brief is a compressed, scannable summary; `grounding-research.md` is the permanent, full-depth backing material it's compressed from, and nothing here should read as more certain than what that document actually supports.
+Every section that states a researched claim (market size, regulatory status, competitor behavior, etc.) should cite back to where the full sourcing and confidence level live. **Use GitHub-flavored markdown footnotes for this (`claim.[^1]` with `[^1]: grounding-research.md §Section` defined in a `## Sources` section at the bottom) — not inline parentheticals like "(full sourcing: grounding-research.md §X)" in the middle of a sentence.** Inline citations break reading flow in exactly the way this template is trying to avoid (see "1-2 pages, scannable" above); footnotes keep the prose readable while still making every claim traceable. Reuse the same footnote number wherever the same section is cited again, rather than minting a new one each time. The brief is a compressed, scannable summary; `grounding-research.md` is the permanent, full-depth backing material it's compressed from, and nothing here should read as more certain than what that document actually supports.
 
 ---
 
@@ -60,6 +60,9 @@ Links to `scope.md` and `grounding-research.md` for the full research this brief
 
 ## A note on what this is
 Fictional company/product; research real and cited; personas/interviews synthetic. (Existing portfolio-wide convention, carried forward.)
+
+## Sources
+Footnote definitions go here, one per cited grounding-research.md section — e.g. `[^1]: grounding-research.md §Market size`. GitHub renders these as clickable footnotes. Don't put citations inline in the prose above.
 ```
 
 ---
