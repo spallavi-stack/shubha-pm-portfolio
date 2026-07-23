@@ -64,10 +64,11 @@ Frozen at `templates/product-brief-template.md` — every project's `docs/produc
 Applies to product briefs, case studies, personas, and anything else meant to be read by someone outside this repo (not internal working docs like `grounding-research.md`, though there's no harm in following it there too):
 
 - **No em-dashes.** Use a period, comma, or restructure the sentence instead.
-- **No "it's not X, it's Y" contrastive framing**, or its variants — "X, not Y," "not just X, but Y," and similar. This pattern is everywhere in the current SunnySideUp docs (written before this rule existed) and needs a cleanup pass; don't propagate it into new writing.
-- **No sentences that are grammatically polished but say very little.** Write with actual substance — a plainer sentence that states something specific beats a smoother one that doesn't.
+- **No "it's not X, it's Y" contrastive framing**, or its variants: "X, not Y," "not just X, but Y," and similar. This pattern was everywhere in the original SunnySideUp docs (written before this rule existed); don't propagate it into new writing.
+- **No sentences that are grammatically polished but say very little.** Write with actual substance. A plainer sentence that states something specific beats a smoother one that doesn't.
+- **Don't lead with what's missing.** Instead of "no single authoritative figure sizes it," open with the positive framing: "while no single figure captures X, [here's what we do have]." State absence briefly if it matters, then move straight to the substance, rather than dwelling on it.
 
-This rule was set explicitly because the docs written so far violate it constantly — check new writing against it deliberately rather than assuming default style is fine.
+This rule was set explicitly because the docs written so far violate it constantly. Check new writing against it deliberately rather than assuming default style is fine.
 
 ## Other notes
 
