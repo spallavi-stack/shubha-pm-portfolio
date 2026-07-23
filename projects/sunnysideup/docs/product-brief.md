@@ -25,7 +25,7 @@ UK solar installations passed 2 million by March 2026, following a record 2025.[
 
 While no single figure captures the total addressable opportunity,[^7] two signals suggest it's substantial. The UK government's 2025 Solar Roadmap targets 45–47GW of installed solar capacity by 2030, up from about 19GW in May 2025, roughly 2.5x growth in five years, with rooftop installations specifically prioritized.[^9] Separately, the no-roof-access segment, people who can't put panels on their own roof and are the audience for plug-in solar, is large: combining ONS data on renters (about 8.8 million private and social renting households) with MHCLG's leaseholder statistics (about 2.6 million owner-occupied leasehold homes) points to roughly 11 million English households in this category.[^8]
 
-The opportunity isn't purely financial: UK surveys consistently show a gap between climate concern and felt ability to act, with one 2025 survey finding 93% of respondents felt some degree of eco-anxiety, many describing frustration at caring about climate change while having no way to act on it.[^11] For renters and leaseholders, plug-in solar may be one of very few concrete actions available to them.
+The opportunity isn't purely financial: UK surveys consistently show a gap between climate concern and felt ability to act, with one 2025 survey finding 93% of respondents felt some degree of eco-anxiety, many describing frustration at caring about climate change while having no way to act on it.[^11]
 
 This brief still deliberately doesn't state a TAM/SAM/SOM figure. The signals above support a real, likely large opportunity, but they don't combine into one number the research can back.
 
