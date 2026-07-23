@@ -106,7 +106,7 @@ Adapted from Sean Ellis's product-market-fit methodology. After the synthetic-in
 - The "honest no" has to be defensible with real payback/viability math. This depends on the technical/economic grounding, which `grounding-research.md` itself flags as its weakest-sourced section (no official UK payback dataset exists).
 
 ## Not yet covered (separate artifacts, sequenced next)
-This brief covers product strategy only. A roadmap, synthetic interviews, a clickable prototype, and dedicated docs for user stories, technical feasibility, account connection, and the AI-collaboration review are separate artifacts, not sections of this document. None of them are excluded from the project; they're sequenced next per `scope.md`'s build-up order (matching Flexy's), starting once personas are drafted.
+This brief covers product strategy only. A roadmap, synthetic interviews, a clickable prototype, and dedicated docs for user stories, technical feasibility, account connection, and the AI-collaboration review are separate artifacts, not sections of this document. None of them are excluded from the project; they're sequenced next per `scope.md`'s build-up order, starting once personas are drafted.
 
 ## Open questions
 - Which specific funding mechanism (SIF, NIA, Innovate UK, Nesta, or something else) actually fits: to be researched at the roadmap stage.
