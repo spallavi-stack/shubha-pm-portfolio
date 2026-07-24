@@ -89,7 +89,7 @@
       note.textContent = 'Requires: nothing — this is the baseline rate open to anyone, no supplier switch or specific installer needed.';
     } else {
       const t = SunnySideUpCalculator.getSegTariffs()[Number(select.value)];
-      note.textContent = `Requires: ${t.eligibility}`;
+      note.textContent = `Requires: ${t.eligibility} (source: ${t.source})`;
     }
   }
 
@@ -100,12 +100,14 @@
 
     let segRatePencePerKwh;
     let segTariffLabel;
+    let segTariffSource;
     if (segRateManualRaw !== '') {
       segRatePencePerKwh = Number(segRateManualRaw);
     } else if (segTariffSelect.value !== '') {
       const t = SunnySideUpCalculator.getSegTariffs()[Number(segTariffSelect.value)];
       segRatePencePerKwh = t.ratePencePerKwh;
       segTariffLabel = `${t.supplier} — ${t.tariff}`;
+      segTariffSource = t.source;
     }
 
     const result = SunnySideUpCalculator.calculateRooftopViability({
@@ -115,6 +117,7 @@
       electricityPricePencePerKwh: elecPriceRaw === '' ? undefined : Number(elecPriceRaw),
       segRatePencePerKwh,
       segTariffLabel,
+      segTariffSource,
     });
     document.getElementById('rooftopResult').textContent = JSON.stringify(result, null, 2);
   }

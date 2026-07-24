@@ -78,6 +78,7 @@ printResult(
     annualConsumptionKwh: 4000,
     segRatePencePerKwh: octopusOutgoing.ratePencePerKwh,
     segTariffLabel: `${octopusOutgoing.supplier} — ${octopusOutgoing.tariff}`,
+    segTariffSource: octopusOutgoing.source,
   })
 );
 
