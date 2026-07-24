@@ -239,7 +239,8 @@ function findSegTariff(supplier, tariff) {
  * @param {number} [input.segRatePencePerKwh] - a specific SEG tariff's rate, e.g. from findSegTariff(); falls back to the no-switch-needed baseline default if omitted
  * @param {string} [input.segTariffLabel] - "Supplier — Tariff name" for display, if segRatePencePerKwh came from a specific named tariff rather than a manually-typed number
  * @param {string} [input.segTariffSource] - the named source for that tariff row (e.g. "Ofgem SEG Licensee Register"), if available
- * @param {Object} [input.regionalGeneration] - a REGIONAL_GENERATION_MULTIPLIER entry, e.g. from calculateRooftopViabilityByPostcode()'s country-level fallback; omit to use the England-calibrated baseline unchanged
+ * @param {Object} [input.regionalGeneration] - a REGIONAL_GENERATION_MULTIPLIER entry, e.g. from calculateRooftopViabilityByPostcode()'s country-level fallback; omit to use the England-calibrated baseline unchanged. Ignored if generationOverride is also given.
+ * @param {Object} [input.generationOverride] - a specific { value, tier, note } to use for generationKwh outright (e.g. a coordinate-precise weather-API estimate), taking precedence over regionalGeneration and the orientation-based default
  */
 function calculateRooftopViability({
   orientation,
@@ -250,9 +251,14 @@ function calculateRooftopViability({
   segTariffLabel,
   segTariffSource,
   regionalGeneration,
+  generationOverride,
 }) {
   const baseGeneration = ROOFTOP_ANNUAL_GENERATION_KWH[orientation];
-  const generation = regionalGeneration ? Math.round(baseGeneration * regionalGeneration.value) : baseGeneration;
+  const generation = generationOverride
+    ? generationOverride.value
+    : regionalGeneration
+      ? Math.round(baseGeneration * regionalGeneration.value)
+      : baseGeneration;
   const selfConsumptionRate = SELF_CONSUMPTION_RATE[occupancy];
   const selfConsumedKwh = Math.min(generation * selfConsumptionRate, annualConsumptionKwh);
   const exportedKwh = generation - selfConsumedKwh;
@@ -294,9 +300,11 @@ function calculateRooftopViability({
             note: "The no-switch-needed baseline (median of tariffs open to anyone). Switching supplier or installing through a specific company can get a meaningfully higher rate, up to 25p/kWh in the researched tariff table — pick your actual tariff for an accurate result",
           },
       systemCostGbp: { value: ROOFTOP_SYSTEM_COST_GBP, tier: 'Assumption', note: 'Industry-consensus range is £5,500-£8,700; not a quote for your specific roof' },
-      generationKwh: regionalGeneration
-        ? { value: generation, tier: regionalGeneration.tier, note: `England-baseline figure (${baseGeneration}kWh/yr) adjusted by a ${regionalGeneration.value}x regional multiplier. ${regionalGeneration.note}` }
-        : { value: generation, tier: orientation === 'southFacing' ? 'Assumption' : 'Prototype estimate, not independently researched', note: 'Researched range is 3,400-4,200kWh/yr for a south-facing 4kW system, England-calibrated. No postcode given, so no regional adjustment applied.' },
+      generationKwh: generationOverride
+        ? { value: generation, tier: generationOverride.tier, note: generationOverride.note }
+        : regionalGeneration
+          ? { value: generation, tier: regionalGeneration.tier, note: `England-baseline figure (${baseGeneration}kWh/yr) adjusted by a ${regionalGeneration.value}x regional multiplier. ${regionalGeneration.note}` }
+          : { value: generation, tier: orientation === 'southFacing' ? 'Assumption' : 'Prototype estimate, not independently researched', note: 'Researched range is 3,400-4,200kWh/yr for a south-facing 4kW system, England-calibrated. No postcode given, so no regional adjustment applied.' },
       selfConsumptionRate: { value: selfConsumptionRate, tier: 'Prototype simplification', note: 'Modeled from occupancy as a rough proxy, not an independently researched figure' },
     },
   };
@@ -353,28 +361,114 @@ async function lookupPostcodeRegion(postcode) {
   };
 }
 
-// [Fact — confirmed via live browser test, 24 July 2026] PVGIS was evaluated
-// for a coordinate-precise generation estimate (on top of the country-level
-// lookup below) and then removed: PVGIS sends no Access-Control-Allow-Origin
-// header on its API responses, so a browser blocks the request with a CORS
-// error regardless of calling origin — confirmed against a real request from
-// a live browser, not just this session's own network restriction. That's a
-// permanent block for a pure static-site prototype with no backend server to
-// proxy the request through (this project's deliberate architecture, per
-// prototype.html's precedent), not a transient failure worth retrying or a
-// contract this code got wrong. Country-level precision (below) is the
-// realistic ceiling for this architecture; a real backend proxy is the only
-// way to get PVGIS's coordinate precision, which is out of scope here.
+// [Fact — confirmed via live browser test, 24 July 2026] PVGIS was tried
+// first for a coordinate-precise generation estimate and removed: it sends
+// no Access-Control-Allow-Origin header, so a browser blocks the request
+// with a CORS error regardless of calling origin — a permanent block for a
+// pure static-site prototype with no backend server to proxy the request
+// through, confirmed against a real request from a live browser.
+//
+// [Inference — corroborated by multiple independent secondary sources
+// (Open-Meteo's own docs, a GitHub PR referencing them, two third-party
+// Python client libraries), not fetched directly against Open-Meteo's own
+// documentation, which this session's network policy blocks (HTTP 403,
+// same as everywhere else). Open-Meteo's docs explicitly claim CORS
+// support, unlike PVGIS — but that specific claim, and the parameter/
+// response contract below, are still unconfirmed by an actual live call
+// from this process; needs the same live-browser check PVGIS got before
+// being fully trusted.] Open-Meteo's archive API returns hourly Global
+// Tilted Irradiance (GTI, W/m²) for a given lat/lon/tilt/azimuth over a
+// date range (same south=0/east=-90/west=90/north=±180 azimuth convention
+// as PVGIS, per a GitHub PR quoting Open-Meteo's docs directly). Unlike
+// PVGIS's PVcalc, this returns raw irradiance, not a ready annual-kWh
+// figure for a system — converting one to the other uses a standard PV
+// yield formula (annual generation kWh = annual in-plane irradiation
+// kWh/m²/yr × system size kWp × performance ratio), the same approach
+// PVGIS itself uses internally, not something invented for this project.
+const OPEN_METEO_ARCHIVE_BASE_URL = 'https://archive-api.open-meteo.com/v1/archive';
+const OPEN_METEO_TILT_ANGLE_DEGREES = 35; // [Assumption] same near-optimal UK roof tilt assumption used throughout this file
+const OPEN_METEO_PERFORMANCE_RATIO = 0.86; // [Assumption] derived the same way as the earlier 14% system-loss figure (1 - 0.14); typical for a well-installed UK system, not a specific-system figure
+const OPEN_METEO_ASSUMED_PEAK_POWER_KWP = 4; // [Assumption] matches the ~4kW system ROOFTOP_ANNUAL_GENERATION_KWH is calibrated to
+const OPEN_METEO_AZIMUTH_BY_ORIENTATION = {
+  southFacing: 0,
+  // A single azimuth can't represent a real east/west split system (panels
+  // on both sides); 90 (west) is a same-order-of-magnitude proxy, not a
+  // precise model of a split array — same simplification used for PVGIS.
+  eastWestFacing: 90,
+  northFacing: 180,
+};
 
 /**
- * Postcode-aware wrapper around calculateRooftopViability: resolves the
- * postcode to a country via postcodes.io, applies that country's generation
- * multiplier and any unresearched-regulatory-regime flag, then delegates the
- * actual scoring to the pure, synchronous calculateRooftopViability. On a
- * failed/unresolvable postcode, falls back to the unadjusted England
- * baseline rather than blocking the calculation.
+ * Calls Open-Meteo's archive API for a full past calendar year of hourly
+ * Global Tilted Irradiance at a location + orientation, sums it into an
+ * annual in-plane irradiation figure, then converts to an estimated annual
+ * generation for a OPEN_METEO_ASSUMED_PEAK_POWER_KWP system via the
+ * standard PV yield formula.
+ * @param {number} latitude
+ * @param {number} longitude
+ * @param {'southFacing'|'eastWestFacing'|'northFacing'} orientation
+ */
+async function lookupOpenMeteoGeneration(latitude, longitude, orientation) {
+  const azimuth = OPEN_METEO_AZIMUTH_BY_ORIENTATION[orientation];
+  // The most recently completed calendar year, computed at call time so
+  // this doesn't go stale — Open-Meteo's archive only covers past dates.
+  const year = new Date().getFullYear() - 1;
+  const params = new URLSearchParams({
+    latitude: String(latitude),
+    longitude: String(longitude),
+    start_date: `${year}-01-01`,
+    end_date: `${year}-12-31`,
+    hourly: 'global_tilted_irradiance',
+    tilt: String(OPEN_METEO_TILT_ANGLE_DEGREES),
+    azimuth: String(azimuth),
+  });
+  let response;
+  try {
+    response = await fetch(`${OPEN_METEO_ARCHIVE_BASE_URL}?${params.toString()}`, { signal: AbortSignal.timeout(15000) });
+  } catch (err) {
+    return { ok: false, error: `Couldn't reach Open-Meteo (${err.message}).` };
+  }
+  if (!response.ok) {
+    return { ok: false, error: `Open-Meteo returned an unexpected error (HTTP ${response.status}).` };
+  }
+  let body;
+  try {
+    body = await response.json();
+  } catch (err) {
+    return { ok: false, error: `Open-Meteo's response wasn't valid JSON (${err.message}) — the response shape assumed by this code may be wrong.` };
+  }
+  const hourlyValues = body?.hourly?.global_tilted_irradiance;
+  if (!Array.isArray(hourlyValues) || hourlyValues.length === 0) {
+    return { ok: false, error: "Open-Meteo's response didn't contain the expected hourly.global_tilted_irradiance array — the response shape assumed by this code may be wrong." };
+  }
+  const validHours = hourlyValues.filter((v) => typeof v === 'number');
+  // Each hourly value is average W/m² during that hour, so summing them
+  // directly gives Wh/m² for the year (W/m² x 1 hour = Wh/m² per reading).
+  const annualInsolationKwhPerM2 = validHours.reduce((sum, v) => sum + v, 0) / 1000;
+  if (validHours.length < hourlyValues.length * 0.9) {
+    return { ok: false, error: `Open-Meteo's response was missing too much hourly data for ${year} (${validHours.length}/${hourlyValues.length} hours present) to trust an annual total.` };
+  }
+  const annualGenerationKwh = annualInsolationKwhPerM2 * OPEN_METEO_ASSUMED_PEAK_POWER_KWP * OPEN_METEO_PERFORMANCE_RATIO;
+  return {
+    ok: true,
+    annualGenerationKwh: Math.round(annualGenerationKwh),
+    annualInsolationKwhPerM2: Math.round(annualInsolationKwhPerM2 * 10) / 10,
+    peakPowerKwp: OPEN_METEO_ASSUMED_PEAK_POWER_KWP,
+    tiltAngleDegrees: OPEN_METEO_TILT_ANGLE_DEGREES,
+    performanceRatio: OPEN_METEO_PERFORMANCE_RATIO,
+    yearUsed: year,
+  };
+}
+
+/**
+ * Postcode-aware wrapper around calculateRooftopViability. Resolves the
+ * postcode via postcodes.io, then tries Open-Meteo for a coordinate-precise
+ * generation estimate; if Open-Meteo is unreachable or its response doesn't
+ * match the assumed shape, falls back to the country-level generation
+ * multiplier; if the postcode itself can't be resolved, falls back further
+ * to the unadjusted England baseline. Never blocks the calculation.
  * @param {string} postcode
- * @param {Object} otherInputs - same shape as calculateRooftopViability's input, minus regionalGeneration
+ * @param {Object} otherInputs - same shape as calculateRooftopViability's input, minus regionalGeneration/generationOverride
  */
 async function calculateRooftopViabilityByPostcode(postcode, otherInputs) {
   const lookup = await lookupPostcodeRegion(postcode);
@@ -383,8 +477,25 @@ async function calculateRooftopViabilityByPostcode(postcode, otherInputs) {
     result.postcodeLookup = { ok: false, error: lookup.error };
     return result;
   }
-  const regionalGeneration = REGIONAL_GENERATION_MULTIPLIER[lookup.country];
-  const result = calculateRooftopViability({ ...otherInputs, regionalGeneration });
+
+  const openMeteo = await lookupOpenMeteoGeneration(lookup.latitude, lookup.longitude, otherInputs.orientation);
+  let result;
+  if (openMeteo.ok) {
+    result = calculateRooftopViability({
+      ...otherInputs,
+      generationOverride: {
+        value: openMeteo.annualGenerationKwh,
+        tier: 'Inference — Open-Meteo coordinate estimate, contract not live-verified by this process',
+        note: `Derived from Open-Meteo's ${openMeteo.yearUsed} hourly irradiance data for this exact location (${openMeteo.annualInsolationKwhPerM2}kWh/m²/yr on a ${openMeteo.tiltAngleDegrees}° tilted, ${otherInputs.orientation === 'southFacing' ? 'south-facing' : otherInputs.orientation === 'northFacing' ? 'north-facing' : 'east/west-facing'} plane), scaled to a ${openMeteo.peakPowerKwp}kWp system at a ${openMeteo.performanceRatio} performance ratio (both assumed, not your actual system). More precise than the country-level multiplier, but this integration's request/response contract hasn't been live-tested end to end yet — treat as directional until confirmed.`,
+      },
+    });
+    result.openMeteoLookup = { ok: true };
+  } else {
+    const regionalGeneration = REGIONAL_GENERATION_MULTIPLIER[lookup.country];
+    result = calculateRooftopViability({ ...otherInputs, regionalGeneration });
+    result.openMeteoLookup = { ok: false, error: openMeteo.error };
+  }
+
   result.postcodeLookup = {
     ok: true,
     postcode: lookup.postcode,
@@ -395,7 +506,7 @@ async function calculateRooftopViabilityByPostcode(postcode, otherInputs) {
   if (regulatoryNote) {
     result.regulatoryFlag = { country: lookup.country, note: regulatoryNote };
   }
-  if (!regionalGeneration) {
+  if (!openMeteo.ok && !REGIONAL_GENERATION_MULTIPLIER[lookup.country]) {
     result.postcodeLookup.note = `No regional generation figure for "${lookup.country}"; used the England-calibrated default.`;
   }
   return result;
@@ -444,6 +555,7 @@ const SunnySideUpCalculator = {
   calculateRooftopViabilityByPostcode,
   calculatePluginViability,
   lookupPostcodeRegion,
+  lookupOpenMeteoGeneration,
   getSegTariffs,
   findSegTariff,
   constants: {
@@ -454,6 +566,9 @@ const SunnySideUpCalculator = {
     ROOFTOP_ANNUAL_GENERATION_KWH,
     REGIONAL_GENERATION_MULTIPLIER,
     REGIONS_WITH_UNRESEARCHED_REGULATORY_REGIME,
+    OPEN_METEO_ASSUMED_PEAK_POWER_KWP,
+    OPEN_METEO_TILT_ANGLE_DEGREES,
+    OPEN_METEO_PERFORMANCE_RATIO,
     PLUGIN_KIT_COST_GBP,
     PLUGIN_ANNUAL_GENERATION_KWH,
     SELF_CONSUMPTION_RATE,
