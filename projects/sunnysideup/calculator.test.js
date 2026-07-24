@@ -43,6 +43,12 @@ printResult(
 // since the constants are drawn from the midpoint of the same range.
 printResult('Plug-in — standard case (defaults)', calculatePluginViability({ occupancy: 'usuallyHome' }));
 
+// Plug-in now varies by orientation too (borrows rooftop's own multipliers,
+// see calculator.js's comment above pluginOrientationMultiplier). North
+// should score meaningfully worse than the south-facing default above.
+printResult('Plug-in — north-facing', calculatePluginViability({ occupancy: 'usuallyHome', orientation: 'northFacing' }));
+console.log('- generationKwh should be 385 (770 x 50%, rooftop\'s own north ratio), payback should be noticeably longer than the south-facing default case above, and assumptions.generationKwh.note should explain the borrowed-ratio reasoning rather than presenting 385 as independently researched.');
+
 // Same rooftop scenario as the first case, but with a user-provided fixed-deal
 // electricity price (higher than the price-cap default) and a user-provided
 // low-SEG-supplier rate. This household self-consumes more than it exports

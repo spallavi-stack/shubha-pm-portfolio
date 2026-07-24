@@ -218,8 +218,29 @@ const REGIONS_WITH_UNRESEARCHED_REGULATORY_REGIME = {
 // §Plug-in/balcony solar cost and generation]. Kit cost reported £400-900,
 // generation 640-900kWh/year. Midpoints used below; treat outputs from this
 // segment as the least reliable in the calculator, and say so to the user.
+// This figure is treated as the south-facing baseline — the weak sources
+// behind it don't specify an assumed orientation, but 770 sits centrally in
+// the reported 640-900 range, which is the closest thing to a "typical/best
+// case" reading available.
 const PLUGIN_KIT_COST_GBP = 650;
 const PLUGIN_ANNUAL_GENERATION_KWH = 770;
+
+// [Assumption, deliberately stacked on another Assumption — a product
+// decision, not a research finding] Plug-in generation should vary by
+// orientation the same way rooftop does — same underlying physics — but no
+// orientation-specific plug-in data was ever found (unsurprising, given the
+// base figure above is already the weakest-sourced number in this
+// calculator). Rather than presenting plug-in as orientation-agnostic
+// (which is more a gap than a real property of plug-in solar) or inventing
+// new plug-in-specific ratios with no basis, this reuses rooftop's own
+// east/west ≈ 79% and north ≈ 50% ratios (ROOFTOP_ANNUAL_GENERATION_KWH
+// above), computed from that same object at call time rather than
+// hardcoded here, so the two stay in sync if rooftop's figures ever change.
+// Flagged in the assumptions output as two stacked Assumption-tier figures,
+// not hidden behind a single confident number.
+function pluginOrientationMultiplier(orientation) {
+  return ROOFTOP_ANNUAL_GENERATION_KWH[orientation] / ROOFTOP_ANNUAL_GENERATION_KWH.southFacing;
+}
 
 // Prototype-only simplification, not independently researched: self-consumption
 // rate modeled from occupancy as a rough two-tier proxy. grounding-research.md's
@@ -918,10 +939,13 @@ async function calculateRooftopViabilityByPostcode(postcode, otherInputs) {
 /**
  * @param {Object} input
  * @param {'usuallyHome'|'usuallyOut'} input.occupancy - retained for interface symmetry; not used in this scoring pass, since plug-in generation is assumed fully self-consumed
+ * @param {'southFacing'|'eastWestFacing'|'northFacing'} [input.orientation] - defaults to southFacing (the figure PLUGIN_ANNUAL_GENERATION_KWH is itself calibrated to) if omitted
  * @param {number} [input.electricityPricePencePerKwh] - the user's own known rate; falls back to the Ofgem price-cap default if omitted
  */
-function calculatePluginViability({ occupancy, electricityPricePencePerKwh }) {
-  const generation = PLUGIN_ANNUAL_GENERATION_KWH;
+function calculatePluginViability({ occupancy, orientation, electricityPricePencePerKwh }) {
+  const usedOrientation = orientation ?? 'southFacing';
+  const orientationMultiplier = pluginOrientationMultiplier(usedOrientation);
+  const generation = Math.round(PLUGIN_ANNUAL_GENERATION_KWH * orientationMultiplier);
   const usedElectricityPrice = electricityPricePencePerKwh ?? ELECTRICITY_PRICE_PENCE_PER_KWH_DEFAULT;
   const electricityPriceIsUserProvided = electricityPricePencePerKwh != null;
   // Plug-in units are treated as fully self-consumed at this scale, no export
@@ -944,7 +968,14 @@ function calculatePluginViability({ occupancy, electricityPricePencePerKwh }) {
         ? { value: usedElectricityPrice, tier: 'User-provided', note: 'Your own stated rate' }
         : { value: usedElectricityPrice, tier: 'Fact (default)', note: "Ofgem price cap, Jul-Sep 2026, changes quarterly, and applies only to default/standard-variable tariffs — if you're on a fixed deal, enter your own rate for an accurate result" },
       kitCostGbp: { value: PLUGIN_KIT_COST_GBP, tier: 'Assumption — weakest-sourced figure in this calculator', note: 'Reported range £400-900; none of these figures trace to a government, MCS, or established consumer body' },
-      generationKwh: { value: generation, tier: 'Assumption — weakest-sourced figure in this calculator', note: 'Reported range 640-900kWh/yr, same sourcing caveat as kit cost' },
+      generationKwh: {
+        value: generation,
+        tier: 'Assumption, stacked on another Assumption — weakest-sourced figure in this calculator',
+        note:
+          usedOrientation === 'southFacing'
+            ? 'Reported range 640-900kWh/yr, same sourcing caveat as kit cost. Treated as the south-facing baseline (the range itself does not specify an assumed orientation).'
+            : `${PLUGIN_ANNUAL_GENERATION_KWH}kWh/yr south-facing baseline (reported range 640-900kWh/yr, same sourcing caveat as kit cost) adjusted by rooftop's own ${usedOrientation === 'eastWestFacing' ? 'east/west' : 'north-facing'} ratio (${Math.round(orientationMultiplier * 100)}% of south) — no orientation-specific plug-in data exists, so this borrows rooftop's proportional estimate rather than presenting plug-in as orientation-agnostic.`,
+      },
     },
   };
 }

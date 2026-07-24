@@ -433,9 +433,18 @@ async function calculateRooftopViabilityByPostcode(postcode, otherInputs) {
 
 // [Assumption — "the weakest data in this document," per grounding-research.md
 // §Plug-in/balcony solar cost and generation]. Kit cost reported £400-900,
-// generation 640-900kWh/year. Midpoints used below.
+// generation 640-900kWh/year. Midpoints used below. Treated as the
+// south-facing baseline (the range itself doesn't specify an orientation).
 const PLUGIN_KIT_COST_GBP = 650;
 const PLUGIN_ANNUAL_GENERATION_KWH = 770;
+
+// [Assumption stacked on another Assumption] No orientation-specific
+// plug-in data exists, so this borrows rooftop's own east/west≈79%/north≈50%
+// ratios rather than presenting plug-in as orientation-agnostic — see
+// calculator.js's fuller comment on this same function.
+function pluginOrientationMultiplier(orientation) {
+  return ROOFTOP_ANNUAL_GENERATION_KWH[orientation] / ROOFTOP_ANNUAL_GENERATION_KWH.southFacing;
+}
 
 // Prototype-only simplification, not independently researched: self-
 // consumption rate modeled from occupancy as a rough two-tier proxy.
@@ -570,8 +579,10 @@ function calculateRooftopViability({ orientation, occupancy, annualConsumptionKw
   };
 }
 
-function calculatePluginViability({ occupancy, electricityPricePencePerKwh }) {
-  const generation = PLUGIN_ANNUAL_GENERATION_KWH;
+function calculatePluginViability({ occupancy, orientation, electricityPricePencePerKwh }) {
+  const usedOrientation = orientation ?? 'southFacing';
+  const orientationMultiplier = pluginOrientationMultiplier(usedOrientation);
+  const generation = Math.round(PLUGIN_ANNUAL_GENERATION_KWH * orientationMultiplier);
   const usedElectricityPrice = electricityPricePencePerKwh ?? ELECTRICITY_PRICE_PENCE_PER_KWH_DEFAULT;
   const electricityPriceIsUserProvided = electricityPricePencePerKwh != null;
   const annualSavingsGbp = (generation * usedElectricityPrice) / 100;
@@ -591,7 +602,14 @@ function calculatePluginViability({ occupancy, electricityPricePencePerKwh }) {
         ? { value: usedElectricityPrice, tier: 'User-provided', note: 'Your own stated rate' }
         : { value: usedElectricityPrice, tier: 'Fact (default)', note: "Ofgem price cap, Jul-Sep 2026, changes quarterly, and applies only to default/standard-variable tariffs — if you're on a fixed deal, enter your own rate for an accurate result" },
       kitCostGbp: { value: PLUGIN_KIT_COST_GBP, tier: 'Assumption — weakest-sourced figure in this calculator', note: 'Reported range £400-900; none of these figures trace to a government, MCS, or established consumer body' },
-      generationKwh: { value: generation, tier: 'Assumption — weakest-sourced figure in this calculator', note: 'Reported range 640-900kWh/yr, same sourcing caveat as kit cost' },
+      generationKwh: {
+        value: generation,
+        tier: 'Assumption, stacked on another Assumption — weakest-sourced figure in this calculator',
+        note:
+          usedOrientation === 'southFacing'
+            ? 'Reported range 640-900kWh/yr, same sourcing caveat as kit cost. Treated as the south-facing baseline (the range itself does not specify an assumed orientation).'
+            : `${PLUGIN_ANNUAL_GENERATION_KWH}kWh/yr south-facing baseline (reported range 640-900kWh/yr, same sourcing caveat as kit cost) adjusted by rooftop's own ${usedOrientation === 'eastWestFacing' ? 'east/west' : 'north-facing'} ratio (${Math.round(orientationMultiplier * 100)}% of south) — no orientation-specific plug-in data exists, so this borrows rooftop's proportional estimate rather than presenting plug-in as orientation-agnostic.`,
+      },
     },
   };
 }
@@ -671,8 +689,11 @@ function setEntryMode(mode, buttonEl) {
 }
 
 function updateSegmentVisibility() {
+  // Orientation matters for both segments (plug-in generation scales with
+  // orientation the same way rooftop does — see pluginOrientationMultiplier)
+  // — only the export/SEG tariff is rooftop-specific (plug-in units are
+  // modeled as fully self-consumed, no export mechanism assumed).
   const isRooftop = document.getElementById('segment').value === 'rooftop';
-  document.getElementById('orientationField').style.display = isRooftop ? '' : 'none';
   document.getElementById('segField').style.display = isRooftop ? '' : 'none';
 }
 
@@ -758,12 +779,14 @@ async function runCalculation() {
   const occupancy = document.getElementById('occupancy').value;
   const postcode = document.getElementById('postcode').value.trim();
 
+  const orientation = document.getElementById('orientation').value;
+
   let result;
   if (segment === 'plugin') {
-    result = calculatePluginViability({ occupancy, electricityPricePencePerKwh });
+    result = calculatePluginViability({ occupancy, orientation, electricityPricePencePerKwh });
   } else {
     const inputs = {
-      orientation: document.getElementById('orientation').value,
+      orientation,
       occupancy,
       annualConsumptionKwh: consumption.annualConsumptionKwh,
       electricityPricePencePerKwh,

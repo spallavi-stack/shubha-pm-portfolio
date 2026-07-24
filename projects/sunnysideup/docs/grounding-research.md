@@ -254,6 +254,8 @@ This research is now live in `calculator.js`'s `estimateAnnualConsumptionKwh()`:
 
 **[Assumption — the weakest data in this document, as anticipated in scope]** An 800W plug-in kit is reported to cost roughly £400–£900, generating an estimated 640–900kWh/year, translating to roughly £75–£200/year in savings with a claimed 3–4 year payback in one source. None of these figures trace to a government, MCS, or established consumer body — they come from newly-created, narrowly-focused sites that appear to exist specifically to cover this just-legalized category. Present as clearly-labeled placeholder estimates, not sourced facts.
 
+**[Assumption, stacked on another Assumption — implementation note, 24 July 2026]** The 640-900kWh/year range above doesn't specify an assumed orientation, and no orientation-specific plug-in generation data was found anywhere (unsurprising, given how weak the base figure already is). Plug-in generation should physically vary by orientation the same way rooftop does — same underlying solar geometry — so `calculator.js`'s `calculatePluginViability()` now takes an orientation input and applies rooftop's own east/west ≈ 79%-of-south and north ≈ 50%-of-south ratios (themselves already flagged elsewhere in this document as "not independently researched," §System cost, size, and generation) to the 770kWh south-facing midpoint. This is a deliberate product decision to avoid presenting plug-in as orientation-agnostic (a gap, not a real property of plug-in solar) rather than a research finding — the calculator's own assumptions output labels it as two stacked Assumption-tier figures, not a single confident number.
+
 ---
 
 ## 4. Market opportunity and demand signals
