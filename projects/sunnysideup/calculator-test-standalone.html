@@ -87,8 +87,8 @@
   <label for="elecPriceRoof">Import price, pence/kWh</label>
   <input id="elecPriceRoof" type="number" step="0.01" placeholder="leave blank to fetch a live current rate for your postcode's region">
 
-  <label for="importSupplier">Your current electricity supplier</label>
-  <input id="importSupplier" type="text" placeholder="e.g. Octopus Energy — used below to check their export/SEG rate, not for the price above">
+  <label for="importSupplier">Your current electricity supplier (used below to check their export/SEG rate, not for the price above)</label>
+  <select id="importSupplier"></select>
 </fieldset>
 
 <fieldset id="segField">
@@ -614,6 +614,31 @@ function calculatePluginViability({ occupancy, electricityPricePencePerKwh }) {
   updateEligibilityNote();
 })();
 
+// A dropdown, not free text — typing "Octopus" instead of the table's exact
+// "Octopus Energy" would silently fail to match anything in
+// findSegTariffsBySupplier() and fall back to the default without
+// explanation. A dropdown of the table's own supplier names makes a
+// mismatch impossible, and doubles as a real, if partial, list of who's in
+// the researched SEG table at all.
+(function populateImportSupplierDropdown() {
+  const select = document.getElementById('importSupplier');
+  const placeholder = document.createElement('option');
+  placeholder.value = '';
+  placeholder.textContent = '-- Select your supplier --';
+  select.appendChild(placeholder);
+  const suppliers = [...new Set(getSegTariffs().map((t) => t.supplier))].sort();
+  suppliers.forEach((supplier) => {
+    const opt = document.createElement('option');
+    opt.value = supplier;
+    opt.textContent = supplier;
+    select.appendChild(opt);
+  });
+  const notListed = document.createElement('option');
+  notListed.value = '';
+  notListed.textContent = 'My supplier isn\'t listed';
+  select.appendChild(notListed);
+})();
+
 function updateEligibilityNote() {
   const select = document.getElementById('segTariff');
   const note = document.getElementById('segTariffEligibility');
@@ -673,7 +698,7 @@ function updateSegChoiceVisibility() {
     sameAsImportNote.textContent = '';
   }
 }
-document.getElementById('importSupplier').addEventListener('input', updateSegChoiceVisibility);
+document.getElementById('importSupplier').addEventListener('change', updateSegChoiceVisibility);
 
 // Resolves annualConsumptionKwh: an exact typed figure always wins; otherwise
 // estimate from household size/heat pump/EV. Returns both the number to use
