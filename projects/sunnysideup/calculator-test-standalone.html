@@ -7,11 +7,17 @@
   body { font-family: -apple-system, sans-serif; max-width: 640px; margin: 40px auto; padding: 0 20px; }
   fieldset { margin-bottom: 24px; padding: 16px; }
   label { display: block; margin: 10px 0 4px; font-weight: 600; }
-  select, input { width: 100%; padding: 6px; font-size: 14px; }
+  select, input[type=text], input[type=number] { width: 100%; padding: 6px; font-size: 14px; }
+  input[type=checkbox] { width: auto; margin-right: 6px; }
+  .checkbox-label { display: flex; align-items: center; font-weight: normal; }
   button { margin-top: 14px; padding: 8px 16px; font-size: 14px; cursor: pointer; }
   pre { background: #f4f4f4; padding: 12px; overflow-x: auto; border-radius: 6px; }
   h1 { font-size: 18px; }
   .note { color: #666; font-size: 13px; }
+  details { margin: 10px 0; border: 1px solid #ddd; border-radius: 6px; padding: 8px 12px; }
+  details summary { cursor: pointer; font-weight: 600; }
+  #entryModeButtons button { margin-right: 8px; }
+  #entryModeButtons button.active { background: #333; color: #fff; }
 </style>
 </head>
 <body>
@@ -19,51 +25,93 @@
 <p class="note">Single self-contained file, no separate calculator.js to keep in sync. Save this one file anywhere and open it directly. Not the styled prototype, just a working form on the real logic.</p>
 
 <fieldset>
-  <legend>Rooftop</legend>
-  <label for="postcode">Your postcode (optional — adjusts generation for your region, e.g. "SW1A 1AA")</label>
-  <input id="postcode" type="text" placeholder="leave blank to use the England-calibrated default">
-
-  <label for="orientation">Roof orientation</label>
-  <select id="orientation">
-    <option value="southFacing">South-facing</option>
-    <option value="eastWestFacing">East/West-facing</option>
-    <option value="northFacing">North-facing</option>
-  </select>
-
-  <label for="occupancyRoof">Home occupancy pattern</label>
-  <select id="occupancyRoof">
-    <option value="usuallyHome">Usually home during the day</option>
-    <option value="usuallyOut">Usually out during the day</option>
-  </select>
-
-  <label for="consumption">Annual household electricity use (kWh/year)</label>
-  <input id="consumption" type="number" value="3500">
-
-  <label for="elecPriceRoof">Your electricity rate, pence/kWh (leave blank to fetch a live current rate for your postcode's region, if given)</label>
-  <input id="elecPriceRoof" type="number" step="0.01" placeholder="e.g. 26.11, or your own fixed-deal rate — leave blank to fetch live">
-
-  <label for="segTariff">Your SEG tariff (or leave as "no-switch default" if you haven't picked one)</label>
-  <select id="segTariff"></select>
-  <p class="note" id="segTariffEligibility"></p>
-
-  <label for="segRateManual">Or type a SEG rate manually instead, pence/kWh (overrides the dropdown above)</label>
-  <input id="segRateManual" type="number" step="0.01" placeholder="leave blank to use the dropdown selection">
-
-  <button onclick="runRooftop()">Calculate rooftop viability</button>
-  <pre id="rooftopResult">(results will appear here)</pre>
+  <legend>How much do you already know?</legend>
+  <div id="entryModeButtons">
+    <button type="button" onclick="setEntryMode('estimate', this)">Just give me an estimate</button>
+    <button type="button" onclick="setEntryMode('detail', this)">I'll enter the details</button>
+  </div>
+  <p class="note">Either choice just changes what's expanded below by default — every field still works either way, and anything you don't fill in gets a reasonable estimate.</p>
 </fieldset>
 
 <fieldset>
-  <legend>Plug-in</legend>
-  <label for="occupancyPlugin">Home occupancy pattern</label>
-  <select id="occupancyPlugin">
-    <option value="usuallyHome">Usually home during the day</option>
-    <option value="usuallyOut">Usually out during the day</option>
+  <legend>About your home</legend>
+  <label for="postcode">Your postcode</label>
+  <input id="postcode" type="text" placeholder="e.g. SW1A 1AA — leave blank to use the England-calibrated default">
+
+  <label for="segment">What are you considering?</label>
+  <select id="segment" onchange="updateSegmentVisibility()">
+    <option value="rooftop">Rooftop solar panels</option>
+    <option value="plugin">Plug-in / balcony solar</option>
   </select>
 
-  <button onclick="runPlugin()">Calculate plug-in viability</button>
-  <pre id="pluginResult">(results will appear here)</pre>
+  <div id="orientationField">
+    <label for="orientation">Roof orientation (or the orientation your panel would face)</label>
+    <select id="orientation">
+      <option value="southFacing">South-facing</option>
+      <option value="eastWestFacing">East/West-facing</option>
+      <option value="northFacing">North-facing</option>
+    </select>
+  </div>
+
+  <label for="occupancy">During a typical weekday...</label>
+  <select id="occupancy">
+    <option value="usuallyHome">I'm usually home</option>
+    <option value="usuallyOut">I'm usually away during the day</option>
+  </select>
 </fieldset>
+
+<fieldset>
+  <legend>Your electricity use</legend>
+
+  <details id="householdSizeDetails">
+    <summary>Estimate it from my household</summary>
+    <label for="householdSize">How many people live in your home?</label>
+    <input id="householdSize" type="number" value="3" min="1">
+    <label class="checkbox-label"><input type="checkbox" id="hasHeatPump"> I have a heat pump</label>
+    <label class="checkbox-label"><input type="checkbox" id="hasEv" onchange="toggleEvCount()"> I have an electric vehicle</label>
+    <div id="evCountField" style="display:none">
+      <label for="evCount">How many electric vehicles?</label>
+      <input id="evCount" type="number" value="1" min="1">
+    </div>
+  </details>
+
+  <details id="exactConsumptionDetails">
+    <summary>I know my exact annual electricity use</summary>
+    <label for="consumption">Annual household electricity use (kWh/year, from a bill)</label>
+    <input id="consumption" type="number" placeholder="overrides the household estimate above if filled in">
+  </details>
+</fieldset>
+
+<fieldset>
+  <legend>Electricity price</legend>
+  <label for="elecPriceRoof">Import price, pence/kWh</label>
+  <input id="elecPriceRoof" type="number" step="0.01" placeholder="leave blank to fetch a live current rate for your postcode's region">
+
+  <label for="importSupplier">Your current electricity supplier</label>
+  <input id="importSupplier" type="text" placeholder="e.g. Octopus Energy — used below to check their export/SEG rate, not for the price above">
+</fieldset>
+
+<fieldset id="segField">
+  <legend>Export (SEG) tariff</legend>
+  <label for="segChoice">When you get solar, your export tariff will most likely be:</label>
+  <select id="segChoice" onchange="updateSegChoiceVisibility()">
+    <option value="sameAsImport">The same supplier as my electricity import, shown above</option>
+    <option value="different">A different export supplier — I'll pick one</option>
+    <option value="dontKnow">I don't know yet</option>
+  </select>
+
+  <div id="segDifferentField" style="display:none">
+    <label for="segTariff">Pick a tariff</label>
+    <select id="segTariff"></select>
+    <p class="note" id="segTariffEligibility"></p>
+    <label for="segRateManual">Or type a SEG rate manually instead, pence/kWh (overrides the dropdown)</label>
+    <input id="segRateManual" type="number" step="0.01" placeholder="leave blank to use the dropdown selection">
+  </div>
+  <p class="note" id="segSameAsImportNote"></p>
+</fieldset>
+
+<button onclick="runCalculation()">Calculate viability</button>
+<pre id="result">(results will appear here)</pre>
 
 <script>
 /**
@@ -416,6 +464,59 @@ function getSegTariffs() {
   return SEG_TARIFFS;
 }
 
+// Deliberately not filtered further than supplier name match — see
+// calculator.js's fuller comment on this function for why (parsing
+// eligibility text to guess "achievable without switching install company"
+// would be fragile and could silently misclassify a row). Fixed-rate
+// tariffs ARE sorted first though (a structured field, not free text) —
+// sorting by raw rate alone surfaced Octopus's "Intelligent Octopus Flux"
+// (highest number, but its own source note says it isn't a flat rate and
+// is "currently shown unavailable") as the top pick, which a Fixed-rate
+// row further down is a more honest single-number answer than.
+function findSegTariffsBySupplier(supplier) {
+  return SEG_TARIFFS.filter((t) => t.supplier === supplier).sort((a, b) => {
+    if (a.rateType === 'Fixed' && b.rateType !== 'Fixed') return -1;
+    if (a.rateType !== 'Fixed' && b.rateType === 'Fixed') return 1;
+    return b.ratePencePerKwh - a.ratePencePerKwh;
+  });
+}
+
+// --- Annual consumption estimator ---------------------------------------------
+// See calculator.js for the full sourcing reasoning (grounding-research.md
+// §Household electricity consumption — TDCV, heat pumps, EVs, 24 Jul 2026).
+const TDCV_ELECTRICITY_KWH_BY_BAND = {
+  low: { value: 1600, description: 'flat or 1-bedroom house, 1-2 people' },
+  medium: { value: 2500, description: '2-3 bedroom house, 2-3 people' },
+  high: { value: 3800, description: '4+ bedroom house, 4-5 people' },
+};
+function tdcvBandForHouseholdSize(householdSize) {
+  if (householdSize <= 2) return 'low';
+  if (householdSize === 3) return 'medium';
+  return 'high';
+}
+const HEAT_PUMP_ANNUAL_KWH_ESTIMATE = 4300; // [Inference] DESNZ field-trial SPF 2.78 applied to an EST ~12,000kWh/yr heat-demand assumption
+const EV_ANNUAL_HOME_CHARGING_KWH_ESTIMATE = 1960; // [Inference] DfT BEV mileage (8,900mi/yr) x Zap-Map home-charging share (85%), Assumption-tier efficiency
+
+function estimateAnnualConsumptionKwh({ householdSize, hasHeatPump, hasEv, evCount }) {
+  const band = tdcvBandForHouseholdSize(householdSize);
+  const baseline = TDCV_ELECTRICITY_KWH_BY_BAND[band];
+  const resolvedEvCount = hasEv ? evCount ?? 1 : 0;
+  const heatPumpAddition = hasHeatPump ? HEAT_PUMP_ANNUAL_KWH_ESTIMATE : 0;
+  const evAddition = resolvedEvCount * EV_ANNUAL_HOME_CHARGING_KWH_ESTIMATE;
+  const totalKwh = baseline.value + heatPumpAddition + evAddition;
+
+  const breakdown = {
+    baseline: { value: baseline.value, tier: 'Fact', note: `Ofgem TDCV ${band} band (standard single-rate meter, effective 1 Jul 2026): ${baseline.description}. Household size ${householdSize} mapped to this band by this calculator's own tie-breaking rule, not an Ofgem-published cutoff.` },
+  };
+  if (hasHeatPump) {
+    breakdown.heatPump = { value: heatPumpAddition, tier: 'Inference', note: 'Derived from a DESNZ field-trial median efficiency figure (SPF 2.78, 742 monitored UK installations) and a named Energy Saving Trust heat-demand modelling assumption (~12,000kWh/yr) — a calculation, not a single published figure.' };
+  }
+  if (resolvedEvCount > 0) {
+    breakdown.ev = { value: evAddition, tier: 'Inference', note: `Derived from DfT's National Travel Survey (8,900 miles/yr average for battery-electric cars) and Zap-Map's home-charging share (85%), combined with an Assumption-tier efficiency figure (no government source found; ~3.5-4.3mi/kWh commercial-site convergence). ${EV_ANNUAL_HOME_CHARGING_KWH_ESTIMATE}kWh/yr per vehicle x ${resolvedEvCount}.` };
+  }
+  return { totalKwh: Math.round(totalKwh), breakdown };
+}
+
 function calculateRooftopViability({ orientation, occupancy, annualConsumptionKwh, electricityPricePencePerKwh, electricityPriceOverride, segRatePencePerKwh, segTariffLabel, segTariffSource, regionalGeneration, generationOverride }) {
   const baseGeneration = ROOFTOP_ANNUAL_GENERATION_KWH[orientation];
   const generation = generationOverride
@@ -533,55 +634,132 @@ function parseLocaleNumber(str) {
   return Number.isNaN(n) ? undefined : n;
 }
 
-async function runRooftop() {
-  const elecPriceRaw = document.getElementById('elecPriceRoof').value;
-  const segRateManualRaw = document.getElementById('segRateManual').value;
-  const segTariffSelect = document.getElementById('segTariff');
+// Framing-only entry point: doesn't gate any field, just decides which of
+// the two <details> disclosures starts open. Someone in "estimate" mode who
+// actually knows their exact consumption can still open the other one and
+// type it — it isn't locked away.
+function setEntryMode(mode, buttonEl) {
+  document.querySelectorAll('#entryModeButtons button').forEach((b) => b.classList.remove('active'));
+  buttonEl.classList.add('active');
+  document.getElementById('householdSizeDetails').open = mode === 'estimate';
+  document.getElementById('exactConsumptionDetails').open = mode === 'detail';
+}
 
-  let segRatePencePerKwh;
-  let segTariffLabel;
-  let segTariffSource;
-  const manualSegRate = parseLocaleNumber(segRateManualRaw);
-  if (manualSegRate !== undefined) {
-    segRatePencePerKwh = manualSegRate;
-  } else if (segTariffSelect.value !== '') {
-    const t = getSegTariffs()[Number(segTariffSelect.value)];
-    segRatePencePerKwh = t.ratePencePerKwh;
-    segTariffLabel = `${t.supplier} — ${t.tariff}`;
-    segTariffSource = t.source;
-  }
+function updateSegmentVisibility() {
+  const isRooftop = document.getElementById('segment').value === 'rooftop';
+  document.getElementById('orientationField').style.display = isRooftop ? '' : 'none';
+  document.getElementById('segField').style.display = isRooftop ? '' : 'none';
+}
 
-  const annualConsumptionKwh = parseLocaleNumber(document.getElementById('consumption').value);
-  if (annualConsumptionKwh === undefined) {
-    document.getElementById('rooftopResult').textContent = 'Enter a valid number for annual household electricity use.';
-    return;
-  }
+function toggleEvCount() {
+  document.getElementById('evCountField').style.display = document.getElementById('hasEv').checked ? '' : 'none';
+}
 
-  const inputs = {
-    orientation: document.getElementById('orientation').value,
-    occupancy: document.getElementById('occupancyRoof').value,
-    annualConsumptionKwh,
-    electricityPricePencePerKwh: parseLocaleNumber(elecPriceRaw),
-    segRatePencePerKwh,
-    segTariffLabel,
-    segTariffSource,
-  };
-
-  const postcode = document.getElementById('postcode').value.trim();
-  let result;
-  if (postcode) {
-    document.getElementById('rooftopResult').textContent = 'Looking up postcode...';
-    result = await calculateRooftopViabilityByPostcode(postcode, inputs);
+function updateSegChoiceVisibility() {
+  const choice = document.getElementById('segChoice').value;
+  document.getElementById('segDifferentField').style.display = choice === 'different' ? '' : 'none';
+  const sameAsImportNote = document.getElementById('segSameAsImportNote');
+  if (choice === 'sameAsImport') {
+    const supplier = document.getElementById('importSupplier').value.trim();
+    if (!supplier) {
+      sameAsImportNote.textContent = 'Enter your current supplier above to see their export rate.';
+    } else {
+      const matches = findSegTariffsBySupplier(supplier);
+      sameAsImportNote.textContent = matches.length
+        ? `${supplier}'s best listed export tariff: ${matches[0].tariff} (${matches[0].ratePencePerKwh}p) — requires: ${matches[0].eligibility}.`
+        : `No SEG tariff found for "${supplier}" in the researched table — will use the no-switch default instead.`;
+    }
   } else {
-    result = calculateRooftopViability(inputs);
+    sameAsImportNote.textContent = '';
   }
-  document.getElementById('rooftopResult').textContent = JSON.stringify(result, null, 2);
+}
+document.getElementById('importSupplier').addEventListener('input', updateSegChoiceVisibility);
+
+// Resolves annualConsumptionKwh: an exact typed figure always wins; otherwise
+// estimate from household size/heat pump/EV. Returns both the number to use
+// and the estimator's breakdown (null if an exact figure was given, since
+// there's nothing to explain in that case).
+function resolveConsumption() {
+  const exact = parseLocaleNumber(document.getElementById('consumption').value);
+  if (exact !== undefined) {
+    return { annualConsumptionKwh: exact, isUserProvided: true, breakdown: null };
+  }
+  const householdSize = parseLocaleNumber(document.getElementById('householdSize').value) ?? 3;
+  const hasHeatPump = document.getElementById('hasHeatPump').checked;
+  const hasEv = document.getElementById('hasEv').checked;
+  const evCount = hasEv ? (parseLocaleNumber(document.getElementById('evCount').value) ?? 1) : undefined;
+  const estimate = estimateAnnualConsumptionKwh({ householdSize, hasHeatPump, hasEv, evCount });
+  return { annualConsumptionKwh: estimate.totalKwh, isUserProvided: false, breakdown: estimate.breakdown };
 }
 
-function runPlugin() {
-  const result = calculatePluginViability({ occupancy: document.getElementById('occupancyPlugin').value });
-  document.getElementById('pluginResult').textContent = JSON.stringify(result, null, 2);
+// Resolves the SEG inputs for calculateRooftopViability based on the
+// segChoice select: same-as-import-supplier looks up that supplier's best
+// listed tariff, "different" uses the existing dropdown/manual-override
+// fields, "dontKnow" passes nothing through (falls back to the calculator's
+// own no-switch default).
+function resolveSegInputs() {
+  const choice = document.getElementById('segChoice').value;
+  if (choice === 'sameAsImport') {
+    const supplier = document.getElementById('importSupplier').value.trim();
+    const matches = supplier ? findSegTariffsBySupplier(supplier) : [];
+    if (matches.length === 0) {
+      return {};
+    }
+    const t = matches[0];
+    return { segRatePencePerKwh: t.ratePencePerKwh, segTariffLabel: `${t.supplier} — ${t.tariff}`, segTariffSource: t.source };
+  }
+  if (choice === 'different') {
+    const segRateManualRaw = document.getElementById('segRateManual').value;
+    const segTariffSelect = document.getElementById('segTariff');
+    const manualSegRate = parseLocaleNumber(segRateManualRaw);
+    if (manualSegRate !== undefined) {
+      return { segRatePencePerKwh: manualSegRate };
+    }
+    if (segTariffSelect.value !== '') {
+      const t = getSegTariffs()[Number(segTariffSelect.value)];
+      return { segRatePencePerKwh: t.ratePencePerKwh, segTariffLabel: `${t.supplier} — ${t.tariff}`, segTariffSource: t.source };
+    }
+    return {};
+  }
+  return {}; // dontKnow
 }
+
+async function runCalculation() {
+  const resultEl = document.getElementById('result');
+  const segment = document.getElementById('segment').value;
+  const elecPriceRaw = document.getElementById('elecPriceRoof').value;
+  const electricityPricePencePerKwh = parseLocaleNumber(elecPriceRaw);
+  const consumption = resolveConsumption();
+  const occupancy = document.getElementById('occupancy').value;
+  const postcode = document.getElementById('postcode').value.trim();
+
+  let result;
+  if (segment === 'plugin') {
+    result = calculatePluginViability({ occupancy, electricityPricePencePerKwh });
+  } else {
+    const inputs = {
+      orientation: document.getElementById('orientation').value,
+      occupancy,
+      annualConsumptionKwh: consumption.annualConsumptionKwh,
+      electricityPricePencePerKwh,
+      ...resolveSegInputs(),
+    };
+    if (postcode) {
+      resultEl.textContent = 'Looking up postcode...';
+      result = await calculateRooftopViabilityByPostcode(postcode, inputs);
+    } else {
+      result = calculateRooftopViability(inputs);
+    }
+  }
+
+  result.consumptionEstimate = consumption.isUserProvided
+    ? { tier: 'User-provided', note: 'Your own stated annual consumption, from a bill.' }
+    : { tier: 'Derived estimate', breakdown: consumption.breakdown };
+
+  resultEl.textContent = JSON.stringify(result, null, 2);
+}
+
+updateSegmentVisibility();
 </script>
 </body>
 </html>

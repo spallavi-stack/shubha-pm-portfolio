@@ -5,7 +5,7 @@
  * the calculator's output lands in the ranges grounding-research.md actually
  * reports, run before any UI is built on top of this logic.
  */
-const { calculateRooftopViability, calculateRooftopViabilityByPostcode, calculatePluginViability, findSegTariff, constants } = require('./calculator.js');
+const { calculateRooftopViability, calculateRooftopViabilityByPostcode, calculatePluginViability, findSegTariff, findSegTariffsBySupplier, estimateAnnualConsumptionKwh, constants } = require('./calculator.js');
 
 function printResult(label, result) {
   console.log(`\n--- ${label} ---`);
@@ -81,6 +81,42 @@ printResult(
     segTariffSource: octopusOutgoing.source,
   })
 );
+
+// findSegTariffsBySupplier: for a supplier with multiple rows including one
+// non-Fixed row that has a higher raw rate but isn't actually a quotable
+// flat number (Octopus's "Intelligent Octopus Flux," rateType
+// "Smart/Variable," source notes say it's currently unavailable), the
+// Fixed-rate "Outgoing Octopus" (12p) should be picked first despite Flux's
+// higher 23p, since Fixed tariffs are sorted ahead of non-Fixed ones.
+const octopusSegTariffs = findSegTariffsBySupplier('Octopus Energy');
+console.log('\n--- findSegTariffsBySupplier("Octopus Energy") ---');
+console.log(octopusSegTariffs.map((t) => `${t.tariff} (${t.ratePencePerKwh}p, ${t.rateType})`).join('\n'));
+console.log(`- First result should be "Outgoing Octopus" (12p, Fixed), not "Intelligent Octopus Flux" (23p, Smart/Variable) despite Flux's higher number.`);
+
+// A supplier not in SEG_TARIFFS at all should return an empty array, not
+// throw or return undefined — the UI layer depends on this for its
+// "no tariff found, falling back to default" message.
+console.log('\n--- findSegTariffsBySupplier("NotARealSupplier") ---');
+console.log(JSON.stringify(findSegTariffsBySupplier('NotARealSupplier')));
+console.log('- Should be an empty array [].');
+
+// estimateAnnualConsumptionKwh: household size alone (no heat pump/EV)
+// should map straight to the TDCV band with no extra breakdown entries.
+console.log('\n--- estimateAnnualConsumptionKwh({ householdSize: 2 }) ---');
+console.log(JSON.stringify(estimateAnnualConsumptionKwh({ householdSize: 2 }), null, 2));
+console.log('- totalKwh should be exactly 1,600 (TDCV low band, household size 2 -> low per this calculator\'s own <=2 rule), breakdown should have only a "baseline" entry, no heatPump/ev.');
+
+// Household size 3 -> medium band; adding a heat pump and 2 EVs should stack
+// additively on top of the baseline, each with its own breakdown entry.
+console.log('\n--- estimateAnnualConsumptionKwh({ householdSize: 3, hasHeatPump: true, hasEv: true, evCount: 2 }) ---');
+const stackedEstimate = estimateAnnualConsumptionKwh({ householdSize: 3, hasHeatPump: true, hasEv: true, evCount: 2 });
+console.log(JSON.stringify(stackedEstimate, null, 2));
+console.log(`- totalKwh should be 2,500 (medium TDCV) + 4,300 (heat pump) + 2 x 1,960 (EV) = ${2500 + 4300 + 2 * 1960}. Breakdown should have baseline/heatPump/ev entries, ev's note should say "x 2".`);
+
+// hasEv true but evCount omitted should default to 1 vehicle, not 0 or NaN.
+console.log('\n--- estimateAnnualConsumptionKwh({ householdSize: 6, hasEv: true }) (evCount omitted) ---');
+console.log(JSON.stringify(estimateAnnualConsumptionKwh({ householdSize: 6, hasEv: true }), null, 2));
+console.log('- Household size 6 should map to "high" band (3,800) despite being above Ofgem\'s own stated 4-5 person range — extrapolated, not an error. ev.value should be exactly 1,960 (1 vehicle, defaulted), not 0.');
 
 // Regional generation multiplier applied manually (regionalGeneration is the
 // public shape returned by REGIONAL_GENERATION_MULTIPLIER[country], not a

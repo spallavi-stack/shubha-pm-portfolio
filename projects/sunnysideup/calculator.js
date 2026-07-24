@@ -271,6 +271,144 @@ function findSegTariff(supplier, tariff) {
   return SEG_TARIFFS.find((t) => t.supplier === supplier && t.tariff === tariff);
 }
 
+/**
+ * Returns SEG_TARIFFS rows for a given supplier, sorted with fixed-rate
+ * tariffs first (then highest rate first within each group). For the "same
+ * as my current import supplier" SEG choice: this shows what that
+ * supplier's own SEG tariffs are, WITHOUT filtering by whether the
+ * eligibility text requires more than just being an existing import
+ * customer (e.g. some rows also require the system being installed by that
+ * same supplier, which isn't guaranteed just because someone already gets
+ * their electricity from them). Deliberately not auto-filtered further than
+ * that — parsing free-text eligibility strings to decide "achievable
+ * without switching install company" reliably would be fragile and could
+ * silently misclassify a row; showing the real eligibility text and letting
+ * the person judge it themselves is the same pattern the tariff dropdown
+ * already uses elsewhere in this file. Fixed-rate IS prioritized over a
+ * pure highest-rate sort, though, because that's a structured field (rateType),
+ * not free text, and sorting by raw rate alone surfaced a real problem:
+ * Octopus's "Intelligent Octopus Flux" row (rateType "Smart/Variable") has
+ * the highest listed number but its own source note says it isn't a flat
+ * rate and is "currently shown unavailable" — a Fixed tariff several rows
+ * down is the more honest "best" pick for a single quoted number.
+ */
+function findSegTariffsBySupplier(supplier) {
+  return SEG_TARIFFS.filter((t) => t.supplier === supplier).sort((a, b) => {
+    if (a.rateType === 'Fixed' && b.rateType !== 'Fixed') return -1;
+    if (a.rateType !== 'Fixed' && b.rateType === 'Fixed') return 1;
+    return b.ratePencePerKwh - a.ratePencePerKwh;
+  });
+}
+
+// --- Annual consumption estimator ---------------------------------------------
+
+// WHY THIS DATA SOURCE: household electricity consumption before someone
+// has ever seen a bill (i.e. before installing solar, most people haven't
+// looked closely at their annual kWh) has no live-fetchable source — no
+// public API tells you "a 3-person household with a heat pump uses X kWh."
+// This is category 3 from the top-of-file note: a static, sourced estimate
+// built from the best available research, not a live fetch or a per-
+// supplier table. Full sourcing trail: grounding-research.md §Household
+// electricity consumption — TDCV, heat pumps, EVs (24 July 2026).
+//
+// [Fact — direct primary-source fetch of Ofgem's own TDCV decision PDF, 24
+// July 2026] Standard single-rate-meter electricity TDCV, effective 1 July
+// 2026: low 1,600 / medium 2,500 / high 3,800 kWh/year. Ofgem's own
+// household-size description for each band (corroborated across multiple
+// sources, not read verbatim on an Ofgem page despite three attempts): low
+// = flat/1-bed, 1-2 people; medium = 2-3 bed, 2-3 people; high = 4+ bed,
+// 4-5 people. Ofgem's own bands overlap at the edges (low says "1-2 people,"
+// medium says "2-3 people" — 2 people fits both descriptions); Ofgem
+// doesn't publish a strict occupant-count formula, only illustrative
+// examples. The boundary rule below (household size 1-2 -> low, 3 ->
+// medium, 4+ -> high) is this calculator's own tie-breaking choice, not an
+// Ofgem rule — flagged here so it isn't mistaken for an official cutoff.
+const TDCV_ELECTRICITY_KWH_BY_BAND = {
+  low: { value: 1600, description: 'flat or 1-bedroom house, 1-2 people' },
+  medium: { value: 2500, description: '2-3 bedroom house, 2-3 people' },
+  high: { value: 3800, description: '4+ bedroom house, 4-5 people' },
+};
+
+function tdcvBandForHouseholdSize(householdSize) {
+  if (householdSize <= 2) return 'low';
+  if (householdSize === 3) return 'medium';
+  return 'high'; // 6+ is extrapolated beyond Ofgem's own stated "4-5 people" high-band description
+}
+
+// [Inference — calculated, not a single published figure, 24 July 2026] No
+// body (MCS, Heat Pump Association, DESNZ, Energy Saving Trust) publishes a
+// headline "UK heat pump uses X kWh/year" figure — checked directly and
+// confirmed absent. This is the most defensible estimate buildable from
+// what does exist: DESNZ's own field trial of 742 monitored UK
+// installations measured a median Seasonal Performance Factor of 2.78
+// (heat output ÷ electricity input); a named Energy Saving Trust modelling
+// assumption puts average UK home heat demand at ~12,000kWh/year. 12,000 ÷
+// 2.78 ≈ 4,317, rounded to 4,300. Presented as a calculation built from two
+// real sources, not a citation of a single authoritative number, because no
+// such number exists to cite.
+const HEAT_PUMP_ANNUAL_KWH_ESTIMATE = 4300;
+
+// [Inference — calculated, not a single published figure, 24 July 2026] Two
+// of the three inputs are now Fact-tier, directly fetched: DfT's National
+// Travel Survey 2024 gives 8,900 miles/year average annual mileage
+// specifically for battery-electric cars; Zap-Map's own 2024 EV Charging
+// Survey states home charging covers 85% of a typical home-charging
+// driver's needs. No government or industry body publishes a real-world
+// miles/kWh efficiency figure, so that piece stays Assumption-tier
+// (commercial-site convergence only, ~3.5-4.3 mi/kWh). 8,900 ÷ 3.5-4.3 ≈
+// 2,070-2,543 kWh/year total; × 85% home-charging share ≈ 1,759-2,161
+// kWh/year charged at home. Midpoint used below as the per-vehicle working
+// estimate.
+const EV_ANNUAL_HOME_CHARGING_KWH_ESTIMATE = 1960;
+
+/**
+ * Estimates annual household electricity consumption from inputs someone
+ * can actually answer without a bill in hand: household size, and whether
+ * they have a heat pump and/or EV(s). A standalone helper, not baked into
+ * calculateRooftopViability — call this first (if the person doesn't know
+ * their exact annual consumption), then pass its totalKwh in as
+ * annualConsumptionKwh. Keeps calculateRooftopViability itself simple and
+ * pure, matching how postcode/live-price lookups are also kept as separate
+ * wrapper logic rather than parameters baked into the core scoring function.
+ * @param {Object} input
+ * @param {number} input.householdSize - number of people living in the home
+ * @param {boolean} [input.hasHeatPump]
+ * @param {boolean} [input.hasEv]
+ * @param {number} [input.evCount] - defaults to 1 if hasEv is true and this is omitted
+ */
+function estimateAnnualConsumptionKwh({ householdSize, hasHeatPump, hasEv, evCount }) {
+  const band = tdcvBandForHouseholdSize(householdSize);
+  const baseline = TDCV_ELECTRICITY_KWH_BY_BAND[band];
+  const resolvedEvCount = hasEv ? evCount ?? 1 : 0;
+  const heatPumpAddition = hasHeatPump ? HEAT_PUMP_ANNUAL_KWH_ESTIMATE : 0;
+  const evAddition = resolvedEvCount * EV_ANNUAL_HOME_CHARGING_KWH_ESTIMATE;
+  const totalKwh = baseline.value + heatPumpAddition + evAddition;
+
+  const breakdown = {
+    baseline: {
+      value: baseline.value,
+      tier: 'Fact',
+      note: `Ofgem TDCV ${band} band (standard single-rate meter, effective 1 Jul 2026): ${baseline.description}. Household size ${householdSize} mapped to this band by this calculator's own tie-breaking rule, not an Ofgem-published cutoff.`,
+    },
+  };
+  if (hasHeatPump) {
+    breakdown.heatPump = {
+      value: heatPumpAddition,
+      tier: 'Inference',
+      note: 'Derived from a DESNZ field-trial median efficiency figure (SPF 2.78, 742 monitored UK installations) and a named Energy Saving Trust heat-demand modelling assumption (~12,000kWh/yr) — a calculation, not a single published figure.',
+    };
+  }
+  if (resolvedEvCount > 0) {
+    breakdown.ev = {
+      value: evAddition,
+      tier: 'Inference',
+      note: `Derived from DfT's National Travel Survey (8,900 miles/yr average for battery-electric cars) and Zap-Map's home-charging share (85%), combined with an Assumption-tier efficiency figure (no government source found; ~3.5-4.3mi/kWh commercial-site convergence). ${EV_ANNUAL_HOME_CHARGING_KWH_ESTIMATE}kWh/yr per vehicle x ${resolvedEvCount}.`,
+    };
+  }
+
+  return { totalKwh: Math.round(totalKwh), breakdown };
+}
+
 // --- Rooftop calculator -------------------------------------------------------
 
 /**
@@ -825,6 +963,8 @@ const SunnySideUpCalculator = {
   lookupLiveElectricityPrice,
   getSegTariffs,
   findSegTariff,
+  findSegTariffsBySupplier,
+  estimateAnnualConsumptionKwh,
   constants: {
     ELECTRICITY_PRICE_PENCE_PER_KWH_DEFAULT,
     SEG_RATE_PENCE_PER_KWH_DEFAULT,
@@ -836,6 +976,9 @@ const SunnySideUpCalculator = {
     OPEN_METEO_ASSUMED_PEAK_POWER_KWP,
     OPEN_METEO_TILT_ANGLE_DEGREES,
     OPEN_METEO_PERFORMANCE_RATIO,
+    TDCV_ELECTRICITY_KWH_BY_BAND,
+    HEAT_PUMP_ANNUAL_KWH_ESTIMATE,
+    EV_ANNUAL_HOME_CHARGING_KWH_ESTIMATE,
     PLUGIN_KIT_COST_GBP,
     PLUGIN_ANNUAL_GENERATION_KWH,
     SELF_CONSUMPTION_RATE,
