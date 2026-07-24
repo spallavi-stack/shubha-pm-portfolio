@@ -200,6 +200,43 @@ async function lookupPostcodeRegion(postcode) {
   return { ok: true, postcode: result.postcode, country: result.country, region: result.region || null, latitude: result.latitude, longitude: result.longitude };
 }
 
+// [Inference — documented via PVGIS's own base URL (confirmed against
+// pvlib's official source) and corroborated by two independent secondary
+// sources describing the same parameter names/response shape, but this
+// prototype's integration hasn't been live-tested end to end against the
+// real API yet — untested unlike postcodes.io, which has been. Written to
+// fail safe: falls back to the country-level multiplier if wrong.
+const PVGIS_BASE_URL = 'https://re.jrc.ec.europa.eu/api/PVcalc';
+const PVGIS_SYSTEM_LOSS_PERCENT = 14; // [Assumption] PVGIS's own commonly-used default
+const PVGIS_TILT_ANGLE_DEGREES = 35; // [Assumption] commonly-cited near-optimal tilt for a UK roof
+const PVGIS_ASSUMED_PEAK_POWER_KWP = 4; // [Assumption] matches the ~4kW system ROOFTOP_ANNUAL_GENERATION_KWH is calibrated to
+const PVGIS_ASPECT_BY_ORIENTATION = { southFacing: 0, eastWestFacing: 90, northFacing: 180 };
+
+async function lookupPvgisGeneration(latitude, longitude, orientation) {
+  const aspect = PVGIS_ASPECT_BY_ORIENTATION[orientation];
+  const params = new URLSearchParams({ lat: String(latitude), lon: String(longitude), peakpower: String(PVGIS_ASSUMED_PEAK_POWER_KWP), loss: String(PVGIS_SYSTEM_LOSS_PERCENT), angle: String(PVGIS_TILT_ANGLE_DEGREES), aspect: String(aspect), outputformat: 'json' });
+  let response;
+  try {
+    response = await fetch(`${PVGIS_BASE_URL}?${params.toString()}`, { signal: AbortSignal.timeout(8000) });
+  } catch (err) {
+    return { ok: false, error: `Couldn't reach PVGIS (${err.message}).` };
+  }
+  if (!response.ok) {
+    return { ok: false, error: `PVGIS returned an unexpected error (HTTP ${response.status}).` };
+  }
+  let body;
+  try {
+    body = await response.json();
+  } catch (err) {
+    return { ok: false, error: `PVGIS's response wasn't valid JSON (${err.message}).` };
+  }
+  const annualKwh = body?.outputs?.totals?.fixed?.E_y;
+  if (typeof annualKwh !== 'number') {
+    return { ok: false, error: "PVGIS's response didn't contain the expected outputs.totals.fixed.E_y field." };
+  }
+  return { ok: true, annualGenerationKwh: Math.round(annualKwh), peakPowerKwp: PVGIS_ASSUMED_PEAK_POWER_KWP, tiltAngleDegrees: PVGIS_TILT_ANGLE_DEGREES };
+}
+
 async function calculateRooftopViabilityByPostcode(postcode, otherInputs) {
   const lookup = await lookupPostcodeRegion(postcode);
   if (!lookup.ok) {
@@ -207,14 +244,31 @@ async function calculateRooftopViabilityByPostcode(postcode, otherInputs) {
     result.postcodeLookup = { ok: false, error: lookup.error };
     return result;
   }
-  const regionalGeneration = REGIONAL_GENERATION_MULTIPLIER[lookup.country];
-  const result = calculateRooftopViability({ ...otherInputs, regionalGeneration });
+
+  const pvgis = await lookupPvgisGeneration(lookup.latitude, lookup.longitude, otherInputs.orientation);
+  let result;
+  if (pvgis.ok) {
+    result = calculateRooftopViability({
+      ...otherInputs,
+      generationOverride: {
+        value: pvgis.annualGenerationKwh,
+        tier: 'Inference — PVGIS coordinate estimate, contract not live-verified by this process',
+        note: `PVGIS's own estimate for this exact location, a ${pvgis.peakPowerKwp}kWp system at ${pvgis.tiltAngleDegrees}° tilt (assumed, not your actual roof pitch). More precise than the country-level multiplier, but this integration hasn't been live-tested end to end yet — treat as directional until confirmed.`,
+      },
+    });
+    result.pvgisLookup = { ok: true };
+  } else {
+    const regionalGeneration = REGIONAL_GENERATION_MULTIPLIER[lookup.country];
+    result = calculateRooftopViability({ ...otherInputs, regionalGeneration });
+    result.pvgisLookup = { ok: false, error: pvgis.error };
+  }
+
   result.postcodeLookup = { ok: true, postcode: lookup.postcode, country: lookup.country, region: lookup.region };
   const regulatoryNote = REGIONS_WITH_UNRESEARCHED_REGULATORY_REGIME[lookup.country];
   if (regulatoryNote) {
     result.regulatoryFlag = { country: lookup.country, note: regulatoryNote };
   }
-  if (!regionalGeneration) {
+  if (!pvgis.ok && !REGIONAL_GENERATION_MULTIPLIER[lookup.country]) {
     result.postcodeLookup.note = `No regional generation figure for "${lookup.country}"; used the England-calibrated default.`;
   }
   return result;
@@ -253,9 +307,13 @@ function getSegTariffs() {
   return SEG_TARIFFS;
 }
 
-function calculateRooftopViability({ orientation, occupancy, annualConsumptionKwh, electricityPricePencePerKwh, segRatePencePerKwh, segTariffLabel, segTariffSource, regionalGeneration }) {
+function calculateRooftopViability({ orientation, occupancy, annualConsumptionKwh, electricityPricePencePerKwh, segRatePencePerKwh, segTariffLabel, segTariffSource, regionalGeneration, generationOverride }) {
   const baseGeneration = ROOFTOP_ANNUAL_GENERATION_KWH[orientation];
-  const generation = regionalGeneration ? Math.round(baseGeneration * regionalGeneration.value) : baseGeneration;
+  const generation = generationOverride
+    ? generationOverride.value
+    : regionalGeneration
+      ? Math.round(baseGeneration * regionalGeneration.value)
+      : baseGeneration;
   const selfConsumptionRate = SELF_CONSUMPTION_RATE[occupancy];
   const selfConsumedKwh = Math.min(generation * selfConsumptionRate, annualConsumptionKwh);
   const exportedKwh = generation - selfConsumedKwh;
@@ -286,9 +344,11 @@ function calculateRooftopViability({ orientation, occupancy, annualConsumptionKw
         ? { value: usedSegRate, tier: 'User-provided', note: segTariffLabel ? `${segTariffLabel}${segTariffSource ? `, per ${segTariffSource}` : ''} (SEG tariff table, user-provided 23 July 2026, not independently fetched or verified)` : 'Your own stated rate' }
         : { value: usedSegRate, tier: 'Assumption (default)', note: 'The no-switch-needed baseline (median of tariffs open to anyone). Switching supplier or installing through a specific company can get a meaningfully higher rate, up to 25p/kWh — pick your actual tariff for an accurate result' },
       systemCostGbp: { value: ROOFTOP_SYSTEM_COST_GBP, tier: 'Assumption', note: 'Industry-consensus range is £5,500-£8,700; not a quote for your specific roof' },
-      generationKwh: regionalGeneration
-        ? { value: generation, tier: regionalGeneration.tier, note: `England-baseline figure (${baseGeneration}kWh/yr) adjusted by a ${regionalGeneration.value}x regional multiplier. ${regionalGeneration.note}` }
-        : { value: generation, tier: orientation === 'southFacing' ? 'Assumption' : 'Prototype estimate, not independently researched', note: 'Researched range is 3,400-4,200kWh/yr for a south-facing 4kW system, England-calibrated. No postcode given, so no regional adjustment applied.' },
+      generationKwh: generationOverride
+        ? { value: generation, tier: generationOverride.tier, note: generationOverride.note }
+        : regionalGeneration
+          ? { value: generation, tier: regionalGeneration.tier, note: `England-baseline figure (${baseGeneration}kWh/yr) adjusted by a ${regionalGeneration.value}x regional multiplier. ${regionalGeneration.note}` }
+          : { value: generation, tier: orientation === 'southFacing' ? 'Assumption' : 'Prototype estimate, not independently researched', note: 'Researched range is 3,400-4,200kWh/yr for a south-facing 4kW system, England-calibrated. No postcode given, so no regional adjustment applied.' },
       selfConsumptionRate: { value: selfConsumptionRate, tier: 'Prototype simplification', note: 'Modeled from occupancy as a rough proxy, not an independently researched figure' },
     },
   };
