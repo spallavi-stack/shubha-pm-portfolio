@@ -20,48 +20,104 @@
 // electricityPricePencePerKwh from the user and prefers it when given.
 const ELECTRICITY_PRICE_PENCE_PER_KWH_DEFAULT = 26.11;
 
-// [User-provided, 23 July 2026 — not independently fetched or verified by
-// this process] A named supplier/tariff SEG rate table for Q2-Q3 2026,
-// supplied by the user as a CSV export, each row citing a named source
-// (e.g. "Ofgem SEG Licensee Register," a supplier's own export-tariff page,
-// or a third-party comparison/league-table site). Named sourcing is real
-// and worth more than an anonymous number, but none of these sources have
-// actually been fetched and read by this process — treat as usable and
-// cited, not upgraded to Fact tier until someone with fetch access spot-
-// checks a sample against the named source directly. Sorted highest to
-// lowest rate. Tariffs requiring a supplier switch or an install through
-// that specific company are named as such — collapsing this into one
-// number would hide a real eligibility bar most users won't clear on day one.
+// [User-provided, 23 July 2026, partially spot-checked 23 Jul 2026] A named
+// supplier/tariff SEG rate table for Q2-Q3 2026, supplied by the user as a
+// CSV export, each row citing a named source (e.g. "Ofgem SEG Licensee
+// Register," a supplier's own export-tariff page, or a third-party
+// comparison/league-table site). Named sourcing is real and worth more than
+// an anonymous number. Nine rows (the ones citing Ofgem's SEG Licensee
+// Register, Octopus Energy's own pages, and British Gas's own page) have
+// since been spot-checked directly against those named sources — see each
+// row's own comment for what was actually confirmed. Two came back clean
+// Facts (Outgoing Octopus, Octopus's base SEG tariff); the rest turned up
+// real mismatches worth reading before trusting: Ofgem's register lists
+// licensee names only, never rates, so it can't be the actual source for
+// any of the three rows citing it; British Gas's "Export & Earn Plus" no
+// longer exists under that name on their current page; Intelligent Octopus
+// Flux isn't a flat rate. The remaining 21 rows (of 30 total; Solar Energy
+// UK's League Table, Uswitch's guide) are still unchecked — same caution as
+// before applies to those specifically. Sorted highest to lowest rate. Tariffs
+// requiring a supplier switch or an install through that specific company
+// are named as such — collapsing this into one number would hide a real
+// eligibility bar most users won't clear on day one.
 const SEG_TARIFFS = [
   { supplier: 'Good Energy', tariff: 'Solar Savings Exclusive', ratePencePerKwh: 25.0, rateType: 'Fixed', eligibility: 'Good Energy import customer + system installed by Good Energy', source: 'Solar Energy UK SEG League Table' },
-  { supplier: 'Octopus Energy', tariff: 'Intelligent Octopus Flux', ratePencePerKwh: 23.0, rateType: 'Smart/Variable', eligibility: 'Octopus import customer with compatible solar + battery setup', source: 'Octopus Energy Export Tariffs' },
+  // [MISMATCH — checked 23 Jul 2026] octopus.energy's own Intelligent Octopus
+  // Flux and Flux pages, fetched directly, state no single flat rate — export
+  // pricing is peak/off-peak and/or postcode-specific via a live rate
+  // checker, and one live page currently shows the tariff "temporarily
+  // unavailable" due to market volatility. A flat 23.0p doesn't match how
+  // Octopus actually prices this tariff; treat as unconfirmed, not Fact.
+  { supplier: 'Octopus Energy', tariff: 'Intelligent Octopus Flux', ratePencePerKwh: 23.0, rateType: 'Smart/Variable', eligibility: 'Octopus import customer with compatible solar + battery setup', source: 'Octopus Energy Export Tariffs (checked 23 Jul 2026: no flat rate stated — peak/off-peak and postcode-variable; currently shown unavailable)' },
   { supplier: 'OVO Energy', tariff: 'SEG Install Exclusive', ratePencePerKwh: 20.0, rateType: 'Variable', eligibility: 'OVO import customer + system bought through OVO', source: 'Solar Energy UK SEG League Table' },
   { supplier: 'So Energy', tariff: 'So Bright', ratePencePerKwh: 20.0, rateType: 'Fixed', eligibility: 'Installed solar/battery via So Energy (no import switch needed)', source: 'Uswitch Solar Export Guide' },
   { supplier: 'EDF Energy', tariff: 'Export Exclusive 12m V3', ratePencePerKwh: 18.0, rateType: 'Fixed', eligibility: 'EDF import customer + system installed by EDF / Contact Solar', source: 'Solar Energy UK SEG League Table' },
   { supplier: 'E.ON Next', tariff: 'Next Export Premium v3', ratePencePerKwh: 17.5, rateType: 'Fixed', eligibility: 'E.ON import customer + system installed by E.ON', source: 'Solar Energy UK SEG League Table' },
-  { supplier: 'British Gas', tariff: 'Export & Earn Plus', ratePencePerKwh: 15.1, rateType: 'Variable', eligibility: 'British Gas electricity import customer', source: 'British Gas SEG Tariffs' },
+  // [MISMATCH — checked 23 Jul 2026, twice via direct fetch] britishgas.co.uk's
+  // current SEG tariff page contains neither "Export & Earn Plus" nor "15.1"
+  // anywhere (confirmed via explicit string search on two separate fetches).
+  // Current live tariffs are named differently: "Export Premium" (12p/kWh,
+  // systems <=15kW, BG electricity customers) and "Export Extra" (8p/kWh,
+  // >15kW). Reads as a real rename/restructure since the CSV was compiled,
+  // not a stale-but-still-accurate figure. Left unchanged rather than
+  // silently replaced — the name and rate would both need revisiting.
+  { supplier: 'British Gas', tariff: 'Export & Earn Plus', ratePencePerKwh: 15.1, rateType: 'Variable', eligibility: 'British Gas electricity import customer', source: 'britishgas.co.uk (checked 23 Jul 2026): name/rate not found — closest current match is "Export Premium" at 12p' },
   { supplier: 'EDF Energy', tariff: 'Export 12m', ratePencePerKwh: 15.0, rateType: 'Fixed', eligibility: 'EDF electricity import customer', source: 'Uswitch Solar Export Guide' },
   { supplier: 'Good Energy', tariff: 'Solar Savings', ratePencePerKwh: 15.0, rateType: 'Variable', eligibility: 'Good Energy electricity import customer', source: 'Solar Energy UK SEG League Table' },
   { supplier: 'ScottishPower', tariff: 'SmartGen Premium Plus', ratePencePerKwh: 15.0, rateType: 'Variable', eligibility: 'ScottishPower import customer + system installed by ScottishPower', source: 'Solar Energy UK SEG League Table' },
   { supplier: 'E.ON Next', tariff: 'Next Export Exclusive v3', ratePencePerKwh: 13.0, rateType: 'Fixed', eligibility: 'E.ON electricity import customer', source: 'Uswitch Solar Export Guide' },
-  { supplier: '100Green', tariff: 'Export Tariff', ratePencePerKwh: 12.0, rateType: 'Variable', eligibility: '100Green electricity import customer', source: 'Ofgem SEG Licensee Register' },
-  { supplier: 'Octopus Energy', tariff: 'Outgoing Octopus', ratePencePerKwh: 12.0, rateType: 'Fixed', eligibility: 'Octopus electricity import customer', source: 'Octopus Energy Export Tariffs' },
+  // [MISMATCH — checked 23 Jul 2026] Ofgem's SEG Licensee Register
+  // (ofgem.gov.uk/guidance/smart-export-guarantee-supplier-list, fetched
+  // directly) lists only which suppliers hold an SEG licence, never rates —
+  // it cannot be this row's actual rate source for any supplier. Separately,
+  // "100Green" doesn't appear on the current (Apr 2026-Mar 2027) register
+  // under that name or its known legal name "Green Energy (UK) Ltd" — its
+  // SEG-licensee status itself is unconfirmed, not just the rate.
+  { supplier: '100Green', tariff: 'Export Tariff', ratePencePerKwh: 12.0, rateType: 'Variable', eligibility: '100Green electricity import customer', source: 'Ofgem SEG Licensee Register (checked 23 Jul 2026: name-only, no rates published; 100Green not found on current list)' },
+  // [Fact — confirmed 23 Jul 2026] octopus.energy/smart/outgoing/, fetched
+  // directly, states this flat rate explicitly: "get paid a flat rate when
+  // you generate more power than you use," 12p/kWh.
+  { supplier: 'Octopus Energy', tariff: 'Outgoing Octopus', ratePencePerKwh: 12.0, rateType: 'Fixed', eligibility: 'Octopus electricity import customer', source: 'octopus.energy/smart/outgoing/ (fetched directly, 23 Jul 2026)' },
   { supplier: 'OVO Energy', tariff: 'SEG Beyond Exclusive', ratePencePerKwh: 12.0, rateType: 'Fixed', eligibility: "OVO import customer on 'OVO Beyond' plan", source: 'Uswitch Solar Export Guide' },
   { supplier: 'ScottishPower', tariff: 'SmartGen Premium', ratePencePerKwh: 12.0, rateType: 'Variable', eligibility: 'ScottishPower electricity import customer', source: 'Solar Energy UK SEG League Table' },
-  { supplier: 'Fuse Energy', tariff: 'Fuse Export', ratePencePerKwh: 10.0, rateType: 'Variable', eligibility: 'Fuse Energy electricity customer', source: 'Ofgem SEG Licensee Register' },
-  { supplier: 'Octopus Energy', tariff: 'Outgoing Agile', ratePencePerKwh: 9.1, rateType: 'Wholesale Variable', eligibility: 'Octopus import customer (tracks 30-min market rates)', source: 'Octopus Energy Export Tariffs' },
+  // [MISMATCH — checked 23 Jul 2026] Same Ofgem register as above, fetched
+  // directly: confirms "Fuse Energy Supply Limited" is a real, current
+  // mandatory SEG licensee, but the register lists names only, never rates.
+  // The 10.0p figure itself is unverified by this citation.
+  { supplier: 'Fuse Energy', tariff: 'Fuse Export', ratePencePerKwh: 10.0, rateType: 'Variable', eligibility: 'Fuse Energy electricity customer', source: 'Ofgem SEG Licensee Register (checked 23 Jul 2026: confirms Fuse Energy is a real licensee, but lists no rates)' },
+  // [Assumption — checked 23 Jul 2026, not confirmable as a single figure]
+  // Octopus's own pages describe Agile Outgoing as dynamic (half-hourly,
+  // tracks wholesale prices) with no single stated rate to check against —
+  // there's no primary "the rate is X.Xp" figure to fetch. A secondary
+  // aggregator's calculated year-average (Apr 2025-Apr 2026) came out to
+  // ~9.4p, close to but not an exact primary match for this row's 9.1p.
+  // Left as Assumption; any flat figure is inherently an approximation here.
+  { supplier: 'Octopus Energy', tariff: 'Outgoing Agile', ratePencePerKwh: 9.1, rateType: 'Wholesale Variable', eligibility: 'Octopus import customer (tracks 30-min market rates)', source: 'Octopus Energy Export Tariffs (checked 23 Jul 2026: inherently dynamic, no single primary rate to verify — secondary year-average ~9.4p)' },
   { supplier: 'Utility Warehouse', tariff: 'UW SEG – Bundle', ratePencePerKwh: 8.0, rateType: 'Variable', eligibility: 'UW import customer bundling 2+ additional services', source: 'Solar Energy UK SEG League Table' },
   { supplier: 'E.ON Next', tariff: 'Next Flex Export v1', ratePencePerKwh: 6.0, rateType: 'Variable', eligibility: 'Open to non-customers / E.ON import customers', source: 'Uswitch Solar Export Guide' },
   { supplier: 'ScottishPower', tariff: 'SmartGen', ratePencePerKwh: 6.0, rateType: 'Variable', eligibility: 'Open to anyone (no switch needed)', source: 'Solar Energy UK SEG League Table' },
   { supplier: 'EDF Energy', tariff: 'SEG Export Variable Value', ratePencePerKwh: 5.6, rateType: 'Variable', eligibility: 'EDF residential SEG customers', source: 'Solar Energy UK SEG League Table' },
   { supplier: 'So Energy', tariff: 'So Export Flex', ratePencePerKwh: 4.5, rateType: 'Variable', eligibility: 'Open to anyone (no switch needed)', source: 'Uswitch Solar Export Guide' },
-  { supplier: 'Octopus Energy', tariff: 'Smart Export Guarantee', ratePencePerKwh: 4.1, rateType: 'Fixed', eligibility: 'Open to anyone (no switch needed)', source: 'Octopus Energy SEG Official Page' },
+  // [Fact — confirmed 23 Jul 2026] octopus.energy/smart/smart-export-guarantee/,
+  // fetched directly, states 4.1p/kWh flat, open to export-only customers
+  // (no Octopus import switch required) — matches.
+  { supplier: 'Octopus Energy', tariff: 'Smart Export Guarantee', ratePencePerKwh: 4.1, rateType: 'Fixed', eligibility: 'Open to anyone (no switch needed)', source: 'octopus.energy/smart/smart-export-guarantee/ (fetched directly, 23 Jul 2026)' },
   { supplier: 'OVO Energy', tariff: 'Standard SEG', ratePencePerKwh: 4.0, rateType: 'Variable', eligibility: 'Open to anyone (no switch needed)', source: 'Uswitch Solar Export Guide' },
-  { supplier: 'British Gas', tariff: 'Standard SEG', ratePencePerKwh: 3.02, rateType: 'Variable', eligibility: 'Open to anyone (no switch needed)', source: 'British Gas SEG Tariffs' },
+  // [Assumption — partially checked 23 Jul 2026] britishgas.co.uk's current
+  // page has no tariff literally named "Standard SEG," but "Export SEG"
+  // (non-British Gas customers) pays 3p/kWh — close enough to this row's
+  // 3.02p to plausibly be the same tariff renamed, though not an exact name
+  // match. Rate is essentially confirmed; the name is not.
+  { supplier: 'British Gas', tariff: 'Standard SEG', ratePencePerKwh: 3.02, rateType: 'Variable', eligibility: 'Open to anyone (no switch needed)', source: 'britishgas.co.uk (checked 23 Jul 2026): rate close to current "Export SEG" (3p); tariff name doesn\'t match exactly' },
   { supplier: 'EDF Energy', tariff: 'SEG Export Variable', ratePencePerKwh: 3.0, rateType: 'Variable', eligibility: 'Open to anyone (no switch needed)', source: 'Uswitch Solar Export Guide' },
   { supplier: 'Utilita', tariff: 'Smart Export Guarantee', ratePencePerKwh: 3.0, rateType: 'Variable', eligibility: 'Open to anyone (no switch needed)', source: 'Uswitch Solar Export Guide' },
   { supplier: 'Utility Warehouse', tariff: 'UW SEG – Standard', ratePencePerKwh: 2.0, rateType: 'Variable', eligibility: 'Open to anyone (no switch needed)', source: 'Uswitch Solar Export Guide' },
-  { supplier: 'Outfox Energy', tariff: 'Outfox Export', ratePencePerKwh: 1.05, rateType: 'Variable', eligibility: 'Open to anyone (no switch needed)', source: 'Ofgem SEG Licensee Register' },
+  // [MISMATCH — checked 23 Jul 2026] Same Ofgem register, fetched directly:
+  // confirms "Foxglove Energy Supply Limited" — Outfox Energy's registered
+  // legal/trading name — as a real, current mandatory SEG licensee, but
+  // again the register lists names only, never rates. The 1.05p figure
+  // itself is unverified by this citation.
+  { supplier: 'Outfox Energy', tariff: 'Outfox Export', ratePencePerKwh: 1.05, rateType: 'Variable', eligibility: 'Open to anyone (no switch needed)', source: 'Ofgem SEG Licensee Register (checked 23 Jul 2026: confirms Foxglove Energy Supply Ltd, Outfox\'s legal name, is a real licensee, but lists no rates)' },
   { supplier: 'E (Gas & Electricity)', tariff: 'SEG Tariff', ratePencePerKwh: 1.0, rateType: 'Variable', eligibility: 'Open to anyone (no switch needed)', source: 'Uswitch Solar Export Guide' },
 ];
 
@@ -199,7 +255,7 @@ function calculateRooftopViability({
             value: usedSegRate,
             tier: 'User-provided',
             note: segTariffLabel
-              ? `${segTariffLabel}${segTariffSource ? `, per ${segTariffSource}` : ''} (SEG tariff table, user-provided 23 July 2026, not independently fetched or verified by this process)`
+              ? `${segTariffLabel}${segTariffSource ? `, per ${segTariffSource}` : ''} (from the user-provided SEG tariff table, dated 23 July 2026)`
               : "Your own stated rate",
           }
         : {
