@@ -144,6 +144,33 @@ const ROOFTOP_ANNUAL_GENERATION_KWH = {
   northFacing: 1900, // prototype estimate only, not independently researched
 };
 
+// [Inference — WebSearch findings, 24 Jul 2026, not independently fetched
+// against a primary source] UK regional solar irradiance varies enough to
+// matter: general figures put South England around 900-1,100kWh/kW/yr and
+// Scotland around 850-900kWh/kW/yr. A separate specific London/Brighton/
+// Glasgow example found in the same search implied somewhat different
+// per-kW figures than that general range — the two sources don't fully
+// agree, which is why this is Inference, not Fact. ROOFTOP_ANNUAL_GENERATION_KWH
+// above is treated as the England baseline (multiplier 1.0). Wales and
+// Northern Ireland have no figure found in this search at all; both are
+// extrapolated from Scotland's climate/latitude band, which is a weaker
+// claim than the England/Scotland split itself and flagged as such below.
+const REGIONAL_GENERATION_MULTIPLIER = {
+  England: { value: 1.0, tier: 'Baseline', note: 'ROOFTOP_ANNUAL_GENERATION_KWH figures above are themselves England-calibrated; this is the reference point, not a separate finding.' },
+  Wales: { value: 0.93, tier: 'Assumption — extrapolated, not independently found', note: 'No Wales-specific figure found; placed between England and Scotland as a geographic estimate only.' },
+  Scotland: { value: 0.85, tier: 'Inference', note: 'General researched range ~850-900kWh/kW/yr vs England ~900-1,100kWh/kW/yr; low end of that ratio used. A separate specific-city example in the same research did not fully agree with this general range.' },
+  'Northern Ireland': { value: 0.85, tier: 'Assumption — extrapolated, not independently found', note: "No Northern Ireland-specific figure found; assumed similar to Scotland's climate/latitude band." },
+};
+
+// Scotland and Wales have differing permitted-development/building-regulation
+// regimes for solar installations that this prototype has not researched in
+// depth (grounding-research.md flags this explicitly). Surfaced as a flag,
+// not folded silently into the generation number.
+const REGIONS_WITH_UNRESEARCHED_REGULATORY_REGIME = {
+  Scotland: 'Scotland has its own permitted-development and building-regulation regime for solar installations, separate from England and Wales, which this prototype has not researched in depth. Check with your local authority before relying on this result for a Scottish address.',
+  Wales: 'Wales has its own permitted-development regime for solar installations, separate from England, which this prototype has not researched in depth. Check with your local authority before relying on this result for a Welsh address.',
+};
+
 // [Assumption — "the weakest data in this document," per grounding-research.md
 // §Plug-in/balcony solar cost and generation]. Kit cost reported £400-900,
 // generation 640-900kWh/year. Midpoints used below; treat outputs from this
@@ -212,6 +239,7 @@ function findSegTariff(supplier, tariff) {
  * @param {number} [input.segRatePencePerKwh] - a specific SEG tariff's rate, e.g. from findSegTariff(); falls back to the no-switch-needed baseline default if omitted
  * @param {string} [input.segTariffLabel] - "Supplier — Tariff name" for display, if segRatePencePerKwh came from a specific named tariff rather than a manually-typed number
  * @param {string} [input.segTariffSource] - the named source for that tariff row (e.g. "Ofgem SEG Licensee Register"), if available
+ * @param {Object} [input.regionalGeneration] - a REGIONAL_GENERATION_MULTIPLIER entry, e.g. from resolvePostcodeRegion(); omit to use the England-calibrated baseline unchanged
  */
 function calculateRooftopViability({
   orientation,
@@ -221,8 +249,10 @@ function calculateRooftopViability({
   segRatePencePerKwh,
   segTariffLabel,
   segTariffSource,
+  regionalGeneration,
 }) {
-  const generation = ROOFTOP_ANNUAL_GENERATION_KWH[orientation];
+  const baseGeneration = ROOFTOP_ANNUAL_GENERATION_KWH[orientation];
+  const generation = regionalGeneration ? Math.round(baseGeneration * regionalGeneration.value) : baseGeneration;
   const selfConsumptionRate = SELF_CONSUMPTION_RATE[occupancy];
   const selfConsumedKwh = Math.min(generation * selfConsumptionRate, annualConsumptionKwh);
   const exportedKwh = generation - selfConsumedKwh;
@@ -264,10 +294,98 @@ function calculateRooftopViability({
             note: "The no-switch-needed baseline (median of tariffs open to anyone). Switching supplier or installing through a specific company can get a meaningfully higher rate, up to 25p/kWh in the researched tariff table — pick your actual tariff for an accurate result",
           },
       systemCostGbp: { value: ROOFTOP_SYSTEM_COST_GBP, tier: 'Assumption', note: 'Industry-consensus range is £5,500-£8,700; not a quote for your specific roof' },
-      generationKwh: { value: generation, tier: orientation === 'southFacing' ? 'Assumption' : 'Prototype estimate, not independently researched', note: 'Researched range is 3,400-4,200kWh/yr for a south-facing 4kW system' },
+      generationKwh: regionalGeneration
+        ? { value: generation, tier: regionalGeneration.tier, note: `England-baseline figure (${baseGeneration}kWh/yr) adjusted by a ${regionalGeneration.value}x regional multiplier. ${regionalGeneration.note}` }
+        : { value: generation, tier: orientation === 'southFacing' ? 'Assumption' : 'Prototype estimate, not independently researched', note: 'Researched range is 3,400-4,200kWh/yr for a south-facing 4kW system, England-calibrated. No postcode given, so no regional adjustment applied.' },
       selfConsumptionRate: { value: selfConsumptionRate, tier: 'Prototype simplification', note: 'Modeled from occupancy as a rough proxy, not an independently researched figure' },
     },
   };
+}
+
+// --- Postcode / regional lookup ----------------------------------------------
+
+// [Fact — API contract, checked against public documentation, not live-called
+// from this session (network-restricted); needs a live check from a browser
+// or unrestricted session before being fully trusted] postcodes.io is a free,
+// open, no-auth-required UK postcode lookup API. GET
+// https://api.postcodes.io/postcodes/{postcode} returns { status, result:
+// { postcode, country, region, admin_district, latitude, longitude, ... } }
+// on success, or a non-200 status with an error body for an invalid/unknown
+// postcode.
+const POSTCODES_IO_BASE_URL = 'https://api.postcodes.io/postcodes/';
+
+/**
+ * Resolves a UK postcode to country/region/lat-long via postcodes.io.
+ * Runs client-side (browser fetch), not from this repo's dev/CI environment.
+ * @param {string} postcode
+ * @returns {Promise<{ok: true, postcode: string, country: string, region: string|null, latitude: number, longitude: number} | {ok: false, error: string}>}
+ */
+async function lookupPostcodeRegion(postcode) {
+  const cleaned = String(postcode || '').trim();
+  if (!cleaned) {
+    return { ok: false, error: 'No postcode entered.' };
+  }
+  const url = POSTCODES_IO_BASE_URL + encodeURIComponent(cleaned.replace(/\s+/g, ''));
+  let response;
+  try {
+    response = await fetch(url);
+  } catch (err) {
+    return { ok: false, error: `Couldn't reach the postcode lookup service (${err.message}). Falling back to the England-calibrated default.` };
+  }
+  if (response.status === 404) {
+    return { ok: false, error: `"${cleaned}" wasn't recognized as a valid UK postcode. Falling back to the England-calibrated default.` };
+  }
+  if (!response.ok) {
+    return { ok: false, error: `The postcode lookup service returned an unexpected error (HTTP ${response.status}). Falling back to the England-calibrated default.` };
+  }
+  const body = await response.json();
+  const result = body && body.result;
+  if (!result) {
+    return { ok: false, error: `"${cleaned}" wasn't recognized as a valid UK postcode. Falling back to the England-calibrated default.` };
+  }
+  return {
+    ok: true,
+    postcode: result.postcode,
+    country: result.country,
+    region: result.region || null,
+    latitude: result.latitude,
+    longitude: result.longitude,
+  };
+}
+
+/**
+ * Postcode-aware wrapper around calculateRooftopViability: resolves the
+ * postcode to a country via postcodes.io, applies that country's generation
+ * multiplier and any unresearched-regulatory-regime flag, then delegates the
+ * actual scoring to the pure, synchronous calculateRooftopViability. On a
+ * failed/unresolvable postcode, falls back to the unadjusted England
+ * baseline rather than blocking the calculation.
+ * @param {string} postcode
+ * @param {Object} otherInputs - same shape as calculateRooftopViability's input, minus regionalGeneration
+ */
+async function calculateRooftopViabilityByPostcode(postcode, otherInputs) {
+  const lookup = await lookupPostcodeRegion(postcode);
+  if (!lookup.ok) {
+    const result = calculateRooftopViability(otherInputs);
+    result.postcodeLookup = { ok: false, error: lookup.error };
+    return result;
+  }
+  const regionalGeneration = REGIONAL_GENERATION_MULTIPLIER[lookup.country];
+  const result = calculateRooftopViability({ ...otherInputs, regionalGeneration });
+  result.postcodeLookup = {
+    ok: true,
+    postcode: lookup.postcode,
+    country: lookup.country,
+    region: lookup.region,
+  };
+  const regulatoryNote = REGIONS_WITH_UNRESEARCHED_REGULATORY_REGIME[lookup.country];
+  if (regulatoryNote) {
+    result.regulatoryFlag = { country: lookup.country, note: regulatoryNote };
+  }
+  if (!regionalGeneration) {
+    result.postcodeLookup.note = `No regional generation figure for "${lookup.country}"; used the England-calibrated default.`;
+  }
+  return result;
 }
 
 // --- Plug-in calculator -------------------------------------------------------
@@ -310,7 +428,9 @@ function calculatePluginViability({ occupancy, electricityPricePencePerKwh }) {
 
 const SunnySideUpCalculator = {
   calculateRooftopViability,
+  calculateRooftopViabilityByPostcode,
   calculatePluginViability,
+  lookupPostcodeRegion,
   getSegTariffs,
   findSegTariff,
   constants: {
@@ -319,6 +439,8 @@ const SunnySideUpCalculator = {
     SEG_TARIFFS,
     ROOFTOP_SYSTEM_COST_GBP,
     ROOFTOP_ANNUAL_GENERATION_KWH,
+    REGIONAL_GENERATION_MULTIPLIER,
+    REGIONS_WITH_UNRESEARCHED_REGULATORY_REGIME,
     PLUGIN_KIT_COST_GBP,
     PLUGIN_ANNUAL_GENERATION_KWH,
     SELF_CONSUMPTION_RATE,

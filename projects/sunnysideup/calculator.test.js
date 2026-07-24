@@ -5,7 +5,7 @@
  * the calculator's output lands in the ranges grounding-research.md actually
  * reports, run before any UI is built on top of this logic.
  */
-const { calculateRooftopViability, calculatePluginViability, findSegTariff } = require('./calculator.js');
+const { calculateRooftopViability, calculateRooftopViabilityByPostcode, calculatePluginViability, findSegTariff, constants } = require('./calculator.js');
 
 function printResult(label, result) {
   console.log(`\n--- ${label} ---`);
@@ -81,6 +81,41 @@ printResult(
     segTariffSource: octopusOutgoing.source,
   })
 );
+
+// Regional generation multiplier applied manually (regionalGeneration is the
+// public shape returned by REGIONAL_GENERATION_MULTIPLIER[country], not a
+// network call) — Scotland's 0.85x should show up as a reduced generationKwh
+// and a longer payback than the same scenario with no regional adjustment.
+printResult(
+  'Rooftop — south-facing, usually home, 4,000kWh/yr, Scotland regional multiplier (0.85x)',
+  calculateRooftopViability({
+    orientation: 'southFacing',
+    occupancy: 'usuallyHome',
+    annualConsumptionKwh: 4000,
+    regionalGeneration: constants.REGIONAL_GENERATION_MULTIPLIER.Scotland,
+  })
+);
+
+// calculateRooftopViabilityByPostcode is async and calls postcodes.io over
+// the network — this sandboxed environment is network-restricted (see
+// CLAUDE.md), so this is expected to hit the lookup-failure fallback path,
+// not a live-resolved postcode. That's still worth checking: the fallback
+// should return a normal, usable result (England-baseline generation) with
+// postcodeLookup.ok === false and a clear error message, not a thrown
+// exception or a silently wrong number. A live postcode (e.g. real success
+// resolving to Scotland/Wales/Northern Ireland with the regional multiplier
+// and, for Scotland/Wales, a regulatoryFlag attached) still needs checking
+// from an unrestricted session or a real browser before fully trusting the
+// success path's exact response shape from postcodes.io.
+(async () => {
+  const result = await calculateRooftopViabilityByPostcode('EH1 1BB', {
+    orientation: 'southFacing',
+    occupancy: 'usuallyHome',
+    annualConsumptionKwh: 4000,
+  });
+  printResult('Rooftop by postcode — EH1 1BB (network-restricted session, fallback path expected)', result);
+  console.log('- postcodeLookup.ok should be false here (network-restricted session), with generationKwh falling back to the unadjusted England baseline (3,800), not a thrown error or NaN.');
+})();
 
 console.log('\nSanity checks:');
 console.log('- Rooftop south-facing/usually-home payback (default SEG rate) should now be longer than before the tariff-table update, since the no-switch-needed baseline dropped from 15p to 4p.');
