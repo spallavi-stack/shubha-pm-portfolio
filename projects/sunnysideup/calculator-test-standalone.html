@@ -209,10 +209,12 @@ async function lookupPostcodeRegion(postcode) {
 //
 // [Inference — corroborated by multiple independent secondary sources, not
 // fetched directly against Open-Meteo's own docs (blocked, same as
-// elsewhere). Its docs explicitly claim CORS support, unlike PVGIS, but
-// that claim and the contract below are still unconfirmed by a live call
-// from this process — needs the same live-browser check PVGIS got.]
-// Open-Meteo's archive API returns hourly Global Tilted Irradiance (W/m²)
+// elsewhere). Confirmed working end to end via a live browser test (Chrome
+// DevTools, 24 July 2026): a real London postcode resolved to
+// 1,104.3kWh/m²/yr with no CORS error, landing in the same range this
+// project's own separate research found for South England
+// (900-1,100kWh/kW/yr) — one location/orientation confirmed, not
+// exhaustive.] Open-Meteo's archive API returns hourly Global Tilted Irradiance (W/m²)
 // for a lat/lon/tilt/azimuth over a date range (same south=0/east=-90/
 // west=90/north=±180 azimuth convention as PVGIS). Converted to an annual
 // generation estimate via the standard PV yield formula: annual generation
@@ -271,8 +273,8 @@ async function calculateRooftopViabilityByPostcode(postcode, otherInputs) {
       ...otherInputs,
       generationOverride: {
         value: openMeteo.annualGenerationKwh,
-        tier: 'Inference — Open-Meteo coordinate estimate, contract not live-verified by this process',
-        note: `Derived from Open-Meteo's ${openMeteo.yearUsed} hourly irradiance data for this exact location (${openMeteo.annualInsolationKwhPerM2}kWh/m²/yr on a ${openMeteo.tiltAngleDegrees}° tilted plane), scaled to a ${openMeteo.peakPowerKwp}kWp system at a ${openMeteo.performanceRatio} performance ratio (both assumed, not your actual system). More precise than the country-level multiplier, but this integration hasn't been live-tested end to end yet — treat as directional until confirmed.`,
+        tier: 'Inference — Open-Meteo coordinate estimate, confirmed working via a live browser test (24 Jul 2026) but not exhaustively verified across locations/orientations',
+        note: `Derived from Open-Meteo's ${openMeteo.yearUsed} hourly irradiance data for this exact location (${openMeteo.annualInsolationKwhPerM2}kWh/m²/yr on a ${openMeteo.tiltAngleDegrees}° tilted plane), scaled to a ${openMeteo.peakPowerKwp}kWp system at a ${openMeteo.performanceRatio} performance ratio (both assumed, not your actual system). More precise than the country-level multiplier.`,
       },
     });
     result.openMeteoLookup = { ok: true };
