@@ -235,7 +235,8 @@ function findSegTariff(supplier, tariff) {
  * @param {'southFacing'|'eastWestFacing'|'northFacing'} input.orientation
  * @param {'usuallyHome'|'usuallyOut'} input.occupancy
  * @param {number} input.annualConsumptionKwh - household's own annual electricity use
- * @param {number} [input.electricityPricePencePerKwh] - the user's own known rate; falls back to the Ofgem price-cap default if omitted
+ * @param {number} [input.electricityPricePencePerKwh] - the user's own known rate; takes precedence over electricityPriceOverride and the static default
+ * @param {Object} [input.electricityPriceOverride] - a specific { value, tier, note } to use for the electricity price outright (e.g. a live-fetched current regional rate), used only if electricityPricePencePerKwh is omitted; falls back to the static Ofgem default if this is also omitted
  * @param {number} [input.segRatePencePerKwh] - a specific SEG tariff's rate, e.g. from findSegTariff(); falls back to the no-switch-needed baseline default if omitted
  * @param {string} [input.segTariffLabel] - "Supplier — Tariff name" for display, if segRatePencePerKwh came from a specific named tariff rather than a manually-typed number
  * @param {string} [input.segTariffSource] - the named source for that tariff row (e.g. "Ofgem SEG Licensee Register"), if available
@@ -247,6 +248,7 @@ function calculateRooftopViability({
   occupancy,
   annualConsumptionKwh,
   electricityPricePencePerKwh,
+  electricityPriceOverride,
   segRatePencePerKwh,
   segTariffLabel,
   segTariffSource,
@@ -263,9 +265,13 @@ function calculateRooftopViability({
   const selfConsumedKwh = Math.min(generation * selfConsumptionRate, annualConsumptionKwh);
   const exportedKwh = generation - selfConsumedKwh;
 
-  const usedElectricityPrice = electricityPricePencePerKwh ?? ELECTRICITY_PRICE_PENCE_PER_KWH_DEFAULT;
-  const usedSegRate = segRatePencePerKwh ?? SEG_RATE_PENCE_PER_KWH_DEFAULT;
   const electricityPriceIsUserProvided = electricityPricePencePerKwh != null;
+  const usedElectricityPrice = electricityPriceIsUserProvided
+    ? electricityPricePencePerKwh
+    : electricityPriceOverride
+      ? electricityPriceOverride.value
+      : ELECTRICITY_PRICE_PENCE_PER_KWH_DEFAULT;
+  const usedSegRate = segRatePencePerKwh ?? SEG_RATE_PENCE_PER_KWH_DEFAULT;
   const segRateIsUserProvided = segRatePencePerKwh != null;
 
   const annualSavingsGbp = (selfConsumedKwh * usedElectricityPrice + exportedKwh * usedSegRate) / 100;
@@ -285,7 +291,9 @@ function calculateRooftopViability({
     assumptions: {
       electricityPricePencePerKwh: electricityPriceIsUserProvided
         ? { value: usedElectricityPrice, tier: 'User-provided', note: 'Your own stated rate' }
-        : { value: usedElectricityPrice, tier: 'Fact (default)', note: "Ofgem price cap, Jul-Sep 2026, changes quarterly, and applies only to default/standard-variable tariffs — if you're on a fixed deal, enter your own rate for an accurate result" },
+        : electricityPriceOverride
+          ? { value: usedElectricityPrice, tier: electricityPriceOverride.tier, note: electricityPriceOverride.note }
+          : { value: usedElectricityPrice, tier: 'Fact (default)', note: "Ofgem price cap, Jul-Sep 2026, changes quarterly, and applies only to default/standard-variable tariffs — if you're on a fixed deal, enter your own rate for an accurate result" },
       segRatePencePerKwh: segRateIsUserProvided
         ? {
             value: usedSegRate,
@@ -462,15 +470,164 @@ async function lookupOpenMeteoGeneration(latitude, longitude, orientation) {
   };
 }
 
+// --- Live electricity price lookup --------------------------------------------
+
+// [Fact — confirmed via GitHub source of a production Octopus Energy Home
+// Assistant integration (BottlecapDave/HomeAssistant-OctopusEnergy), not
+// fetched directly against Octopus's own docs pages (blocked, HTTP 403,
+// same restriction as everywhere else). Octopus Energy runs a genuinely
+// public, no-auth REST API exposing their product catalog and unit rates —
+// this solves "no one knows their kWh price" for the common default case
+// (a standard variable tariff) by fetching a real current rate for the
+// user's own region instead of asking them to type a number from memory or
+// falling back to a single UK-wide constant. Needs a live browser test
+// before being fully trusted end to end, same as Open-Meteo did — this is
+// a longer chained lookup (postcode -> GSP region -> current default
+// product -> that product's live unit rate) with more to go wrong than a
+// single API call, so treat it with proportionally more caution until
+// confirmed.
+const OCTOPUS_BASE_URL = 'https://api.octopus.energy/v1';
+
+/**
+ * Resolves a UK postcode to its electricity Grid Supply Point (GSP) region
+ * code (e.g. "_C" for London) — Octopus's own tariff codes are region-
+ * specific, so this is needed before a region-correct rate can be fetched.
+ * @param {string} postcode
+ */
+async function lookupGspRegion(postcode) {
+  const cleaned = String(postcode || '').trim();
+  if (!cleaned) {
+    return { ok: false, error: 'No postcode entered.' };
+  }
+  let response;
+  try {
+    response = await fetch(`${OCTOPUS_BASE_URL}/industry/grid-supply-points/?postcode=${encodeURIComponent(cleaned)}`, { signal: AbortSignal.timeout(8000) });
+  } catch (err) {
+    return { ok: false, error: `Couldn't reach Octopus's GSP lookup (${err.message}).` };
+  }
+  if (!response.ok) {
+    return { ok: false, error: `Octopus's GSP lookup returned an unexpected error (HTTP ${response.status}).` };
+  }
+  const body = await response.json();
+  const groupId = body?.results?.[0]?.group_id;
+  if (!groupId) {
+    return { ok: false, error: `Couldn't resolve a GSP region for "${cleaned}".` };
+  }
+  return { ok: true, groupId };
+}
+
+/**
+ * Finds Octopus's current flagship default variable-rate electricity
+ * product (the closest live equivalent to "the standard variable tariff
+ * most people are on without actively choosing a deal") by filtering the
+ * public products list, rather than hardcoding a product code — Octopus
+ * reissues these under a new dated code roughly every quarter as the Ofgem
+ * price cap changes, so a hardcoded code would go stale the same way the
+ * static ELECTRICITY_PRICE_PENCE_PER_KWH_DEFAULT constant does.
+ */
+async function lookupCurrentOctopusVariableProduct() {
+  let response;
+  try {
+    response = await fetch(`${OCTOPUS_BASE_URL}/products/?brand=OCTOPUS_ENERGY&is_variable=true`, { signal: AbortSignal.timeout(10000) });
+  } catch (err) {
+    return { ok: false, error: `Couldn't reach Octopus's product list (${err.message}).` };
+  }
+  if (!response.ok) {
+    return { ok: false, error: `Octopus's product list returned an unexpected error (HTTP ${response.status}).` };
+  }
+  const body = await response.json();
+  const products = body?.results;
+  if (!Array.isArray(products)) {
+    return { ok: false, error: "Octopus's product list response didn't contain the expected results array." };
+  }
+  // Heuristic, not a guaranteed match: excludes green/tracker/prepay/business
+  // variants and Agile-style wholesale-linked tariffs (no single flat rate to
+  // fetch, same reason Octopus's Agile SEG/export tariffs were left as
+  // Assumption-tier elsewhere in this file), looking for the plain
+  // "Flexible Octopus"-style default among currently-available products.
+  const candidates = products.filter(
+    (p) => !p.is_green && !p.is_tracker && !p.is_prepay && !p.is_business && !p.is_restricted && (p.available_to == null || new Date(p.available_to) > new Date())
+  );
+  if (candidates.length === 0) {
+    return { ok: false, error: 'No currently-available default variable Octopus product found matching the expected filters.' };
+  }
+  // Most recently launched matching product, since Octopus periodically
+  // reissues this tariff under a new code.
+  candidates.sort((a, b) => new Date(b.available_from) - new Date(a.available_from));
+  const product = candidates[0];
+  return { ok: true, productCode: product.code, displayName: product.display_name };
+}
+
+/**
+ * Fetches the current standard-unit-rate (Direct Debit, pence/kWh inc VAT)
+ * for a given Octopus product code + GSP region, via the single-register
+ * electricity tariff code convention (E-1R-{productCode}-{groupId}).
+ * @param {string} productCode
+ * @param {string} groupId - e.g. "_C", from lookupGspRegion()
+ */
+async function lookupOctopusUnitRate(productCode, groupId) {
+  const tariffCode = `E-1R-${productCode}-${groupId}`;
+  let response;
+  try {
+    response = await fetch(`${OCTOPUS_BASE_URL}/products/${productCode}/electricity-tariffs/${tariffCode}/standard-unit-rates/`, { signal: AbortSignal.timeout(10000) });
+  } catch (err) {
+    return { ok: false, error: `Couldn't reach Octopus's unit-rates endpoint (${err.message}).` };
+  }
+  if (!response.ok) {
+    return { ok: false, error: `Octopus's unit-rates endpoint returned an unexpected error (HTTP ${response.status}) for tariff code "${tariffCode}".` };
+  }
+  const body = await response.json();
+  const currentRate = body?.results?.[0];
+  const ratePencePerKwh = currentRate?.value_inc_vat;
+  if (typeof ratePencePerKwh !== 'number') {
+    return { ok: false, error: "Octopus's unit-rates response didn't contain the expected value_inc_vat field." };
+  }
+  return { ok: true, ratePencePerKwh, tariffCode, validFrom: currentRate.valid_from };
+}
+
+/**
+ * Chains the three lookups above into one live current electricity price
+ * for a given postcode: postcode -> GSP region, current default variable
+ * product, that product's live unit rate for the region. Falls back
+ * cleanly to { ok: false } (letting the caller use the static default) at
+ * any failed step, rather than throwing or silently producing a wrong
+ * number.
+ * @param {string} postcode
+ */
+async function lookupLiveElectricityPrice(postcode) {
+  const gsp = await lookupGspRegion(postcode);
+  if (!gsp.ok) {
+    return { ok: false, error: gsp.error };
+  }
+  const product = await lookupCurrentOctopusVariableProduct();
+  if (!product.ok) {
+    return { ok: false, error: product.error };
+  }
+  const rate = await lookupOctopusUnitRate(product.productCode, gsp.groupId);
+  if (!rate.ok) {
+    return { ok: false, error: rate.error };
+  }
+  return {
+    ok: true,
+    ratePencePerKwh: rate.ratePencePerKwh,
+    productDisplayName: product.displayName,
+    tariffCode: rate.tariffCode,
+    validFrom: rate.validFrom,
+  };
+}
+
 /**
  * Postcode-aware wrapper around calculateRooftopViability. Resolves the
  * postcode via postcodes.io, then tries Open-Meteo for a coordinate-precise
  * generation estimate; if Open-Meteo is unreachable or its response doesn't
  * match the assumed shape, falls back to the country-level generation
  * multiplier; if the postcode itself can't be resolved, falls back further
- * to the unadjusted England baseline. Never blocks the calculation.
+ * to the unadjusted England baseline. Also tries a live current electricity
+ * price for the user's region (via Octopus's public API) unless the user
+ * already gave their own rate, falling back to the static Ofgem default on
+ * any failure. Never blocks the calculation.
  * @param {string} postcode
- * @param {Object} otherInputs - same shape as calculateRooftopViability's input, minus regionalGeneration/generationOverride
+ * @param {Object} otherInputs - same shape as calculateRooftopViability's input, minus regionalGeneration/generationOverride/electricityPriceOverride
  */
 async function calculateRooftopViabilityByPostcode(postcode, otherInputs) {
   const lookup = await lookupPostcodeRegion(postcode);
@@ -480,23 +637,37 @@ async function calculateRooftopViabilityByPostcode(postcode, otherInputs) {
     return result;
   }
 
-  const openMeteo = await lookupOpenMeteoGeneration(lookup.latitude, lookup.longitude, otherInputs.orientation);
-  let result;
+  const userProvidedElectricityPrice = otherInputs.electricityPricePencePerKwh != null;
+  const [openMeteo, electricityPrice] = await Promise.all([
+    lookupOpenMeteoGeneration(lookup.latitude, lookup.longitude, otherInputs.orientation),
+    userProvidedElectricityPrice ? Promise.resolve({ ok: false, error: 'Skipped: you provided your own rate.' }) : lookupLiveElectricityPrice(postcode),
+  ]);
+
+  const calcInputs = { ...otherInputs };
   if (openMeteo.ok) {
-    result = calculateRooftopViability({
-      ...otherInputs,
-      generationOverride: {
-        value: openMeteo.annualGenerationKwh,
-        tier: 'Inference — Open-Meteo coordinate estimate, confirmed working via a live browser test (24 Jul 2026) but not exhaustively verified across locations/orientations',
-        note: `Derived from Open-Meteo's ${openMeteo.yearUsed} hourly irradiance data for this exact location (${openMeteo.annualInsolationKwhPerM2}kWh/m²/yr on a ${openMeteo.tiltAngleDegrees}° tilted, ${otherInputs.orientation === 'southFacing' ? 'south-facing' : otherInputs.orientation === 'northFacing' ? 'north-facing' : 'east/west-facing'} plane), scaled to a ${openMeteo.peakPowerKwp}kWp system at a ${openMeteo.performanceRatio} performance ratio (both assumed, not your actual system). More precise than the country-level multiplier.`,
-      },
-    });
-    result.openMeteoLookup = { ok: true };
+    calcInputs.generationOverride = {
+      value: openMeteo.annualGenerationKwh,
+      tier: 'Inference — Open-Meteo coordinate estimate, confirmed working via a live browser test (24 Jul 2026) but not exhaustively verified across locations/orientations',
+      note: `Derived from Open-Meteo's ${openMeteo.yearUsed} hourly irradiance data for this exact location (${openMeteo.annualInsolationKwhPerM2}kWh/m²/yr on a ${openMeteo.tiltAngleDegrees}° tilted, ${otherInputs.orientation === 'southFacing' ? 'south-facing' : otherInputs.orientation === 'northFacing' ? 'north-facing' : 'east/west-facing'} plane), scaled to a ${openMeteo.peakPowerKwp}kWp system at a ${openMeteo.performanceRatio} performance ratio (both assumed, not your actual system). More precise than the country-level multiplier.`,
+    };
   } else {
-    const regionalGeneration = REGIONAL_GENERATION_MULTIPLIER[lookup.country];
-    result = calculateRooftopViability({ ...otherInputs, regionalGeneration });
-    result.openMeteoLookup = { ok: false, error: openMeteo.error };
+    calcInputs.regionalGeneration = REGIONAL_GENERATION_MULTIPLIER[lookup.country];
   }
+  if (!userProvidedElectricityPrice && electricityPrice.ok) {
+    calcInputs.electricityPriceOverride = {
+      value: electricityPrice.ratePencePerKwh,
+      tier: "Inference — live-fetched from Octopus Energy's public API, not yet confirmed via a live browser test",
+      note: `Octopus's current "${electricityPrice.productDisplayName}" rate for your region (tariff ${electricityPrice.tariffCode}, valid from ${electricityPrice.validFrom}), fetched live rather than assumed. This is Octopus's own price-cap-tracking rate, not necessarily your actual supplier's identical figure — Ofgem's price cap sets a regional ceiling every standard-variable-tariff supplier must match or beat, so this is a close proxy if you're on a standard variable deal, not a guarantee if you're on a fixed deal or with a different supplier. Enter your own rate above for an exact result.`,
+    };
+  }
+
+  const result = calculateRooftopViability(calcInputs);
+  result.openMeteoLookup = openMeteo.ok ? { ok: true } : { ok: false, error: openMeteo.error };
+  result.electricityPriceLookup = userProvidedElectricityPrice
+    ? { ok: false, note: 'Skipped: you provided your own rate.' }
+    : electricityPrice.ok
+      ? { ok: true, productDisplayName: electricityPrice.productDisplayName, tariffCode: electricityPrice.tariffCode, validFrom: electricityPrice.validFrom }
+      : { ok: false, error: electricityPrice.error };
 
   result.postcodeLookup = {
     ok: true,
@@ -558,6 +729,10 @@ const SunnySideUpCalculator = {
   calculatePluginViability,
   lookupPostcodeRegion,
   lookupOpenMeteoGeneration,
+  lookupGspRegion,
+  lookupCurrentOctopusVariableProduct,
+  lookupOctopusUnitRate,
+  lookupLiveElectricityPrice,
   getSegTariffs,
   findSegTariff,
   constants: {

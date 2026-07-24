@@ -164,6 +164,50 @@ printResult(
   printResult('Rooftop by postcode — Scotland resolved, Open-Meteo succeeds (stubbed fetch: coordinate-precise estimate expected)', scotlandOpenMeteoSucceedsResult);
   console.log('- generationKwh should be 3,440 (1,000kWh/m²/yr stubbed insolation x 4kWp x 0.86 performance ratio), overriding the country multiplier entirely; regulatoryFlag should still be present (Scotland); openMeteoLookup.ok should be true.');
 
+  // Full chain success: postcode -> GSP region -> current default Octopus
+  // product -> that product's live unit rate. Exercises the electricity
+  // price lookup end to end, since a real network call can't be made from
+  // this sandboxed session (same restriction as postcodes.io/Open-Meteo).
+  global.fetch = async (url) => {
+    const u = String(url);
+    if (u.includes('postcodes.io')) {
+      return { ok: true, status: 200, json: async () => ({ result: { postcode: 'EH1 1BB', country: 'Scotland', region: 'Edinburgh, City of', latitude: 55.9533, longitude: -3.1883 } }) };
+    }
+    if (u.includes('archive-api.open-meteo.com')) {
+      return { ok: false, status: 500 }; // isolate: only testing the electricity-price chain here
+    }
+    if (u.includes('/industry/grid-supply-points/')) {
+      return { ok: true, status: 200, json: async () => ({ count: 1, results: [{ group_id: '_M' }] }) };
+    }
+    if (u.includes('/products/?')) {
+      return {
+        ok: true,
+        status: 200,
+        json: async () => ({
+          results: [
+            { code: 'VAR-22-11-01', display_name: 'Flexible Octopus', is_green: false, is_tracker: false, is_prepay: false, is_business: false, is_restricted: false, available_from: '2022-11-01T00:00:00Z', available_to: '2026-01-01T00:00:00Z' },
+            { code: 'VAR-25-09-01', display_name: 'Flexible Octopus', is_green: false, is_tracker: false, is_prepay: false, is_business: false, is_restricted: false, available_from: '2025-09-01T00:00:00Z', available_to: null },
+            { code: 'AGILE-24-04-03', display_name: 'Agile Octopus', is_green: false, is_tracker: true, is_prepay: false, is_business: false, is_restricted: false, available_from: '2024-04-03T00:00:00Z', available_to: null },
+          ],
+        }),
+      };
+    }
+    if (u.includes('/standard-unit-rates/')) {
+      if (!u.includes('E-1R-VAR-25-09-01-_M')) {
+        throw new Error('unexpected tariff code in stub URL: ' + u);
+      }
+      return { ok: true, status: 200, json: async () => ({ results: [{ value_inc_vat: 27.44, valid_from: '2026-07-01T00:00:00Z', valid_to: '2026-10-01T00:00:00Z' }] }) };
+    }
+    throw new Error('unexpected fetch URL in stub: ' + u);
+  };
+  const electricityPriceResult = await calculateRooftopViabilityByPostcode('EH1 1BB', {
+    orientation: 'southFacing',
+    occupancy: 'usuallyHome',
+    annualConsumptionKwh: 4000,
+  });
+  printResult('Rooftop by postcode — live electricity price chain succeeds (stubbed fetch: GSP -> current product -> unit rate)', electricityPriceResult);
+  console.log('- electricityPriceLookup.ok should be true, with productDisplayName "Flexible Octopus" and tariffCode "E-1R-VAR-25-09-01-_M" (the newer of the two matching stubbed products, by available_from — the older VAR-22-11-01 and the tracker-flagged Agile product should both be excluded by the filter). assumptions.electricityPricePencePerKwh.value should be 27.44, tier should start with "Inference — live-fetched".');
+
   global.fetch = async (url) => {
     if (String(url).includes('postcodes.io')) {
       return { ok: true, status: 200, json: async () => ({ result: { postcode: 'SW1A 1AA', country: 'England', region: 'London', latitude: 51.5, longitude: -0.14 } }) };
