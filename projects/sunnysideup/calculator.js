@@ -8,6 +8,28 @@
  * from occupancy pattern as a rough two-tier proxy — that specific mapping
  * was not independently researched and is a prototype-only simplification,
  * flagged in the assumptions output rather than presented as researched.
+ *
+ * WHY EACH VALUE IS SOURCED THE WAY IT IS: every input in this file falls
+ * into one of three sourcing strategies, chosen deliberately per input, not
+ * uniformly:
+ *   1. Live-fetched with a static fallback — used where a free, no-auth
+ *      public API exists AND the value is either genuinely location-
+ *      specific (postcodes.io, Open-Meteo) or regulatorily pinned to a
+ *      single trackable figure (the Octopus-fetched electricity price, a
+ *      proxy for the Ofgem price cap — see the reasoning above OCTOPUS_BASE_URL).
+ *   2. A static, dated, per-provider table — used where the underlying
+ *      value is genuinely discretionary per supplier, with no regulatory
+ *      ceiling or live source to proxy it through (SEG_TARIFFS: suppliers
+ *      set export rates as a commercial choice, unlike price-cap-tracked
+ *      import rates, so there's nothing analogous to fetch live).
+ *   3. A static Assumption-tier constant — used where no live, public,
+ *      anonymous data source exists at all, for anyone (system install
+ *      cost, plug-in kit cost/generation, self-consumption behavior,
+ *      payback thresholds) — see each constant's own comment for why.
+ * This isn't one blanket policy because the three categories of input are
+ * genuinely different problems; treating them identically would mean either
+ * inventing a live source that doesn't exist, or leaving a fetchable value
+ * needlessly static.
  */
 
 // --- Constants -------------------------------------------------------------
@@ -20,6 +42,22 @@
 // electricityPricePencePerKwh from the user and prefers it when given.
 const ELECTRICITY_PRICE_PENCE_PER_KWH_DEFAULT = 26.11;
 
+// WHY A STATIC TABLE HERE, NOT A LIVE FETCH LIKE THE ELECTRICITY PRICE
+// BELOW: SEG export rates are a genuine commercial choice each supplier
+// makes independently — unlike standard-variable *import* rates, they're
+// not tied to a single regulatory ceiling, so there's no equivalent of "the
+// cap" to fetch live as a trustworthy stand-in for every supplier at once
+// (see the reasoning above OCTOPUS_BASE_URL for that mechanism, which
+// doesn't apply here). Octopus's own SEG tariffs specifically could in
+// principle be fetched the same way their import rate is — their public
+// API does expose export tariffs too — but that would only ever cover one
+// supplier's rows in a 30-row table spanning many suppliers, not solve the
+// table as a whole, so it wasn't worth a second, narrower live-fetch path
+// alongside this one. A static, dated, per-supplier table is the only
+// approach that captures the real spread between suppliers, at the cost of
+// going stale between updates — the same tradeoff SEG_TARIFFS already
+// documents below.
+//
 // [User-provided, 23 July 2026, partially spot-checked 23 Jul 2026] A named
 // supplier/tariff SEG rate table for Q2-Q3 2026, supplied by the user as a
 // CSV export, each row citing a named source (e.g. "Ofgem SEG Licensee
@@ -127,6 +165,13 @@ const SEG_TARIFFS = [
 // installing through a specific company). This replaces the old flat 15p
 // guess, which sat far above what an uncommitted household would actually
 // receive — most of the higher rates above require a real eligibility step.
+// OPEN ISSUE, found 24 Jul 2026, not yet resolved: the 10 qualifying rows
+// (§SEG_TARIFFS above) are [1.0, 1.05, 2.0, 3.0, 3.0, 3.02, 4.0, 4.1, 4.5,
+// 6.0]p — the true median is 3.01p, not 4.0p. This constant sits nearer the
+// 70th percentile of that set than the 50th, contradicting its own label.
+// Needs a decision: correct the constant to 3.01 (changes every default-SEG
+// rooftop calculation's output), or rewrite this comment to describe what
+// 4.0 actually is instead of miscalling it a median.
 const SEG_RATE_PENCE_PER_KWH_DEFAULT = 4.0;
 
 // [Assumption — wide range, no single authoritative figure] Typical UK
@@ -472,20 +517,67 @@ async function lookupOpenMeteoGeneration(latitude, longitude, orientation) {
 
 // --- Live electricity price lookup --------------------------------------------
 
-// [Fact — confirmed via GitHub source of a production Octopus Energy Home
-// Assistant integration (BottlecapDave/HomeAssistant-OctopusEnergy), not
-// fetched directly against Octopus's own docs pages (blocked, HTTP 403,
-// same restriction as everywhere else). Octopus Energy runs a genuinely
-// public, no-auth REST API exposing their product catalog and unit rates —
-// this solves "no one knows their kWh price" for the common default case
-// (a standard variable tariff) by fetching a real current rate for the
-// user's own region instead of asking them to type a number from memory or
-// falling back to a single UK-wide constant. Needs a live browser test
-// before being fully trusted end to end, same as Open-Meteo did — this is
-// a longer chained lookup (postcode -> GSP region -> current default
-// product -> that product's live unit rate) with more to go wrong than a
-// single API call, so treat it with proportionally more caution until
-// confirmed.
+// WHY THIS DATA SOURCE, NOT AN ALTERNATIVE — the reasoning, not just the
+// result, since this was an explicit product decision, not just an
+// engineering default. Full evidence trail in grounding-research.md
+// §Electricity price, "Regional price cap vs. actual supplier rates."
+//
+// The problem: most people don't know their own per-kWh electricity rate,
+// and the static ELECTRICITY_PRICE_PENCE_PER_KWH_DEFAULT above goes stale
+// every quarter as Ofgem's price cap changes. Four options were considered:
+//
+// 1. Ask the user to type their rate. Kept as the top-priority override
+//    (electricityPricePencePerKwh, below) since it's the only genuinely
+//    exact answer — but insufficient alone, since most people can't supply
+//    it, which is the whole problem being solved here.
+// 2. Keep the static default, just update it by hand each quarter. Simplest,
+//    but doesn't solve "no one knows their rate" and requires remembering
+//    to update a hardcoded number four times a year.
+// 3. Fetch Ofgem's own regional price-cap data directly — the most
+//    obviously "neutral" source, and the one this decision started from.
+//    Ruled out: Ofgem publishes it as an XLSX file, not a JSON/CSV API, with
+//    no dataset on data.gov.uk either. Using it live in-browser would need
+//    (a) a reliable way to find the current quarter's file URL, unconfirmed
+//    to exist as a stable link, (b) an XLSX-parsing library added to what's
+//    otherwise a zero-dependency prototype, and (c) mapping Ofgem's region
+//    naming to whatever postcodes.io returns. Meaningfully more fragile than
+//    a JSON API for an uncertain accuracy gain — see point 4.
+// 4. Build a static, dated per-supplier rate table, the same pattern used
+//    for SEG_TARIFFS. Directly tested rather than assumed: checked 5 real
+//    (supplier, region) pairs against Ofgem's own regional cap (24 Jul
+//    2026). Result: every standard-variable-tariff rate found landed within
+//    ~0.03p/kWh of that region's cap — rounding-noise small, not a real
+//    pricing difference. This is a structurally different situation from
+//    SEG rates, which genuinely vary supplier-to-supplier by commercial
+//    choice (why a static table earns its keep there). Standard-variable
+//    tariffs are regulatorily pinned to the cap, so a static table here
+//    would mostly duplicate what a live cap-tracking fetch already gives,
+//    while missing the cap's quarterly changes that a live fetch handles
+//    automatically.
+//
+// Conclusion: fetch a live rate that tracks the cap, since the cap itself
+// was empirically shown to be a trustworthy proxy for standard-variable
+// customers regardless of supplier. Ofgem has no fetchable API for this;
+// Octopus Energy does — a genuinely public, no-auth REST API for their
+// product catalog and unit rates [Fact — confirmed via GitHub source of a
+// production Octopus Energy Home Assistant integration
+// (BottlecapDave/HomeAssistant-OctopusEnergy), since Octopus's own docs
+// pages are blocked the same way every other primary source in this session
+// is]. This is Octopus's own rate specifically, used as a stand-in — it is
+// NOT claiming a British Gas or OVO customer is billed at Octopus's rate,
+// only that their own supplier's independently-set rate has been shown to
+// land at nearly the same number, because all of them track the same
+// regional cap. That equivalence is the actual finding being relied on
+// here, not an assumption.
+//
+// What's still unconfirmed: the request/response contract below was
+// directly fetched successfully once from an unrestricted session
+// (grounding-research.md, 24 Jul 2026 — confirms the API shape assumed by
+// this code is correct), but not yet from an actual browser the way
+// postcodes.io and Open-Meteo were — this is also a longer chained lookup
+// (postcode -> GSP region -> current default product -> that product's live
+// unit rate) with more surface for something to go wrong than a single API
+// call, so treat it with proportionally more caution until browser-tested.
 const OCTOPUS_BASE_URL = 'https://api.octopus.energy/v1';
 
 /**
