@@ -41,10 +41,32 @@ printResult(
 
 // Plug-in. Expect: payback near the weak source's claimed 3-4yr figure,
 // since the constants are drawn from the midpoint of the same range.
-printResult('Plug-in — standard case', calculatePluginViability({ occupancy: 'usuallyHome' }));
+printResult('Plug-in — standard case (defaults)', calculatePluginViability({ occupancy: 'usuallyHome' }));
+
+// Same rooftop scenario as the first case, but with a user-provided fixed-deal
+// electricity price (higher than the price-cap default) and a user-provided
+// low-SEG-supplier rate. This household self-consumes more than it exports
+// (see the first case's selfConsumedKwh/exportedKwh split), so the higher
+// electricity price's benefit on self-consumption outweighs the worse SEG
+// rate's cost on export -- expect a SHORTER payback than the defaulted case,
+// not longer, a genuine result of the math, not a guess. Confirms a real
+// product insight: a household on an expensive fixed deal can find solar
+// more attractive via self-consumption even with a worse export rate.
+// assumptions.tier should read "User-provided" for both rates either way.
+printResult(
+  'Rooftop — south-facing, usually home, 4,000kWh/yr, user-provided rates (35p/kWh electricity, 6p/kWh SEG)',
+  calculateRooftopViability({
+    orientation: 'southFacing',
+    occupancy: 'usuallyHome',
+    annualConsumptionKwh: 4000,
+    electricityPricePencePerKwh: 35,
+    segRatePencePerKwh: 6,
+  })
+);
 
 console.log('\nSanity checks:');
 console.log('- Rooftop south-facing/usually-home payback should land roughly 8-11yr (researched range is 6-14yr for rooftop generally).');
 console.log('- Rooftop north-facing should score red (worst case).');
 console.log('- Low-consumption household result should show selfConsumedKwh capped near annualConsumptionKwh, not the full occupancy-implied share.');
 console.log('- Plug-in payback should land near 3-4yr, consistent with (though not independently verifying) the one weak source that claims that figure.');
+console.log('- The user-provided-rates case should show a SHORTER payback than the same scenario with defaults (higher electricity price benefits self-consumption more than the lower SEG rate costs on export, for this self-consumption-heavy household), and assumptions should mark both rates "User-provided" not "Fact (default)"/"Assumption (default)".');

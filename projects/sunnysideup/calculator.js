@@ -13,13 +13,19 @@
 // --- Constants -------------------------------------------------------------
 
 // [Fact] Ofgem price cap, Direct Debit standard variable tariff, 1 Jul-30 Sep
-// 2026. grounding-research.md §Electricity price. Time-sensitive, changes quarterly.
-const ELECTRICITY_PRICE_PENCE_PER_KWH = 26.11;
+// 2026. grounding-research.md §Electricity price. Time-sensitive (changes
+// quarterly), and applies only to default/standard-variable tariffs — many
+// households are on a fixed deal above or below it, per the same section.
+// Used as a DEFAULT only; calculateRooftopViability accepts a real
+// electricityPricePencePerKwh from the user and prefers it when given.
+const ELECTRICITY_PRICE_PENCE_PER_KWH_DEFAULT = 26.11;
 
 // [Assumption — wide range, re-verify near publication] SEG export tariffs
-// span roughly 3-30p/kWh market-wide and change monthly. 15p is a rough
-// midpoint used as a default, not a researched "typical" rate.
-// grounding-research.md §Smart Export Guarantee.
+// span roughly 3-30p/kWh market-wide, are genuinely supplier-specific (there
+// is no single "the SEG rate"), and change roughly monthly.
+// grounding-research.md §Smart Export Guarantee. 15p is a rough market
+// midpoint used as a DEFAULT only; prefer a real segRatePencePerKwh from the
+// user (their own supplier's published rate) when given.
 const SEG_RATE_PENCE_PER_KWH_DEFAULT = 15;
 
 // [Assumption — wide range, no single authoritative figure] Typical UK
@@ -91,15 +97,27 @@ function scoreStatus(paybackYears, thresholds) {
  * @param {'southFacing'|'eastWestFacing'|'northFacing'} input.orientation
  * @param {'usuallyHome'|'usuallyOut'} input.occupancy
  * @param {number} input.annualConsumptionKwh - household's own annual electricity use
+ * @param {number} [input.electricityPricePencePerKwh] - the user's own known rate; falls back to the Ofgem price-cap default if omitted
+ * @param {number} [input.segRatePencePerKwh] - the user's own supplier's published SEG rate; falls back to a rough market-midpoint default if omitted
  */
-function calculateRooftopViability({ orientation, occupancy, annualConsumptionKwh }) {
+function calculateRooftopViability({
+  orientation,
+  occupancy,
+  annualConsumptionKwh,
+  electricityPricePencePerKwh,
+  segRatePencePerKwh,
+}) {
   const generation = ROOFTOP_ANNUAL_GENERATION_KWH[orientation];
   const selfConsumptionRate = SELF_CONSUMPTION_RATE[occupancy];
   const selfConsumedKwh = Math.min(generation * selfConsumptionRate, annualConsumptionKwh);
   const exportedKwh = generation - selfConsumedKwh;
 
-  const annualSavingsGbp =
-    (selfConsumedKwh * ELECTRICITY_PRICE_PENCE_PER_KWH + exportedKwh * SEG_RATE_PENCE_PER_KWH_DEFAULT) / 100;
+  const usedElectricityPrice = electricityPricePencePerKwh ?? ELECTRICITY_PRICE_PENCE_PER_KWH_DEFAULT;
+  const usedSegRate = segRatePencePerKwh ?? SEG_RATE_PENCE_PER_KWH_DEFAULT;
+  const electricityPriceIsUserProvided = electricityPricePencePerKwh != null;
+  const segRateIsUserProvided = segRatePencePerKwh != null;
+
+  const annualSavingsGbp = (selfConsumedKwh * usedElectricityPrice + exportedKwh * usedSegRate) / 100;
 
   const paybackYears = ROOFTOP_SYSTEM_COST_GBP / annualSavingsGbp;
   const status = scoreStatus(paybackYears, ROOFTOP_PAYBACK_THRESHOLDS);
@@ -114,8 +132,12 @@ function calculateRooftopViability({ orientation, occupancy, annualConsumptionKw
     selfConsumedKwh: Math.round(selfConsumedKwh),
     exportedKwh: Math.round(exportedKwh),
     assumptions: {
-      electricityPricePencePerKwh: { value: ELECTRICITY_PRICE_PENCE_PER_KWH, tier: 'Fact', note: 'Ofgem price cap, Jul-Sep 2026, changes quarterly' },
-      segRatePencePerKwh: { value: SEG_RATE_PENCE_PER_KWH_DEFAULT, tier: 'Assumption', note: 'Rough midpoint of a 3-30p/kWh market range, changes monthly' },
+      electricityPricePencePerKwh: electricityPriceIsUserProvided
+        ? { value: usedElectricityPrice, tier: 'User-provided', note: 'Your own stated rate' }
+        : { value: usedElectricityPrice, tier: 'Fact (default)', note: "Ofgem price cap, Jul-Sep 2026, changes quarterly, and applies only to default/standard-variable tariffs — if you're on a fixed deal, enter your own rate for an accurate result" },
+      segRatePencePerKwh: segRateIsUserProvided
+        ? { value: usedSegRate, tier: 'User-provided', note: "Your own supplier's stated rate" }
+        : { value: usedSegRate, tier: 'Assumption (default)', note: 'A rough midpoint only — real SEG rates are supplier-specific and range roughly 3-30p/kWh; enter your own supplier\'s rate for an accurate result' },
       systemCostGbp: { value: ROOFTOP_SYSTEM_COST_GBP, tier: 'Assumption', note: 'Industry-consensus range is £5,500-£8,700; not a quote for your specific roof' },
       generationKwh: { value: generation, tier: orientation === 'southFacing' ? 'Assumption' : 'Prototype estimate, not independently researched', note: 'Researched range is 3,400-4,200kWh/yr for a south-facing 4kW system' },
       selfConsumptionRate: { value: selfConsumptionRate, tier: 'Prototype simplification', note: 'Modeled from occupancy as a rough proxy, not an independently researched figure' },
@@ -128,13 +150,16 @@ function calculateRooftopViability({ orientation, occupancy, annualConsumptionKw
 /**
  * @param {Object} input
  * @param {'usuallyHome'|'usuallyOut'} input.occupancy - retained for interface symmetry; not used in this scoring pass, since plug-in generation is assumed fully self-consumed
+ * @param {number} [input.electricityPricePencePerKwh] - the user's own known rate; falls back to the Ofgem price-cap default if omitted
  */
-function calculatePluginViability({ occupancy }) {
+function calculatePluginViability({ occupancy, electricityPricePencePerKwh }) {
   const generation = PLUGIN_ANNUAL_GENERATION_KWH;
+  const usedElectricityPrice = electricityPricePencePerKwh ?? ELECTRICITY_PRICE_PENCE_PER_KWH_DEFAULT;
+  const electricityPriceIsUserProvided = electricityPricePencePerKwh != null;
   // Plug-in units are treated as fully self-consumed at this scale, no export
   // mechanism assumed. This mirrors how the source figures were reported,
   // not an independently modeled export split.
-  const annualSavingsGbp = (generation * ELECTRICITY_PRICE_PENCE_PER_KWH) / 100;
+  const annualSavingsGbp = (generation * usedElectricityPrice) / 100;
   const paybackYears = PLUGIN_KIT_COST_GBP / annualSavingsGbp;
   const status = scoreStatus(paybackYears, PLUGIN_PAYBACK_THRESHOLDS);
 
@@ -147,7 +172,9 @@ function calculatePluginViability({ occupancy }) {
     generationKwh: generation,
     legalStatus: PLUGIN_LEGAL_STATUS,
     assumptions: {
-      electricityPricePencePerKwh: { value: ELECTRICITY_PRICE_PENCE_PER_KWH, tier: 'Fact', note: 'Ofgem price cap, Jul-Sep 2026, changes quarterly' },
+      electricityPricePencePerKwh: electricityPriceIsUserProvided
+        ? { value: usedElectricityPrice, tier: 'User-provided', note: 'Your own stated rate' }
+        : { value: usedElectricityPrice, tier: 'Fact (default)', note: "Ofgem price cap, Jul-Sep 2026, changes quarterly, and applies only to default/standard-variable tariffs — if you're on a fixed deal, enter your own rate for an accurate result" },
       kitCostGbp: { value: PLUGIN_KIT_COST_GBP, tier: 'Assumption — weakest-sourced figure in this calculator', note: 'Reported range £400-900; none of these figures trace to a government, MCS, or established consumer body' },
       generationKwh: { value: generation, tier: 'Assumption — weakest-sourced figure in this calculator', note: 'Reported range 640-900kWh/yr, same sourcing caveat as kit cost' },
     },
@@ -160,7 +187,7 @@ const SunnySideUpCalculator = {
   calculateRooftopViability,
   calculatePluginViability,
   constants: {
-    ELECTRICITY_PRICE_PENCE_PER_KWH,
+    ELECTRICITY_PRICE_PENCE_PER_KWH_DEFAULT,
     SEG_RATE_PENCE_PER_KWH_DEFAULT,
     ROOFTOP_SYSTEM_COST_GBP,
     ROOFTOP_ANNUAL_GENERATION_KWH,

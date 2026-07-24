@@ -36,6 +36,12 @@
   <label for="consumption">Annual household electricity use (kWh/year)</label>
   <input id="consumption" type="number" value="3500">
 
+  <label for="elecPriceRoof">Your electricity rate, pence/kWh (leave blank to use the Ofgem price-cap default)</label>
+  <input id="elecPriceRoof" type="number" step="0.01" placeholder="e.g. 26.11 (default) or your own fixed-deal rate">
+
+  <label for="segRate">Your SEG export rate, pence/kWh (leave blank to use a rough default — real rates are supplier-specific, 3-30p/kWh)</label>
+  <input id="segRate" type="number" step="0.01" placeholder="e.g. 15 (default) or your own supplier's rate">
+
   <button onclick="runRooftop()">Calculate rooftop viability</button>
   <pre id="rooftopResult">(results will appear here)</pre>
 </fieldset>
@@ -55,10 +61,14 @@
 <script src="calculator.js"></script>
 <script>
   function runRooftop() {
+    const elecPriceRaw = document.getElementById('elecPriceRoof').value;
+    const segRateRaw = document.getElementById('segRate').value;
     const result = SunnySideUpCalculator.calculateRooftopViability({
       orientation: document.getElementById('orientation').value,
       occupancy: document.getElementById('occupancyRoof').value,
       annualConsumptionKwh: Number(document.getElementById('consumption').value),
+      electricityPricePencePerKwh: elecPriceRaw === '' ? undefined : Number(elecPriceRaw),
+      segRatePencePerKwh: segRateRaw === '' ? undefined : Number(segRateRaw),
     });
     document.getElementById('rooftopResult').textContent = JSON.stringify(result, null, 2);
   }
