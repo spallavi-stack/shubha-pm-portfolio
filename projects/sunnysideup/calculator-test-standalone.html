@@ -53,6 +53,11 @@
     </select>
   </div>
 
+  <div id="roofAreaField">
+    <label for="roofArea">Usable roof area, m² (rooftop only — leave blank to use a flat ~4.6kWp typical-system default)</label>
+    <input id="roofArea" type="number" step="0.1" placeholder="e.g. 25 — sizes the system to your actual roof instead of a flat default">
+  </div>
+
   <label for="occupancy">During a typical weekday...</label>
   <select id="occupancy">
     <option value="usuallyHome">I'm usually home</option>
@@ -198,6 +203,42 @@ const ROOFTOP_ANNUAL_GENERATION_KWH = {
   eastWestFacing: 3000,
   northFacing: 1900,
 };
+
+// [Fact — MCS's own reported average domestic system size] The figures
+// above and ROOFTOP_SYSTEM_COST_GBP are calibrated to roughly this
+// reference size (MCS's own reported UK average is 4.6kWp, close enough to
+// the "4kW system" this project's research was framed around).
+const REFERENCE_SYSTEM_SIZE_KWP = 4;
+
+// --- Roof-area-based system sizing ---------------------------------------
+// See calculator.js for the full sourcing reasoning. [Inference] usable
+// roof area per panel (incl. mounting/spacing clearance, more than a
+// panel's bare ~1.9m² footprint): derived from an MCS-anchored range (a
+// typical 3-bed semi's 22-30m² usable roof fits 9-12 panels). [Inference]
+// typical panel wattage, cross-checked against current UK panel specs
+// (350-460W depending on generation). [Fact] MCS's own installed-cost-per-
+// kWp figures are nonlinear: smaller systems cost more per kWp since fixed
+// costs (scaffolding, inverter) don't shrink with the array.
+const ROOF_AREA_PER_PANEL_M2 = 2.45;
+const PANEL_WATTAGE_KWP = 0.43;
+const COST_PER_KWP_GBP_BY_TIER = { smallSystemThresholdKwp: 3, smallSystemCostPerKwp: 1800, standardCostPerKwp: 1625 };
+// [Fact] 4kWp is the largest system covered by Permitted Development Rights
+// in England; Scotland/Wales have their own separate, unresearched thresholds.
+const PERMITTED_DEVELOPMENT_KWP_CEILING_ENGLAND = 4;
+
+function estimateSystemSizeFromRoofArea(roofAreaM2) {
+  const panelCount = Math.floor(Math.max(0, roofAreaM2) / ROOF_AREA_PER_PANEL_M2);
+  if (panelCount === 0) return null;
+  const systemSizeKwp = Math.round(panelCount * PANEL_WATTAGE_KWP * 100) / 100;
+  const costPerKwpGbp = systemSizeKwp <= COST_PER_KWP_GBP_BY_TIER.smallSystemThresholdKwp ? COST_PER_KWP_GBP_BY_TIER.smallSystemCostPerKwp : COST_PER_KWP_GBP_BY_TIER.standardCostPerKwp;
+  return {
+    panelCount,
+    systemSizeKwp,
+    costPerKwpGbp,
+    systemCostGbp: Math.round(systemSizeKwp * costPerKwpGbp),
+    exceedsPermittedDevelopmentEngland: systemSizeKwp > PERMITTED_DEVELOPMENT_KWP_CEILING_ENGLAND,
+  };
+}
 
 // [Inference — WebSearch findings, 24 Jul 2026, not independently fetched
 // against a primary source] South England ~900-1,100kWh/kW/yr vs Scotland
@@ -526,13 +567,20 @@ function estimateAnnualConsumptionKwh({ householdSize, hasHeatPump, hasEv, evCou
   return { totalKwh: Math.round(totalKwh), breakdown };
 }
 
-function calculateRooftopViability({ orientation, occupancy, annualConsumptionKwh, electricityPricePencePerKwh, electricityPriceOverride, segRatePencePerKwh, segTariffLabel, segTariffSource, regionalGeneration, generationOverride }) {
+function calculateRooftopViability({ orientation, occupancy, annualConsumptionKwh, electricityPricePencePerKwh, electricityPriceOverride, segRatePencePerKwh, segTariffLabel, segTariffSource, regionalGeneration, generationOverride, roofAreaM2 }) {
   const baseGeneration = ROOFTOP_ANNUAL_GENERATION_KWH[orientation];
-  const generation = generationOverride
+  const preRoofAreaGeneration = generationOverride
     ? generationOverride.value
     : regionalGeneration
       ? Math.round(baseGeneration * regionalGeneration.value)
       : baseGeneration;
+
+  const roofAreaSizing = roofAreaM2 != null ? estimateSystemSizeFromRoofArea(roofAreaM2) : null;
+  const systemSizeKwp = roofAreaSizing ? roofAreaSizing.systemSizeKwp : REFERENCE_SYSTEM_SIZE_KWP;
+  const roofAreaMultiplier = roofAreaSizing ? roofAreaSizing.systemSizeKwp / REFERENCE_SYSTEM_SIZE_KWP : 1;
+  const generation = Math.round(preRoofAreaGeneration * roofAreaMultiplier);
+  const systemCostGbp = roofAreaSizing ? roofAreaSizing.systemCostGbp : ROOFTOP_SYSTEM_COST_GBP;
+
   const selfConsumptionRate = SELF_CONSUMPTION_RATE[occupancy];
   const selfConsumedKwh = Math.min(generation * selfConsumptionRate, annualConsumptionKwh);
   const exportedKwh = generation - selfConsumedKwh;
@@ -547,15 +595,16 @@ function calculateRooftopViability({ orientation, occupancy, annualConsumptionKw
   const segRateIsUserProvided = segRatePencePerKwh != null;
 
   const annualSavingsGbp = (selfConsumedKwh * usedElectricityPrice + exportedKwh * usedSegRate) / 100;
-  const paybackYears = ROOFTOP_SYSTEM_COST_GBP / annualSavingsGbp;
+  const paybackYears = systemCostGbp / annualSavingsGbp;
   const status = scoreStatus(paybackYears, ROOFTOP_PAYBACK_THRESHOLDS);
 
-  return {
+  const result = {
     segment: 'rooftop',
     status,
     paybackYears: Math.round(paybackYears * 10) / 10,
     annualSavingsGbp: Math.round(annualSavingsGbp),
-    systemCostGbp: ROOFTOP_SYSTEM_COST_GBP,
+    systemCostGbp,
+    systemSizeKwp,
     generationKwh: generation,
     selfConsumedKwh: Math.round(selfConsumedKwh),
     exportedKwh: Math.round(exportedKwh),
@@ -568,15 +617,30 @@ function calculateRooftopViability({ orientation, occupancy, annualConsumptionKw
       segRatePencePerKwh: segRateIsUserProvided
         ? { value: usedSegRate, tier: 'User-provided', note: segTariffLabel ? `${segTariffLabel}${segTariffSource ? `, per ${segTariffSource}` : ''} (SEG tariff table, user-provided 23 July 2026, not independently fetched or verified)` : 'Your own stated rate' }
         : { value: usedSegRate, tier: 'Assumption (default)', note: 'The no-switch-needed baseline (median of tariffs open to anyone). Switching supplier or installing through a specific company can get a meaningfully higher rate, up to 25p/kWh — pick your actual tariff for an accurate result' },
-      systemCostGbp: { value: ROOFTOP_SYSTEM_COST_GBP, tier: 'Assumption', note: 'Industry-consensus range is £5,500-£8,700; not a quote for your specific roof' },
+      systemCostGbp: roofAreaSizing
+        ? { value: systemCostGbp, tier: 'Inference — derived from your roof area', note: `${roofAreaSizing.panelCount} panels x ${PANEL_WATTAGE_KWP}kWp x £${roofAreaSizing.costPerKwpGbp}/kWp (MCS-sourced installed-cost rate for this system size). Not a quote for your specific roof — actual roof shape, shading, and access all affect a real quote.` }
+        : { value: systemCostGbp, tier: 'Assumption', note: `Industry-consensus range is £5,500-£8,700 for a ~${REFERENCE_SYSTEM_SIZE_KWP}kWp system (MCS's own reported UK average is 4.6kWp); not a quote for your specific roof. Give your usable roof area for a size-adjusted estimate instead of this flat default.` },
       generationKwh: generationOverride
-        ? { value: generation, tier: generationOverride.tier, note: generationOverride.note }
+        ? { value: generation, tier: generationOverride.tier, note: `${generationOverride.note}${roofAreaSizing ? ` Further scaled by your roof-area-derived system size (${systemSizeKwp}kWp vs the ${REFERENCE_SYSTEM_SIZE_KWP}kWp this figure and your postcode estimate are both otherwise calibrated to).` : ''}` }
         : regionalGeneration
-          ? { value: generation, tier: regionalGeneration.tier, note: `England-baseline figure (${baseGeneration}kWh/yr) adjusted by a ${regionalGeneration.value}x regional multiplier. ${regionalGeneration.note}` }
-          : { value: generation, tier: orientation === 'southFacing' ? 'Assumption' : 'Prototype estimate, not independently researched', note: 'Researched range is 3,400-4,200kWh/yr for a south-facing 4kW system, England-calibrated. No postcode given, so no regional adjustment applied.' },
+          ? { value: generation, tier: regionalGeneration.tier, note: `England-baseline figure (${baseGeneration}kWh/yr) adjusted by a ${regionalGeneration.value}x regional multiplier${roofAreaSizing ? ` and a roof-area-derived ${systemSizeKwp}kWp system size (vs the ${REFERENCE_SYSTEM_SIZE_KWP}kWp reference)` : ''}. ${regionalGeneration.note}` }
+          : { value: generation, tier: orientation === 'southFacing' ? 'Assumption' : 'Prototype estimate, not independently researched', note: `Researched range is 3,400-4,200kWh/yr for a south-facing ${REFERENCE_SYSTEM_SIZE_KWP}kWp system, England-calibrated. No postcode given, so no regional adjustment applied.${roofAreaSizing ? ` Scaled to your roof-area-derived ${systemSizeKwp}kWp system size.` : ''}` },
       selfConsumptionRate: { value: selfConsumptionRate, tier: 'Prototype simplification', note: 'Modeled from occupancy as a rough proxy, not an independently researched figure' },
     },
   };
+
+  if (roofAreaSizing) {
+    result.roofAreaSizing = { roofAreaM2, panelCount: roofAreaSizing.panelCount, systemSizeKwp: roofAreaSizing.systemSizeKwp };
+    if (roofAreaSizing.exceedsPermittedDevelopmentEngland) {
+      result.permittedDevelopmentFlag = {
+        systemSizeKwp: roofAreaSizing.systemSizeKwp,
+        ceilingKwp: PERMITTED_DEVELOPMENT_KWP_CEILING_ENGLAND,
+        note: `Your roof-area-derived system (${roofAreaSizing.systemSizeKwp}kWp) is larger than the ${PERMITTED_DEVELOPMENT_KWP_CEILING_ENGLAND}kWp ceiling covered by Permitted Development Rights in England — you may need planning permission for a system this size. Scotland and Wales have their own separate thresholds, not researched here.`,
+      };
+    }
+  }
+
+  return result;
 }
 
 function calculatePluginViability({ occupancy, orientation, electricityPricePencePerKwh }) {
@@ -691,10 +755,12 @@ function setEntryMode(mode, buttonEl) {
 function updateSegmentVisibility() {
   // Orientation matters for both segments (plug-in generation scales with
   // orientation the same way rooftop does — see pluginOrientationMultiplier)
-  // — only the export/SEG tariff is rooftop-specific (plug-in units are
-  // modeled as fully self-consumed, no export mechanism assumed).
+  // — the export/SEG tariff and roof-area sizing are rooftop-specific
+  // (plug-in units are a fixed small kit, not sized against roof area, and
+  // are modeled as fully self-consumed with no export mechanism assumed).
   const isRooftop = document.getElementById('segment').value === 'rooftop';
   document.getElementById('segField').style.display = isRooftop ? '' : 'none';
+  document.getElementById('roofAreaField').style.display = isRooftop ? '' : 'none';
 }
 
 function toggleEvCount() {
@@ -790,6 +856,7 @@ async function runCalculation() {
       occupancy,
       annualConsumptionKwh: consumption.annualConsumptionKwh,
       electricityPricePencePerKwh,
+      roofAreaM2: parseLocaleNumber(document.getElementById('roofArea').value),
       ...resolveSegInputs(),
     };
     if (postcode) {

@@ -5,7 +5,7 @@
  * the calculator's output lands in the ranges grounding-research.md actually
  * reports, run before any UI is built on top of this logic.
  */
-const { calculateRooftopViability, calculateRooftopViabilityByPostcode, calculatePluginViability, findSegTariff, findSegTariffsBySupplier, estimateAnnualConsumptionKwh, constants } = require('./calculator.js');
+const { calculateRooftopViability, calculateRooftopViabilityByPostcode, calculatePluginViability, findSegTariff, findSegTariffsBySupplier, estimateAnnualConsumptionKwh, estimateSystemSizeFromRoofArea, constants } = require('./calculator.js');
 
 function printResult(label, result) {
   console.log(`\n--- ${label} ---`);
@@ -123,6 +123,58 @@ console.log(`- totalKwh should be 2,500 (medium TDCV) + 4,300 (heat pump) + 2 x 
 console.log('\n--- estimateAnnualConsumptionKwh({ householdSize: 6, hasEv: true }) (evCount omitted) ---');
 console.log(JSON.stringify(estimateAnnualConsumptionKwh({ householdSize: 6, hasEv: true }), null, 2));
 console.log('- Household size 6 should map to "high" band (3,800) despite being above Ofgem\'s own stated 4-5 person range — extrapolated, not an error. ev.value should be exactly 1,960 (1 vehicle, defaulted), not 0.');
+
+// estimateSystemSizeFromRoofArea: too small to fit a panel should return
+// null (not a zeroed-out system), so callers know to fall back rather than
+// compute a nonsensical 0kWp result.
+console.log('\n--- estimateSystemSizeFromRoofArea(1) (too small for one panel) ---');
+console.log(estimateSystemSizeFromRoofArea(1));
+console.log('- Should be null.');
+
+// A roof large enough to exceed the small-system cost tier (>3kWp) and the
+// Permitted Development ceiling (>4kWp) in the same call.
+console.log('\n--- estimateSystemSizeFromRoofArea(60) ---');
+console.log(JSON.stringify(estimateSystemSizeFromRoofArea(60), null, 2));
+console.log('- panelCount 24 (floor(60/2.45)), systemSizeKwp 10.32 (24 x 0.43), costPerKwpGbp 1625 (standard tier, >3kWp), exceedsPermittedDevelopmentEngland true (>4kWp).');
+
+// A small roof that stays within the small-system cost tier (<=3kWp).
+console.log('\n--- estimateSystemSizeFromRoofArea(12) ---');
+console.log(JSON.stringify(estimateSystemSizeFromRoofArea(12), null, 2));
+console.log('- panelCount 4 (floor(12/2.45)), systemSizeKwp 1.72, costPerKwpGbp 1800 (small-system tier, <=3kWp), exceedsPermittedDevelopmentEngland false.');
+
+// calculateRooftopViability with roofAreaM2: should override the flat
+// REFERENCE_SYSTEM_SIZE_KWP default entirely (systemCostGbp, systemSizeKwp,
+// generationKwh all scaled), attach roofAreaSizing, and attach
+// permittedDevelopmentFlag since 60m2 produces >4kWp.
+printResult(
+  'Rooftop — south-facing, usually home, 4,000kWh/yr, 60m² roof area (exceeds Permitted Development ceiling)',
+  calculateRooftopViability({ orientation: 'southFacing', occupancy: 'usuallyHome', annualConsumptionKwh: 4000, roofAreaM2: 60 })
+);
+console.log('- systemSizeKwp should be 10.32, systemCostGbp should be 16,770 (10.32 x £1,625/kWp), generationKwh should be scaled up from the flat 3,800kWh baseline (10.32/4 x 3,800 = 9,804), and permittedDevelopmentFlag should be present.');
+
+// Roof area interacting with an existing generation adjustment (regional
+// multiplier here, standing in for what a real postcode call would also
+// compose with) — the two multipliers should both apply, not one override
+// the other.
+printResult(
+  'Rooftop — south-facing, usually home, 4,000kWh/yr, 60m² roof area + Scotland regional multiplier (0.85x)',
+  calculateRooftopViability({
+    orientation: 'southFacing',
+    occupancy: 'usuallyHome',
+    annualConsumptionKwh: 4000,
+    roofAreaM2: 60,
+    regionalGeneration: constants.REGIONAL_GENERATION_MULTIPLIER.Scotland,
+  })
+);
+console.log(`- generationKwh should be 8,333 (3,800 x 0.85 regional x 10.32/4 roof-area-size ratio = ${Math.round(3800 * 0.85 * (10.32 / 4))}), confirming the two multipliers compose rather than one replacing the other.`);
+
+// A roof too small to fit even one panel should fall back to the flat
+// default cleanly, not produce NaN/Infinity from a 0kWp system.
+printResult(
+  'Rooftop — south-facing, usually home, 4,000kWh/yr, 1m² roof area (too small to fit a panel)',
+  calculateRooftopViability({ orientation: 'southFacing', occupancy: 'usuallyHome', annualConsumptionKwh: 4000, roofAreaM2: 1 })
+);
+console.log('- Should fall back to the flat default entirely: systemSizeKwp 4, systemCostGbp 7,000, generationKwh 3,800, no roofAreaSizing or permittedDevelopmentFlag field, no NaN/Infinity anywhere.');
 
 // Regional generation multiplier applied manually (regionalGeneration is the
 // public shape returned by REGIONAL_GENERATION_MULTIPLIER[country], not a
