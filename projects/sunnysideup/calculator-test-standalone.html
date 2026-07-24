@@ -16,22 +16,11 @@
   .note { color: #666; font-size: 13px; }
   details { margin: 10px 0; border: 1px solid #ddd; border-radius: 6px; padding: 8px 12px; }
   details summary { cursor: pointer; font-weight: 600; }
-  #entryModeButtons button { margin-right: 8px; }
-  #entryModeButtons button.active { background: #333; color: #fff; }
 </style>
 </head>
 <body>
 <h1>SunnySideUp calculator — standalone test harness</h1>
 <p class="note">Single self-contained file, no separate calculator.js to keep in sync. Save this one file anywhere and open it directly. Not the styled prototype, just a working form on the real logic.</p>
-
-<fieldset>
-  <legend>How much do you already know?</legend>
-  <div id="entryModeButtons">
-    <button type="button" onclick="setEntryMode('estimate', this)">Just give me an estimate</button>
-    <button type="button" onclick="setEntryMode('detail', this)">I'll enter the details</button>
-  </div>
-  <p class="note">Either choice just changes what's expanded below by default — every field still works either way, and anything you don't fill in gets a reasonable estimate.</p>
-</fieldset>
 
 <fieldset>
   <legend>About your home</legend>
@@ -68,7 +57,7 @@
 <fieldset>
   <legend>Your electricity use</legend>
 
-  <details id="householdSizeDetails">
+  <details id="householdSizeDetails" open>
     <summary>Estimate it from my household</summary>
     <label for="householdSize">How many people live in your home?</label>
     <input id="householdSize" type="number" value="3" min="1">
@@ -739,17 +728,6 @@ function parseLocaleNumber(str) {
   const normalized = String(str).trim().replace(',', '.');
   const n = Number(normalized);
   return Number.isNaN(n) ? undefined : n;
-}
-
-// Framing-only entry point: doesn't gate any field, just decides which of
-// the two <details> disclosures starts open. Someone in "estimate" mode who
-// actually knows their exact consumption can still open the other one and
-// type it — it isn't locked away.
-function setEntryMode(mode, buttonEl) {
-  document.querySelectorAll('#entryModeButtons button').forEach((b) => b.classList.remove('active'));
-  buttonEl.classList.add('active');
-  document.getElementById('householdSizeDetails').open = mode === 'estimate';
-  document.getElementById('exactConsumptionDetails').open = mode === 'detail';
 }
 
 function updateSegmentVisibility() {
