@@ -5,7 +5,7 @@
  * the calculator's output lands in the ranges grounding-research.md actually
  * reports, run before any UI is built on top of this logic.
  */
-const { calculateRooftopViability, calculatePluginViability } = require('./calculator.js');
+const { calculateRooftopViability, calculatePluginViability, findSegTariff } = require('./calculator.js');
 
 function printResult(label, result) {
   console.log(`\n--- ${label} ---`);
@@ -64,9 +64,27 @@ printResult(
   })
 );
 
+// A specific named tariff looked up from the table, not a manually-typed
+// number — Octopus Energy's flagship "Outgoing Octopus" at 12.0p, well above
+// the new 4.0p no-switch default. Expect: meaningfully shorter payback than
+// the same scenario on the default rate, and the tariff label should show up
+// in the assumptions note.
+const octopusOutgoing = findSegTariff('Octopus Energy', 'Outgoing Octopus');
+printResult(
+  `Rooftop — south-facing, usually home, 4,000kWh/yr, SEG tariff: ${octopusOutgoing.supplier} ${octopusOutgoing.tariff} (${octopusOutgoing.ratePencePerKwh}p, requires: ${octopusOutgoing.eligibility})`,
+  calculateRooftopViability({
+    orientation: 'southFacing',
+    occupancy: 'usuallyHome',
+    annualConsumptionKwh: 4000,
+    segRatePencePerKwh: octopusOutgoing.ratePencePerKwh,
+    segTariffLabel: `${octopusOutgoing.supplier} — ${octopusOutgoing.tariff}`,
+  })
+);
+
 console.log('\nSanity checks:');
-console.log('- Rooftop south-facing/usually-home payback should land roughly 8-11yr (researched range is 6-14yr for rooftop generally).');
+console.log('- Rooftop south-facing/usually-home payback (default SEG rate) should now be longer than before the tariff-table update, since the no-switch-needed baseline dropped from 15p to 4p.');
 console.log('- Rooftop north-facing should score red (worst case).');
 console.log('- Low-consumption household result should show selfConsumedKwh capped near annualConsumptionKwh, not the full occupancy-implied share.');
 console.log('- Plug-in payback should land near 3-4yr, consistent with (though not independently verifying) the one weak source that claims that figure.');
 console.log('- The user-provided-rates case should show a SHORTER payback than the same scenario with defaults (higher electricity price benefits self-consumption more than the lower SEG rate costs on export, for this self-consumption-heavy household), and assumptions should mark both rates "User-provided" not "Fact (default)"/"Assumption (default)".');
+console.log('- The named-tariff case should show a materially shorter payback than the default-rate case (12p vs 4p on the exported portion), and the assumptions note should name "Octopus Energy — Outgoing Octopus" rather than saying "Your own stated rate".');

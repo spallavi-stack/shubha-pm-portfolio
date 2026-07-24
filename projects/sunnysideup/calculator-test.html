@@ -39,8 +39,12 @@
   <label for="elecPriceRoof">Your electricity rate, pence/kWh (leave blank to use the Ofgem price-cap default)</label>
   <input id="elecPriceRoof" type="number" step="0.01" placeholder="e.g. 26.11 (default) or your own fixed-deal rate">
 
-  <label for="segRate">Your SEG export rate, pence/kWh (leave blank to use a rough default — real rates are supplier-specific, 3-30p/kWh)</label>
-  <input id="segRate" type="number" step="0.01" placeholder="e.g. 15 (default) or your own supplier's rate">
+  <label for="segTariff">Your SEG tariff (or leave as "no-switch default" if you haven't picked one)</label>
+  <select id="segTariff"></select>
+  <p class="note" id="segTariffEligibility"></p>
+
+  <label for="segRateManual">Or type a SEG rate manually instead, pence/kWh (overrides the dropdown above)</label>
+  <input id="segRateManual" type="number" step="0.01" placeholder="leave blank to use the dropdown selection">
 
   <button onclick="runRooftop()">Calculate rooftop viability</button>
   <pre id="rooftopResult">(results will appear here)</pre>
@@ -60,15 +64,57 @@
 
 <script src="calculator.js"></script>
 <script>
+  // Populate the SEG tariff dropdown from the researched table (user-provided,
+  // 23 July 2026, not independently verified — see calculator.js).
+  (function populateSegTariffDropdown() {
+    const select = document.getElementById('segTariff');
+    const defaultOption = document.createElement('option');
+    defaultOption.value = '';
+    defaultOption.textContent = `No-switch default (${SunnySideUpCalculator.constants.SEG_RATE_PENCE_PER_KWH_DEFAULT}p, open to anyone)`;
+    select.appendChild(defaultOption);
+    SunnySideUpCalculator.getSegTariffs().forEach((t, i) => {
+      const opt = document.createElement('option');
+      opt.value = i;
+      opt.textContent = `${t.supplier} — ${t.tariff} (${t.ratePencePerKwh}p)`;
+      select.appendChild(opt);
+    });
+    select.addEventListener('change', updateEligibilityNote);
+    updateEligibilityNote();
+  })();
+
+  function updateEligibilityNote() {
+    const select = document.getElementById('segTariff');
+    const note = document.getElementById('segTariffEligibility');
+    if (select.value === '') {
+      note.textContent = 'Requires: nothing — this is the baseline rate open to anyone, no supplier switch or specific installer needed.';
+    } else {
+      const t = SunnySideUpCalculator.getSegTariffs()[Number(select.value)];
+      note.textContent = `Requires: ${t.eligibility}`;
+    }
+  }
+
   function runRooftop() {
     const elecPriceRaw = document.getElementById('elecPriceRoof').value;
-    const segRateRaw = document.getElementById('segRate').value;
+    const segRateManualRaw = document.getElementById('segRateManual').value;
+    const segTariffSelect = document.getElementById('segTariff');
+
+    let segRatePencePerKwh;
+    let segTariffLabel;
+    if (segRateManualRaw !== '') {
+      segRatePencePerKwh = Number(segRateManualRaw);
+    } else if (segTariffSelect.value !== '') {
+      const t = SunnySideUpCalculator.getSegTariffs()[Number(segTariffSelect.value)];
+      segRatePencePerKwh = t.ratePencePerKwh;
+      segTariffLabel = `${t.supplier} — ${t.tariff}`;
+    }
+
     const result = SunnySideUpCalculator.calculateRooftopViability({
       orientation: document.getElementById('orientation').value,
       occupancy: document.getElementById('occupancyRoof').value,
       annualConsumptionKwh: Number(document.getElementById('consumption').value),
       electricityPricePencePerKwh: elecPriceRaw === '' ? undefined : Number(elecPriceRaw),
-      segRatePencePerKwh: segRateRaw === '' ? undefined : Number(segRateRaw),
+      segRatePencePerKwh,
+      segTariffLabel,
     });
     document.getElementById('rooftopResult').textContent = JSON.stringify(result, null, 2);
   }

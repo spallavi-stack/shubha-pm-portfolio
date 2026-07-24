@@ -20,13 +20,55 @@
 // electricityPricePencePerKwh from the user and prefers it when given.
 const ELECTRICITY_PRICE_PENCE_PER_KWH_DEFAULT = 26.11;
 
-// [Assumption — wide range, re-verify near publication] SEG export tariffs
-// span roughly 3-30p/kWh market-wide, are genuinely supplier-specific (there
-// is no single "the SEG rate"), and change roughly monthly.
-// grounding-research.md §Smart Export Guarantee. 15p is a rough market
-// midpoint used as a DEFAULT only; prefer a real segRatePencePerKwh from the
-// user (their own supplier's published rate) when given.
-const SEG_RATE_PENCE_PER_KWH_DEFAULT = 15;
+// [User-provided, 23 July 2026 — not independently fetched or verified by
+// this process] A named supplier/tariff SEG rate table for Q2-Q3 2026,
+// pasted in by the user, not sourced by grounding-research.md's own research
+// pass. Treat with the same caution as any unverified user-shared source:
+// usable, cited as such, not upgraded to Fact tier without independent
+// confirmation. Sorted highest to lowest rate. Tariffs requiring a supplier
+// switch or an install through that specific company are named as such —
+// collapsing this into one number would hide a real eligibility bar most
+// users won't clear on day one.
+const SEG_TARIFFS = [
+  { supplier: 'Good Energy', tariff: 'Solar Savings Exclusive', ratePencePerKwh: 25.0, rateType: 'Fixed', eligibility: 'Good Energy import customer + system installed by Good Energy' },
+  { supplier: 'Octopus Energy', tariff: 'Intelligent Octopus Flux', ratePencePerKwh: 23.0, rateType: 'Smart/Variable', eligibility: 'Octopus import customer with compatible solar + battery setup' },
+  { supplier: 'OVO Energy', tariff: 'SEG Install Exclusive', ratePencePerKwh: 20.0, rateType: 'Variable', eligibility: 'OVO import customer + system bought through OVO' },
+  { supplier: 'So Energy', tariff: 'So Bright', ratePencePerKwh: 20.0, rateType: 'Fixed', eligibility: 'Installed solar/battery via So Energy (no import switch needed)' },
+  { supplier: 'EDF Energy', tariff: 'Export Exclusive 12m V3', ratePencePerKwh: 18.0, rateType: 'Fixed', eligibility: 'EDF import customer + system installed by EDF / Contact Solar' },
+  { supplier: 'E.ON Next', tariff: 'Next Export Premium v3', ratePencePerKwh: 17.5, rateType: 'Fixed', eligibility: 'E.ON import customer + system installed by E.ON' },
+  { supplier: 'British Gas', tariff: 'Export & Earn Plus', ratePencePerKwh: 15.1, rateType: 'Variable', eligibility: 'British Gas electricity import customer' },
+  { supplier: 'EDF Energy', tariff: 'Export 12m', ratePencePerKwh: 15.0, rateType: 'Fixed', eligibility: 'EDF electricity import customer' },
+  { supplier: 'Good Energy', tariff: 'Solar Savings', ratePencePerKwh: 15.0, rateType: 'Variable', eligibility: 'Good Energy electricity import customer' },
+  { supplier: 'ScottishPower', tariff: 'SmartGen Premium Plus', ratePencePerKwh: 15.0, rateType: 'Variable', eligibility: 'ScottishPower import customer + system installed by ScottishPower' },
+  { supplier: 'E.ON Next', tariff: 'Next Export Exclusive v3', ratePencePerKwh: 13.0, rateType: 'Fixed', eligibility: 'E.ON electricity import customer' },
+  { supplier: '100Green', tariff: 'Export Tariff', ratePencePerKwh: 12.0, rateType: 'Variable', eligibility: '100Green electricity import customer' },
+  { supplier: 'Octopus Energy', tariff: 'Outgoing Octopus', ratePencePerKwh: 12.0, rateType: 'Fixed', eligibility: 'Octopus electricity import customer' },
+  { supplier: 'OVO Energy', tariff: 'SEG Beyond Exclusive', ratePencePerKwh: 12.0, rateType: 'Fixed', eligibility: "OVO import customer on 'OVO Beyond' plan" },
+  { supplier: 'ScottishPower', tariff: 'SmartGen Premium', ratePencePerKwh: 12.0, rateType: 'Variable', eligibility: 'ScottishPower electricity import customer' },
+  { supplier: 'Fuse Energy', tariff: 'Fuse Export', ratePencePerKwh: 10.0, rateType: 'Variable', eligibility: 'Fuse Energy electricity customer' },
+  { supplier: 'Octopus Energy', tariff: 'Outgoing Agile', ratePencePerKwh: 9.1, rateType: 'Wholesale Variable', eligibility: 'Octopus import customer (tracks 30-min market rates)' },
+  { supplier: 'Utility Warehouse', tariff: 'UW SEG – Bundle', ratePencePerKwh: 8.0, rateType: 'Variable', eligibility: 'UW import customer bundling 2+ additional services' },
+  { supplier: 'E.ON Next', tariff: 'Next Flex Export v1', ratePencePerKwh: 6.0, rateType: 'Variable', eligibility: 'Open to non-customers / E.ON import customers' },
+  { supplier: 'ScottishPower', tariff: 'SmartGen', ratePencePerKwh: 6.0, rateType: 'Variable', eligibility: 'Open to anyone (no switch needed)' },
+  { supplier: 'EDF Energy', tariff: 'SEG Export Variable Value', ratePencePerKwh: 5.6, rateType: 'Variable', eligibility: 'EDF electricity import customer' },
+  { supplier: 'So Energy', tariff: 'So Export Flex', ratePencePerKwh: 4.5, rateType: 'Variable', eligibility: 'Open to anyone (no switch needed)' },
+  { supplier: 'Octopus Energy', tariff: 'Smart Export Guarantee', ratePencePerKwh: 4.1, rateType: 'Fixed', eligibility: 'Open to anyone (no switch needed)' },
+  { supplier: 'OVO Energy', tariff: 'Standard SEG', ratePencePerKwh: 4.0, rateType: 'Variable', eligibility: 'Open to anyone (no switch needed)' },
+  { supplier: 'British Gas', tariff: 'Standard SEG', ratePencePerKwh: 3.02, rateType: 'Variable', eligibility: 'Open to anyone (no switch needed)' },
+  { supplier: 'EDF Energy', tariff: 'SEG Export Variable', ratePencePerKwh: 3.0, rateType: 'Variable', eligibility: 'Open to anyone (no switch needed)' },
+  { supplier: 'Utilita', tariff: 'Smart Export Guarantee', ratePencePerKwh: 3.0, rateType: 'Variable', eligibility: 'Open to anyone (no switch needed)' },
+  { supplier: 'Utility Warehouse', tariff: 'UW SEG – Standard', ratePencePerKwh: 2.0, rateType: 'Variable', eligibility: 'Open to anyone (no switch needed)' },
+  { supplier: 'Outfox Energy', tariff: 'Outfox Export', ratePencePerKwh: 1.05, rateType: 'Variable', eligibility: 'Open to anyone (no switch needed)' },
+  { supplier: 'E (Gas & Electricity)', tariff: 'SEG Tariff', ratePencePerKwh: 1.0, rateType: 'Variable', eligibility: 'Open to anyone (no switch needed)' },
+];
+
+// [Inference, drawn from the table above] A realistic no-commitment default:
+// the median rate among tariffs explicitly "open to anyone, no switch
+// needed" (the baseline a household gets without switching supplier or
+// installing through a specific company). This replaces the old flat 15p
+// guess, which sat far above what an uncommitted household would actually
+// receive — most of the higher rates above require a real eligibility step.
+const SEG_RATE_PENCE_PER_KWH_DEFAULT = 4.0;
 
 // [Assumption — wide range, no single authoritative figure] Typical UK
 // domestic rooftop system cost estimates range £5,500-£8,700; £7,000 is
@@ -90,6 +132,16 @@ function scoreStatus(paybackYears, thresholds) {
   return 'red';
 }
 
+/** Returns SEG_TARIFFS, already sorted highest to lowest rate. For a UI to build a picker from. */
+function getSegTariffs() {
+  return SEG_TARIFFS;
+}
+
+/** Looks up a specific tariff's rate and eligibility by supplier + tariff name. Returns undefined if not found. */
+function findSegTariff(supplier, tariff) {
+  return SEG_TARIFFS.find((t) => t.supplier === supplier && t.tariff === tariff);
+}
+
 // --- Rooftop calculator -------------------------------------------------------
 
 /**
@@ -98,7 +150,8 @@ function scoreStatus(paybackYears, thresholds) {
  * @param {'usuallyHome'|'usuallyOut'} input.occupancy
  * @param {number} input.annualConsumptionKwh - household's own annual electricity use
  * @param {number} [input.electricityPricePencePerKwh] - the user's own known rate; falls back to the Ofgem price-cap default if omitted
- * @param {number} [input.segRatePencePerKwh] - the user's own supplier's published SEG rate; falls back to a rough market-midpoint default if omitted
+ * @param {number} [input.segRatePencePerKwh] - a specific SEG tariff's rate, e.g. from findSegTariff(); falls back to the no-switch-needed baseline default if omitted
+ * @param {string} [input.segTariffLabel] - "Supplier — Tariff name" for display, if segRatePencePerKwh came from a specific named tariff rather than a manually-typed number
  */
 function calculateRooftopViability({
   orientation,
@@ -106,6 +159,7 @@ function calculateRooftopViability({
   annualConsumptionKwh,
   electricityPricePencePerKwh,
   segRatePencePerKwh,
+  segTariffLabel,
 }) {
   const generation = ROOFTOP_ANNUAL_GENERATION_KWH[orientation];
   const selfConsumptionRate = SELF_CONSUMPTION_RATE[occupancy];
@@ -136,8 +190,18 @@ function calculateRooftopViability({
         ? { value: usedElectricityPrice, tier: 'User-provided', note: 'Your own stated rate' }
         : { value: usedElectricityPrice, tier: 'Fact (default)', note: "Ofgem price cap, Jul-Sep 2026, changes quarterly, and applies only to default/standard-variable tariffs — if you're on a fixed deal, enter your own rate for an accurate result" },
       segRatePencePerKwh: segRateIsUserProvided
-        ? { value: usedSegRate, tier: 'User-provided', note: "Your own supplier's stated rate" }
-        : { value: usedSegRate, tier: 'Assumption (default)', note: 'A rough midpoint only — real SEG rates are supplier-specific and range roughly 3-30p/kWh; enter your own supplier\'s rate for an accurate result' },
+        ? {
+            value: usedSegRate,
+            tier: 'User-provided',
+            note: segTariffLabel
+              ? `${segTariffLabel} (from grounding-research.md's SEG tariff table — user-provided, 23 July 2026, not independently verified by this process)`
+              : "Your own stated rate",
+          }
+        : {
+            value: usedSegRate,
+            tier: 'Assumption (default)',
+            note: "The no-switch-needed baseline (median of tariffs open to anyone). Switching supplier or installing through a specific company can get a meaningfully higher rate, up to 25p/kWh in the researched tariff table — pick your actual tariff for an accurate result",
+          },
       systemCostGbp: { value: ROOFTOP_SYSTEM_COST_GBP, tier: 'Assumption', note: 'Industry-consensus range is £5,500-£8,700; not a quote for your specific roof' },
       generationKwh: { value: generation, tier: orientation === 'southFacing' ? 'Assumption' : 'Prototype estimate, not independently researched', note: 'Researched range is 3,400-4,200kWh/yr for a south-facing 4kW system' },
       selfConsumptionRate: { value: selfConsumptionRate, tier: 'Prototype simplification', note: 'Modeled from occupancy as a rough proxy, not an independently researched figure' },
@@ -186,9 +250,12 @@ function calculatePluginViability({ occupancy, electricityPricePencePerKwh }) {
 const SunnySideUpCalculator = {
   calculateRooftopViability,
   calculatePluginViability,
+  getSegTariffs,
+  findSegTariff,
   constants: {
     ELECTRICITY_PRICE_PENCE_PER_KWH_DEFAULT,
     SEG_RATE_PENCE_PER_KWH_DEFAULT,
+    SEG_TARIFFS,
     ROOFTOP_SYSTEM_COST_GBP,
     ROOFTOP_ANNUAL_GENERATION_KWH,
     PLUGIN_KIT_COST_GBP,
