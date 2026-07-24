@@ -82,6 +82,16 @@
     updateEligibilityNote();
   })();
 
+  // Number(str) returns NaN for a comma decimal separator (e.g. "0,01"),
+  // which a European keyboard/locale produces naturally. Parse defensively
+  // rather than silently breaking the whole calculation on valid input.
+  function parseLocaleNumber(str) {
+    if (str === '' || str == null) return undefined;
+    const normalized = String(str).trim().replace(',', '.');
+    const n = Number(normalized);
+    return Number.isNaN(n) ? undefined : n;
+  }
+
   function updateEligibilityNote() {
     const select = document.getElementById('segTariff');
     const note = document.getElementById('segTariffEligibility');
@@ -101,8 +111,9 @@
     let segRatePencePerKwh;
     let segTariffLabel;
     let segTariffSource;
-    if (segRateManualRaw !== '') {
-      segRatePencePerKwh = Number(segRateManualRaw);
+    const manualSegRate = parseLocaleNumber(segRateManualRaw);
+    if (manualSegRate !== undefined) {
+      segRatePencePerKwh = manualSegRate;
     } else if (segTariffSelect.value !== '') {
       const t = SunnySideUpCalculator.getSegTariffs()[Number(segTariffSelect.value)];
       segRatePencePerKwh = t.ratePencePerKwh;
@@ -110,11 +121,17 @@
       segTariffSource = t.source;
     }
 
+    const annualConsumptionKwh = parseLocaleNumber(document.getElementById('consumption').value);
+    if (annualConsumptionKwh === undefined) {
+      document.getElementById('rooftopResult').textContent = 'Enter a valid number for annual household electricity use.';
+      return;
+    }
+
     const result = SunnySideUpCalculator.calculateRooftopViability({
       orientation: document.getElementById('orientation').value,
       occupancy: document.getElementById('occupancyRoof').value,
-      annualConsumptionKwh: Number(document.getElementById('consumption').value),
-      electricityPricePencePerKwh: elecPriceRaw === '' ? undefined : Number(elecPriceRaw),
+      annualConsumptionKwh,
+      electricityPricePencePerKwh: parseLocaleNumber(elecPriceRaw),
       segRatePencePerKwh,
       segTariffLabel,
       segTariffSource,
