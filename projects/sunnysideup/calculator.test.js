@@ -112,58 +112,47 @@ printResult(
   printResult('Rooftop by postcode — EH1 1BB (network-restricted session, fallback-to-England path expected)', realNetworkResult);
   console.log('- postcodeLookup.ok should be false here (network-restricted session), with generationKwh falling back to the unadjusted England baseline (3,800), not a thrown error or NaN.');
 
-  // The three scenarios below stub global.fetch to exercise the branches a
-  // network-restricted session can never actually reach: a successful
-  // postcodes.io lookup, and both outcomes of the subsequent PVGIS call.
-  // This checks the branching logic itself (which fallback fires, what gets
-  // attached to the result), not whether postcodes.io/PVGIS's real contracts
-  // match what's assumed here — that still needs a live check from an
-  // unrestricted session or a real browser before either is fully trusted.
+  // The two scenarios below stub global.fetch to exercise the postcode
+  // success branches a network-restricted session can never actually reach.
+  // (PVGIS was tried here too and removed — confirmed via a live browser
+  // test, 24 July 2026, that it sends no Access-Control-Allow-Origin header
+  // and is permanently CORS-blocked for a pure static-site prototype with no
+  // backend proxy — see calculator.js's comment above
+  // calculateRooftopViabilityByPostcode for the full finding.) This checks
+  // the branching logic itself (which fallback fires, what gets attached to
+  // the result), not whether postcodes.io's real contract matches what's
+  // assumed here — that still needs a live check, though it's already been
+  // confirmed working once (see the Chrome DevTools test that surfaced the
+  // PVGIS finding above: postcodes.io itself resolved a real postcode to
+  // real coordinates before the PVGIS call was attempted and blocked).
   const originalFetch = global.fetch;
 
   global.fetch = async (url) => {
     if (String(url).includes('postcodes.io')) {
       return { ok: true, status: 200, json: async () => ({ result: { postcode: 'EH1 1BB', country: 'Scotland', region: 'Edinburgh, City of', latitude: 55.9533, longitude: -3.1883 } }) };
     }
-    return { ok: false, status: 500 }; // PVGIS fails
-  };
-  const scotlandPvgisFailsResult = await calculateRooftopViabilityByPostcode('EH1 1BB', {
-    orientation: 'southFacing',
-    occupancy: 'usuallyHome',
-    annualConsumptionKwh: 4000,
-  });
-  printResult('Rooftop by postcode — Scotland resolved, PVGIS fails (stubbed fetch: country-multiplier fallback expected)', scotlandPvgisFailsResult);
-  console.log(`- generationKwh should be ${Math.round(3800 * 0.85)} (3,800 England baseline x Scotland's 0.85 multiplier), regulatoryFlag should be present (Scotland), pvgisLookup.ok should be false.`);
-
-  global.fetch = async (url) => {
-    if (String(url).includes('postcodes.io')) {
-      return { ok: true, status: 200, json: async () => ({ result: { postcode: 'EH1 1BB', country: 'Scotland', region: 'Edinburgh, City of', latitude: 55.9533, longitude: -3.1883 } }) };
-    }
-    if (String(url).includes('re.jrc.ec.europa.eu')) {
-      return { ok: true, status: 200, json: async () => ({ outputs: { totals: { fixed: { E_y: 3300.5, E_m: 275 } } } }) };
-    }
     throw new Error('unexpected fetch URL in stub: ' + url);
   };
-  const scotlandPvgisSucceedsResult = await calculateRooftopViabilityByPostcode('EH1 1BB', {
+  const scotlandResult = await calculateRooftopViabilityByPostcode('EH1 1BB', {
     orientation: 'southFacing',
     occupancy: 'usuallyHome',
     annualConsumptionKwh: 4000,
   });
-  printResult('Rooftop by postcode — Scotland resolved, PVGIS succeeds (stubbed fetch: coordinate-precise estimate expected)', scotlandPvgisSucceedsResult);
-  console.log('- generationKwh should be 3,301 (PVGIS\'s stubbed E_y, rounded), overriding the country multiplier entirely; regulatoryFlag should still be present (Scotland); pvgisLookup.ok should be true.');
+  printResult('Rooftop by postcode — Scotland resolved (stubbed fetch: country-multiplier expected)', scotlandResult);
+  console.log(`- generationKwh should be ${Math.round(3800 * 0.85)} (3,800 England baseline x Scotland's 0.85 multiplier), and regulatoryFlag should be present (Scotland).`);
 
   global.fetch = async (url) => {
     if (String(url).includes('postcodes.io')) {
       return { ok: true, status: 200, json: async () => ({ result: { postcode: 'SW1A 1AA', country: 'England', region: 'London', latitude: 51.5, longitude: -0.14 } }) };
     }
-    return { ok: false, status: 500 }; // PVGIS fails
+    throw new Error('unexpected fetch URL in stub: ' + url);
   };
   const englandResult = await calculateRooftopViabilityByPostcode('SW1A 1AA', {
     orientation: 'southFacing',
     occupancy: 'usuallyHome',
     annualConsumptionKwh: 4000,
   });
-  printResult('Rooftop by postcode — England resolved, PVGIS fails (stubbed fetch: no regulatory flag expected)', englandResult);
+  printResult('Rooftop by postcode — England resolved (stubbed fetch: no regulatory flag expected)', englandResult);
   console.log('- generationKwh should be 3,800 (England\'s 1.0x multiplier is a no-op), and regulatoryFlag should be ABSENT (England has no unresearched-regime flag).');
 
   global.fetch = originalFetch;
