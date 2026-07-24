@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>SunnySideUp calculator — manual test harness (not the real prototype UI)</title>
+<style>
+  body { font-family: -apple-system, sans-serif; max-width: 640px; margin: 40px auto; padding: 0 20px; }
+  fieldset { margin-bottom: 24px; padding: 16px; }
+  label { display: block; margin: 10px 0 4px; font-weight: 600; }
+  select, input { width: 100%; padding: 6px; font-size: 14px; }
+  button { margin-top: 14px; padding: 8px 16px; font-size: 14px; cursor: pointer; }
+  pre { background: #f4f4f4; padding: 12px; overflow-x: auto; border-radius: 6px; }
+  h1 { font-size: 18px; }
+  .note { color: #666; font-size: 13px; }
+</style>
+</head>
+<body>
+<h1>SunnySideUp calculator — manual test harness</h1>
+<p class="note">This is a bare test page for calculator.js, not the styled prototype. No design, just a working form so the logic can be poked at directly.</p>
+
+<fieldset>
+  <legend>Rooftop</legend>
+  <label for="orientation">Roof orientation</label>
+  <select id="orientation">
+    <option value="southFacing">South-facing</option>
+    <option value="eastWestFacing">East/West-facing</option>
+    <option value="northFacing">North-facing</option>
+  </select>
+
+  <label for="occupancyRoof">Home occupancy pattern</label>
+  <select id="occupancyRoof">
+    <option value="usuallyHome">Usually home during the day</option>
+    <option value="usuallyOut">Usually out during the day</option>
+  </select>
+
+  <label for="consumption">Annual household electricity use (kWh/year)</label>
+  <input id="consumption" type="number" value="3500">
+
+  <button onclick="runRooftop()">Calculate rooftop viability</button>
+  <pre id="rooftopResult">(results will appear here)</pre>
+</fieldset>
+
+<fieldset>
+  <legend>Plug-in</legend>
+  <label for="occupancyPlugin">Home occupancy pattern</label>
+  <select id="occupancyPlugin">
+    <option value="usuallyHome">Usually home during the day</option>
+    <option value="usuallyOut">Usually out during the day</option>
+  </select>
+
+  <button onclick="runPlugin()">Calculate plug-in viability</button>
+  <pre id="pluginResult">(results will appear here)</pre>
+</fieldset>
+
+<script src="calculator.js"></script>
+<script>
+  function runRooftop() {
+    const result = SunnySideUpCalculator.calculateRooftopViability({
+      orientation: document.getElementById('orientation').value,
+      occupancy: document.getElementById('occupancyRoof').value,
+      annualConsumptionKwh: Number(document.getElementById('consumption').value),
+    });
+    document.getElementById('rooftopResult').textContent = JSON.stringify(result, null, 2);
+  }
+  function runPlugin() {
+    const result = SunnySideUpCalculator.calculatePluginViability({
+      occupancy: document.getElementById('occupancyPlugin').value,
+    });
+    document.getElementById('pluginResult').textContent = JSON.stringify(result, null, 2);
+  }
+</script>
+</body>
+</html>
