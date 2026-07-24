@@ -165,14 +165,12 @@ const SEG_TARIFFS = [
 // installing through a specific company). This replaces the old flat 15p
 // guess, which sat far above what an uncommitted household would actually
 // receive — most of the higher rates above require a real eligibility step.
-// OPEN ISSUE, found 24 Jul 2026, not yet resolved: the 10 qualifying rows
-// (§SEG_TARIFFS above) are [1.0, 1.05, 2.0, 3.0, 3.0, 3.02, 4.0, 4.1, 4.5,
-// 6.0]p — the true median is 3.01p, not 4.0p. This constant sits nearer the
-// 70th percentile of that set than the 50th, contradicting its own label.
-// Needs a decision: correct the constant to 3.01 (changes every default-SEG
-// rooftop calculation's output), or rewrite this comment to describe what
-// 4.0 actually is instead of miscalling it a median.
-const SEG_RATE_PENCE_PER_KWH_DEFAULT = 4.0;
+// Corrected 24 Jul 2026: the 10 qualifying rows (§SEG_TARIFFS above) are
+// [1.0, 1.05, 2.0, 3.0, 3.0, 3.02, 4.0, 4.1, 4.5, 6.0]p; the true median
+// (mean of the 5th and 6th values) is 3.01p. The constant previously read
+// 4.0p, nearer the 70th percentile than the 50th, contradicting its own
+// "median" label — fixed to actually match it.
+const SEG_RATE_PENCE_PER_KWH_DEFAULT = 3.01;
 
 // [Assumption — wide range, no single authoritative figure] Typical UK
 // domestic rooftop system cost estimates range £5,500-£8,700; £7,000 is
