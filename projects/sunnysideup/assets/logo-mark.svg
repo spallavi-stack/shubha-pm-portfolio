@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="256" height="256" role="img" aria-label="SunnySideUp logo, a cartoon fried egg">
+  <defs>
+    <clipPath id="ssuClip"><rect x="0" y="0" width="64" height="64" rx="16"></rect></clipPath>
+  </defs>
+  <rect x="0" y="0" width="64" height="64" rx="16" fill="#FFE9B8"></rect>
+  <g clip-path="url(#ssuClip)">
+    <path d="M9 33 C6 21 18 11 30 12 C41 13 47 8 54 15 C61 22 59 33 55 40 C50 49 38 53 27 50 C15 47 11 43 9 33 Z" fill="#FFFDF6" stroke="#F0E4D0" stroke-width="1.5"></path>
+    <circle cx="35" cy="31" r="13" fill="#F5B942" stroke="#D4890B" stroke-width="1.5"></circle>
+    <ellipse cx="30" cy="26" rx="4" ry="2.5" fill="#FFE9B8" opacity="0.85"></ellipse>
+    <circle cx="31" cy="31" r="1.7" fill="#2B2118"></circle>
+    <circle cx="39" cy="31" r="1.7" fill="#2B2118"></circle>
+    <path d="M31 36 Q35 39.5 39 36" fill="none" stroke="#2B2118" stroke-width="1.8" stroke-linecap="round"></path>
+  </g>
+</svg>
