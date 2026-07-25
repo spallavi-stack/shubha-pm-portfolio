@@ -7,7 +7,7 @@ Usage:
 Expects each project's markdown source at projects/<slug>/docs/*.md and
 writes the rendered HTML alongside it as projects/<slug>/docs/*.html.
 """
-import markdown, os, re, sys
+import html, markdown, os, re, sys
 
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -49,6 +49,7 @@ PROJECTS = {
             ("synthetic-interviews.md", "synthetic-interviews.html", "Synthetic Interviews"),
             ("roadmap.md", "roadmap.html", "Roadmap"),
             ("calculation-logic.md", "calculation-logic.html", "Calculation Logic"),
+            ("price-integration-guide.md", "price-integration-guide.html", "Price Integration Guide"),
         ],
     },
 }
@@ -58,7 +59,7 @@ TEMPLATE = """<!DOCTYPE html>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>{title} — {project_title} | Shubha's PM Portfolio</title>
+<title>{title}, {project_title} | Shubha's PM Portfolio</title>
 <style>
   :root{{
     --teal:{teal}; --teal-dark:{teal_dark}; --navy:{navy};
@@ -88,6 +89,8 @@ TEMPLATE = """<!DOCTYPE html>
   article th{{font-size:11px;text-transform:uppercase;letter-spacing:0.04em;color:var(--ink-soft);}}
   article code{{background:var(--paper-soft);padding:1px 5px;border-radius:4px;font-size:13px;}}
   article svg{{max-width:100%;height:auto;display:block;margin:20px 0;border:1px solid var(--border);border-radius:12px;padding:10px;background:#fff;}}
+  article pre.mermaid{{background:none;border:none;padding:0;margin:20px 0;overflow-x:auto;text-align:center;}}
+  article pre.mermaid svg{{margin:0 auto;}}
   .doc-footer{{margin-top:40px;padding-top:20px;border-top:1px solid var(--border);font-size:13px;color:var(--ink-soft);}}
   footer{{background:var(--navy);color:{footer_ink};padding:32px 0;text-align:center;font-size:13px;}}
   footer a{{color:{footer_link};}}
@@ -110,6 +113,15 @@ TEMPLATE = """<!DOCTYPE html>
 <footer>
   <div class="wrap">{footer_note}</div>
 </footer>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>
+  mermaid.initialize({{
+    startOnLoad: true,
+    theme: 'neutral',
+    fontFamily: '-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif',
+    flowchart: {{ curve: 'basis' }},
+  }});
+</script>
 </body>
 </html>
 """
@@ -126,6 +138,11 @@ def build(slug):
         html_body = md.convert(text)
         md.reset()
         html_body = re.sub(r"<p>(<svg[\s\S]*?</svg>)</p>", r"\1", html_body)
+        html_body = re.sub(
+            r'<pre><code class="language-mermaid">([\s\S]*?)</code></pre>',
+            lambda m: f'<pre class="mermaid">{html.unescape(m.group(1))}</pre>',
+            html_body,
+        )
         full = TEMPLATE.format(
             title=title,
             project_title=cfg["title"],
