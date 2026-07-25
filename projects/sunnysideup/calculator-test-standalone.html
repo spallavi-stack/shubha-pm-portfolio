@@ -46,16 +46,16 @@
     <label for="roofArea">Usable roof area, m² (rooftop only — leave blank to use a flat ~4.6kWp typical-system default)</label>
     <input id="roofArea" type="number" step="0.1" placeholder="e.g. 25 — sizes the system to your actual roof instead of a flat default">
   </div>
+</fieldset>
+
+<fieldset>
+  <legend>Your electricity use</legend>
 
   <label for="occupancy">During a typical weekday...</label>
   <select id="occupancy">
     <option value="usuallyHome">I'm usually home</option>
     <option value="usuallyOut">I'm usually away during the day</option>
   </select>
-</fieldset>
-
-<fieldset>
-  <legend>Your electricity use</legend>
 
   <details id="householdSizeDetails" open>
     <summary>Estimate it from my household</summary>
@@ -80,16 +80,16 @@
   <legend>Electricity price</legend>
   <label for="elecPriceRoof">Import price, pence/kWh</label>
   <input id="elecPriceRoof" type="number" step="0.01" placeholder="leave blank to fetch a live current rate for your postcode's region">
-
-  <label for="importSupplier">Your current electricity supplier (used below to check their export/SEG rate, not for the price above)</label>
-  <select id="importSupplier"></select>
 </fieldset>
 
 <fieldset id="segField">
   <legend>Export (SEG) tariff</legend>
+  <label for="importSupplier">Your current electricity supplier (used to check their export/SEG rate below)</label>
+  <select id="importSupplier"></select>
+
   <label for="segChoice">When you get solar, your export tariff will most likely be:</label>
   <select id="segChoice" onchange="updateSegChoiceVisibility()">
-    <option value="sameAsImport">The same supplier as my electricity import, shown above</option>
+    <option value="sameAsImport">The same supplier as my electricity import, above</option>
     <option value="different">A different export supplier — I'll pick one</option>
     <option value="dontKnow">I don't know yet</option>
   </select>
