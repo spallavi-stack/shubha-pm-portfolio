@@ -248,8 +248,14 @@ button{font-family:inherit;}
 .stat-sub{font-size:var(--text-xs);color:var(--text-secondary);}
 
 /* Sunny says: mascot + speech bubble, carousel through flags if >1 */
+.flags-intro{
+  font-weight:700;font-size:var(--text-sm);color:var(--text-secondary);
+  margin:var(--space-5) 0 var(--space-2);opacity:0;transition:opacity var(--duration-base) ease;
+}
+.flags-intro.shown{opacity:1;}
+
 .sunny-says{
-  display:flex;gap:12px;align-items:flex-start;margin:var(--space-5) 0 var(--space-2);
+  display:flex;gap:12px;align-items:flex-start;margin:0 0 var(--space-2);
   opacity:0;transition:opacity var(--duration-base) ease;
 }
 .sunny-says.shown{opacity:1;}
@@ -463,6 +469,7 @@ button{font-family:inherit;}
 
           <div class="stat-row" id="statRow"></div>
 
+          <div class="flags-intro" id="flagsIntro"></div>
           <div class="sunny-says" id="sunnySays">
             <div class="mascot-wrap" id="mascotSays"></div>
             <div class="speech-bubble">
@@ -810,6 +817,7 @@ async function runCalculation() {
   verdictEl.className = 'verdict-text';
   document.getElementById('statRow').innerHTML = '';
   document.getElementById('sunnySays').classList.remove('shown');
+  document.getElementById('flagsIntro').classList.remove('shown');
   document.getElementById('flagDots').innerHTML = '';
   const accordion = document.getElementById('assumptionsAccordion');
   accordion.classList.add('hidden');
@@ -859,7 +867,12 @@ async function runCalculation() {
   currentFlags = collectFlags(result, segment);
   flagStep = 0;
   renderFlagStep();
-  setTimeout(() => document.getElementById('sunnySays').classList.add('shown'), stats.length * 180 + 300);
+  const flagsIntroEl = document.getElementById('flagsIntro');
+  flagsIntroEl.textContent = result.status === 'red' ? 'And some more things to consider' : 'But please consider';
+  setTimeout(() => {
+    flagsIntroEl.classList.add('shown');
+    document.getElementById('sunnySays').classList.add('shown');
+  }, stats.length * 180 + 300);
 
   fillAssumptions(result, segment);
   accordion.classList.remove('hidden');
