@@ -472,7 +472,7 @@ async function calculateRooftopViabilityByPostcode(postcode, otherInputs) {
   result.postcodeLookup = { ok: true, postcode: lookup.postcode, country: lookup.country, region: lookup.region };
   const regulatoryNote = REGIONS_WITH_UNRESEARCHED_REGULATORY_REGIME[lookup.country];
   if (regulatoryNote) {
-    result.regulatoryFlag = { country: lookup.country, note: regulatoryNote };
+    result.flags.push({ id: 'regulatoryRegime', tier: 'Fact', title: `${lookup.country}: regulatory regime not researched`, country: lookup.country, note: regulatoryNote });
   }
   if (!openMeteo.ok && !REGIONAL_GENERATION_MULTIPLIER[lookup.country]) {
     result.postcodeLookup.note = `No regional generation figure for "${lookup.country}"; used the England-calibrated default.`;
@@ -575,7 +575,7 @@ function estimateAnnualConsumptionKwh({ householdSize, hasHeatPump, hasEv, evCou
   return { totalKwh: Math.round(totalKwh), breakdown };
 }
 
-function calculateRooftopViability({ orientation, occupancy, annualConsumptionKwh, electricityPricePencePerKwh, electricityPriceOverride, segRatePencePerKwh, segTariffLabel, segTariffSource, regionalGeneration, generationOverride, roofAreaM2 }) {
+function calculateRooftopViability({ orientation, occupancy, annualConsumptionKwh, electricityPricePencePerKwh, electricityPriceOverride, segRatePencePerKwh, segTariffLabel, segTariffSource, segTariffEligibility, regionalGeneration, generationOverride, roofAreaM2 }) {
   const baseGeneration = ROOFTOP_ANNUAL_GENERATION_KWH[orientation];
   const preRoofAreaGeneration = generationOverride
     ? generationOverride.value
@@ -623,7 +623,7 @@ function calculateRooftopViability({ orientation, occupancy, annualConsumptionKw
           ? { value: usedElectricityPrice, tier: electricityPriceOverride.tier, note: electricityPriceOverride.note }
           : { value: usedElectricityPrice, tier: 'Fact (default)', note: "Ofgem price cap, Jul-Sep 2026, changes quarterly, and applies only to default/standard-variable tariffs — if you're on a fixed deal, enter your own rate for an accurate result" },
       segRatePencePerKwh: segRateIsUserProvided
-        ? { value: usedSegRate, tier: 'User-provided', note: segTariffLabel ? `${segTariffLabel}${segTariffSource ? `, per ${segTariffSource}` : ''} (SEG tariff table, user-provided 23 July 2026, not independently fetched or verified)` : 'Your own stated rate' }
+        ? { value: usedSegRate, tier: 'User-provided', note: segTariffLabel ? `${segTariffLabel}${segTariffSource ? `, per ${segTariffSource}` : ''} (SEG tariff table, user-provided 23 July 2026, not independently fetched or verified)${segTariffEligibility ? ` — requires: ${segTariffEligibility}` : ''}` : 'Your own stated rate' }
         : { value: usedSegRate, tier: 'Assumption (default)', note: 'The no-switch-needed baseline (median of tariffs open to anyone). Switching supplier or installing through a specific company can get a meaningfully higher rate, up to 25p/kWh — pick your actual tariff for an accurate result' },
       systemCostGbp: roofAreaSizing
         ? { value: systemCostGbp, tier: 'Inference — derived from your roof area', note: `${roofAreaSizing.panelCount} panels x ${PANEL_WATTAGE_KWP}kWp x £${roofAreaSizing.costPerKwpGbp}/kWp (MCS-sourced installed-cost rate for this system size). Not a quote for your specific roof — actual roof shape, shading, and access all affect a real quote.` }
@@ -639,14 +639,41 @@ function calculateRooftopViability({ orientation, occupancy, annualConsumptionKw
 
   if (roofAreaSizing) {
     result.roofAreaSizing = { roofAreaM2, panelCount: roofAreaSizing.panelCount, systemSizeKwp: roofAreaSizing.systemSizeKwp };
-    if (roofAreaSizing.exceedsPermittedDevelopmentEngland) {
-      result.permittedDevelopmentFlag = {
-        systemSizeKwp: roofAreaSizing.systemSizeKwp,
-        ceilingKwp: PERMITTED_DEVELOPMENT_KWP_CEILING_ENGLAND,
-        note: `Your roof-area-derived system (${roofAreaSizing.systemSizeKwp}kWp) is larger than the ${PERMITTED_DEVELOPMENT_KWP_CEILING_ENGLAND}kWp ceiling covered by Permitted Development Rights in England — you may need planning permission for a system this size. Scotland and Wales have their own separate thresholds, not researched here.`,
-      };
-    }
   }
+
+  // Situational callouts, distinct from the per-field assumptions above —
+  // see calculator.js's fuller comment above this same block. The first
+  // three are unconditional: no input this calculator collects (deliberately
+  // no new ones added) can tell it whether a property is leasehold, listed,
+  // or in a conservation area, so every rooftop result carries them.
+  const flags = [];
+  if (roofAreaSizing && roofAreaSizing.exceedsPermittedDevelopmentEngland) {
+    flags.push({
+      id: 'permittedDevelopment',
+      tier: 'Fact',
+      title: 'May need planning permission',
+      note: `Your roof-area-derived system (${roofAreaSizing.systemSizeKwp}kWp) is larger than the ${PERMITTED_DEVELOPMENT_KWP_CEILING_ENGLAND}kWp ceiling covered by Permitted Development Rights in England — you may need planning permission for a system this size. Scotland and Wales have their own separate thresholds, not researched here.`,
+    });
+  }
+  flags.push({
+    id: 'tenancyConsent',
+    tier: 'Fact',
+    title: 'Leasehold or renting? You likely need consent',
+    note: "If you're a leaseholder, UK leasehold law generally requires freeholder (or management company) consent before altering a building's exterior — including rooftop solar — regardless of system size; lease terms vary, so check yours. If you rent, check with your landlord. This tool doesn't resolve either question for your specific situation.",
+  });
+  flags.push({
+    id: 'listedBuilding',
+    tier: 'Fact',
+    title: 'Listed building? No permitted development rights apply',
+    note: 'This result only checks the size-based Permitted Development ceiling above. Listed buildings have no permitted development rights for solar at all, regardless of system size — not checked by this tool.',
+  });
+  flags.push({
+    id: 'conservationArea',
+    tier: 'Inference',
+    title: 'In a conservation area? Extra rules may apply',
+    note: 'Panels visible from a highway in a conservation area may need full planning permission even within the Permitted Development ceiling; rear- or side-facing panels not visible from a highway are more often still exempt. Not checked by this tool.',
+  });
+  result.flags = flags;
 
   return result;
 }
@@ -815,7 +842,7 @@ function resolveSegInputs() {
       return {};
     }
     const t = matches[0];
-    return { segRatePencePerKwh: t.ratePencePerKwh, segTariffLabel: `${t.supplier} — ${t.tariff}`, segTariffSource: t.source };
+    return { segRatePencePerKwh: t.ratePencePerKwh, segTariffLabel: `${t.supplier} — ${t.tariff}`, segTariffSource: t.source, segTariffEligibility: t.eligibility };
   }
   if (choice === 'different') {
     const segRateManualRaw = document.getElementById('segRateManual').value;
@@ -826,7 +853,7 @@ function resolveSegInputs() {
     }
     if (segTariffSelect.value !== '') {
       const t = getSegTariffs()[Number(segTariffSelect.value)];
-      return { segRatePencePerKwh: t.ratePencePerKwh, segTariffLabel: `${t.supplier} — ${t.tariff}`, segTariffSource: t.source };
+      return { segRatePencePerKwh: t.ratePencePerKwh, segTariffLabel: `${t.supplier} — ${t.tariff}`, segTariffSource: t.source, segTariffEligibility: t.eligibility };
     }
     return {};
   }

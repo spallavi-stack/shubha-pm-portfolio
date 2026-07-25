@@ -528,6 +528,7 @@ function estimateAnnualConsumptionKwh({ householdSize, hasHeatPump, hasEv, evCou
  * @param {number} [input.segRatePencePerKwh] - a specific SEG tariff's rate, e.g. from findSegTariff(); falls back to the no-switch-needed baseline default if omitted
  * @param {string} [input.segTariffLabel] - "Supplier — Tariff name" for display, if segRatePencePerKwh came from a specific named tariff rather than a manually-typed number
  * @param {string} [input.segTariffSource] - the named source for that tariff row (e.g. "Ofgem SEG Licensee Register"), if available
+ * @param {string} [input.segTariffEligibility] - that tariff row's eligibility text (e.g. "requires system installed by that same supplier"), if available — carried into the result so the condition attached to the picked rate isn't lost between the picker UI and the calculated output
  * @param {Object} [input.regionalGeneration] - a REGIONAL_GENERATION_MULTIPLIER entry, e.g. from calculateRooftopViabilityByPostcode()'s country-level fallback; omit to use the England-calibrated baseline unchanged. Ignored if generationOverride is also given.
  * @param {Object} [input.generationOverride] - a specific { value, tier, note } to use for generationKwh outright (e.g. a coordinate-precise weather-API estimate), taking precedence over regionalGeneration and the orientation-based default
  * @param {number} [input.roofAreaM2] - usable roof area; if given, sizes the system (panels, kWp, cost) against it via estimateSystemSizeFromRoofArea() instead of the flat REFERENCE_SYSTEM_SIZE_KWP default, and scales whatever generation figure was otherwise resolved (flat/regional/override) proportionally to the derived system size
@@ -541,6 +542,7 @@ function calculateRooftopViability({
   segRatePencePerKwh,
   segTariffLabel,
   segTariffSource,
+  segTariffEligibility,
   regionalGeneration,
   generationOverride,
   roofAreaM2,
@@ -597,7 +599,7 @@ function calculateRooftopViability({
             value: usedSegRate,
             tier: 'User-provided',
             note: segTariffLabel
-              ? `${segTariffLabel}${segTariffSource ? `, per ${segTariffSource}` : ''} (from the user-provided SEG tariff table, dated 23 July 2026)`
+              ? `${segTariffLabel}${segTariffSource ? `, per ${segTariffSource}` : ''} (from the user-provided SEG tariff table, dated 23 July 2026)${segTariffEligibility ? ` — requires: ${segTariffEligibility}` : ''}`
               : "Your own stated rate",
           }
         : {
@@ -631,14 +633,51 @@ function calculateRooftopViability({
       panelCount: roofAreaSizing.panelCount,
       systemSizeKwp: roofAreaSizing.systemSizeKwp,
     };
-    if (roofAreaSizing.exceedsPermittedDevelopmentEngland) {
-      result.permittedDevelopmentFlag = {
-        systemSizeKwp: roofAreaSizing.systemSizeKwp,
-        ceilingKwp: PERMITTED_DEVELOPMENT_KWP_CEILING_ENGLAND,
-        note: `Your roof-area-derived system (${roofAreaSizing.systemSizeKwp}kWp) is larger than the ${PERMITTED_DEVELOPMENT_KWP_CEILING_ENGLAND}kWp ceiling covered by Permitted Development Rights in England — you may need planning permission for a system this size. Scotland and Wales have their own separate thresholds, not researched here.`,
-      };
-    }
   }
+
+  // Situational, always-worth-reading callouts, distinct from the per-field
+  // assumptions above: those explain how confident a number is, these tell
+  // the user about a condition attached to *this specific result* that the
+  // number alone doesn't convey. calculateRooftopViabilityByPostcode may
+  // append a regulatory-regime flag to this same array once it knows the
+  // resolved country. The first three below are unconditional — every
+  // rooftop result gets them, not just some — because none of the inputs
+  // this calculator collects (deliberately no new ones added for this) can
+  // tell it whether a given property is leasehold, listed, or in a
+  // conservation area.
+  const flags = [];
+
+  if (roofAreaSizing && roofAreaSizing.exceedsPermittedDevelopmentEngland) {
+    flags.push({
+      id: 'permittedDevelopment',
+      tier: 'Fact',
+      title: 'May need planning permission',
+      note: `Your roof-area-derived system (${roofAreaSizing.systemSizeKwp}kWp) is larger than the ${PERMITTED_DEVELOPMENT_KWP_CEILING_ENGLAND}kWp ceiling covered by Permitted Development Rights in England — you may need planning permission for a system this size. Scotland and Wales have their own separate thresholds, not researched here.`,
+    });
+  }
+
+  flags.push({
+    id: 'tenancyConsent',
+    tier: 'Fact',
+    title: 'Leasehold or renting? You likely need consent',
+    note: "If you're a leaseholder, UK leasehold law generally requires freeholder (or management company) consent before altering a building's exterior — including rooftop solar — regardless of system size; lease terms vary, so check yours. If you rent, check with your landlord. This tool doesn't resolve either question for your specific situation.",
+  });
+
+  flags.push({
+    id: 'listedBuilding',
+    tier: 'Fact',
+    title: 'Listed building? No permitted development rights apply',
+    note: 'This result only checks the size-based Permitted Development ceiling above. Listed buildings have no permitted development rights for solar at all, regardless of system size — not checked by this tool.',
+  });
+
+  flags.push({
+    id: 'conservationArea',
+    tier: 'Inference',
+    title: 'In a conservation area? Extra rules may apply',
+    note: 'Panels visible from a highway in a conservation area may need full planning permission even within the Permitted Development ceiling; rear- or side-facing panels not visible from a highway are more often still exempt. Not checked by this tool.',
+  });
+
+  result.flags = flags;
 
   return result;
 }
@@ -1094,7 +1133,7 @@ async function calculateRooftopViabilityByPostcode(postcode, otherInputs) {
   };
   const regulatoryNote = REGIONS_WITH_UNRESEARCHED_REGULATORY_REGIME[lookup.country];
   if (regulatoryNote) {
-    result.regulatoryFlag = { country: lookup.country, note: regulatoryNote };
+    result.flags.push({ id: 'regulatoryRegime', tier: 'Fact', title: `${lookup.country}: regulatory regime not researched`, country: lookup.country, note: regulatoryNote });
   }
   if (!openMeteo.ok && !REGIONAL_GENERATION_MULTIPLIER[lookup.country]) {
     result.postcodeLookup.note = `No regional generation figure for "${lookup.country}"; used the England-calibrated default.`;

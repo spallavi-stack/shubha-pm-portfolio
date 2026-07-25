@@ -291,7 +291,8 @@ flowchart TD
 ```
 
 For the "different supplier" choice, a manually typed rate overrides the table selection if
-both are filled in.
+both are filled in. Either resolution path also carries the picked row's eligibility text (e.g.
+"requires system installed by that same supplier") into the final result — see §5.
 
 **Key constants** (`calculator.js` L81-173):
 
@@ -338,12 +339,37 @@ flowchart TD
 
 Every result carries an `assumptions` object naming each input's resolved value, confidence
 tier, and a plain-language note — so a user (or a future reviewer) can see exactly which parts
-of a given result are Fact-backed vs. Assumption-backed, not just the final figure. Rooftop
-results additionally carry, when applicable: `postcodeLookup`, `openMeteoLookup`,
+of a given result are Fact-backed vs. Assumption-backed, not just the final figure. This is
+sourcing-confidence detail: intended as a collapsible "read it if you want it" section below
+the headline numbers (payback, annual savings, system cost), not something that needs to
+interrupt anyone by default.
+
+Rooftop results also carry a `flags` array — situational, always-worth-surfacing callouts,
+distinct from `assumptions` in kind, not just placement: `assumptions` explains how confident a
+*number* is, `flags` tells the user about a *condition attached to this specific result* that
+the number alone doesn't convey. Each entry is `{ id, tier, title, note }`. Three are
+unconditional (every rooftop result gets them, since no input this calculator collects tells it
+whether a property is leasehold, listed, or in a conservation area — deliberately not adding new
+inputs just to gate these):
+
+| id | Trigger | Tier | What it says |
+|---|---|---|---|
+| `permittedDevelopment` | Roof-area-derived system exceeds England's 4kWp Permitted Development ceiling | Fact | May need planning permission for a system this size |
+| `tenancyConsent` | Always | Fact | Leaseholders generally need freeholder consent for exterior alterations; renters should check with their landlord — standard UK leasehold law, not resolved by this tool |
+| `listedBuilding` | Always | Fact | Listed buildings have zero Permitted Development rights for solar at any size — the `permittedDevelopment` flag above only checks size, not listed status |
+| `conservationArea` | Always | Inference | Street-visible panels in a conservation area may need planning permission even under the size ceiling |
+| `regulatoryRegime` | Postcode resolves to Scotland or Wales | Fact | That country's own permitted-development/building-regulation regime hasn't been researched here |
+
+Rooftop results additionally carry, when applicable: `postcodeLookup`, `openMeteoLookup`,
 `electricityPriceLookup` (each `{ ok, error? }`, so a failed live lookup is visible rather than
-silently masked by its fallback), `roofAreaSizing`, `permittedDevelopmentFlag`, and
-`regulatoryFlag` (Scotland/Wales — permitted-development regime not researched for those
-countries).
+silently masked by its fallback) and `roofAreaSizing`.
+
+Separately, when a SEG rate comes from a specific named tariff (either the "same as my import
+supplier" lookup or a manually-picked row from the full table), that tariff's eligibility text
+(e.g. "requires system installed by that same supplier") is folded into
+`assumptions.segRatePencePerKwh.note` — not just shown in the picker UI — so the condition
+attached to the picked rate survives into the calculated result instead of getting lost between
+the two.
 
 ---
 

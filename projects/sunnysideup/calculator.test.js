@@ -73,8 +73,9 @@ printResult(
 // A specific named tariff looked up from the table, not a manually-typed
 // number — Octopus Energy's flagship "Outgoing Octopus" at 12.0p, well above
 // the 3.01p no-switch default. Expect: meaningfully shorter payback than
-// the same scenario on the default rate, and the tariff label should show up
-// in the assumptions note.
+// the same scenario on the default rate, and the tariff label AND its
+// eligibility text should show up in the assumptions note — the condition
+// attached to this rate shouldn't get lost between the picker and the result.
 const octopusOutgoing = findSegTariff('Octopus Energy', 'Outgoing Octopus');
 printResult(
   `Rooftop — south-facing, usually home, 4,000kWh/yr, SEG tariff: ${octopusOutgoing.supplier} ${octopusOutgoing.tariff} (${octopusOutgoing.ratePencePerKwh}p, requires: ${octopusOutgoing.eligibility})`,
@@ -85,6 +86,7 @@ printResult(
     segRatePencePerKwh: octopusOutgoing.ratePencePerKwh,
     segTariffLabel: `${octopusOutgoing.supplier} — ${octopusOutgoing.tariff}`,
     segTariffSource: octopusOutgoing.source,
+    segTariffEligibility: octopusOutgoing.eligibility,
   })
 );
 
@@ -144,13 +146,13 @@ console.log('- panelCount 4 (floor(12/2.45)), systemSizeKwp 1.72, costPerKwpGbp 
 
 // calculateRooftopViability with roofAreaM2: should override the flat
 // REFERENCE_SYSTEM_SIZE_KWP default entirely (systemCostGbp, systemSizeKwp,
-// generationKwh all scaled), attach roofAreaSizing, and attach
-// permittedDevelopmentFlag since 60m2 produces >4kWp.
+// generationKwh all scaled), attach roofAreaSizing, and lead the flags array
+// with a "permittedDevelopment" entry since 60m2 produces >4kWp.
 printResult(
   'Rooftop — south-facing, usually home, 4,000kWh/yr, 60m² roof area (exceeds Permitted Development ceiling)',
   calculateRooftopViability({ orientation: 'southFacing', occupancy: 'usuallyHome', annualConsumptionKwh: 4000, roofAreaM2: 60 })
 );
-console.log('- systemSizeKwp should be 10.32, systemCostGbp should be 16,770 (10.32 x £1,625/kWp), generationKwh should be scaled up from the flat 3,800kWh baseline (10.32/4 x 3,800 = 9,804), and permittedDevelopmentFlag should be present.');
+console.log('- systemSizeKwp should be 10.32, systemCostGbp should be 16,770 (10.32 x £1,625/kWp), generationKwh should be scaled up from the flat 3,800kWh baseline (10.32/4 x 3,800 = 9,804), and flags[0].id should be "permittedDevelopment" (followed by the always-present tenancyConsent/listedBuilding/conservationArea flags).');
 
 // Roof area interacting with an existing generation adjustment (regional
 // multiplier here, standing in for what a real postcode call would also
@@ -174,7 +176,7 @@ printResult(
   'Rooftop — south-facing, usually home, 4,000kWh/yr, 1m² roof area (too small to fit a panel)',
   calculateRooftopViability({ orientation: 'southFacing', occupancy: 'usuallyHome', annualConsumptionKwh: 4000, roofAreaM2: 1 })
 );
-console.log('- Should fall back to the flat default entirely: systemSizeKwp 4, systemCostGbp 7,000, generationKwh 3,800, no roofAreaSizing or permittedDevelopmentFlag field, no NaN/Infinity anywhere.');
+console.log('- Should fall back to the flat default entirely: systemSizeKwp 4, systemCostGbp 7,000, generationKwh 3,800, no roofAreaSizing field and no "permittedDevelopment" entry in flags (the always-present tenancyConsent/listedBuilding/conservationArea flags should still be there), no NaN/Infinity anywhere.');
 
 // Regional generation multiplier applied manually (regionalGeneration is the
 // public shape returned by REGIONAL_GENERATION_MULTIPLIER[country], not a
@@ -235,7 +237,7 @@ printResult(
     annualConsumptionKwh: 4000,
   });
   printResult('Rooftop by postcode — Scotland resolved, Open-Meteo fails (stubbed fetch: country-multiplier fallback expected)', scotlandOpenMeteoFailsResult);
-  console.log(`- generationKwh should be ${Math.round(3800 * 0.85)} (3,800 England baseline x Scotland's 0.85 multiplier), regulatoryFlag should be present (Scotland), openMeteoLookup.ok should be false.`);
+  console.log(`- generationKwh should be ${Math.round(3800 * 0.85)} (3,800 England baseline x Scotland's 0.85 multiplier), flags should include a "regulatoryRegime" entry for Scotland, openMeteoLookup.ok should be false.`);
 
   global.fetch = async (url) => {
     if (String(url).includes('postcodes.io')) {
@@ -256,7 +258,7 @@ printResult(
     annualConsumptionKwh: 4000,
   });
   printResult('Rooftop by postcode — Scotland resolved, Open-Meteo succeeds (stubbed fetch: coordinate-precise estimate expected)', scotlandOpenMeteoSucceedsResult);
-  console.log('- generationKwh should be 3,440 (1,000kWh/m²/yr stubbed insolation x 4kWp x 0.86 performance ratio), overriding the country multiplier entirely; regulatoryFlag should still be present (Scotland); openMeteoLookup.ok should be true.');
+  console.log('- generationKwh should be 3,440 (1,000kWh/m²/yr stubbed insolation x 4kWp x 0.86 performance ratio), overriding the country multiplier entirely; flags should still include a "regulatoryRegime" entry for Scotland; openMeteoLookup.ok should be true.');
 
   // Full chain success: postcode -> GSP region -> current default Octopus
   // product -> that product's live unit rate. Exercises the electricity
@@ -318,7 +320,7 @@ printResult(
     annualConsumptionKwh: 4000,
   });
   printResult('Rooftop by postcode — England resolved, Open-Meteo fails (stubbed fetch: no regulatory flag expected)', englandResult);
-  console.log('- generationKwh should be 3,800 (England\'s 1.0x multiplier is a no-op), and regulatoryFlag should be ABSENT (England has no unresearched-regime flag).');
+  console.log('- generationKwh should be 3,800 (England\'s 1.0x multiplier is a no-op), and flags should have NO "regulatoryRegime" entry (England has no unresearched-regime flag) — just the three always-present ones.');
 
   global.fetch = originalFetch;
 
