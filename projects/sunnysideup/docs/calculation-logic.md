@@ -43,22 +43,24 @@ changing *what the fallback value is* is a `calculator.js` change.
 
 ```mermaid
 flowchart TD
-  Start(["User inputs: segment, orientation, occupancy,<br/>postcode?, roof area?, consumption info,<br/>price?, SEG choice?"]) --> Seg{"Which segment?"}
+  Start(["User inputs"]) --> Seg{"Segment?"}
 
-  Seg -->|"Plug-in / balcony"| P1["Resolve orientation multiplier<br/>(borrows rooftop's own ratios)"]
-  P1 --> P2["Resolve generation:<br/>770kWh baseline x multiplier"]
-  P2 --> P3["Resolve price:<br/>user rate or static default"]
-  P3 --> P4["Formula: savings, payback, status<br/>(section 3)"]
-  P4 --> POut(["Output: plugin result + legal-status block"])
+  Seg -->|"Plug-in"| P1["Resolve<br/>orientation<br/>multiplier"]
+  P1 --> P2["Resolve generation:<br/>770kWh x multiplier"]
+  P2 --> P3["Resolve price"]
+  P3 --> P4["Formula: savings,<br/>payback, status"]
+  P4 --> POut(["Output: plugin<br/>result + legal<br/>status"])
 
-  Seg -->|"Rooftop"| R1["Resolve consumption<br/>(section 4a)"]
-  R1 --> R2["Resolve generation<br/>(section 4b)"]
-  R2 --> R3["Resolve roof-area system sizing<br/>(section 4b)"]
-  R3 --> R4["Resolve electricity price<br/>(section 4c)"]
-  R4 --> R5["Resolve SEG export rate<br/>(section 4d)"]
-  R5 --> R6["Formula: self-consumption, export,<br/>savings, payback, status (section 4e)"]
-  R6 --> ROut(["Output: rooftop result + assumptions + flags"])
+  Seg -->|"Rooftop"| R1["Resolve<br/>consumption"]
+  R1 --> R2["Resolve<br/>generation"]
+  R2 --> R3["Resolve roof-area<br/>system sizing"]
+  R3 --> R4["Resolve<br/>electricity price"]
+  R4 --> R5["Resolve SEG<br/>export rate"]
+  R5 --> R6["Formula: self-<br/>consumption, export,<br/>savings, payback,<br/>status"]
+  R6 --> ROut(["Output: rooftop<br/>result + flags"])
 ```
+
+Each stage is detailed in the matching section below: §3 for plug-in, §4a-4e for rooftop.
 
 ---
 
@@ -70,17 +72,17 @@ roof-area sizing (it's a fixed small kit).
 
 ```mermaid
 flowchart TD
-  A["orientation (default: south-facing)"] --> B["multiplier = rooftop's own<br/>east/west 79% / north 50% ratio<br/>(no plug-in-specific data exists)"]
-  B --> C["generation = 770kWh x multiplier"]
-  D["User typed a price?"] -->|Yes| E["use as-is"]
-  D -->|No| F["static default: 26.11p"]
-  C --> G["savings = generation x price / 100"]
+  A["Orientation<br/>(default: south)"] --> B["Multiplier =<br/>rooftop's own<br/>E/W 79% / N 50%<br/>ratio"]
+  B --> C["Generation =<br/>770kWh x<br/>multiplier"]
+  D{"User typed<br/>a price?"} -->|Yes| E["Use as-is"]
+  D -->|No| F["Default:<br/>26.11p"]
+  C --> G["Savings =<br/>generation x<br/>price / 100"]
   E --> G
   F --> G
-  G --> H["payback = 650 / savings"]
-  H --> I{"payback <= 5?"}
+  G --> H["Payback =<br/>650 / savings"]
+  H --> I{"Payback<br/>≤ 5?"}
   I -->|Yes| Green(["green"])
-  I -->|No| J{"payback <= 8?"}
+  I -->|No| J{"Payback<br/>≤ 8?"}
   J -->|Yes| Amber(["amber"])
   J -->|No| Red(["red"])
 ```
@@ -107,17 +109,29 @@ isn't part of the calculation, but ships alongside it in the same result object.
 
 ```mermaid
 flowchart TD
-  A{"Exact annual kWh typed?"} -->|Yes| B["Use as-is (user-provided)"]
-  A -->|No| C["Estimate from household"]
-  C --> D["TDCV band by household size:<br/><=2 -> low (1,600) / 3 -> medium (2,500) / 4+ -> high (3,800)"]
-  D --> E{"Has heat pump?"}
-  E -->|Yes| F["+ 4,300kWh"]
-  E -->|No| G["+ 0"]
+  A{"Exact annual<br/>kWh typed?"}
+  B["Use as-is<br/>(user-provided)"]
+  C["Estimate from<br/>household"]
+  D["TDCV band by size:<br/>≤2 low (1,600)<br/>3 medium (2,500)<br/>4+ high (3,800)"]
+  E{"Has heat<br/>pump?"}
+  F["+ 4,300kWh"]
+  G["+ 0"]
+  H{"Has EV(s)?"}
+  I["+ 1,960kWh x<br/>vehicle count<br/>(default: 1)"]
+  J["+ 0"]
+  K["Total annual<br/>consumption"]
+
+  A -->|Yes| B
+  A -->|No| C
+  C --> D
+  D --> E
+  E -->|Yes| F
+  E -->|No| G
   F --> H
-  G --> H{"Has EV(s)?"}
-  H -->|Yes| I["+ 1,960kWh x vehicle count<br/>(defaults to 1 vehicle if count omitted)"]
-  H -->|No| J["+ 0"]
-  I --> K["Total annual consumption"]
+  G --> H
+  H -->|Yes| I
+  H -->|No| J
+  I --> K
   J --> K
   B --> K
 ```
@@ -134,37 +148,59 @@ flowchart TD
 
 ```mermaid
 flowchart TD
-  subgraph GEN["Generation source (priority order)"]
-    G0{"Postcode given?"} -->|No| G1["Flat orientation baseline<br/>South 3,800 / East-West 3,000 / North 1,900 kWh/yr"]
-    G0 -->|Yes| G2["postcodes.io: postcode -> country, lat/long"]
-    G2 --> G3{"Resolved OK?"}
+  subgraph GEN["Generation source"]
+    G0{"Postcode<br/>given?"}
+    G1["Flat baseline:<br/>South 3,800<br/>E/W 3,000<br/>North 1,900"]
+    G2["postcodes.io:<br/>→ country,<br/>lat/long"]
+    G3{"Resolved<br/>OK?"}
+    G4["Open-Meteo:<br/>hourly irradiance,<br/>35° tilt"]
+    G5{"≥90% hourly<br/>data + valid<br/>shape?"}
+    G6["Coordinate-precise:<br/>insolation x 4kWp<br/>x 0.86 PR"]
+    G7["Country x<br/>baseline:<br/>Eng 1.0 / Wal 0.93<br/>Sco 0.85 / NI 0.85"]
+    G8["Pre-scaling<br/>generation"]
+
+    G0 -->|No| G1
+    G0 -->|Yes| G2
+    G2 --> G3
     G3 -->|No| G1
-    G3 -->|Yes| G4["Open-Meteo: hourly irradiance<br/>at lat/long, 35° tilt, azimuth by orientation"]
-    G4 --> G5{">=90% of hourly<br/>data present + valid shape?"}
-    G5 -->|Yes| G6["Coordinate-precise generation:<br/>insolation x 4kWp assumed x 0.86 performance ratio"]
-    G5 -->|No| G7["Country multiplier x orientation baseline:<br/>England 1.0 / Wales 0.93 / Scotland 0.85 / N.Ireland 0.85"]
-    G1 --> G8["Generation before roof-area scaling"]
+    G3 -->|Yes| G4
+    G4 --> G5
+    G5 -->|Yes| G6
+    G5 -->|No| G7
+    G1 --> G8
     G6 --> G8
     G7 --> G8
   end
 
-  subgraph ROOF["Roof-area system sizing"]
-    RA0{"Usable roof area given?"} -->|No| RA1["Flat reference: 4kWp, £7,000"]
-    RA0 -->|Yes| RA2["panels = floor(area / 2.45m²)"]
-    RA2 --> RA3{">=1 panel fits?"}
+  subgraph ROOF["Roof-area sizing"]
+    RA0{"Roof area<br/>given?"}
+    RA1["Flat reference:<br/>4kWp, £7,000"]
+    RA2["Panels =<br/>floor(area /<br/>2.45m²)"]
+    RA3{"≥1 panel<br/>fits?"}
+    RA4["kWp = panels<br/>x 0.43;<br/>cost tier by kWp"]
+    RA5{"kWp over 4?"}
+    RA6["Flag: exceeds<br/>Permitted Dev<br/>ceiling"]
+    RA7["No flag"]
+    RA8["System size<br/>+ cost resolved"]
+
+    RA0 -->|No| RA1
+    RA0 -->|Yes| RA2
+    RA2 --> RA3
     RA3 -->|No| RA1
-    RA3 -->|Yes| RA4["kWp = panels x 0.43<br/>cost tier: <=3kWp @ £1,800/kWp, else @ £1,625/kWp"]
-    RA4 --> RA5{"kWp > 4?"}
-    RA5 -->|Yes| RA6["Flag: exceeds England's<br/>Permitted Development ceiling"]
-    RA5 -->|No| RA7["No flag"]
-    RA1 --> RA8["System size + cost resolved"]
+    RA3 -->|Yes| RA4
+    RA4 --> RA5
+    RA5 -->|Yes| RA6
+    RA5 -->|No| RA7
+    RA1 --> RA8
     RA6 --> RA8
     RA7 --> RA8
   end
 
-  G8 --> SCALE["Final generation = pre-scaling generation<br/>x (system kWp / 4kWp reference)"]
+  SCALE["Final generation<br/>= pre-scaling x<br/>(kWp / 4 ref)"]
+  GenFinal(["generationKwh,<br/>systemSizeKwp,<br/>systemCostGbp"])
+  G8 --> SCALE
   RA8 --> SCALE
-  SCALE --> GenFinal(["generationKwh, systemSizeKwp, systemCostGbp"])
+  SCALE --> GenFinal
 ```
 
 **Key constants** (`calculator.js` L184-245, L287-292, L217-236, L723-727):
@@ -186,20 +222,33 @@ flowchart TD
 
 ```mermaid
 flowchart TD
-  E0{"User typed a rate?"} -->|Yes| E1["Use as-is (highest priority)"]
-  E0 -->|No| E2{"Postcode given?"}
-  E2 -->|No| E3["Static default: 26.11p<br/>(Ofgem cap, Jul-Sep 2026, standard-variable only)"]
-  E2 -->|Yes| E4["Octopus: postcode -> GSP region"]
-  E4 --> E5{"Resolved OK?"}
+  E0{"User typed<br/>a rate?"}
+  E1["Use as-is<br/>(top priority)"]
+  E2{"Postcode<br/>given?"}
+  E3["Static default:<br/>26.11p<br/>(Ofgem cap)"]
+  E4["Octopus:<br/>postcode →<br/>GSP region"]
+  E5{"Resolved<br/>OK?"}
+  E6["Octopus: find<br/>current product<br/>(prefer exact<br/>'Flexible Octopus'<br/>name match)"]
+  E7{"Found?"}
+  E8["Octopus: fetch<br/>unit rate for<br/>product + region"]
+  E9{"Resolved<br/>OK?"}
+  E10["Live rate"]
+  PriceFinal(["Final price<br/>(p/kWh)"])
+
+  E0 -->|Yes| E1
+  E0 -->|No| E2
+  E2 -->|No| E3
+  E2 -->|Yes| E4
+  E4 --> E5
   E5 -->|No| E3
-  E5 -->|Yes| E6["Octopus: find current variable product<br/>prefer exact 'Flexible Octopus' name match,<br/>else most-recently-launched candidate"]
-  E6 --> E7{"Found?"}
+  E5 -->|Yes| E6
+  E6 --> E7
   E7 -->|No| E3
-  E7 -->|Yes| E8["Octopus: fetch unit rate for<br/>product + region (letter, no underscore)"]
-  E8 --> E9{"Resolved OK?"}
+  E7 -->|Yes| E8
+  E8 --> E9
   E9 -->|No| E3
-  E9 -->|Yes| E10["Live rate"]
-  E1 --> PriceFinal(["Final electricityPricePencePerKwh"])
+  E9 -->|Yes| E10
+  E1 --> PriceFinal
   E3 --> PriceFinal
   E10 --> PriceFinal
 ```
@@ -217,19 +266,32 @@ flowchart TD
 
 ```mermaid
 flowchart TD
-  S0{"User typed a manual rate?"} -->|Yes| S1["Use as-is"]
-  S0 -->|No| S2{"Which SEG choice?"}
-  S2 -->|"Same as import supplier"| S3["Look up that supplier's rows:<br/>Fixed-rate sorted first, then highest rate"]
-  S3 --> S4{"Match found?"}
-  S4 -->|Yes| S5["Use that tariff's rate + label"]
-  S4 -->|No| S6["Default: 3.01p"]
-  S2 -->|"Different supplier"| S7["User picks a row from the<br/>30-tariff table (manual rate overrides if also typed)"]
+  S0{"User typed a<br/>manual rate?"}
+  S1["Use as-is"]
+  S2{"Which SEG<br/>choice?"}
+  S3["Look up supplier's<br/>rows: Fixed-rate<br/>sorted first"]
+  S4{"Match<br/>found?"}
+  S5["Use that tariff's<br/>rate + label"]
+  S6["Default: 3.01p"]
+  S7["User picks a row<br/>from the 30-tariff<br/>table"]
+  SEGFinal(["Final SEG<br/>rate (p/kWh)"])
+
+  S0 -->|Yes| S1
+  S0 -->|No| S2
+  S2 -->|"Same supplier"| S3
+  S3 --> S4
+  S4 -->|Yes| S5
+  S4 -->|No| S6
+  S2 -->|"Different"| S7
   S2 -->|"Don't know"| S6
-  S1 --> SEGFinal(["Final segRatePencePerKwh"])
+  S1 --> SEGFinal
   S5 --> SEGFinal
   S7 --> SEGFinal
   S6 --> SEGFinal
 ```
+
+For the "different supplier" choice, a manually typed rate overrides the table selection if
+both are filled in.
 
 **Key constants** (`calculator.js` L81-173):
 
@@ -243,14 +305,24 @@ flowchart TD
 
 ```mermaid
 flowchart TD
-  F1["selfConsumed = min(<br/>generation x selfConsumptionRate,<br/>annualConsumptionKwh)"] --> F2["exported = generation - selfConsumed"]
-  F2 --> F3["savings = (selfConsumed x price<br/>+ exported x SEGrate) / 100"]
-  F3 --> F4["payback = systemCost / savings"]
-  F4 --> F5{"payback <= 8?"}
-  F5 -->|Yes| Green(["green"])
-  F5 -->|No| F6{"payback <= 13?"}
-  F6 -->|Yes| Amber(["amber"])
-  F6 -->|No| Red(["red"])
+  F1["selfConsumed =<br/>min(generation x<br/>rate, consumption)"]
+  F2["exported =<br/>generation −<br/>selfConsumed"]
+  F3["savings =<br/>(selfConsumed x price<br/>+ exported x SEG) / 100"]
+  F4["payback =<br/>systemCost / savings"]
+  F5{"payback<br/>≤ 8?"}
+  F6{"payback<br/>≤ 13?"}
+  Green(["green"])
+  Amber(["amber"])
+  Red(["red"])
+
+  F1 --> F2
+  F2 --> F3
+  F3 --> F4
+  F4 --> F5
+  F5 -->|Yes| Green
+  F5 -->|No| F6
+  F6 -->|Yes| Amber
+  F6 -->|No| Red
 ```
 
 **Key constants** (`calculator.js` L335-345):
