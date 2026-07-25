@@ -19,7 +19,6 @@ The candidate list below is drawn from three places, not invented fresh: the cal
 | Plug-in viability + legal-status calculator, with an explicit "still unresolved" flag | Aisha's JTBD; interview theme that honesty about limits, not confident answers, is the actual trust mechanism | 9 | 6 | 6 | 7.0 |
 | Assumptions / "show your work" transparency panel | Graham's and Denise's Q5 trust conditions specifically (showing what's driving the calculation); Aisha's related but distinct Q5 want, honesty about the unresolved legal question, is the plug-in calculator's own flag below, not this panel | 8 | 9 | 8 | 8.3 |
 | Honest "red" result with substantive reasoning, not just a color | Solution's stated promise; interview theme that red results are trusted and acted on, not dismissed | 8 | 9 | 7 | 8.0 |
-| Basic quote-comparison (manual entry of a received quote's price and system size against the baseline calculation) | Denise's JTBD specifically | 8 | 8 | 8 | 8.0 |
 
 ### Rooftop and plug-in calculators: what the Confidence gap means
 
@@ -37,11 +36,14 @@ The honest-red-result feature depends on the same logic. `synthetic-interviews.m
 
 | Feature | Tied to | Impact | Confidence | Ease | ICE |
 |---|---|---|---|---|---|
+| Basic quote-comparison (manual entry of a received quote's price and system size against the baseline calculation) | Denise's JTBD specifically | 8 | 8 | 8 | 8.0 |
 | Shareable result / referral summary | Hypothesis behavior #3 (organic word-of-mouth); the organic-referral-rate leading indicator in Success Metrics; interview theme that sharing is peer-to-peer | 7 | 6 | 7 | 6.7 |
 | Quote document upload/parsing (auto-extract price, system size, and included items from an uploaded PDF quote) | Removes manual-entry friction on Denise's flow; catches the specific inflated line items (scaffolding, DNO paperwork, battery bundling) named in `grounding-research.md`'s quote-complexity finding | 8 | 5 | 3 | 5.3 |
 | Battery/storage add-on calculator | Rooftop segment's fuller economics, per `grounding-research.md`'s battery arbitrage figures | 6 | 4 | 6 | 5.3 |
 
-Quote-document parsing scores well on Impact, since it would remove real friction from Denise's flow, but it sits in Next rather than Now because it depends on the baseline calculator and manual quote-comparison already working, and because reliable PDF/OCR parsing is a genuine, unproven technical risk that shouldn't gate MVP launch. The battery calculator is deferred for a data reason rather than a demand reason: none of the three personas raised batteries specifically, and `grounding-research.md` names battery arbitrage value as "the least certain figure found" in the whole document, a wide, uncorroborated range not worth building a launch feature on yet.
+Basic quote-comparison scores as high as anything in Now (ICE 8.0), but it's sequenced into Next rather than Now because it's a validation-dependent feature: it only matters once the core viability calculator is live and being used, and testing whether users actually bring a quote to compare is itself part of what MVP validation is for. Building it before that validation lands would be building ahead of evidence the behavior exists at all.
+
+Quote-document parsing scores well on Impact, since it would remove real friction from Denise's flow, but it sits later within Next because it depends on the baseline calculator (Now) and the manual quote-comparison flow above it landing first, and because reliable PDF/OCR parsing is a genuine, unproven technical risk that shouldn't gate MVP launch. The battery calculator is deferred for a data reason rather than a demand reason: none of the three personas raised batteries specifically, and `grounding-research.md` names battery arbitrage value as "the least certain figure found" in the whole document, a wide, uncorroborated range not worth building a launch feature on yet.
 
 ---
 
@@ -62,9 +64,9 @@ Energy Saving Trust, the closest real independent analog identified in research,
 
 ## What this roadmap deliberately does not do
 
-It doesn't rank purely by ICE score. Quote-document parsing and the battery calculator both sit in Next despite reasonable Impact scores because they depend on infrastructure Now builds first (a working baseline calculator, a manual quote-comparison flow) or rest on data too thin to build a launch feature on. This is a dependency-and-evidence-aware roadmap, not a sorted list.
+It doesn't rank purely by ICE score. Basic quote-comparison has a Now-level ICE score but sits in Next because it depends on MVP validation, not on any technical gap. Quote-document parsing and the battery calculator both sit in Next despite reasonable Impact scores because they depend on infrastructure Now (and, for parsing, quote-comparison itself) builds first, or rest on data too thin to build a launch feature on. This is a dependency-and-evidence-aware roadmap, not a sorted list.
 
 It also deliberately excludes two things that could look like roadmap items but aren't: institutional distribution partnerships (a Go-to-market motion, not an engineering sequence) and further legal research on tenancy consent (a research task tracked in Open Questions, not a product feature to build).
 
 ## Status
-**Draft v1, audited.** Six Now (MVP) features, three Next, four Later items, each tied to a specific persona JTBD, `grounding-research.md` finding, or `synthetic-interviews.md` theme rather than a gut call. `research-auditor` run: the transparency panel's citation originally overclaimed Aisha's Q5 as supporting the same feature as Graham's and Denise's, when her answer actually supports the separately-listed plug-in "still unresolved" flag; narrowed the citation and the prose rationale to match. Also fixed a minor misquote (punctuation altered inside quotation marks) in the Scotland/Wales Later item.
+**Draft v1.1, audited.** Five Now (MVP) features, four Next, four Later items, each tied to a specific persona JTBD, `grounding-research.md` finding, or `synthetic-interviews.md` theme rather than a gut call. `research-auditor` run: the transparency panel's citation originally overclaimed Aisha's Q5 as supporting the same feature as Graham's and Denise's, when her answer actually supports the separately-listed plug-in "still unresolved" flag; narrowed the citation and the prose rationale to match. Also fixed a minor misquote (punctuation altered inside quotation marks) in the Scotland/Wales Later item. v1.1 moved basic quote-comparison from Now to Next: high ICE score, but it's a validation-dependent feature (whether users actually bring a quote to compare is itself part of what MVP validation tests), not an MVP prerequisite.
