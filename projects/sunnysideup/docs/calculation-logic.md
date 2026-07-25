@@ -359,6 +359,7 @@ inputs just to gate these):
 | `listedBuilding` | Always | Fact | Listed buildings have zero Permitted Development rights for solar at any size — the `permittedDevelopment` flag above only checks size, not listed status |
 | `conservationArea` | Always | Inference | Street-visible panels in a conservation area may need planning permission even under the size ceiling |
 | `regulatoryRegime` | Postcode resolves to Scotland or Wales | Fact | That country's own permitted-development/building-regulation regime hasn't been researched here |
+| `highExportSensitivity` | No user-picked SEG tariff, and exported share of generation exceeds 50% | Inference | This result uses the low default SEG rate; a high-export household's result moves more than most when a real (much higher) tariff is picked |
 
 Rooftop results additionally carry, when applicable: `postcodeLookup`, `openMeteoLookup`,
 `electricityPriceLookup` (each `{ ok, error? }`, so a failed live lookup is visible rather than
