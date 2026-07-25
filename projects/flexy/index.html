@@ -210,6 +210,8 @@
   .limitation-card li{font-size:13.5px;color:var(--ink-soft);margin-bottom:5px;}
   .limitation-card .src{font-size:12px;color:var(--ink-soft);}
   .limitation-card .src a{color:var(--teal-dark);}
+
+  section[id]{scroll-margin-top:70px;}
 </style>
 </head>
 <body>
@@ -554,6 +556,28 @@
     Market research is real and cited from public program data; personas and interviews are synthetic.
   </div>
 </footer>
+
+<script>
+(function(){
+  function openTarget(){
+    var id = location.hash.slice(1);
+    if(!id) return;
+    var target = document.getElementById(id);
+    if(!target) return;
+    var details = target.matches && target.matches('details.section-collapse')
+      ? [target]
+      : target.querySelectorAll('details.section-collapse');
+    (details.length ? details : [target.closest && target.closest('details.section-collapse')].filter(Boolean))
+      .forEach(function(d){ d.open = true; });
+  }
+  window.addEventListener('hashchange', openTarget);
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', openTarget);
+  } else {
+    openTarget();
+  }
+})();
+</script>
 
 </body>
 </html>
