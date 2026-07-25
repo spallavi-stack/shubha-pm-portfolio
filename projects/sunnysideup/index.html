@@ -426,8 +426,9 @@
       <div class="limitation-card">
         <h4>A working demo isn't 10% of the way to done</h4>
         <ul>
-          <li>The calculator's underlying payback and generation figures are wide, industry-consensus ranges corroborated across multiple sources; no single authoritative UK payback dataset exists to draw a tighter number from.</li>
-          <li>There's no real backend, no live tariff/price API, and no quote-upload parsing; every input is self-reported inside the prototype.</li>
+          <li>The calculator genuinely live-fetches three real sources: a postcode's region and coordinates from postcodes.io, solar irradiance history from Open-Meteo, and current electricity prices from Octopus Energy's public API, each tagged with its own sourcing tier in the code.</li>
+          <li>What's still missing is everything around that calculation: no real backend, no account or data persistence, and no quote-upload parsing (that stays a self-reported, manual-entry comparison for now, and is already scoped as a Next-horizon, post-validation roadmap item rather than an MVP gap).</li>
+          <li>The underlying payback and generation figures are wide, industry-consensus ranges corroborated across multiple sources; no single authoritative UK payback dataset exists to draw a tighter number from.</li>
         </ul>
         <span class="src">Source: <a href="https://usekyros.ai/blog/from-prototype-to-production-ai-apps-never-ship" target="_blank" rel="noopener">Kyros, "From Prototype to Production"</a></span>
       </div>
@@ -440,10 +441,10 @@
         <span class="src">Source: <a href="https://www.parallelhq.com/blog/ai-powered-prototyping-tools" target="_blank" rel="noopener">Parallel, "AI-Powered Prototyping for UI/UX Design"</a></span>
       </div>
       <div class="limitation-card">
-        <h4>Happy-path only, no edge cases</h4>
+        <h4>Some edge cases are handled, most aren't</h4>
         <ul>
-          <li>AI-built prototypes handle the intended flow well but typically skip error states and unusual inputs.</li>
-          <li>The prototype shows the ideal path only, no built-out states for an invalid postcode, an unusually shaped roof, or conflicting self-reported values.</li>
+          <li>AI-built prototypes typically skip error states and unusual inputs entirely. This one is a partial exception: an unrecognized postcode, a failed lookup, or an unexpected API error each get a specific message and a graceful fallback to an England-calibrated default, rather than a silent break.</li>
+          <li>What's still unhandled: an unusually shaped roof, conflicting self-reported values (e.g. a stated consumption figure that doesn't match the household-size estimate), and any quote-upload edge cases, since that feature doesn't exist yet.</li>
         </ul>
         <span class="src">Source: <a href="https://codeconductor.ai/blog/vibe-coding-for-product-managers/" target="_blank" rel="noopener">CodeConductor, "Vibe Coding for PMs"</a></span>
       </div>
