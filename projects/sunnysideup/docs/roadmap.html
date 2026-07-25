@@ -108,14 +108,6 @@
 <td>7</td>
 <td>8.0</td>
 </tr>
-<tr>
-<td>Basic quote-comparison (manual entry of a received quote's price and system size against the baseline calculation)</td>
-<td>Denise's JTBD specifically</td>
-<td>8</td>
-<td>8</td>
-<td>8</td>
-<td>8.0</td>
-</tr>
 </tbody>
 </table>
 <h3>Rooftop and plug-in calculators: what the Confidence gap means</h3>
@@ -137,6 +129,14 @@
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>Basic quote-comparison (manual entry of a received quote's price and system size against the baseline calculation)</td>
+<td>Denise's JTBD specifically</td>
+<td>8</td>
+<td>8</td>
+<td>8</td>
+<td>8.0</td>
+</tr>
 <tr>
 <td>Shareable result / referral summary</td>
 <td>Hypothesis behavior #3 (organic word-of-mouth); the organic-referral-rate leading indicator in Success Metrics; interview theme that sharing is peer-to-peer</td>
@@ -163,7 +163,8 @@
 </tr>
 </tbody>
 </table>
-<p>Quote-document parsing scores well on Impact, since it would remove real friction from Denise's flow, but it sits in Next rather than Now because it depends on the baseline calculator and manual quote-comparison already working, and because reliable PDF/OCR parsing is a genuine, unproven technical risk that shouldn't gate MVP launch. The battery calculator is deferred for a data reason rather than a demand reason: none of the three personas raised batteries specifically, and <code>grounding-research.md</code> names battery arbitrage value as "the least certain figure found" in the whole document, a wide, uncorroborated range not worth building a launch feature on yet.</p>
+<p>Basic quote-comparison scores as high as anything in Now (ICE 8.0), but it's sequenced into Next rather than Now because it's a validation-dependent feature: it only matters once the core viability calculator is live and being used, and testing whether users actually bring a quote to compare is itself part of what MVP validation is for. Building it before that validation lands would be building ahead of evidence the behavior exists at all.</p>
+<p>Quote-document parsing scores well on Impact, since it would remove real friction from Denise's flow, but it sits later within Next because it depends on the baseline calculator (Now) and the manual quote-comparison flow above it landing first, and because reliable PDF/OCR parsing is a genuine, unproven technical risk that shouldn't gate MVP launch. The battery calculator is deferred for a data reason rather than a demand reason: none of the three personas raised batteries specifically, and <code>grounding-research.md</code> names battery arbitrage value as "the least certain figure found" in the whole document, a wide, uncorroborated range not worth building a launch feature on yet.</p>
 <hr />
 <h2>LATER (roadmap-level vision, not built in this portfolio)</h2>
 <table>
@@ -196,10 +197,10 @@
 <h2>Competitive grounding</h2>
 <p>Energy Saving Trust, the closest real independent analog identified in research, provides generic assumptions and then defers the final personalized number back to the installer being evaluated (<code>grounding-research.md</code>'s Competitors section). That's the specific gap the transparency panel and quote-comparison mode are built to close: give the personalized number directly, and show what it's based on, rather than sending the user back to the party being evaluated.</p>
 <h2>What this roadmap deliberately does not do</h2>
-<p>It doesn't rank purely by ICE score. Quote-document parsing and the battery calculator both sit in Next despite reasonable Impact scores because they depend on infrastructure Now builds first (a working baseline calculator, a manual quote-comparison flow) or rest on data too thin to build a launch feature on. This is a dependency-and-evidence-aware roadmap, not a sorted list.</p>
+<p>It doesn't rank purely by ICE score. Basic quote-comparison has a Now-level ICE score but sits in Next because it depends on MVP validation, not on any technical gap. Quote-document parsing and the battery calculator both sit in Next despite reasonable Impact scores because they depend on infrastructure Now (and, for parsing, quote-comparison itself) builds first, or rest on data too thin to build a launch feature on. This is a dependency-and-evidence-aware roadmap, not a sorted list.</p>
 <p>It also deliberately excludes two things that could look like roadmap items but aren't: institutional distribution partnerships (a Go-to-market motion, not an engineering sequence) and further legal research on tenancy consent (a research task tracked in Open Questions, not a product feature to build).</p>
 <h2>Status</h2>
-<p><strong>Draft v1, audited.</strong> Six Now (MVP) features, three Next, four Later items, each tied to a specific persona JTBD, <code>grounding-research.md</code> finding, or <code>synthetic-interviews.md</code> theme rather than a gut call. <code>research-auditor</code> run: the transparency panel's citation originally overclaimed Aisha's Q5 as supporting the same feature as Graham's and Denise's, when her answer actually supports the separately-listed plug-in "still unresolved" flag; narrowed the citation and the prose rationale to match. Also fixed a minor misquote (punctuation altered inside quotation marks) in the Scotland/Wales Later item.</p>
+<p><strong>Draft v1.1, audited.</strong> Five Now (MVP) features, four Next, four Later items, each tied to a specific persona JTBD, <code>grounding-research.md</code> finding, or <code>synthetic-interviews.md</code> theme rather than a gut call. <code>research-auditor</code> run: the transparency panel's citation originally overclaimed Aisha's Q5 as supporting the same feature as Graham's and Denise's, when her answer actually supports the separately-listed plug-in "still unresolved" flag; narrowed the citation and the prose rationale to match. Also fixed a minor misquote (punctuation altered inside quotation marks) in the Scotland/Wales Later item. v1.1 moved basic quote-comparison from Now to Next: high ICE score, but it's a validation-dependent feature (whether users actually bring a quote to compare is itself part of what MVP validation tests), not an MVP prerequisite.</p>
 <div class="doc-footer">Part of the SunnySideUp case study documentation set. For the short version, see the <a href="../index.html">case study page</a>.</div>
 </article>
 <footer>
