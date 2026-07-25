@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SunnySideUp — is solar worth it for your home?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* ---------- Design tokens (from the frozen SunnySideUp design system) ---------- */
+:root{
+  --color-cream:#FFF8E9;
+  --color-cream-alt:#FFFDF6;
+  --color-ink:#1C1B18;
+  --color-ink-70:rgba(28,27,24,0.7);
+  --color-ink-40:rgba(28,27,24,0.4);
+  --color-ink-10:rgba(28,27,24,0.08);
+  --color-white:#FFFFFF;
+  --color-sun-yellow:#F5B942;
+  --color-sun-yellow-dark:#D4890B;
+  --color-sun-yellow-tint:#FFE9B8;
+  --color-sky-blue:#4F9DDE;
+  --color-sky-blue-dark:#2E76B4;
+  --color-sky-blue-tint:#DCEEFC;
+  --color-coral:#FF6B54;
+  --color-coral-dark:#E14B36;
+  --color-coral-tint:#FFE1DA;
+  --color-good:#3FAE5C;
+  --color-good-dark:#1F7A3B;
+  --color-good-tint:#DDF3E1;
+  --color-mid:#F5B942;
+  --color-mid-dark:#D4890B;
+  --color-mid-tint:#FFF3D6;
+  --color-poor:#E5473A;
+  --color-poor-dark:#B8291F;
+  --color-poor-tint:#FCE0DC;
+  --surface-page:var(--color-cream);
+  --surface-card:var(--color-cream-alt);
+  --surface-sunken:var(--color-ink-10);
+  --text-primary:var(--color-ink);
+  --text-secondary:var(--color-ink-70);
+  --text-muted:var(--color-ink-40);
+  --border-color:var(--color-ink);
+
+  --font-display:'Space Grotesk',sans-serif;
+  --font-body:'Inter',sans-serif;
+  --font-mono:'Space Mono',monospace;
+  --text-xs:12px; --text-sm:14px; --text-base:16px; --text-lg:18px;
+  --text-xl:20px; --text-2xl:24px; --text-3xl:30px; --text-4xl:38px; --text-5xl:48px;
+
+  --space-1:4px; --space-2:8px; --space-3:12px; --space-4:16px; --space-5:20px;
+  --space-6:24px; --space-8:32px; --space-10:40px; --space-12:48px; --space-16:64px;
+
+  --radius-sm:8px; --radius-md:14px; --radius-lg:20px; --radius-xl:28px; --radius-pill:999px;
+  --border-thin:2px solid var(--border-color);
+  --border-thick:3px solid var(--border-color);
+  --border-heavy:4px solid var(--border-color);
+  --shadow-sm:3px 3px 0 var(--color-ink);
+  --shadow-md:5px 5px 0 var(--color-ink);
+  --shadow-lg:8px 8px 0 var(--color-ink);
+  --shadow-press:2px 2px 0 var(--color-ink);
+  --ease-pop:cubic-bezier(.2,1.4,.4,1);
+  --duration-fast:120ms;
+  --duration-base:180ms;
+}
+
+*{box-sizing:border-box;}
+html{-webkit-text-size-adjust:100%;}
+body{
+  margin:0;
+  background:var(--surface-page);
+  color:var(--text-primary);
+  font-family:var(--font-body);
+  font-size:var(--text-base);
+  line-height:var(--leading-normal,1.5);
+}
+h1,h2,h3,h4{font-family:var(--font-display);font-weight:700;margin:0;letter-spacing:-0.01em;}
+p{margin:0;}
+button{font-family:inherit;}
+
+/* ---------- Layout shell ---------- */
+.topbar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:16px 24px;border-bottom:var(--border-thin);
+  background:var(--surface-page);
+  position:sticky;top:0;z-index:10;
+}
+.brand{display:flex;align-items:center;gap:10px;font-family:var(--font-display);font-weight:700;font-size:var(--text-xl);}
+.brand img{width:34px;height:34px;display:block;}
+.tagline{font-family:var(--font-mono);font-size:var(--text-xs);color:var(--text-secondary);display:none;}
+@media (min-width:640px){.tagline{display:inline;}}
+
+.page{max-width:1180px;margin:0 auto;padding:0 20px 96px;}
+
+.hero{padding:40px 0 8px;max-width:640px;}
+.hero h1{font-size:var(--text-4xl);line-height:var(--leading-tight,1.08);margin-bottom:10px;}
+.hero p{color:var(--text-secondary);font-size:var(--text-lg);}
+@media (min-width:768px){.hero h1{font-size:var(--text-5xl);}}
+
+.layout{
+  display:grid;grid-template-columns:1fr;gap:24px;margin-top:28px;
+}
+@media (min-width:960px){
+  .layout{grid-template-columns:minmax(0,1fr) minmax(340px,420px);align-items:start;}
+  .results-col{position:sticky;top:88px;}
+}
+
+/* ---------- Card ---------- */
+.card{
+  background:var(--surface-card);
+  border:var(--border-thick);
+  border-radius:var(--radius-lg);
+  box-shadow:var(--shadow-md);
+  padding:var(--space-6);
+}
+.card + .card{margin-top:20px;}
+.card-heading{font-size:var(--text-xl);margin-bottom:var(--space-5);display:flex;align-items:center;gap:10px;}
+.card-heading .step-num{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:28px;height:28px;border-radius:var(--radius-pill);
+  background:var(--color-sun-yellow);border:var(--border-thin);
+  font-family:var(--font-mono);font-size:var(--text-sm);font-weight:700;flex-shrink:0;
+}
+
+/* ---------- Form fields ---------- */
+.field{display:flex;flex-direction:column;gap:6px;margin-bottom:var(--space-5);}
+.field:last-child{margin-bottom:0;}
+.field label{font-weight:700;font-size:var(--text-sm);}
+.field .helper{font-size:var(--text-xs);color:var(--text-muted);}
+
+.field input[type=text],
+.field input[type=number],
+.field select{
+  width:100%;
+  font:inherit;
+  font-family:var(--font-mono);
+  font-size:var(--text-base);
+  padding:12px 14px;
+  background:var(--color-cream-alt);
+  border:var(--border-thin);
+  border-radius:var(--radius-sm);
+  color:var(--text-primary);
+  outline:none;
+  box-shadow:var(--shadow-sm);
+  transition:box-shadow var(--duration-fast) var(--ease-pop);
+}
+.field select{
+  font-family:var(--font-body);font-weight:600;
+  appearance:none;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8'><path d='M1 1l5 5 5-5' stroke='%231C1B18' stroke-width='2' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+  background-repeat:no-repeat;background-position:right 14px center;padding-right:38px;
+}
+.field input:focus,.field select:focus{box-shadow:var(--shadow-sm), 0 0 0 3px var(--color-sky-blue-tint);}
+
+.checkbox-row{display:flex;align-items:center;gap:10px;cursor:pointer;font-weight:500;font-size:var(--text-base);margin-bottom:var(--space-3);user-select:none;}
+.checkbox-row:last-child{margin-bottom:0;}
+.checkbox-row input{display:none;}
+.checkbox-box{
+  width:22px;height:22px;flex-shrink:0;border-radius:6px;
+  background:var(--color-cream-alt);border:var(--border-thin);
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:2px 2px 0 var(--color-ink);
+  font-size:14px;font-weight:900;line-height:1;
+  transition:background var(--duration-fast) var(--ease-pop);
+}
+.checkbox-row input:checked + .checkbox-box{background:var(--color-sun-yellow);}
+.checkbox-row input:checked + .checkbox-box::after{content:"✓";}
+
+.subgroup{
+  border:var(--border-thin);border-radius:var(--radius-md);
+  background:var(--surface-sunken);padding:var(--space-4);margin-bottom:var(--space-5);
+}
+.subgroup summary{
+  cursor:pointer;font-family:var(--font-display);font-weight:700;font-size:var(--text-base);
+  list-style:none;display:flex;align-items:center;justify-content:space-between;
+}
+.subgroup summary::-webkit-details-marker{display:none;}
+.subgroup summary::after{content:"▾";transition:transform var(--duration-base) var(--ease-pop);}
+.subgroup[open] summary::after{transform:rotate(180deg);}
+.subgroup .subgroup-body{margin-top:var(--space-4);}
+.subgroup[open]{background:var(--color-sun-yellow-tint);}
+
+.hidden{display:none !important;}
+.mascot-wrap svg{width:100%;height:100%;display:block;}
+
+/* ---------- Buttons ---------- */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  font-family:var(--font-display);font-weight:700;font-size:var(--text-lg);
+  padding:16px 28px;border:var(--border-thick);border-radius:var(--radius-md);
+  background:var(--color-sun-yellow);color:var(--color-ink);
+  box-shadow:var(--shadow-md);cursor:pointer;
+  transition:transform var(--duration-fast) var(--ease-pop), box-shadow var(--duration-fast) var(--ease-pop);
+  width:100%;
+}
+.btn:active{transform:translate(3px,3px);box-shadow:var(--shadow-press);}
+.btn-ghost{background:var(--surface-card);font-size:var(--text-sm);padding:10px 18px;width:auto;}
+
+/* ---------- Results panel ---------- */
+.result-idle{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;
+  text-align:center;padding:var(--space-8) var(--space-6);
+  background:var(--color-sun-yellow-tint);
+}
+.result-idle .mascot-wrap{width:72px;height:88px;}
+.result-idle .title{font-family:var(--font-display);font-weight:700;font-size:var(--text-lg);}
+
+.result-panel .card-heading{justify-content:space-between;margin-bottom:var(--space-4);}
+
+/* Literal 3-lamp traffic signal */
+.signal-housing{
+  display:flex;flex-direction:column;gap:8px;align-items:center;
+  width:60px;margin:0 auto var(--space-4);
+  background:var(--color-ink);border-radius:var(--radius-lg);
+  padding:12px 8px;border:var(--border-thick);box-shadow:var(--shadow-md);
+}
+.signal-lamp{
+  width:36px;height:36px;border-radius:50%;flex-shrink:0;
+  background:rgba(255,255,255,0.1);
+  transition:background 150ms ease, box-shadow 150ms ease;
+}
+.signal-lamp.lit[data-color="red"]{background:var(--color-poor);box-shadow:0 0 14px 3px var(--color-poor);}
+.signal-lamp.lit[data-color="amber"]{background:var(--color-mid);box-shadow:0 0 14px 3px var(--color-mid);}
+.signal-lamp.lit[data-color="green"]{background:var(--color-good);box-shadow:0 0 14px 3px var(--color-good);}
+.loading-caption{text-align:center;font-size:var(--text-sm);color:var(--text-secondary);margin-bottom:var(--space-4);}
+
+.verdict-text{
+  text-align:center;font-family:var(--font-display);font-weight:700;font-size:var(--text-2xl);
+  margin-bottom:var(--space-2);opacity:0;transition:opacity var(--duration-base) var(--ease-pop);
+}
+.verdict-text.shown{opacity:1;}
+.verdict-good{color:var(--color-good-dark);}
+.verdict-mid{color:var(--color-sun-yellow-dark);}
+.verdict-poor{color:var(--color-poor-dark);}
+
+.stat-row{display:flex;gap:12px;flex-wrap:wrap;margin:var(--space-5) 0;justify-content:center;}
+.stat-card{
+  flex:1 1 110px;min-width:110px;display:flex;flex-direction:column;gap:2px;
+  background:var(--surface-page);border:var(--border-thin);border-radius:var(--radius-md);
+  padding:var(--space-3);box-shadow:var(--shadow-sm);
+  opacity:0;transform:translateY(10px);
+  transition:opacity var(--duration-base) var(--ease-pop), transform var(--duration-base) var(--ease-pop);
+}
+.stat-card.shown{opacity:1;transform:translateY(0);}
+.stat-label{font-weight:600;font-size:var(--text-xs);letter-spacing:0.04em;text-transform:uppercase;color:var(--text-secondary);}
+.stat-value{font-family:var(--font-mono);font-weight:700;font-size:var(--text-2xl);}
+.stat-sub{font-size:var(--text-xs);color:var(--text-secondary);}
+
+/* Sunny says: mascot + speech bubble, carousel through flags if >1 */
+.sunny-says{
+  display:flex;gap:12px;align-items:flex-start;margin:var(--space-5) 0 var(--space-2);
+  opacity:0;transition:opacity var(--duration-base) ease;
+}
+.sunny-says.shown{opacity:1;}
+.sunny-says .mascot-wrap{width:52px;height:64px;flex-shrink:0;}
+.speech-bubble{
+  position:relative;flex:1;background:var(--surface-page);border:var(--border-thin);
+  border-radius:var(--radius-md);padding:var(--space-3) var(--space-4);box-shadow:var(--shadow-sm);
+}
+.speech-bubble::before{
+  content:"";position:absolute;left:-9px;top:14px;
+  border-style:solid;border-width:7px 9px 7px 0;border-color:transparent var(--color-ink) transparent transparent;
+}
+.speech-bubble::after{
+  content:"";position:absolute;left:-6.5px;top:14px;
+  border-style:solid;border-width:7px 8px 7px 0;border-color:transparent var(--surface-page) transparent transparent;
+}
+.flag-title{font-weight:700;font-size:var(--text-sm);margin-bottom:2px;}
+.flag-note{font-size:var(--text-xs);color:var(--text-secondary);}
+.flag-dots{margin-bottom:var(--space-4);}
+
+.accordion{border:var(--border-thin);border-radius:var(--radius-md);background:var(--surface-card);overflow:hidden;margin-top:var(--space-5);}
+.accordion summary{
+  cursor:pointer;list-style:none;padding:var(--space-4);
+  display:flex;align-items:center;justify-content:space-between;
+  font-family:var(--font-display);font-weight:700;font-size:var(--text-base);
+}
+.accordion summary::-webkit-details-marker{display:none;}
+.accordion summary::after{content:"▾";transition:transform var(--duration-base) var(--ease-pop);}
+.accordion[open] summary::after{transform:rotate(180deg);}
+.accordion-body{padding:0 var(--space-4) var(--space-4);border-top:2px solid var(--color-ink-10);}
+.assumption-row{padding:var(--space-3) 0;border-bottom:1px solid var(--color-ink-10);}
+.assumption-row:last-child{border-bottom:none;}
+.assumption-top{display:flex;justify-content:space-between;align-items:baseline;gap:10px;}
+.assumption-label{font-weight:700;font-size:var(--text-sm);}
+.assumption-value{font-family:var(--font-mono);font-weight:700;font-size:var(--text-sm);}
+.tier-pill{
+  display:inline-block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;
+  padding:2px 8px;border-radius:var(--radius-pill);border:1.5px solid var(--color-ink);margin-top:4px;
+}
+.assumption-note{font-size:var(--text-xs);color:var(--text-secondary);margin-top:4px;}
+
+/* ---------- Carousel (cards 1-4, one at a time) ---------- */
+.carousel-dots{display:flex;gap:8px;justify-content:center;margin-bottom:var(--space-4);}
+.carousel-dot{
+  width:10px;height:10px;border-radius:var(--radius-pill);
+  background:var(--color-ink-10);border:1.5px solid var(--color-ink);
+  cursor:pointer;transition:background var(--duration-fast) var(--ease-pop);
+}
+.carousel-dot.active{background:var(--color-sun-yellow);}
+.carousel-card.hidden{display:none !important;}
+.carousel-nav{display:flex;gap:12px;margin-top:var(--space-2);}
+.carousel-nav .btn{flex:1;}
+.carousel-nav .btn-ghost{flex:0 0 auto;visibility:visible;}
+
+/* Decorative doodle accents, used sparingly */
+.doodle{position:absolute;pointer-events:none;opacity:0.5;}
+.hero-wrap{position:relative;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand">
+    <img src="assets/logo-mark.svg" alt="SunnySideUp logo, a cartoon fried egg">
+    SunnySideUp
+  </div>
+</div>
+
+<div class="page">
+  <div class="hero-wrap">
+    <div class="hero">
+      <h1>Is solar worth it for your home?</h1>
+      <p>SunnySideUp gives UK homeowners, renters, and leaseholders clear, independent solar viability checks to help them take confident climate action. Check for your home now.</p>
+    </div>
+  </div>
+
+  <div class="layout">
+    <div class="form-col">
+      <div class="carousel-dots" id="carouselDots"></div>
+
+      <div class="card carousel-card">
+        <h2 class="card-heading"><span class="step-num">1</span>About your home</h2>
+
+        <div class="field">
+          <label for="postcode">Your postcode</label>
+          <input id="postcode" type="text" placeholder="e.g. SW1A 1AA — leave blank to use the default">
+        </div>
+
+        <div class="field">
+          <label for="segment">What are you considering?</label>
+          <select id="segment" onchange="updateSegmentVisibility()">
+            <option value="rooftop">Rooftop solar panels</option>
+            <option value="plugin">Plug-in / balcony solar</option>
+          </select>
+        </div>
+
+        <div class="field" id="orientationField">
+          <label for="orientation">Roof orientation (or the direction your panel would face)</label>
+          <select id="orientation">
+            <option value="southFacing">South-facing</option>
+            <option value="eastWestFacing">East/West-facing</option>
+            <option value="northFacing">North-facing</option>
+          </select>
+        </div>
+
+        <div class="field" id="roofAreaField">
+          <label for="roofArea">Usable roof area, m²</label>
+          <input id="roofArea" type="number" step="0.1" placeholder="leave blank to calculate for average roof size">
+        </div>
+      </div>
+
+      <div class="card carousel-card">
+        <h2 class="card-heading"><span class="step-num">2</span>Your electricity use</h2>
+
+        <div class="field">
+          <label for="occupancy">During a typical weekday...</label>
+          <select id="occupancy">
+            <option value="usuallyHome">I'm usually home</option>
+            <option value="usuallyOut">I'm usually away during the day</option>
+          </select>
+        </div>
+
+        <details class="subgroup" id="householdSizeDetails" open>
+          <summary>Estimate it from my household</summary>
+          <div class="subgroup-body">
+            <div class="field">
+              <label for="householdSize">How many people live in your home?</label>
+              <input id="householdSize" type="number" value="3" min="1">
+            </div>
+            <label class="checkbox-row"><input type="checkbox" id="hasHeatPump"><span class="checkbox-box"></span>I have a heat pump</label>
+            <label class="checkbox-row"><input type="checkbox" id="hasEv" onchange="toggleEvCount()"><span class="checkbox-box"></span>I have an electric vehicle</label>
+            <div class="field hidden" id="evCountField">
+              <label for="evCount">How many electric vehicles?</label>
+              <input id="evCount" type="number" value="1" min="1">
+            </div>
+          </div>
+        </details>
+
+        <details class="subgroup" id="exactConsumptionDetails">
+          <summary>I know my exact annual electricity use</summary>
+          <div class="subgroup-body">
+            <div class="field">
+              <label for="consumption">Annual household electricity use (kWh/year, from a bill)</label>
+              <input id="consumption" type="number" placeholder="overrides the estimate above">
+            </div>
+          </div>
+        </details>
+      </div>
+
+      <div class="card carousel-card">
+        <h2 class="card-heading"><span class="step-num">3</span>Electricity price</h2>
+        <div class="field">
+          <label for="elecPriceRoof">Import price, pence/kWh</label>
+          <input id="elecPriceRoof" type="number" step="0.01" placeholder="leave blank to fetch your area's live rate">
+        </div>
+      </div>
+
+      <div class="card carousel-card" id="segField">
+        <h2 class="card-heading"><span class="step-num">4</span>Export (SEG) tariff</h2>
+
+        <div class="field">
+          <label for="importSupplier">Your current electricity supplier</label>
+          <select id="importSupplier"></select>
+          <span class="helper">Used to check their export/SEG rate below.</span>
+        </div>
+
+        <div class="field">
+          <label for="segChoice">When you get solar, your export tariff will most likely be:</label>
+          <select id="segChoice" onchange="updateSegChoiceVisibility()">
+            <option value="sameAsImport">The same supplier as my electricity import, above</option>
+            <option value="different">A different export supplier — I'll pick one</option>
+            <option value="dontKnow">I don't know yet</option>
+          </select>
+        </div>
+
+        <div id="segDifferentField" class="hidden">
+          <div class="field">
+            <label for="segTariff">Pick a tariff</label>
+            <select id="segTariff"></select>
+            <span class="helper" id="segTariffEligibility"></span>
+          </div>
+          <div class="field">
+            <label for="segRateManual">Or type a SEG rate manually instead, pence/kWh</label>
+            <input id="segRateManual" type="number" step="0.01" placeholder="leave blank to use the dropdown selection">
+          </div>
+        </div>
+        <p class="helper" id="segSameAsImportNote" style="margin-top:8px"></p>
+      </div>
+
+      <div class="carousel-nav">
+        <button class="btn btn-ghost" id="carouselBack" onclick="carouselPrev()">← Back</button>
+        <button class="btn" id="carouselNext" style="margin-top:0"></button>
+      </div>
+    </div>
+
+    <div class="results-col">
+      <div class="card result-panel" id="resultPanel">
+        <div id="resultIdle" class="result-idle">
+          <div class="mascot-wrap" id="mascotIdle"></div>
+          <div class="title">Your result appears here</div>
+        </div>
+
+        <div class="hidden" id="resultActive">
+          <div class="signal-housing" id="signalHousing">
+            <span class="signal-lamp" data-color="red"></span>
+            <span class="signal-lamp" data-color="amber"></span>
+            <span class="signal-lamp" data-color="green"></span>
+          </div>
+          <p class="loading-caption" id="loadingCaption">Crunching the numbers…</p>
+          <div id="verdictText" class="verdict-text"></div>
+
+          <div class="stat-row" id="statRow"></div>
+
+          <div class="sunny-says" id="sunnySays">
+            <div class="mascot-wrap" id="mascotSays"></div>
+            <div class="speech-bubble">
+              <div class="flag-title" id="flagTitle"></div>
+              <div class="flag-note" id="flagNote"></div>
+            </div>
+          </div>
+          <div class="carousel-dots flag-dots" id="flagDots"></div>
+
+          <details class="accordion" id="assumptionsAccordion">
+            <summary>See the full breakdown</summary>
+            <div class="accordion-body" id="assumptionsBody"></div>
+          </details>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="calculator.js"></script>
+<script>
+const SSU = window.SunnySideUpCalculator;
+
+(function populateSegTariffDropdown() {
+  const select = document.getElementById('segTariff');
+  const defaultOption = document.createElement('option');
+  defaultOption.value = '';
+  defaultOption.textContent = `No-switch default (${SSU.constants.SEG_RATE_PENCE_PER_KWH_DEFAULT}p, open to anyone)`;
+  select.appendChild(defaultOption);
+  SSU.getSegTariffs().forEach((t, i) => {
+    const opt = document.createElement('option');
+    opt.value = i;
+    opt.textContent = `${t.supplier} — ${t.tariff} (${t.ratePencePerKwh}p)`;
+    select.appendChild(opt);
+  });
+  select.addEventListener('change', updateEligibilityNote);
+  updateEligibilityNote();
+})();
+
+(function populateImportSupplierDropdown() {
+  const select = document.getElementById('importSupplier');
+  const placeholder = document.createElement('option');
+  placeholder.value = '';
+  placeholder.textContent = '-- Select your supplier --';
+  select.appendChild(placeholder);
+  const suppliers = [...new Set(SSU.getSegTariffs().map((t) => t.supplier))].sort();
+  suppliers.forEach((supplier) => {
+    const opt = document.createElement('option');
+    opt.value = supplier;
+    opt.textContent = supplier;
+    select.appendChild(opt);
+  });
+  const notListed = document.createElement('option');
+  notListed.value = '';
+  notListed.textContent = "My supplier isn't listed";
+  select.appendChild(notListed);
+})();
+
+function updateEligibilityNote() {
+  const select = document.getElementById('segTariff');
+  const note = document.getElementById('segTariffEligibility');
+  if (select.value === '') {
+    note.textContent = 'Requires: nothing — this is the baseline rate open to anyone, no supplier switch or specific installer needed.';
+  } else {
+    const t = SSU.getSegTariffs()[Number(select.value)];
+    note.textContent = `Requires: ${t.eligibility} (source: ${t.source})`;
+  }
+}
+
+function parseLocaleNumber(str) {
+  if (str === '' || str == null) return undefined;
+  const normalized = String(str).trim().replace(',', '.');
+  const n = Number(normalized);
+  return Number.isNaN(n) ? undefined : n;
+}
+
+function updateSegmentVisibility() {
+  const isRooftop = document.getElementById('segment').value === 'rooftop';
+  document.getElementById('roofAreaField').style.display = isRooftop ? '' : 'none';
+  renderCarousel();
+}
+
+function toggleEvCount() {
+  document.getElementById('evCountField').classList.toggle('hidden', !document.getElementById('hasEv').checked);
+}
+
+// ---------- Carousel: one card at a time, lower cognitive load than a long
+// scroll. Card 4 (Export/SEG) only applies to rooftop, so plug-in gets a
+// 3-step carousel instead of 4 — recomputed live if the segment changes
+// mid-flow, not fixed at page load.
+let carouselStep = 0;
+function carouselActiveCards() {
+  const cards = Array.from(document.querySelectorAll('.carousel-card'));
+  const isRooftop = document.getElementById('segment').value === 'rooftop';
+  return isRooftop ? cards : cards.filter((c) => c.id !== 'segField');
+}
+function renderCarousel() {
+  const active = carouselActiveCards();
+  if (carouselStep > active.length - 1) carouselStep = active.length - 1;
+  document.querySelectorAll('.carousel-card').forEach((c) => c.classList.add('hidden'));
+  active.forEach((c, i) => c.classList.toggle('hidden', i !== carouselStep));
+
+  const dots = document.getElementById('carouselDots');
+  dots.innerHTML = '';
+  active.forEach((_, i) => {
+    const dot = document.createElement('span');
+    dot.className = 'carousel-dot' + (i === carouselStep ? ' active' : '');
+    dot.onclick = () => { carouselStep = i; renderCarousel(); };
+    dots.appendChild(dot);
+  });
+
+  document.getElementById('carouselBack').style.visibility = carouselStep === 0 ? 'hidden' : 'visible';
+  const isLast = carouselStep === active.length - 1;
+  const isPlugin = document.getElementById('segment').value === 'plugin';
+  const nextBtn = document.getElementById('carouselNext');
+  nextBtn.textContent = isLast ? (isPlugin ? 'Check →' : 'Check my roof →') : 'Next →';
+  nextBtn.onclick = isLast ? runCalculation : carouselNext;
+}
+function carouselNext() {
+  const active = carouselActiveCards();
+  if (carouselStep < active.length - 1) { carouselStep++; renderCarousel(); }
+}
+function carouselPrev() {
+  if (carouselStep > 0) { carouselStep--; renderCarousel(); }
+}
+
+function updateSegChoiceVisibility() {
+  const choice = document.getElementById('segChoice').value;
+  document.getElementById('segDifferentField').classList.toggle('hidden', choice !== 'different');
+  const sameAsImportNote = document.getElementById('segSameAsImportNote');
+  if (choice === 'sameAsImport') {
+    const supplier = document.getElementById('importSupplier').value.trim();
+    if (!supplier) {
+      sameAsImportNote.textContent = 'Enter your current supplier above to see their export rate.';
+    } else {
+      const matches = SSU.findSegTariffsBySupplier(supplier);
+      sameAsImportNote.textContent = matches.length
+        ? `${supplier}'s best listed export tariff: ${matches[0].tariff} (${matches[0].ratePencePerKwh}p) — requires: ${matches[0].eligibility}.`
+        : `No SEG tariff found for "${supplier}" in the researched table — will use the no-switch default instead.`;
+    }
+  } else {
+    sameAsImportNote.textContent = '';
+  }
+}
+document.getElementById('importSupplier').addEventListener('change', updateSegChoiceVisibility);
+
+function resolveConsumption() {
+  const exact = parseLocaleNumber(document.getElementById('consumption').value);
+  if (exact !== undefined) {
+    return { annualConsumptionKwh: exact, isUserProvided: true, breakdown: null };
+  }
+  const householdSize = parseLocaleNumber(document.getElementById('householdSize').value) ?? 3;
+  const hasHeatPump = document.getElementById('hasHeatPump').checked;
+  const hasEv = document.getElementById('hasEv').checked;
+  const evCount = hasEv ? (parseLocaleNumber(document.getElementById('evCount').value) ?? 1) : undefined;
+  const estimate = SSU.estimateAnnualConsumptionKwh({ householdSize, hasHeatPump, hasEv, evCount });
+  return { annualConsumptionKwh: estimate.totalKwh, isUserProvided: false, breakdown: estimate.breakdown };
+}
+
+function resolveSegInputs() {
+  const choice = document.getElementById('segChoice').value;
+  if (choice === 'sameAsImport') {
+    const supplier = document.getElementById('importSupplier').value.trim();
+    const matches = supplier ? SSU.findSegTariffsBySupplier(supplier) : [];
+    if (matches.length === 0) return {};
+    const t = matches[0];
+    return { segRatePencePerKwh: t.ratePencePerKwh, segTariffLabel: `${t.supplier} — ${t.tariff}`, segTariffSource: t.source, segTariffEligibility: t.eligibility };
+  }
+  if (choice === 'different') {
+    const manualSegRate = parseLocaleNumber(document.getElementById('segRateManual').value);
+    if (manualSegRate !== undefined) return { segRatePencePerKwh: manualSegRate };
+    const segTariffSelect = document.getElementById('segTariff');
+    if (segTariffSelect.value !== '') {
+      const t = SSU.getSegTariffs()[Number(segTariffSelect.value)];
+      return { segRatePencePerKwh: t.ratePencePerKwh, segTariffLabel: `${t.supplier} — ${t.tariff}`, segTariffSource: t.source, segTariffEligibility: t.eligibility };
+    }
+    return {};
+  }
+  return {};
+}
+
+function gbp(n) {
+  return `£${Math.round(n).toLocaleString('en-GB')}`;
+}
+
+const STATUS_TO_TONE = { green: 'good', amber: 'mid', red: 'poor' };
+const STATUS_TO_LABEL = { green: 'Worth it', amber: 'Borderline', red: 'Not yet' };
+const SIGNAL_COLORS = ['red', 'amber', 'green'];
+
+// Sunny, the mascot: same flat, thick-outline, no-gradient language as the
+// rest of the design system (the fluffy body is a new addition inspired by
+// a reference image; the face reuses the existing egg-logo design for
+// brand consistency, not a new invention). Mood only changes the mouth —
+// one consistent character, not a different drawing per result.
+function mascotSvg(mood) {
+  const mouthPaths = {
+    good: 'M40,50 Q50,58 60,50',
+    mid: 'M42,51 L58,51',
+    poor: 'M40,53 Q50,46 60,53',
+    idle: 'M42,50 Q50,55 58,50',
+  };
+  const mouth = mouthPaths[mood] || mouthPaths.idle;
+  return `<svg viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Sunny, the SunnySideUp mascot">
+    <path d="M20,118 C10,118 8,100 12,88 C6,85 4,72 14,65 C10,55 22,50 30,56 C34,48 46,46 52,54 C60,46 74,48 76,58 C86,54 96,62 92,75 C98,80 96,96 88,100 C90,112 78,118 68,118 Z"
+      fill="#F5B942" stroke="#1C1B18" stroke-width="3.5" stroke-linejoin="round"/>
+    <path d="M50,82 C54,88 54,94 50,96 C46,94 46,88 50,82 Z" fill="#FFFDF6" stroke="#1C1B18" stroke-width="2"/>
+    <ellipse cx="50" cy="38" rx="34" ry="30" fill="#FFFDF6" stroke="#1C1B18" stroke-width="3.5"/>
+    <circle cx="50" cy="40" r="20" fill="#F5B942" stroke="#D4890B" stroke-width="2.5"/>
+    <ellipse cx="43" cy="31" rx="6" ry="4" fill="#FFE9B8" opacity="0.85"/>
+    <circle cx="43" cy="42" r="2.8" fill="#1C1B18"/>
+    <circle cx="57" cy="42" r="2.8" fill="#1C1B18"/>
+    <path d="${mouth}" fill="none" stroke="#1C1B18" stroke-width="2.4" stroke-linecap="round"/>
+  </svg>`;
+}
+document.getElementById('mascotIdle').innerHTML = mascotSvg('idle');
+
+function renderStat(label, value, sub) {
+  const el = document.createElement('div');
+  el.className = 'stat-card';
+  el.innerHTML = `<span class="stat-label">${label}</span><span class="stat-value">${value}</span>${sub ? `<span class="stat-sub">${sub}</span>` : ''}`;
+  return el;
+}
+
+function revealStatsSequentially(statEls) {
+  statEls.forEach((el, i) => setTimeout(() => el.classList.add('shown'), i * 180));
+}
+
+// Both segments' "worth knowing" callouts, normalized to one shape so they
+// can share the same Sunny-says carousel — rooftop already has a real
+// `flags` array; plug-in's legalStatus block gets reshaped to match rather
+// than needing its own separate rendering path.
+function collectFlags(result, segment) {
+  if (segment === 'plugin') {
+    const ls = result.legalStatus;
+    return [
+      { title: 'Electrician install: legal', note: `Legal since ${ls.electricianInstall.since} under ${ls.electricianInstall.basis}.`, tier: 'Fact' },
+      { title: ls.diySelfInstall.legal ? 'DIY self-install: legal' : 'DIY self-install: not yet legal', note: `${ls.diySelfInstall.note} (${ls.diySelfInstall.basis}, ${ls.diySelfInstall.becomesLegal})`, tier: 'Fact' },
+      { title: 'Leasehold or renting?', note: ls.tenancyConsent.note, tier: 'Fact' },
+    ];
+  }
+  return result.flags || [];
+}
+
+let currentFlags = [];
+let flagStep = 0;
+function renderFlagStep() {
+  const f = currentFlags[flagStep];
+  document.getElementById('flagTitle').textContent = f.title;
+  document.getElementById('flagNote').textContent = f.note;
+  document.getElementById('mascotSays').innerHTML = mascotSvg(window.currentResultTone || 'idle');
+  const dots = document.getElementById('flagDots');
+  dots.innerHTML = '';
+  if (currentFlags.length > 1) {
+    currentFlags.forEach((_, i) => {
+      const dot = document.createElement('span');
+      dot.className = 'carousel-dot' + (i === flagStep ? ' active' : '');
+      dot.onclick = () => { flagStep = i; renderFlagStep(); };
+      dots.appendChild(dot);
+    });
+  }
+}
+
+// Some tier strings (e.g. a live-fetched rate's tier) are full explanatory
+// sentences written for the docs/audit trail, not a short UI label — take
+// only the leading phrase before " — " for the pill; the rest of that detail
+// is internal sourcing narrative, not something an end user needs, and the
+// separate `note` field already carries the user-relevant explanation.
+function tierLabel(tier) {
+  const idx = tier.indexOf(' — ');
+  return idx === -1 ? tier : tier.slice(0, idx);
+}
+
+function renderAssumptionRow(label, value, tier, note) {
+  const el = document.createElement('div');
+  el.className = 'assumption-row';
+  el.innerHTML = `
+    <div class="assumption-top"><span class="assumption-label">${label}</span><span class="assumption-value">${value}</span></div>
+    <span class="tier-pill">${tierLabel(tier)}</span>
+    <div class="assumption-note">${note}</div>
+  `;
+  return el;
+}
+
+function fillAssumptions(result, segment) {
+  const body = document.getElementById('assumptionsBody');
+  body.innerHTML = '';
+  const a = result.assumptions;
+  body.appendChild(renderAssumptionRow('Electricity price', `${a.electricityPricePencePerKwh.value}p/kWh`, a.electricityPricePencePerKwh.tier, a.electricityPricePencePerKwh.note));
+  if (a.segRatePencePerKwh) body.appendChild(renderAssumptionRow('SEG export rate', `${a.segRatePencePerKwh.value}p/kWh`, a.segRatePencePerKwh.tier, a.segRatePencePerKwh.note));
+  body.appendChild(renderAssumptionRow(segment === 'plugin' ? 'Kit cost' : 'System cost', gbp(segment === 'plugin' ? result.kitCostGbp : result.systemCostGbp), a.systemCostGbp ? a.systemCostGbp.tier : a.kitCostGbp.tier, a.systemCostGbp ? a.systemCostGbp.note : a.kitCostGbp.note));
+  body.appendChild(renderAssumptionRow('Annual generation', `${result.generationKwh.toLocaleString()} kWh`, a.generationKwh.tier, a.generationKwh.note));
+  if (a.selfConsumptionRate) body.appendChild(renderAssumptionRow('Self-consumption rate', `${Math.round(a.selfConsumptionRate.value * 100)}%`, a.selfConsumptionRate.tier, a.selfConsumptionRate.note));
+
+  if (result.consumptionEstimate) {
+    const ce = result.consumptionEstimate;
+    if (ce.tier === 'User-provided') {
+      body.appendChild(renderAssumptionRow('Annual consumption', 'your own figure', 'User-provided', ce.note));
+    } else if (ce.breakdown) {
+      Object.entries(ce.breakdown).forEach(([key, entry]) => {
+        const label = key === 'baseline' ? 'Consumption (household size)' : key === 'heatPump' ? 'Consumption (heat pump)' : 'Consumption (EV charging)';
+        body.appendChild(renderAssumptionRow(label, `${entry.value.toLocaleString()} kWh`, entry.tier, entry.note));
+      });
+    }
+  }
+}
+
+let signalCycleInterval = null;
+function startSignalCycle() {
+  let i = 0;
+  const tick = () => {
+    document.querySelectorAll('.signal-lamp').forEach((el) => el.classList.remove('lit'));
+    document.querySelector(`.signal-lamp[data-color="${SIGNAL_COLORS[i % 3]}"]`).classList.add('lit');
+    i++;
+  };
+  tick();
+  signalCycleInterval = setInterval(tick, 220);
+}
+function stopSignalCycle(finalColor) {
+  clearInterval(signalCycleInterval);
+  document.querySelectorAll('.signal-lamp').forEach((el) => el.classList.remove('lit'));
+  document.querySelector(`.signal-lamp[data-color="${finalColor}"]`).classList.add('lit');
+}
+
+async function runCalculation() {
+  const segment = document.getElementById('segment').value;
+  const electricityPricePencePerKwh = parseLocaleNumber(document.getElementById('elecPriceRoof').value);
+  const consumption = resolveConsumption();
+  const occupancy = document.getElementById('occupancy').value;
+  const postcode = document.getElementById('postcode').value.trim();
+  const orientation = document.getElementById('orientation').value;
+
+  // Enter the loading state: signal starts cycling immediately, everything
+  // below it stays hidden/reset until the real result (and a minimum visual
+  // duration, so a near-instant offline calc doesn't feel like a glitch)
+  // both land.
+  document.getElementById('resultIdle').classList.add('hidden');
+  document.getElementById('resultActive').classList.remove('hidden');
+  document.getElementById('loadingCaption').classList.remove('hidden');
+  const verdictEl = document.getElementById('verdictText');
+  verdictEl.textContent = '';
+  verdictEl.className = 'verdict-text';
+  document.getElementById('statRow').innerHTML = '';
+  document.getElementById('sunnySays').classList.remove('shown');
+  document.getElementById('flagDots').innerHTML = '';
+  const accordion = document.getElementById('assumptionsAccordion');
+  accordion.classList.add('hidden');
+  accordion.open = false;
+  startSignalCycle();
+
+  const calcPromise = (async () => {
+    if (segment === 'plugin') {
+      return SSU.calculatePluginViability({ occupancy, orientation, electricityPricePencePerKwh });
+    }
+    const inputs = {
+      orientation,
+      occupancy,
+      annualConsumptionKwh: consumption.annualConsumptionKwh,
+      electricityPricePencePerKwh,
+      roofAreaM2: parseLocaleNumber(document.getElementById('roofArea').value),
+      ...resolveSegInputs(),
+    };
+    return postcode ? await SSU.calculateRooftopViabilityByPostcode(postcode, inputs) : SSU.calculateRooftopViability(inputs);
+  })();
+  const minDelay = new Promise((resolve) => setTimeout(resolve, 1200));
+  const [result] = await Promise.all([calcPromise, minDelay]);
+
+  result.consumptionEstimate = consumption.isUserProvided
+    ? { tier: 'User-provided', note: 'Your own stated annual consumption, from a bill.' }
+    : { tier: 'Derived estimate', breakdown: consumption.breakdown };
+
+  // Signal settles on the real result, then everything else reveals in
+  // sequence: verdict text, stat cards one by one, then Sunny with flags.
+  stopSignalCycle(result.status);
+  document.getElementById('loadingCaption').classList.add('hidden');
+
+  const tone = STATUS_TO_TONE[result.status] || 'mid';
+  window.currentResultTone = tone;
+  verdictEl.textContent = STATUS_TO_LABEL[result.status] || result.status;
+  verdictEl.className = `verdict-text verdict-${tone} shown`;
+
+  const statRow = document.getElementById('statRow');
+  const stats = [
+    renderStat('Payback', `${result.paybackYears}yr`, 'vs. a 25yr panel lifespan'),
+    renderStat('Annual saving', gbp(result.annualSavingsGbp), 'per year'),
+    renderStat(segment === 'plugin' ? 'Kit cost' : 'System cost', gbp(segment === 'plugin' ? result.kitCostGbp : result.systemCostGbp)),
+  ];
+  stats.forEach((el) => statRow.appendChild(el));
+  requestAnimationFrame(() => revealStatsSequentially(stats));
+
+  currentFlags = collectFlags(result, segment);
+  flagStep = 0;
+  renderFlagStep();
+  setTimeout(() => document.getElementById('sunnySays').classList.add('shown'), stats.length * 180 + 300);
+
+  fillAssumptions(result, segment);
+  accordion.classList.remove('hidden');
+}
+
+updateSegmentVisibility();
+</script>
+</body>
+</html>

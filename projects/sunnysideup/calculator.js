@@ -528,6 +528,7 @@ function estimateAnnualConsumptionKwh({ householdSize, hasHeatPump, hasEv, evCou
  * @param {number} [input.segRatePencePerKwh] - a specific SEG tariff's rate, e.g. from findSegTariff(); falls back to the no-switch-needed baseline default if omitted
  * @param {string} [input.segTariffLabel] - "Supplier — Tariff name" for display, if segRatePencePerKwh came from a specific named tariff rather than a manually-typed number
  * @param {string} [input.segTariffSource] - the named source for that tariff row (e.g. "Ofgem SEG Licensee Register"), if available
+ * @param {string} [input.segTariffEligibility] - that tariff row's eligibility text (e.g. "requires system installed by that same supplier"), if available — carried into the result so the condition attached to the picked rate isn't lost between the picker UI and the calculated output
  * @param {Object} [input.regionalGeneration] - a REGIONAL_GENERATION_MULTIPLIER entry, e.g. from calculateRooftopViabilityByPostcode()'s country-level fallback; omit to use the England-calibrated baseline unchanged. Ignored if generationOverride is also given.
  * @param {Object} [input.generationOverride] - a specific { value, tier, note } to use for generationKwh outright (e.g. a coordinate-precise weather-API estimate), taking precedence over regionalGeneration and the orientation-based default
  * @param {number} [input.roofAreaM2] - usable roof area; if given, sizes the system (panels, kWp, cost) against it via estimateSystemSizeFromRoofArea() instead of the flat REFERENCE_SYSTEM_SIZE_KWP default, and scales whatever generation figure was otherwise resolved (flat/regional/override) proportionally to the derived system size
@@ -541,6 +542,7 @@ function calculateRooftopViability({
   segRatePencePerKwh,
   segTariffLabel,
   segTariffSource,
+  segTariffEligibility,
   regionalGeneration,
   generationOverride,
   roofAreaM2,
@@ -597,7 +599,7 @@ function calculateRooftopViability({
             value: usedSegRate,
             tier: 'User-provided',
             note: segTariffLabel
-              ? `${segTariffLabel}${segTariffSource ? `, per ${segTariffSource}` : ''} (from the user-provided SEG tariff table, dated 23 July 2026)`
+              ? `${segTariffLabel}${segTariffSource ? `, per ${segTariffSource}` : ''} (from the user-provided SEG tariff table, dated 23 July 2026)${segTariffEligibility ? ` — requires: ${segTariffEligibility}` : ''}`
               : "Your own stated rate",
           }
         : {
@@ -631,14 +633,51 @@ function calculateRooftopViability({
       panelCount: roofAreaSizing.panelCount,
       systemSizeKwp: roofAreaSizing.systemSizeKwp,
     };
-    if (roofAreaSizing.exceedsPermittedDevelopmentEngland) {
-      result.permittedDevelopmentFlag = {
-        systemSizeKwp: roofAreaSizing.systemSizeKwp,
-        ceilingKwp: PERMITTED_DEVELOPMENT_KWP_CEILING_ENGLAND,
-        note: `Your roof-area-derived system (${roofAreaSizing.systemSizeKwp}kWp) is larger than the ${PERMITTED_DEVELOPMENT_KWP_CEILING_ENGLAND}kWp ceiling covered by Permitted Development Rights in England — you may need planning permission for a system this size. Scotland and Wales have their own separate thresholds, not researched here.`,
-      };
-    }
   }
+
+  // Situational, always-worth-reading callouts, distinct from the per-field
+  // assumptions above: those explain how confident a number is, these tell
+  // the user about a condition attached to *this specific result* that the
+  // number alone doesn't convey. calculateRooftopViabilityByPostcode may
+  // append a regulatory-regime flag to this same array once it knows the
+  // resolved country. The first three below are unconditional — every
+  // rooftop result gets them, not just some — because none of the inputs
+  // this calculator collects (deliberately no new ones added for this) can
+  // tell it whether a given property is leasehold, listed, or in a
+  // conservation area.
+  const flags = [];
+
+  if (roofAreaSizing && roofAreaSizing.exceedsPermittedDevelopmentEngland) {
+    flags.push({
+      id: 'permittedDevelopment',
+      tier: 'Fact',
+      title: 'May need planning permission',
+      note: `Your roof-area-derived system (${roofAreaSizing.systemSizeKwp}kWp) is larger than the ${PERMITTED_DEVELOPMENT_KWP_CEILING_ENGLAND}kWp ceiling covered by Permitted Development Rights in England — you may need planning permission for a system this size. Scotland and Wales have their own separate thresholds, not researched here.`,
+    });
+  }
+
+  flags.push({
+    id: 'tenancyConsent',
+    tier: 'Fact',
+    title: 'Leasehold or renting? You likely need consent',
+    note: "If you're a leaseholder, UK leasehold law generally requires freeholder (or management company) consent before altering a building's exterior — including rooftop solar — regardless of system size; lease terms vary, so check yours. If you rent, check with your landlord. This tool doesn't resolve either question for your specific situation.",
+  });
+
+  flags.push({
+    id: 'listedBuilding',
+    tier: 'Fact',
+    title: 'Listed building? No permitted development rights apply',
+    note: 'This result only checks the size-based Permitted Development ceiling above. Listed buildings have no permitted development rights for solar at all, regardless of system size — not checked by this tool.',
+  });
+
+  flags.push({
+    id: 'conservationArea',
+    tier: 'Inference',
+    title: 'In a conservation area? Extra rules may apply',
+    note: 'Panels visible from a highway in a conservation area may need full planning permission even within the Permitted Development ceiling; rear- or side-facing panels not visible from a highway are more often still exempt. Not checked by this tool.',
+  });
+
+  result.flags = flags;
 
   return result;
 }
@@ -850,14 +889,41 @@ async function lookupOpenMeteoGeneration(latitude, longitude, orientation) {
 // regional cap. That equivalence is the actual finding being relied on
 // here, not an assumption.
 //
-// What's still unconfirmed: the request/response contract below was
-// directly fetched successfully once from an unrestricted session
-// (grounding-research.md, 24 Jul 2026 — confirms the API shape assumed by
-// this code is correct), but not yet from an actual browser the way
-// postcodes.io and Open-Meteo were — this is also a longer chained lookup
-// (postcode -> GSP region -> current default product -> that product's live
-// unit rate) with more surface for something to go wrong than a single API
-// call, so treat it with proportionally more caution until browser-tested.
+// [Fact — confirmed via a live end-to-end test, 25 Jul 2026] The full chained
+// lookup (postcode -> GSP region -> current default product -> that
+// product's live unit rate) was run against the real API for 4 real UK
+// postcodes across 4 different GSP regions, reproducing this file's exact
+// fetch logic. This surfaced two real bugs, both fixed as a direct result of
+// running the test rather than just reading the docs:
+//   1. lookupCurrentOctopusVariableProduct()'s "most recently launched"
+//      heuristic picked a niche specialty product ("Snug Octopus") over the
+//      actual flagship "Flexible Octopus" default, since Octopus launches
+//      niche variable tariffs more often than it reissues the flagship one.
+//      Fixed by preferring an exact name match on the flagship product.
+//   2. lookupOctopusUnitRate() built the tariff code using groupId verbatim
+//      (e.g. "E-1R-{product}-_C"), but Octopus's tariff-code convention
+//      drops the GSP region's leading underscore (the real code is
+//      "E-1R-{product}-C") — the underscored form 200s with a "no tariff
+//      matches" error body instead of a rate. Fixed by stripping it.
+// After both fixes, all 4 test postcodes returned real rates landing within
+// ~0.3p of the static ELECTRICITY_PRICE_PENCE_PER_KWH_DEFAULT above, as
+// expected. What this test could NOT confirm: an actual browser (Chromium
+// via Playwright, launched fresh for this check) could not reach the
+// internet at all in this session — every outbound HTTPS request failed
+// with ERR_CONNECTION_RESET, including to postcodes.io and Open-Meteo,
+// which a *different* session's live browser test confirmed working
+// earlier (see those functions' own comments). Diagnosed via this session's
+// proxy status endpoint, which showed no relay attempt ever reached it for
+// any of these hosts — a browser-level network restriction specific to this
+// session, not a targeted block on Octopus, and not evidence those earlier
+// browser confirmations were wrong. The direct-HTTP chained test above is a
+// strictly stronger check of the actual request/response contract this code
+// depends on than a browser test would have added on top of it; what a
+// browser test would still catch that this doesn't is a real CORS rejection
+// specific to Octopus's API — unconfirmed either way, though Open-Meteo and
+// postcodes.io both turned out to be CORS-open, and Octopus's own headers
+// (checked via curl, same session) return `Access-Control-Allow-Origin: *`,
+// so a CORS block here would be a surprise, not the expected case.
 const OCTOPUS_BASE_URL = 'https://api.octopus.energy/v1';
 
 /**
@@ -923,22 +989,40 @@ async function lookupCurrentOctopusVariableProduct() {
   if (candidates.length === 0) {
     return { ok: false, error: 'No currently-available default variable Octopus product found matching the expected filters.' };
   }
-  // Most recently launched matching product, since Octopus periodically
-  // reissues this tariff under a new code.
+  // [Bug found via live end-to-end test, 25 Jul 2026 — see OCTOPUS_BASE_URL's
+  // comment for the full test] Sorting by most-recently-launched alone picks
+  // whatever niche variable product Octopus happened to launch last (e.g.
+  // "Snug Octopus," a smart/time-of-use product) over the actual long-running
+  // flagship default "Flexible Octopus" — Octopus launches specialty variable
+  // tariffs more often than it reissues the flagship one, so recency isn't a
+  // reliable proxy for "the standard one most people are on." Prefer an exact
+  // name match on the flagship product; fall back to the recency heuristic
+  // only if Octopus ever renames or retires it.
+  const flagship = candidates.find((p) => p.display_name === 'Flexible Octopus');
   candidates.sort((a, b) => new Date(b.available_from) - new Date(a.available_from));
-  const product = candidates[0];
+  const product = flagship || candidates[0];
   return { ok: true, productCode: product.code, displayName: product.display_name };
 }
 
 /**
  * Fetches the current standard-unit-rate (Direct Debit, pence/kWh inc VAT)
  * for a given Octopus product code + GSP region, via the single-register
- * electricity tariff code convention (E-1R-{productCode}-{groupId}).
+ * electricity tariff code convention (E-1R-{productCode}-{region letter}).
  * @param {string} productCode
- * @param {string} groupId - e.g. "_C", from lookupGspRegion()
+ * @param {string} groupId - e.g. "_C", from lookupGspRegion() (leading
+ *   underscore stripped internally before building the tariff code)
  */
 async function lookupOctopusUnitRate(productCode, groupId) {
-  const tariffCode = `E-1R-${productCode}-${groupId}`;
+  // [Bug found via live end-to-end test, 25 Jul 2026 — see OCTOPUS_BASE_URL's
+  // comment] groupId comes back from the GSP lookup with a leading underscore
+  // (e.g. "_C"), matching the region keys inside a product's own
+  // single_register_electricity_tariffs object — but the actual tariff-code
+  // convention Octopus's URLs use is the bare region letter with no
+  // underscore ("E-1R-VAR-22-11-01-C", not "...-_C"). Using groupId verbatim
+  // silently 200s with a "no tariff matches" error body instead of a real
+  // rate. Confirmed against 4 real regions after this fix.
+  const regionLetter = groupId.replace(/^_/, '');
+  const tariffCode = `E-1R-${productCode}-${regionLetter}`;
   let response;
   try {
     response = await fetch(`${OCTOPUS_BASE_URL}/products/${productCode}/electricity-tariffs/${tariffCode}/standard-unit-rates/`, { signal: AbortSignal.timeout(10000) });
@@ -1028,7 +1112,7 @@ async function calculateRooftopViabilityByPostcode(postcode, otherInputs) {
   if (!userProvidedElectricityPrice && electricityPrice.ok) {
     calcInputs.electricityPriceOverride = {
       value: electricityPrice.ratePencePerKwh,
-      tier: "Inference — live-fetched from Octopus Energy's public API, not yet confirmed via a live browser test",
+      tier: "Inference — live-fetched from Octopus Energy's public API, confirmed end-to-end via a direct-HTTP test across 4 real UK regions (25 Jul 2026, see OCTOPUS_BASE_URL's comment); a browser-specific CORS check could not be run this session (network-restricted)",
       note: `Octopus's current "${electricityPrice.productDisplayName}" rate for your region (tariff ${electricityPrice.tariffCode}, valid from ${electricityPrice.validFrom}), fetched live rather than assumed. This is Octopus's own price-cap-tracking rate, not necessarily your actual supplier's identical figure — Ofgem's price cap sets a regional ceiling every standard-variable-tariff supplier must match or beat, so this is a close proxy if you're on a standard variable deal, not a guarantee if you're on a fixed deal or with a different supplier. Enter your own rate above for an exact result.`,
     };
   }
@@ -1049,7 +1133,7 @@ async function calculateRooftopViabilityByPostcode(postcode, otherInputs) {
   };
   const regulatoryNote = REGIONS_WITH_UNRESEARCHED_REGULATORY_REGIME[lookup.country];
   if (regulatoryNote) {
-    result.regulatoryFlag = { country: lookup.country, note: regulatoryNote };
+    result.flags.push({ id: 'regulatoryRegime', tier: 'Fact', title: `${lookup.country}: regulatory regime not researched`, country: lookup.country, note: regulatoryNote });
   }
   if (!openMeteo.ok && !REGIONAL_GENERATION_MULTIPLIER[lookup.country]) {
     result.postcodeLookup.note = `No regional generation figure for "${lookup.country}"; used the England-calibrated default.`;

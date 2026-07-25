@@ -46,16 +46,16 @@
     <label for="roofArea">Usable roof area, m² (rooftop only — leave blank to use a flat ~4.6kWp typical-system default)</label>
     <input id="roofArea" type="number" step="0.1" placeholder="e.g. 25 — sizes the system to your actual roof instead of a flat default">
   </div>
+</fieldset>
+
+<fieldset>
+  <legend>Your electricity use</legend>
 
   <label for="occupancy">During a typical weekday...</label>
   <select id="occupancy">
     <option value="usuallyHome">I'm usually home</option>
     <option value="usuallyOut">I'm usually away during the day</option>
   </select>
-</fieldset>
-
-<fieldset>
-  <legend>Your electricity use</legend>
 
   <details id="householdSizeDetails" open>
     <summary>Estimate it from my household</summary>
@@ -80,16 +80,16 @@
   <legend>Electricity price</legend>
   <label for="elecPriceRoof">Import price, pence/kWh</label>
   <input id="elecPriceRoof" type="number" step="0.01" placeholder="leave blank to fetch a live current rate for your postcode's region">
-
-  <label for="importSupplier">Your current electricity supplier (used below to check their export/SEG rate, not for the price above)</label>
-  <select id="importSupplier"></select>
 </fieldset>
 
 <fieldset id="segField">
   <legend>Export (SEG) tariff</legend>
+  <label for="importSupplier">Your current electricity supplier (used to check their export/SEG rate below)</label>
+  <select id="importSupplier"></select>
+
   <label for="segChoice">When you get solar, your export tariff will most likely be:</label>
   <select id="segChoice" onchange="updateSegChoiceVisibility()">
-    <option value="sameAsImport">The same supplier as my electricity import, shown above</option>
+    <option value="sameAsImport">The same supplier as my electricity import, above</option>
     <option value="different">A different export supplier — I'll pick one</option>
     <option value="dontKnow">I don't know yet</option>
   </select>
@@ -343,9 +343,20 @@ async function lookupOpenMeteoGeneration(latitude, longitude, orientation) {
 // Assistant integration, not fetched directly against Octopus's own docs
 // (blocked, same restriction as elsewhere). Octopus runs a genuinely
 // public, no-auth REST API for their product catalog and unit rates.
-// Needs a live browser test before being fully trusted end to end (longer
-// chained lookup than Open-Meteo: postcode -> GSP region -> current
-// default product -> that product's live unit rate).
+//
+// [Fact — confirmed via a live end-to-end test, 25 Jul 2026, see
+// calculator.js's fuller comment on this same constant] The full chained
+// lookup (postcode -> GSP region -> current product -> live unit rate) was
+// tested against the real API across 4 real UK postcodes/regions, which
+// surfaced and fixed two real bugs: (1) the "most recent" product-selection
+// heuristic below picked a niche product over the actual flagship "Flexible
+// Octopus" default — fixed by preferring an exact name match; (2) the
+// tariff code was built with the GSP region's leading underscore left in
+// (e.g. "...-_C"), which the real API rejects — the real code drops it
+// (e.g. "...-C"). A literal browser test (Playwright/Chromium) could not be
+// run this session — all outbound HTTPS from a launched browser failed
+// (ERR_CONNECTION_RESET), a session-level network restriction confirmed via
+// the proxy status endpoint, not specific to Octopus.
 const OCTOPUS_BASE_URL = 'https://api.octopus.energy/v1';
 
 async function lookupGspRegion(postcode) {
@@ -379,13 +390,21 @@ async function lookupCurrentOctopusVariableProduct() {
     (p) => !p.is_green && !p.is_tracker && !p.is_prepay && !p.is_business && !p.is_restricted && (p.available_to == null || new Date(p.available_to) > new Date())
   );
   if (candidates.length === 0) return { ok: false, error: 'No currently-available default variable Octopus product found matching the expected filters.' };
+  // Prefer an exact name match on the flagship "Flexible Octopus" product —
+  // sorting by most-recently-launched alone picks niche specialty products
+  // instead (bug found via live test, see OCTOPUS_BASE_URL's comment).
+  const flagship = candidates.find((p) => p.display_name === 'Flexible Octopus');
   candidates.sort((a, b) => new Date(b.available_from) - new Date(a.available_from));
-  const product = candidates[0];
+  const product = flagship || candidates[0];
   return { ok: true, productCode: product.code, displayName: product.display_name };
 }
 
 async function lookupOctopusUnitRate(productCode, groupId) {
-  const tariffCode = `E-1R-${productCode}-${groupId}`;
+  // groupId comes back with a leading underscore (e.g. "_C"); the real
+  // tariff-code convention drops it (bug found via live test, see
+  // OCTOPUS_BASE_URL's comment).
+  const regionLetter = groupId.replace(/^_/, '');
+  const tariffCode = `E-1R-${productCode}-${regionLetter}`;
   let response;
   try {
     response = await fetch(`${OCTOPUS_BASE_URL}/products/${productCode}/electricity-tariffs/${tariffCode}/standard-unit-rates/`, { signal: AbortSignal.timeout(10000) });
@@ -437,7 +456,7 @@ async function calculateRooftopViabilityByPostcode(postcode, otherInputs) {
   if (!userProvidedElectricityPrice && electricityPrice.ok) {
     calcInputs.electricityPriceOverride = {
       value: electricityPrice.ratePencePerKwh,
-      tier: "Inference — live-fetched from Octopus Energy's public API, not yet confirmed via a live browser test",
+      tier: "Inference — live-fetched from Octopus Energy's public API, confirmed end-to-end via a direct-HTTP test across 4 real UK regions (25 Jul 2026, see OCTOPUS_BASE_URL's comment); a browser-specific CORS check could not be run this session (network-restricted)",
       note: `Octopus's current "${electricityPrice.productDisplayName}" rate for your region (tariff ${electricityPrice.tariffCode}, valid from ${electricityPrice.validFrom}), fetched live rather than assumed. This is Octopus's own price-cap-tracking rate, not necessarily your actual supplier's identical figure — Ofgem's price cap sets a regional ceiling every standard-variable-tariff supplier must match or beat, so this is a close proxy if you're on a standard variable deal, not a guarantee if you're on a fixed deal or with a different supplier. Enter your own rate above for an exact result.`,
     };
   }
@@ -453,7 +472,7 @@ async function calculateRooftopViabilityByPostcode(postcode, otherInputs) {
   result.postcodeLookup = { ok: true, postcode: lookup.postcode, country: lookup.country, region: lookup.region };
   const regulatoryNote = REGIONS_WITH_UNRESEARCHED_REGULATORY_REGIME[lookup.country];
   if (regulatoryNote) {
-    result.regulatoryFlag = { country: lookup.country, note: regulatoryNote };
+    result.flags.push({ id: 'regulatoryRegime', tier: 'Fact', title: `${lookup.country}: regulatory regime not researched`, country: lookup.country, note: regulatoryNote });
   }
   if (!openMeteo.ok && !REGIONAL_GENERATION_MULTIPLIER[lookup.country]) {
     result.postcodeLookup.note = `No regional generation figure for "${lookup.country}"; used the England-calibrated default.`;
@@ -556,7 +575,7 @@ function estimateAnnualConsumptionKwh({ householdSize, hasHeatPump, hasEv, evCou
   return { totalKwh: Math.round(totalKwh), breakdown };
 }
 
-function calculateRooftopViability({ orientation, occupancy, annualConsumptionKwh, electricityPricePencePerKwh, electricityPriceOverride, segRatePencePerKwh, segTariffLabel, segTariffSource, regionalGeneration, generationOverride, roofAreaM2 }) {
+function calculateRooftopViability({ orientation, occupancy, annualConsumptionKwh, electricityPricePencePerKwh, electricityPriceOverride, segRatePencePerKwh, segTariffLabel, segTariffSource, segTariffEligibility, regionalGeneration, generationOverride, roofAreaM2 }) {
   const baseGeneration = ROOFTOP_ANNUAL_GENERATION_KWH[orientation];
   const preRoofAreaGeneration = generationOverride
     ? generationOverride.value
@@ -604,7 +623,7 @@ function calculateRooftopViability({ orientation, occupancy, annualConsumptionKw
           ? { value: usedElectricityPrice, tier: electricityPriceOverride.tier, note: electricityPriceOverride.note }
           : { value: usedElectricityPrice, tier: 'Fact (default)', note: "Ofgem price cap, Jul-Sep 2026, changes quarterly, and applies only to default/standard-variable tariffs — if you're on a fixed deal, enter your own rate for an accurate result" },
       segRatePencePerKwh: segRateIsUserProvided
-        ? { value: usedSegRate, tier: 'User-provided', note: segTariffLabel ? `${segTariffLabel}${segTariffSource ? `, per ${segTariffSource}` : ''} (SEG tariff table, user-provided 23 July 2026, not independently fetched or verified)` : 'Your own stated rate' }
+        ? { value: usedSegRate, tier: 'User-provided', note: segTariffLabel ? `${segTariffLabel}${segTariffSource ? `, per ${segTariffSource}` : ''} (SEG tariff table, user-provided 23 July 2026, not independently fetched or verified)${segTariffEligibility ? ` — requires: ${segTariffEligibility}` : ''}` : 'Your own stated rate' }
         : { value: usedSegRate, tier: 'Assumption (default)', note: 'The no-switch-needed baseline (median of tariffs open to anyone). Switching supplier or installing through a specific company can get a meaningfully higher rate, up to 25p/kWh — pick your actual tariff for an accurate result' },
       systemCostGbp: roofAreaSizing
         ? { value: systemCostGbp, tier: 'Inference — derived from your roof area', note: `${roofAreaSizing.panelCount} panels x ${PANEL_WATTAGE_KWP}kWp x £${roofAreaSizing.costPerKwpGbp}/kWp (MCS-sourced installed-cost rate for this system size). Not a quote for your specific roof — actual roof shape, shading, and access all affect a real quote.` }
@@ -620,14 +639,41 @@ function calculateRooftopViability({ orientation, occupancy, annualConsumptionKw
 
   if (roofAreaSizing) {
     result.roofAreaSizing = { roofAreaM2, panelCount: roofAreaSizing.panelCount, systemSizeKwp: roofAreaSizing.systemSizeKwp };
-    if (roofAreaSizing.exceedsPermittedDevelopmentEngland) {
-      result.permittedDevelopmentFlag = {
-        systemSizeKwp: roofAreaSizing.systemSizeKwp,
-        ceilingKwp: PERMITTED_DEVELOPMENT_KWP_CEILING_ENGLAND,
-        note: `Your roof-area-derived system (${roofAreaSizing.systemSizeKwp}kWp) is larger than the ${PERMITTED_DEVELOPMENT_KWP_CEILING_ENGLAND}kWp ceiling covered by Permitted Development Rights in England — you may need planning permission for a system this size. Scotland and Wales have their own separate thresholds, not researched here.`,
-      };
-    }
   }
+
+  // Situational callouts, distinct from the per-field assumptions above —
+  // see calculator.js's fuller comment above this same block. The first
+  // three are unconditional: no input this calculator collects (deliberately
+  // no new ones added) can tell it whether a property is leasehold, listed,
+  // or in a conservation area, so every rooftop result carries them.
+  const flags = [];
+  if (roofAreaSizing && roofAreaSizing.exceedsPermittedDevelopmentEngland) {
+    flags.push({
+      id: 'permittedDevelopment',
+      tier: 'Fact',
+      title: 'May need planning permission',
+      note: `Your roof-area-derived system (${roofAreaSizing.systemSizeKwp}kWp) is larger than the ${PERMITTED_DEVELOPMENT_KWP_CEILING_ENGLAND}kWp ceiling covered by Permitted Development Rights in England — you may need planning permission for a system this size. Scotland and Wales have their own separate thresholds, not researched here.`,
+    });
+  }
+  flags.push({
+    id: 'tenancyConsent',
+    tier: 'Fact',
+    title: 'Leasehold or renting? You likely need consent',
+    note: "If you're a leaseholder, UK leasehold law generally requires freeholder (or management company) consent before altering a building's exterior — including rooftop solar — regardless of system size; lease terms vary, so check yours. If you rent, check with your landlord. This tool doesn't resolve either question for your specific situation.",
+  });
+  flags.push({
+    id: 'listedBuilding',
+    tier: 'Fact',
+    title: 'Listed building? No permitted development rights apply',
+    note: 'This result only checks the size-based Permitted Development ceiling above. Listed buildings have no permitted development rights for solar at all, regardless of system size — not checked by this tool.',
+  });
+  flags.push({
+    id: 'conservationArea',
+    tier: 'Inference',
+    title: 'In a conservation area? Extra rules may apply',
+    note: 'Panels visible from a highway in a conservation area may need full planning permission even within the Permitted Development ceiling; rear- or side-facing panels not visible from a highway are more often still exempt. Not checked by this tool.',
+  });
+  result.flags = flags;
 
   return result;
 }
@@ -796,7 +842,7 @@ function resolveSegInputs() {
       return {};
     }
     const t = matches[0];
-    return { segRatePencePerKwh: t.ratePencePerKwh, segTariffLabel: `${t.supplier} — ${t.tariff}`, segTariffSource: t.source };
+    return { segRatePencePerKwh: t.ratePencePerKwh, segTariffLabel: `${t.supplier} — ${t.tariff}`, segTariffSource: t.source, segTariffEligibility: t.eligibility };
   }
   if (choice === 'different') {
     const segRateManualRaw = document.getElementById('segRateManual').value;
@@ -807,7 +853,7 @@ function resolveSegInputs() {
     }
     if (segTariffSelect.value !== '') {
       const t = getSegTariffs()[Number(segTariffSelect.value)];
-      return { segRatePencePerKwh: t.ratePencePerKwh, segTariffLabel: `${t.supplier} — ${t.tariff}`, segTariffSource: t.source };
+      return { segRatePencePerKwh: t.ratePencePerKwh, segTariffLabel: `${t.supplier} — ${t.tariff}`, segTariffSource: t.source, segTariffEligibility: t.eligibility };
     }
     return {};
   }
