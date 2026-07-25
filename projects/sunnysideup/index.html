@@ -119,12 +119,30 @@
   .theme p{margin:0;font-size:13.5px;color:var(--ink-soft);}
 
   .proto-frame-wrap{
-    background:#0E1116;border-radius:16px;padding:20px;margin-top:24px;
+    background:linear-gradient(180deg,#1A1D23,#0E1116);border-radius:16px;padding:32px 20px 20px;margin-top:24px;
     display:flex;justify-content:center;
   }
+  .laptop{width:100%;max-width:960px;display:flex;flex-direction:column;align-items:center;}
+  .laptop-screen{
+    width:100%;background:#111318;border-radius:14px 14px 4px 4px;
+    padding:12px 12px 8px;box-shadow:0 30px 70px rgba(0,0,0,0.45),inset 0 0 0 1px rgba(255,255,255,0.06);
+  }
+  .laptop-camera{width:5px;height:5px;border-radius:50%;background:#2E333D;margin:0 auto 8px;}
   iframe.proto{
-    width:390px;height:780px;border:0;border-radius:12px;background:#fff;
-    box-shadow:0 20px 60px rgba(0,0,0,0.4);
+    width:100%;height:600px;border:0;border-radius:5px;background:#fff;display:block;
+  }
+  .laptop-base{
+    width:108%;height:14px;margin-top:-1px;
+    background:linear-gradient(180deg,#DDE0E5,#B7BBC2);
+    border-radius:0 0 10px 10px;position:relative;
+    box-shadow:0 8px 16px rgba(0,0,0,0.3);
+  }
+  .laptop-base::after{
+    content:"";position:absolute;left:50%;top:0;transform:translateX(-50%);
+    width:110px;height:5px;background:#9DA1A8;border-radius:0 0 7px 7px;
+  }
+  @media(max-width:640px){
+    iframe.proto{height:440px;}
   }
   .proto-actions{display:flex;gap:12px;justify-content:center;margin-top:18px;flex-wrap:wrap;}
   .btn{
@@ -408,9 +426,15 @@
 <section id="prototype">
   <div class="wrap">
     <div class="section-kicker">Prototype</div>
-    <p class="lede">A working, coded viability-check calculator: postcode and segment (rooftop or plug-in) selection, self-reported consumption/tariff/occupancy inputs, and a green/amber/red result with the assumptions behind it shown openly.</p>
+    <p class="lede">A working, coded viability-check calculator: postcode and segment (rooftop or plug-in) selection, self-reported consumption/tariff/occupancy inputs, and a green/amber/red result with the assumptions behind it shown openly. Built as a desktop web tool rather than a mobile app, so it's shown here on a laptop rather than in a phone frame.</p>
     <div class="proto-frame-wrap">
-      <iframe class="proto" src="prototype.html" title="SunnySideUp interactive prototype"></iframe>
+      <div class="laptop">
+        <div class="laptop-screen">
+          <div class="laptop-camera"></div>
+          <iframe class="proto" src="prototype.html" title="SunnySideUp interactive prototype"></iframe>
+        </div>
+        <div class="laptop-base"></div>
+      </div>
     </div>
     <div class="proto-actions">
       <a class="btn btn-primary" href="prototype.html" target="_blank">Open prototype full-screen</a>
