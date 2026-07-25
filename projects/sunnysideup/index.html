@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SunnySideUp - Product Case Study | Shubha's PM Portfolio</title>
+<style>
+  :root{
+    --teal:#D4890B;
+    --teal-dark:#A8690A;
+    --navy:#3A2A0E;
+    --gold:#F5B942;
+    --peach:#FFE9B8;
+    --ink:#2B2118;
+    --ink-soft:#6B5A45;
+    --paper:#FFFFFF;
+    --paper-soft:#FFF8EC;
+    --border:#F0E4D0;
+    --now:#A8690A;
+    --next:#D4890B;
+    --later:#B8A483;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+    color:var(--ink);
+    background:var(--paper);
+    line-height:1.6;
+  }
+  .wrap{max-width:920px;margin:0 auto;padding:0 24px;}
+
+  nav{
+    position:sticky;top:0;z-index:50;
+    background:rgba(255,255,255,0.92);
+    backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--border);
+  }
+  nav .wrap{display:flex;align-items:center;justify-content:space-between;padding:14px 24px;max-width:920px;}
+  nav .brand{font-weight:700;letter-spacing:-0.02em;color:var(--navy);font-size:16px;display:flex;align-items:center;gap:8px;}
+  nav .brand span{color:var(--teal);}
+  nav ul{list-style:none;display:flex;gap:22px;margin:0;padding:0;}
+  nav a{color:var(--ink-soft);text-decoration:none;font-size:13.5px;font-weight:500;}
+  nav a:hover{color:var(--teal-dark);}
+  @media(max-width:720px){ nav ul{display:none;} }
+
+  header.hero{
+    background:linear-gradient(160deg, var(--navy) 0%, #7A4E12 55%, var(--gold) 130%);
+    color:#fff;padding:40px 0 34px;
+  }
+  .eyebrow{
+    display:inline-block;font-size:12px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;
+    color:#FFE9B8;background:rgba(245,185,66,0.25);border:1px solid rgba(255,233,184,0.35);
+    padding:5px 12px;border-radius:999px;margin-bottom:18px;
+  }
+  h1.title{font-size:42px;line-height:1.1;margin:0 0 14px;letter-spacing:-0.02em;}
+  .subtitle{font-size:18px;color:#F5E8D0;max-width:640px;margin:0 0 28px;}
+  .hero-meta{display:flex;flex-wrap:wrap;gap:28px;margin-top:16px;}
+  .hero-meta div{font-size:12.5px;color:#E8D4A8;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:4px;}
+  .hero-meta strong{display:block;font-size:15px;color:#fff;text-transform:none;letter-spacing:0;font-weight:600;}
+
+  section{padding:22px 0;}
+  section.alt{background:var(--paper-soft);}
+  h2.section-title{font-size:26px;letter-spacing:-0.01em;margin:0 0 8px;}
+  .section-kicker{font-size:12.5px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--teal-dark);margin-bottom:10px;}
+  .lede{color:var(--ink-soft);font-size:15.5px;max-width:680px;margin-bottom:16px;}
+
+  .tldr-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:24px;}
+  @media(max-width:760px){.tldr-grid{grid-template-columns:repeat(2,1fr);}}
+  .tldr-card{
+    background:#fff;border:1px solid var(--border);border-radius:12px;padding:18px 16px;
+    text-decoration:none;color:var(--ink);transition:transform .15s, box-shadow .15s;
+  }
+  .tldr-card:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(0,0,0,0.06);}
+  .tldr-card .num{font-size:12px;color:var(--teal-dark);font-weight:700;margin-bottom:8px;}
+  .tldr-card h3{font-size:15px;margin:0 0 6px;}
+  .tldr-card p{font-size:13px;color:var(--ink-soft);margin:0;}
+
+  .summary-box{
+    background:#fff;border:1px solid var(--border);border-left:4px solid var(--teal);
+    border-radius:10px;padding:22px 24px;margin-top:24px;font-size:15.5px;color:var(--ink);
+  }
+
+  .card{background:#fff;border:1px solid var(--border);border-radius:12px;padding:22px 24px;margin-bottom:16px;}
+  .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  @media(max-width:720px){.grid-2{grid-template-columns:1fr;}}
+
+  .persona-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;}
+  @media(max-width:900px){.persona-grid{grid-template-columns:1fr;}}
+  .persona{background:#fff;border:1px solid var(--border);border-radius:12px;padding:20px;}
+  .persona .name{font-weight:700;font-size:15px;margin-bottom:2px;}
+  .persona .role{font-size:12.5px;color:var(--ink-soft);margin-bottom:10px;}
+  .persona blockquote{margin:0 0 12px;font-style:italic;color:var(--navy);font-size:14px;border-left:3px solid var(--teal);padding-left:10px;}
+  .persona .label{font-size:11px;text-transform:uppercase;letter-spacing:0.05em;color:var(--teal-dark);font-weight:700;margin-top:10px;}
+  .persona p{font-size:13.5px;margin:4px 0 0;color:var(--ink);}
+
+  table{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:12px;}
+  th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--border);}
+  th{font-size:11.5px;text-transform:uppercase;letter-spacing:0.05em;color:var(--ink-soft);font-weight:700;}
+  tr:last-child td{border-bottom:none;}
+
+  .horizon-tag{display:inline-block;font-size:11px;font-weight:700;padding:2px 9px;border-radius:999px;color:#fff;}
+  .tag-now{background:var(--now);}
+  .tag-next{background:var(--next);}
+  .tag-later{background:var(--later);}
+
+  .roadmap-col h4{display:flex;align-items:center;gap:8px;font-size:14px;margin:0 0 12px;}
+  .roadmap-cols{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;}
+  @media(max-width:760px){.roadmap-cols{grid-template-columns:1fr;}}
+  .roadmap-item{background:#fff;border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin-bottom:10px;font-size:13px;}
+  .roadmap-item .feat{font-weight:600;margin-bottom:3px;}
+  .roadmap-item .ice{color:var(--ink-soft);font-size:12px;}
+
+  .theme-list{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  @media(max-width:720px){.theme-list{grid-template-columns:1fr;}}
+  .theme{background:#fff;border:1px solid var(--border);border-radius:12px;padding:18px;}
+  .theme .n{font-size:22px;font-weight:800;color:var(--teal);opacity:0.5;}
+  .theme h4{margin:4px 0 6px;font-size:14.5px;}
+  .theme p{margin:0;font-size:13.5px;color:var(--ink-soft);}
+
+  .proto-frame-wrap{
+    background:#0E1116;border-radius:16px;padding:20px;margin-top:24px;
+    display:flex;justify-content:center;
+  }
+  iframe.proto{
+    width:390px;height:780px;border:0;border-radius:12px;background:#fff;
+    box-shadow:0 20px 60px rgba(0,0,0,0.4);
+  }
+  .proto-actions{display:flex;gap:12px;justify-content:center;margin-top:18px;flex-wrap:wrap;}
+  .btn{
+    display:inline-block;padding:10px 20px;border-radius:8px;font-size:13.5px;font-weight:600;
+    text-decoration:none;border:1px solid transparent;
+  }
+  .btn-primary{background:var(--teal);color:#fff;}
+  .btn-primary:hover{background:var(--teal-dark);}
+  .btn-ghost{border:1px solid var(--border);color:var(--ink);}
+  .btn-ghost:hover{border-color:var(--teal);color:var(--teal-dark);}
+
+  .doc-category{margin-top:28px;}
+  .doc-category:first-child{margin-top:0;}
+  .doc-category h3{font-size:14.5px;margin:0 0 12px;color:var(--ink);}
+  .doc-links{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;}
+  @media(max-width:760px){.doc-links{grid-template-columns:repeat(2,1fr);}}
+  .doc-link{
+    background:#fff;border:1px solid var(--border);border-radius:10px;padding:14px;text-decoration:none;
+    color:var(--ink);font-size:13px;font-weight:600;text-align:center;
+  }
+  .doc-link:hover{border-color:var(--teal);color:var(--teal-dark);}
+  .doc-link .ic{display:block;font-size:20px;margin-bottom:6px;}
+  .doc-empty{background:var(--paper-soft);border:1px dashed var(--border);border-radius:10px;padding:16px;font-size:13px;color:var(--ink-soft);text-align:center;}
+
+  .skills-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;}
+  .skill-chip{background:#fff;border:1px solid var(--border);border-radius:999px;padding:6px 14px;font-size:12.5px;color:var(--ink-soft);}
+
+  footer{background:var(--navy);color:#E8D4A8;padding:40px 0;text-align:center;font-size:13px;}
+  footer a{color:#FFE9B8;}
+
+  h3.subhead{font-size:17px;margin:26px 0 10px;}
+  ul.plain{padding-left:20px;margin:8px 0;}
+  ul.plain li{font-size:14px;margin-bottom:6px;color:var(--ink);}
+
+  details.section-collapse summary{cursor:pointer;list-style:none;display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:2px 0;}
+  details.section-collapse summary::-webkit-details-marker{display:none;}
+  details.section-collapse summary .summary-head{flex:1;}
+  details.section-collapse summary .section-kicker{margin-bottom:0;}
+  details.section-collapse summary .section-title{margin-bottom:0;}
+  details.section-collapse summary .toggle-ic{font-size:13px;color:var(--teal-dark);font-weight:600;white-space:nowrap;padding-top:4px;}
+  details.section-collapse[open] summary .toggle-ic::before{content:"Hide ▾";}
+  details.section-collapse:not([open]) summary .toggle-ic::before{content:"Show more ▸";}
+  details.section-collapse[open] > *:not(summary){margin-top:10px;}
+
+  .tam-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:16px;}
+  @media(max-width:760px){.tam-grid{grid-template-columns:1fr;}}
+  .tam-card{background:#fff;border:1px solid var(--border);border-radius:12px;padding:18px;}
+  .tam-card .tam-label{font-size:11.5px;text-transform:uppercase;letter-spacing:0.06em;color:var(--teal-dark);font-weight:700;}
+  .tam-card .tam-num{font-size:22px;font-weight:800;margin:6px 0 4px;}
+  .tam-card p{font-size:12.5px;color:var(--ink-soft);margin:0;}
+  .footnotes{font-size:12px;color:var(--ink-soft);margin-top:14px;padding-left:18px;}
+  .footnotes li{margin-bottom:6px;}
+  .footnotes a{color:var(--teal-dark);}
+
+  .limitation-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px;}
+  @media(max-width:720px){.limitation-grid{grid-template-columns:1fr;}}
+  .limitation-card{background:#fff;border:1px solid var(--border);border-radius:12px;padding:20px;}
+  .limitation-card h4{margin:0 0 8px;font-size:14.5px;}
+  .limitation-card p{font-size:13.5px;color:var(--ink-soft);margin:0 0 8px;}
+  .limitation-card ul{margin:0 0 10px;padding-left:18px;}
+  .limitation-card li{font-size:13.5px;color:var(--ink-soft);margin-bottom:5px;}
+  .limitation-card .src{font-size:12px;color:var(--ink-soft);}
+  .limitation-card .src a{color:var(--teal-dark);}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <div class="brand">
+      <svg viewBox="0 0 64 64" width="24" height="24" role="img" aria-label="SunnySideUp logo, a cartoon fried egg">
+        <defs><clipPath id="ssuClipNav"><rect x="0" y="0" width="64" height="64" rx="16"/></clipPath></defs>
+        <rect x="0" y="0" width="64" height="64" rx="16" fill="#FFE9B8"/>
+        <g clip-path="url(#ssuClipNav)">
+          <path d="M9 33 C6 21 18 11 30 12 C41 13 47 8 54 15 C61 22 59 33 55 40 C50 49 38 53 27 50 C15 47 11 43 9 33 Z" fill="#FFFDF6" stroke="#F0E4D0" stroke-width="1.5"/>
+          <circle cx="35" cy="31" r="13" fill="#F5B942" stroke="#D4890B" stroke-width="1.5"/>
+          <ellipse cx="30" cy="26" rx="4" ry="2.5" fill="#FFE9B8" opacity="0.85"/>
+          <circle cx="31" cy="31" r="1.7" fill="#2B2118"/>
+          <circle cx="39" cy="31" r="1.7" fill="#2B2118"/>
+          <path d="M31 36 Q35 39.5 39 36" fill="none" stroke="#2B2118" stroke-width="1.8" stroke-linecap="round"/>
+        </g>
+      </svg>
+      SunnySideUp<span>.</span> - PM Case Study
+    </div>
+    <ul>
+      <li><a href="../../index.html">← Home</a></li>
+      <li><a href="#tldr">Summary</a></li>
+      <li><a href="#problem">Problem</a></li>
+      <li><a href="#research">Research</a></li>
+      <li><a href="#roadmap">Roadmap</a></li>
+      <li><a href="#prototype">Prototype</a></li>
+      <li><a href="#limitations">Limitations</a></li>
+    </ul>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap">
+    <h1 class="title">Is solar worth it for your home? An honest, independent read.</h1>
+    <p class="subtitle">An end-to-end PM case study: problem framing, sourced UK market and regulatory research, three personas, synthetic user interviews, an ICE-prioritized roadmap, and a working interactive viability-check prototype.</p>
+    <div class="hero-meta">
+      <div>First market<strong>United Kingdom</strong></div>
+      <div>Deliverables<strong>Brief · Personas · Interviews · Roadmap · Working calculator</strong></div>
+    </div>
+  </div>
+</header>
+
+<section id="tldr">
+  <div class="wrap">
+    <div class="section-kicker">The short version</div>
+    <div class="summary-box">
+      SunnySideUp gives UK homeowners, renters, and leaseholders a fast, plain-English solar viability check, independent of any installer, before they talk to a salesperson or sign a quote.
+    </div>
+    <div class="tldr-grid">
+      <a class="tldr-card" href="#problem"><div class="num">01</div><h3>Problem &amp; positioning</h3><p>Quote opacity, sales pressure, and a shifting plug-in solar regulatory timeline, and where SunnySideUp sits against the UK's lead-gen comparison sites.</p></a>
+      <a class="tldr-card" href="#research"><div class="num">02</div><h3>Research</h3><p>Three personas across both segments, synthetic interviews, and the cross-persona trust themes that shaped the roadmap.</p></a>
+      <a class="tldr-card" href="#roadmap"><div class="num">03</div><h3>Roadmap</h3><p>ICE-prioritized Now/Next/Later, with the reasoning behind every score.</p></a>
+      <a class="tldr-card" href="#prototype"><div class="num">04</div><h3>Prototype</h3><p>A working viability-check calculator covering rooftop and plug-in solar.</p></a>
+    </div>
+  </div>
+</section>
+
+<section class="alt" id="problem">
+  <div class="wrap">
+    <details class="section-collapse">
+    <summary>
+      <div class="summary-head">
+        <div class="section-kicker" style="margin-bottom:0;">Problem &amp; positioning</div>
+      </div>
+      <span class="toggle-ic"></span>
+    </summary>
+    <div class="grid-2">
+      <div class="card">
+        <h3 class="subhead" style="margin-top:0;">The market signal</h3>
+        <ul class="plain">
+          <li>The CMA's 2022 investigation into the solar sector specifically flagged "inaccurate and unrealistic headline price information."</li>
+          <li>A Which? survey found more than a third of solar-panel owners had been cold-called with false claims, including bogus "government-required" checks.</li>
+          <li>Every UK solar comparison platform identified in research (CompareMySolar, Uswitch, Solar Selections, Easy PV, Renewable Energy Hub, Solar Planet, Solar PV Quotes Compare) runs a lead-generation or referral-fee model.</li>
+          <li>BS 7671 Amendment 4 (in force 15 April 2026) legalized electrician-installed plug-in solar; true DIY self-install becomes legal 27 August 2026 under SI 2026/848.</li>
+          <li>2025 was UK solar's record installation year, 31-37% growth, so rooftop demand, and the sales pressure that comes with it, is already at an all-time high.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3 class="subhead" style="margin-top:0;">Positioning</h3>
+        <p style="font-size:14px;">SunnySideUp doesn't sell, install, or take referral fees from installers. It's an independent viability check used at two moments: before any sales conversation, to set a baseline, or after receiving a quote, to get an unbiased second opinion. The closest real analog is Energy Saving Trust, a government/private-funded impartial-advice body, but even it defers the final personalized number back to the installer being evaluated. SunnySideUp gives that specific, personalized read directly.</p>
+      </div>
+    </div>
+
+    <h3 class="subhead">Market opportunity</h3>
+    <p style="font-size:13.5px;color:var(--ink-soft);max-width:680px;">No single figure captures the plug-in category's size yet since it's too new to measure, but two forward-looking signals and one comparable-market analog suggest real scale.</p>
+    <div class="tam-grid">
+      <div class="tam-card">
+        <div class="tam-label">UK Solar Roadmap</div>
+        <div class="tam-num">45-47GW</div>
+        <p>Government target for installed solar capacity by 2030, up from ~19GW in May 2025, roughly 2.5x growth in five years, with rooftop prioritized.<sup>1</sup></p>
+      </div>
+      <div class="tam-card">
+        <div class="tam-label">No-roof-access households</div>
+        <div class="tam-num">~11M</div>
+        <p>English renters (~8.8M, ONS) plus owner-occupied leaseholders (~2.6M, MHCLG), the plug-in category's addressable population.<sup>2</sup></p>
+      </div>
+      <div class="tam-card">
+        <div class="tam-label">Balkonkraftwerke (Germany)</div>
+        <div class="tam-num">270K → 1M+</div>
+        <p>Germany's comparable balcony-solar market, 2023 to mid-2025, growth accelerating after renters gained an explicit legal right to install in 2024.<sup>3</sup></p>
+      </div>
+    </div>
+    <ol class="footnotes">
+      <li>UK government 2025 Solar Roadmap. See <code>grounding-research.md</code> §UK solar capacity trajectory.</li>
+      <li>ONS renting-household data combined with MHCLG leaseholder statistics. See <code>grounding-research.md</code> §No-roof-access population size.</li>
+      <li>Germany's Balkonkraftwerke market, the closest comparable-market signal for a category too new to measure directly in the UK. See <code>grounding-research.md</code> §Balkonkraftwerke growth in Germany.</li>
+    </ol>
+
+    <h3 class="subhead">Competitive landscape</h3>
+    <table>
+      <tr><th>Company</th><th>Model</th><th>Gap SunnySideUp targets</th></tr>
+      <tr><td><strong>CompareMySolar, Solar Selections, Easy PV</strong></td><td>Lead-generation / referral-fee</td><td>Paid per lead, incentivized to maximize quotes, not clarity</td></tr>
+      <tr><td><strong>Uswitch solar comparison</strong></td><td>Referral-fee comparison site</td><td>Same conflict of interest, general-comparison brand extension</td></tr>
+      <tr><td><strong>Renewable Energy Hub, Solar Planet, Solar PV Quotes Compare</strong></td><td>Lead-generation</td><td>Same referral-fee model across the board</td></tr>
+      <tr><td><strong>Energy Saving Trust</strong></td><td>Government/private-funded impartial advice</td><td>Closest structurally-independent analog, but its own calculator uses generic assumptions and defers the final number back to an installer</td></tr>
+    </table>
+    <p style="font-size:13.5px;color:var(--ink-soft);margin-top:10px;">No independently-funded platform identified in research gives a direct, personalized viability read without routing the user back to an installer. That gap is SunnySideUp's bet.</p>
+
+    </details>
+  </div>
+</section>
+
+<section id="research">
+  <div class="wrap">
+    <details class="section-collapse">
+    <summary>
+      <div class="summary-head">
+        <div class="section-kicker" style="margin-bottom:0;">Research</div>
+      </div>
+      <span class="toggle-ic"></span>
+    </summary>
+    <div class="persona-grid">
+      <div class="persona">
+        <div class="name">Graham Whitfield</div>
+        <div class="role">58, Solihull · The Sales-Call Avoider</div>
+        <blockquote>"I don't want a salesman doing my sums for me before I've even worked out if this makes sense."</blockquote>
+        <div class="label">JTBD</div>
+        <p>An independent read on his specific financial case before any installer contacts him.</p>
+        <div class="label">SunnySideUp feature</div>
+        <p>Pre-conversation viability check</p>
+      </div>
+      <div class="persona">
+        <div class="name">Denise Okafor</div>
+        <div class="role">47, Reading · The Quote Skeptic</div>
+        <blockquote>"Two companies, two numbers four thousand pounds apart, and neither one explains why."</blockquote>
+        <div class="label">JTBD</div>
+        <p>An independent check on whether a quote's price and system size are reasonable before signing.</p>
+        <div class="label">SunnySideUp feature</div>
+        <p>Post-quote second-opinion check</p>
+      </div>
+      <div class="persona">
+        <div class="name">Aisha Rahman</div>
+        <div class="role">29, Manchester (renter) · The Plug-In Fence-Sitter</div>
+        <blockquote>"Everyone online says I can just plug it in. No two of them agree on whether that's actually still true."</blockquote>
+        <div class="label">JTBD</div>
+        <p>A clear, unbiased read on both legality and value for a plug-and-play setup, calibrated to her own skills.</p>
+        <div class="label">SunnySideUp feature</div>
+        <p>Plug-in viability + legal-status check, with an honest "still unresolved" flag</p>
+      </div>
+    </div>
+
+    <h3 class="subhead">What synthetic interviews surfaced</h3>
+    <p style="font-size:14px;color:var(--ink-soft);max-width:680px;">All three personas were interviewed with the same guide (AI-generated, in-character, grounded strictly in each persona's brief and real UK research, explicitly flagged as synthetic, not real user data). Cross-persona themes directly shaped the roadmap:</p>
+    <div class="theme-list">
+      <div class="theme"><div class="n">01</div><h4>Trust comes from independence plus honesty about limits</h4><p>All three trust conditions center on non-referral independence, and, for Aisha, a willingness to say "this part is genuinely unclear."</p></div>
+      <div class="theme"><div class="n">02</div><h4>A "red" result is trusted and acted on</h4><p>All three would accept an unfavorable result and change their behavior, specifically because of the non-referral positioning.</p></div>
+      <div class="theme"><div class="n">03</div><h4>Sharing is peer-to-peer</h4><p>All three said they'd tell someone specific, a neighbour, a sister, a renters' Facebook group, rather than post publicly.</p></div>
+      <div class="theme"><div class="n">04</div><h4>Aisha's disappointment is capped, and no product design fixes that</h4><p>Her ceiling is structurally lower than the rooftop segment's for as long as the tenancy-consent question stays legally unresolved, independent of what SunnySideUp itself does well.</p></div>
+    </div>
+    </details>
+  </div>
+</section>
+
+<section class="alt" id="roadmap">
+  <div class="wrap">
+    <details class="section-collapse">
+    <summary>
+      <div class="summary-head">
+        <div class="section-kicker" style="margin-bottom:0;">Prioritized roadmap</div>
+      </div>
+      <span class="toggle-ic"></span>
+    </summary>
+    <div class="roadmap-cols">
+      <div class="roadmap-col">
+        <h4><span class="horizon-tag tag-now">NOW</span> MVP</h4>
+        <div class="roadmap-item"><div class="feat">Rooftop viability calculator (core engine)</div><div class="ice">ICE 7.7 · Graham &amp; Denise JTBDs</div></div>
+        <div class="roadmap-item"><div class="feat">Self-reported data input flow</div><div class="ice">ICE 7.7 · consumption, tariff, occupancy, roof/socket, financing</div></div>
+        <div class="roadmap-item"><div class="feat">Plug-in viability + legal-status calculator</div><div class="ice">ICE 7.0 · Aisha's JTBD, explicit "still unresolved" flag</div></div>
+        <div class="roadmap-item"><div class="feat">Assumptions / "show your work" transparency panel</div><div class="ice">ICE 8.3 · highest score, direct trust-theme match</div></div>
+        <div class="roadmap-item"><div class="feat">Honest "red" result with substantive reasoning</div><div class="ice">ICE 8.0 · a stated reason behind every result</div></div>
+        <div class="roadmap-item"><div class="feat">Basic quote-comparison (manual entry)</div><div class="ice">ICE 8.0 · Denise's JTBD</div></div>
+      </div>
+      <div class="roadmap-col">
+        <h4><span class="horizon-tag tag-next">NEXT</span> Post-validation</h4>
+        <div class="roadmap-item"><div class="feat">Shareable result / referral summary</div><div class="ice">ICE 6.7 · organic word-of-mouth</div></div>
+        <div class="roadmap-item"><div class="feat">Quote document upload/parsing</div><div class="ice">ICE 5.3 · removes Denise's manual-entry friction</div></div>
+        <div class="roadmap-item"><div class="feat">Battery/storage add-on calculator</div><div class="ice">ICE 5.3 · thinnest-sourced figures in the research</div></div>
+      </div>
+      <div class="roadmap-col">
+        <h4><span class="horizon-tag tag-later">LATER</span> Vision</h4>
+        <div class="roadmap-item"><div class="feat">Real data integration (smart-meter / bank-linked)</div><div class="ice">No UK equivalent mechanism researched yet</div></div>
+        <div class="roadmap-item"><div class="feat">Scotland/Wales-specific guidance</div><div class="ice">Distinct regimes, explicitly not researched in depth</div></div>
+        <div class="roadmap-item"><div class="feat">Institutional/DNO/local-authority portal integrations</div><div class="ice">A distribution motion, not an engineering roadmap item</div></div>
+        <div class="roadmap-item"><div class="feat">Further legal research on tenancy-agreement consent</div><div class="ice">A research task, tracked separately in Open Questions</div></div>
+      </div>
+    </div>
+
+    <h3 class="subhead">A prioritization call worth showing</h3>
+    <p style="font-size:14px;color:var(--ink-soft);">The plug-in calculator's Confidence score (6) is deliberately the lowest in Now. Aisha's segment is the newly-legal, most differentiated part of the pitch, but <code>grounding-research.md</code> itself flags plug-in cost and generation figures as its weakest-sourced section, and that caveat ships inside the tool's own output to real users, carried through to launch rather than dropped along the way.</p>
+    </details>
+  </div>
+</section>
+
+<section id="prototype">
+  <div class="wrap">
+    <div class="section-kicker">Prototype</div>
+    <p class="lede">A working, coded viability-check calculator: postcode and segment (rooftop or plug-in) selection, self-reported consumption/tariff/occupancy inputs, and a green/amber/red result with the assumptions behind it shown openly.</p>
+    <div class="proto-frame-wrap">
+      <iframe class="proto" src="prototype.html" title="SunnySideUp interactive prototype"></iframe>
+    </div>
+    <div class="proto-actions">
+      <a class="btn btn-primary" href="prototype.html" target="_blank">Open prototype full-screen</a>
+    </div>
+  </div>
+</section>
+
+<section id="limitations">
+  <div class="wrap">
+    <div class="section-kicker">Limitations</div>
+    <p class="lede">Industry commentary on AI-assisted prototypes in 2025-2026 converges on one point: a polished demo and a shippable product are different things, and it's easy to mistake one for the other. A few of the gaps commonly named by product practitioners, applied honestly to SunnySideUp:</p>
+    <div class="limitation-grid">
+      <div class="limitation-card">
+        <h4>A working demo isn't 10% of the way to done</h4>
+        <ul>
+          <li>The calculator's underlying payback and generation figures are wide, industry-consensus ranges corroborated across multiple sources; no single authoritative UK payback dataset exists to draw a tighter number from.</li>
+          <li>There's no real backend, no live tariff/price API, and no quote-upload parsing; every input is self-reported inside the prototype.</li>
+        </ul>
+        <span class="src">Source: <a href="https://usekyros.ai/blog/from-prototype-to-production-ai-apps-never-ship" target="_blank" rel="noopener">Kyros, "From Prototype to Production"</a></span>
+      </div>
+      <div class="limitation-card">
+        <h4>Automated design still needs real users</h4>
+        <ul>
+          <li>AI-generated screens can miss subtle hierarchy, spacing, and comprehension issues that only surface with real usability testing.</li>
+          <li>SunnySideUp's personas and interviews are synthetic and internally consistent, but were never tested against an actual homeowner, renter, or leaseholder clicking through the flow.</li>
+        </ul>
+        <span class="src">Source: <a href="https://www.parallelhq.com/blog/ai-powered-prototyping-tools" target="_blank" rel="noopener">Parallel, "AI-Powered Prototyping for UI/UX Design"</a></span>
+      </div>
+      <div class="limitation-card">
+        <h4>Happy-path only, no edge cases</h4>
+        <ul>
+          <li>AI-built prototypes handle the intended flow well but typically skip error states and unusual inputs.</li>
+          <li>The prototype shows the ideal path only, no built-out states for an invalid postcode, an unusually shaped roof, or conflicting self-reported values.</li>
+        </ul>
+        <span class="src">Source: <a href="https://codeconductor.ai/blog/vibe-coding-for-product-managers/" target="_blank" rel="noopener">CodeConductor, "Vibe Coding for PMs"</a></span>
+      </div>
+      <div class="limitation-card">
+        <h4>Prototype code isn't production code</h4>
+        <ul>
+          <li>AI-generated prototypes are typically isolated from any real codebase and would need to be re-implemented by an engineering team to actually ship.</li>
+          <li>The prototype is static HTML/CSS/JS with no data layer, no security review, and no compliance pass, relevant since a real version would handle a user's address, energy usage, and quote details.</li>
+        </ul>
+        <span class="src">Source: <a href="https://monday.com/blog/vibe-coding/vibe-coding-product-managers/" target="_blank" rel="noopener">monday.com, "Vibe coding for product managers"</a></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="documents">
+  <div class="wrap">
+    <div class="section-kicker">Full documentation</div>
+    <p class="lede">For anyone who wants to go deeper than this page, the full source documents are linked below.</p>
+
+    <details class="section-collapse doc-category">
+    <summary>
+      <div class="summary-head"><h3 style="margin:0;">Product development</h3></div>
+      <span class="toggle-ic"></span>
+    </summary>
+      <div class="doc-links">
+        <a class="doc-link" href="docs/product-brief.html"><span class="ic">📄</span>Product Brief</a>
+        <a class="doc-link" href="docs/personas.html"><span class="ic">🧑‍🤝‍🧑</span>Personas</a>
+        <a class="doc-link" href="docs/synthetic-interviews.html"><span class="ic">🎙️</span>Interviews</a>
+        <a class="doc-link" href="docs/roadmap.html"><span class="ic">🗺️</span>Roadmap</a>
+        <a class="doc-link" href="docs/calculation-logic.html"><span class="ic">🧮</span>Calculation Logic</a>
+      </div>
+    </details>
+
+    <details class="section-collapse doc-category">
+    <summary>
+      <div class="summary-head"><h3 style="margin:0;">Platform &amp; Technical</h3></div>
+      <span class="toggle-ic"></span>
+    </summary>
+      <div class="doc-empty">Nothing published here yet.</div>
+    </details>
+
+    <details class="section-collapse doc-category">
+    <summary>
+      <div class="summary-head"><h3 style="margin:0;">Growth</h3></div>
+      <span class="toggle-ic"></span>
+    </summary>
+      <div class="doc-empty">Nothing here yet.</div>
+    </details>
+
+    <details class="section-collapse doc-category">
+    <summary>
+      <div class="summary-head"><h3 style="margin:0;">Product Analytics</h3></div>
+      <span class="toggle-ic"></span>
+    </summary>
+      <div class="doc-empty">Nothing here yet.</div>
+    </details>
+
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    SunnySideUp is a fictional case study built for a product management portfolio.<br>
+    Market research is real and cited from public/regulatory sources; personas and interviews are synthetic.
+  </div>
+</footer>
+
+</body>
+</html>
