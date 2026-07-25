@@ -34,6 +34,23 @@ PROJECTS = {
             ("ai-collaboration-review.md", "ai-collaboration-review.html", "AI Collaboration Review"),
         ],
     },
+    "sunnysideup": {
+        "title": "SunnySideUp",
+        "colors": {
+            "teal": "#D4890B", "teal_dark": "#A8690A", "navy": "#3A2A0E",
+            "ink": "#2B2118", "ink_soft": "#6B5A45", "paper": "#FFFFFF",
+            "paper_soft": "#FFF8EC", "border": "#F0E4D0",
+            "footer_ink": "#E8D4A8", "footer_link": "#FFE9B8",
+        },
+        "footer_note": "SunnySideUp is a fictional case study built for portfolio purposes. Market research is real and cited; personas, interviews, and user data are synthetic.",
+        "docs": [
+            ("product-brief.md", "product-brief.html", "Product Brief"),
+            ("personas.md", "personas.html", "Personas"),
+            ("synthetic-interviews.md", "synthetic-interviews.html", "Synthetic Interviews"),
+            ("roadmap.md", "roadmap.html", "Roadmap"),
+            ("calculation-logic.md", "calculation-logic.html", "Calculation Logic"),
+        ],
+    },
 }
 
 TEMPLATE = """<!DOCTYPE html>

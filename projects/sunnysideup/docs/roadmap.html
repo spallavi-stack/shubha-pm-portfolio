@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Roadmap — SunnySideUp | Shubha's PM Portfolio</title>
+<style>
+  :root{
+    --teal:#D4890B; --teal-dark:#A8690A; --navy:#3A2A0E;
+    --ink:#2B2118; --ink-soft:#6B5A45; --paper:#FFFFFF; --paper-soft:#FFF8EC; --border:#F0E4D0;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;color:var(--ink);background:var(--paper);line-height:1.7;}
+  .wrap{max-width:760px;margin:0 auto;padding:0 24px;}
+  nav{position:sticky;top:0;z-index:50;background:rgba(255,255,255,0.95);backdrop-filter:blur(8px);border-bottom:1px solid var(--border);}
+  nav .navwrap{max-width:920px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:14px 24px;}
+  nav a{color:var(--teal-dark);text-decoration:none;font-size:13.5px;font-weight:600;}
+  nav .brand{color:var(--navy);font-weight:700;font-size:15px;}
+  nav .brand span{color:var(--teal);}
+  article{padding:48px 0 64px;}
+  article h1{font-size:30px;letter-spacing:-0.01em;color:var(--navy);margin:0 0 8px;}
+  article h1 + p{color:var(--ink-soft);font-size:14px;margin-top:0;}
+  article h2{font-size:20px;margin:36px 0 12px;padding-bottom:8px;border-bottom:2px solid var(--teal);color:var(--navy);}
+  article h3{font-size:16px;margin:24px 0 8px;color:var(--navy);}
+  article p{font-size:15px;color:var(--ink);margin:0 0 14px;}
+  article ul, article ol{padding-left:22px;margin:0 0 14px;}
+  article li{font-size:15px;margin-bottom:6px;}
+  article strong{color:var(--navy);}
+  article blockquote{margin:16px 0;padding:10px 18px;border-left:3px solid var(--teal);background:var(--paper-soft);color:var(--navy);font-style:italic;}
+  article hr{border:none;border-top:1px solid var(--border);margin:32px 0;}
+  article table{width:100%;border-collapse:collapse;margin:16px 0;font-size:13.5px;}
+  article th, article td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--border);}
+  article th{font-size:11px;text-transform:uppercase;letter-spacing:0.04em;color:var(--ink-soft);}
+  article code{background:var(--paper-soft);padding:1px 5px;border-radius:4px;font-size:13px;}
+  article svg{max-width:100%;height:auto;display:block;margin:20px 0;border:1px solid var(--border);border-radius:12px;padding:10px;background:#fff;}
+  .doc-footer{margin-top:40px;padding-top:20px;border-top:1px solid var(--border);font-size:13px;color:var(--ink-soft);}
+  footer{background:var(--navy);color:#E8D4A8;padding:32px 0;text-align:center;font-size:13px;}
+  footer a{color:#FFE9B8;}
+</style>
+</head>
+<body>
+<nav>
+  <div class="navwrap">
+    <span class="brand">SunnySideUp<span>.</span> Documentation</span>
+    <div style="display:flex;gap:18px;">
+      <a href="../index.html">← Case study</a>
+      <a href="../../../index.html">Portfolio</a>
+    </div>
+  </div>
+</nav>
+<article class="wrap">
+<h1>SunnySideUp — Roadmap (v1)</h1>
+<h2>Prioritization framework: ICE</h2>
+<p>Using ICE (Impact, Confidence, Ease) rather than RICE. Reach isn't meaningfully estimable yet since SunnySideUp has no real user base or institutional partner in place, so ICE fits a pre-launch, research-grounded prioritization better. Each scored 1–10; ICE score is the average of the three. Every score is justified against a specific persona JTBD, <code>grounding-research.md</code> finding, or <code>synthetic-interviews.md</code> theme, not a gut feeling.</p>
+<p><strong>Legend:</strong> Impact = how much this moves the needle on the core problem. Confidence = how sure we are, based on persona/interview evidence or grounding-research sourcing strength, that this is the right feature. Ease = technical/data feasibility given known constraints.</p>
+<p>The candidate list below is drawn from three places, not invented fresh: the calculator-inputs list already named in <code>product-brief.md</code>'s Open Questions, the three personas' JTBD statements, and the four themes from <code>synthetic-interviews.md</code>. Prioritizing without first enumerating candidates from what's already established would just be inventing structure over nothing.</p>
+<hr />
+<h2>NOW (MVP, build first)</h2>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Tied to</th>
+<th>Impact</th>
+<th>Confidence</th>
+<th>Ease</th>
+<th>ICE</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Rooftop viability calculator (core engine)</td>
+<td>Graham's and Denise's JTBDs; Solution's core promise</td>
+<td>9</td>
+<td>8</td>
+<td>6</td>
+<td>7.7</td>
+</tr>
+<tr>
+<td>Self-reported data input flow (consumption, tariff, occupancy, roof/socket, financing)</td>
+<td>Open Questions' calculator-inputs list; literal prerequisite for the calculator to run at all</td>
+<td>9</td>
+<td>8</td>
+<td>6</td>
+<td>7.7</td>
+</tr>
+<tr>
+<td>Plug-in viability + legal-status calculator, with an explicit "still unresolved" flag</td>
+<td>Aisha's JTBD; interview theme that honesty about limits, not confident answers, is the actual trust mechanism</td>
+<td>9</td>
+<td>6</td>
+<td>6</td>
+<td>7.0</td>
+</tr>
+<tr>
+<td>Assumptions / "show your work" transparency panel</td>
+<td>Graham's and Denise's Q5 trust conditions specifically (showing what's driving the calculation); Aisha's related but distinct Q5 want, honesty about the unresolved legal question, is the plug-in calculator's own flag below, not this panel</td>
+<td>8</td>
+<td>9</td>
+<td>8</td>
+<td>8.3</td>
+</tr>
+<tr>
+<td>Honest "red" result with substantive reasoning, not just a color</td>
+<td>Solution's stated promise; interview theme that red results are trusted and acted on, not dismissed</td>
+<td>8</td>
+<td>9</td>
+<td>7</td>
+<td>8.0</td>
+</tr>
+<tr>
+<td>Basic quote-comparison (manual entry of a received quote's price and system size against the baseline calculation)</td>
+<td>Denise's JTBD specifically</td>
+<td>8</td>
+<td>8</td>
+<td>8</td>
+<td>8.0</td>
+</tr>
+</tbody>
+</table>
+<h3>Rooftop and plug-in calculators: what the Confidence gap means</h3>
+<p>The plug-in calculator's Confidence score (6) is the lowest in Now on purpose, not because Aisha's segment matters less (it's the newly-legal, most differentiated part of the pitch), but because <code>grounding-research.md</code> itself flags plug-in cost and generation figures as its weakest-sourced section: "present as clearly-labeled placeholder estimates, not sourced facts." That caveat ships to real users directly, inside the tool's own output, not smoothed over in the roadmap and quietly dropped by launch. The rooftop calculator's underlying figures (system cost, generation, payback range) are also wide, industry-consensus ranges rather than a single authoritative number, but they're corroborated across more independent sources than plug-in's, which is the actual basis for the 8 vs. 6 split.</p>
+<h3>Transparency panel and honest red results: what the interviews actually showed</h3>
+<p>Graham and Denise gave closely related reasons for wanting to see the assumptions behind a number, Graham didn't want a black-box score, Denise wanted to see what's driving a price difference, and that shared want is what this panel is built for. Aisha's own Q5 answer names the same underlying trust mechanism, independence plus honesty about limits, but applied to a different, already-separately-listed capability: the plug-in calculator's explicit "this part's genuinely unclear" flag on the legal question, not a general calculation-assumptions panel. Both features exist because of the same interview-validated trust mechanism, which is why this panel has the highest ICE score in this roadmap alongside the honest-red-result feature below: it's the actual product differentiator the interviews validated, not a nice-to-have polish item.</p>
+<p>The honest-red-result feature depends on the same logic. <code>synthetic-interviews.md</code> found all three personas would accept an unfavorable result and change their behavior accordingly (Denise pushing back on an installer, Aisha dropping the plug-in idea) specifically <em>because</em> of the non-referral positioning, not as an assumed trait independent of it. A generic "not recommended" message doesn't carry that weight; the result needs to state the specific reason (poor payback given the household's numbers, a legal status that isn't in force yet, and so on).</p>
+<hr />
+<h2>NEXT (build once MVP is validated)</h2>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Tied to</th>
+<th>Impact</th>
+<th>Confidence</th>
+<th>Ease</th>
+<th>ICE</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Shareable result / referral summary</td>
+<td>Hypothesis behavior #3 (organic word-of-mouth); the organic-referral-rate leading indicator in Success Metrics; interview theme that sharing is peer-to-peer</td>
+<td>7</td>
+<td>6</td>
+<td>7</td>
+<td>6.7</td>
+</tr>
+<tr>
+<td>Quote document upload/parsing (auto-extract price, system size, and included items from an uploaded PDF quote)</td>
+<td>Removes manual-entry friction on Denise's flow; catches the specific inflated line items (scaffolding, DNO paperwork, battery bundling) named in <code>grounding-research.md</code>'s quote-complexity finding</td>
+<td>8</td>
+<td>5</td>
+<td>3</td>
+<td>5.3</td>
+</tr>
+<tr>
+<td>Battery/storage add-on calculator</td>
+<td>Rooftop segment's fuller economics, per <code>grounding-research.md</code>'s battery arbitrage figures</td>
+<td>6</td>
+<td>4</td>
+<td>6</td>
+<td>5.3</td>
+</tr>
+</tbody>
+</table>
+<p>Quote-document parsing scores well on Impact, since it would remove real friction from Denise's flow, but it sits in Next rather than Now because it depends on the baseline calculator and manual quote-comparison already working, and because reliable PDF/OCR parsing is a genuine, unproven technical risk that shouldn't gate MVP launch. The battery calculator is deferred for a data reason rather than a demand reason: none of the three personas raised batteries specifically, and <code>grounding-research.md</code> names battery arbitrage value as "the least certain figure found" in the whole document, a wide, uncorroborated range not worth building a launch feature on yet.</p>
+<hr />
+<h2>LATER (roadmap-level vision, not built in this portfolio)</h2>
+<table>
+<thead>
+<tr>
+<th>Item</th>
+<th>Rationale</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Real data integration (smart-meter or bank-linked automatic consumption pull, replacing self-report)</td>
+<td>No UK equivalent mechanism has been researched yet. Self-report is the realistic near-term input source; matches Flexy's own precedent of keeping real data integration as a separate future guide rather than an MVP/Next roadmap item.</td>
+</tr>
+<tr>
+<td>Scotland/Wales-specific guidance</td>
+<td><code>grounding-research.md</code> flags Scotland and Wales as having their own "broadly similar but distinct regimes," explicitly not researched in depth — a genuine, named deferral rather than an oversight.</td>
+</tr>
+<tr>
+<td>Institutional/DNO/local-authority portal integrations</td>
+<td>A distribution and partnership motion, already named in <code>product-brief.md</code>'s Go-to-market. Not a product capability to sequence on an engineering roadmap.</td>
+</tr>
+<tr>
+<td>Further legal research on individual tenancy-agreement consent</td>
+<td>A research task, not a product feature. Tracked in <code>product-brief.md</code>'s Open Questions, not this roadmap.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>Competitive grounding</h2>
+<p>Energy Saving Trust, the closest real independent analog identified in research, provides generic assumptions and then defers the final personalized number back to the installer being evaluated (<code>grounding-research.md</code>'s Competitors section). That's the specific gap the transparency panel and quote-comparison mode are built to close: give the personalized number directly, and show what it's based on, rather than sending the user back to the party being evaluated.</p>
+<h2>What this roadmap deliberately does not do</h2>
+<p>It doesn't rank purely by ICE score. Quote-document parsing and the battery calculator both sit in Next despite reasonable Impact scores because they depend on infrastructure Now builds first (a working baseline calculator, a manual quote-comparison flow) or rest on data too thin to build a launch feature on. This is a dependency-and-evidence-aware roadmap, not a sorted list.</p>
+<p>It also deliberately excludes two things that could look like roadmap items but aren't: institutional distribution partnerships (a Go-to-market motion, not an engineering sequence) and further legal research on tenancy consent (a research task tracked in Open Questions, not a product feature to build).</p>
+<h2>Status</h2>
+<p><strong>Draft v1, audited.</strong> Six Now (MVP) features, three Next, four Later items, each tied to a specific persona JTBD, <code>grounding-research.md</code> finding, or <code>synthetic-interviews.md</code> theme rather than a gut call. <code>research-auditor</code> run: the transparency panel's citation originally overclaimed Aisha's Q5 as supporting the same feature as Graham's and Denise's, when her answer actually supports the separately-listed plug-in "still unresolved" flag; narrowed the citation and the prose rationale to match. Also fixed a minor misquote (punctuation altered inside quotation marks) in the Scotland/Wales Later item.</p>
+<div class="doc-footer">Part of the SunnySideUp case study documentation set. For the short version, see the <a href="../index.html">case study page</a>.</div>
+</article>
+<footer>
+  <div class="wrap">SunnySideUp is a fictional case study built for portfolio purposes. Market research is real and cited; personas, interviews, and user data are synthetic.</div>
+</footer>
+</body>
+</html>
