@@ -677,6 +677,25 @@ function calculateRooftopViability({
     note: 'Panels visible from a highway in a conservation area may need full planning permission even within the Permitted Development ceiling; rear- or side-facing panels not visible from a highway are more often still exempt. Not checked by this tool.',
   });
 
+  // High-export households are unusually sensitive to which SEG rate this
+  // result assumes: real tariffs span roughly 1-25p/kWh (SEG_TARIFFS above),
+  // a much wider spread than electricity import prices do. When no specific
+  // tariff was picked, this result falls back to the no-switch-needed
+  // baseline (SEG_RATE_PENCE_PER_KWH_DEFAULT), which sits near the bottom of
+  // that range — so the more of the generated electricity a household
+  // exports rather than uses itself, the more this result understates what
+  // an actual, higher-paying tariff would be worth.
+  const exportShareOfGeneration = generation > 0 ? exportedKwh / generation : 0;
+  if (!segRateIsUserProvided && exportShareOfGeneration > 0.5) {
+    const topSegRate = SEG_TARIFFS[0].ratePencePerKwh;
+    flags.push({
+      id: 'highExportSensitivity',
+      tier: 'Inference',
+      title: 'High-export household: this result is unusually sensitive to your SEG rate',
+      note: `You're projected to export ${Math.round(exportShareOfGeneration * 100)}% of what you generate, more than most households. This result uses the no-switch-needed baseline SEG rate (${SEG_RATE_PENCE_PER_KWH_DEFAULT}p/kWh) since no specific tariff was picked, but real SEG rates researched here range up to ${topSegRate}p/kWh. For a high-export household like this one, picking your actual tariff will move this result more than it would for most, not just the import price. Use the SEG tariff picker for an accurate result.`,
+    });
+  }
+
   result.flags = flags;
 
   return result;
