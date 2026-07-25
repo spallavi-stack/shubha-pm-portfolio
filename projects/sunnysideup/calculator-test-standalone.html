@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>SunnySideUp calculator — standalone test harness (single file, not the real prototype UI)</title>
+<style>
+  body { font-family: -apple-system, sans-serif; max-width: 640px; margin: 40px auto; padding: 0 20px; }
+  fieldset { margin-bottom: 24px; padding: 16px; }
+  label { display: block; margin: 10px 0 4px; font-weight: 600; }
+  select, input[type=text], input[type=number] { width: 100%; padding: 6px; font-size: 14px; }
+  input[type=checkbox] { width: auto; margin-right: 6px; }
+  .checkbox-label { display: flex; align-items: center; font-weight: normal; }
+  button { margin-top: 14px; padding: 8px 16px; font-size: 14px; cursor: pointer; }
+  pre { background: #f4f4f4; padding: 12px; overflow-x: auto; border-radius: 6px; }
+  h1 { font-size: 18px; }
+  .note { color: #666; font-size: 13px; }
+  details { margin: 10px 0; border: 1px solid #ddd; border-radius: 6px; padding: 8px 12px; }
+  details summary { cursor: pointer; font-weight: 600; }
+</style>
+</head>
+<body>
+<h1>SunnySideUp calculator — standalone test harness</h1>
+<p class="note">Single self-contained file, no separate calculator.js to keep in sync. Save this one file anywhere and open it directly. Not the styled prototype, just a working form on the real logic.</p>
+
+<fieldset>
+  <legend>About your home</legend>
+  <label for="postcode">Your postcode</label>
+  <input id="postcode" type="text" placeholder="e.g. SW1A 1AA — leave blank to use the England-calibrated default">
+
+  <label for="segment">What are you considering?</label>
+  <select id="segment" onchange="updateSegmentVisibility()">
+    <option value="rooftop">Rooftop solar panels</option>
+    <option value="plugin">Plug-in / balcony solar</option>
+  </select>
+
+  <div id="orientationField">
+    <label for="orientation">Roof orientation (or the orientation your panel would face)</label>
+    <select id="orientation">
+      <option value="southFacing">South-facing</option>
+      <option value="eastWestFacing">East/West-facing</option>
+      <option value="northFacing">North-facing</option>
+    </select>
+  </div>
+
+  <div id="roofAreaField">
+    <label for="roofArea">Usable roof area, m² (rooftop only — leave blank to use a flat ~4.6kWp typical-system default)</label>
+    <input id="roofArea" type="number" step="0.1" placeholder="e.g. 25 — sizes the system to your actual roof instead of a flat default">
+  </div>
+
+  <label for="occupancy">During a typical weekday...</label>
+  <select id="occupancy">
+    <option value="usuallyHome">I'm usually home</option>
+    <option value="usuallyOut">I'm usually away during the day</option>
+  </select>
+</fieldset>
+
+<fieldset>
+  <legend>Your electricity use</legend>
+
+  <details id="householdSizeDetails" open>
+    <summary>Estimate it from my household</summary>
+    <label for="householdSize">How many people live in your home?</label>
+    <input id="householdSize" type="number" value="3" min="1">
+    <label class="checkbox-label"><input type="checkbox" id="hasHeatPump"> I have a heat pump</label>
+    <label class="checkbox-label"><input type="checkbox" id="hasEv" onchange="toggleEvCount()"> I have an electric vehicle</label>
+    <div id="evCountField" style="display:none">
+      <label for="evCount">How many electric vehicles?</label>
+      <input id="evCount" type="number" value="1" min="1">
+    </div>
+  </details>
+
+  <details id="exactConsumptionDetails">
+    <summary>I know my exact annual electricity use</summary>
+    <label for="consumption">Annual household electricity use (kWh/year, from a bill)</label>
+    <input id="consumption" type="number" placeholder="overrides the household estimate above if filled in">
+  </details>
+</fieldset>
+
+<fieldset>
+  <legend>Electricity price</legend>
+  <label for="elecPriceRoof">Import price, pence/kWh</label>
+  <input id="elecPriceRoof" type="number" step="0.01" placeholder="leave blank to fetch a live current rate for your postcode's region">
+
+  <label for="importSupplier">Your current electricity supplier (used below to check their export/SEG rate, not for the price above)</label>
+  <select id="importSupplier"></select>
+</fieldset>
+
+<fieldset id="segField">
+  <legend>Export (SEG) tariff</legend>
+  <label for="segChoice">When you get solar, your export tariff will most likely be:</label>
+  <select id="segChoice" onchange="updateSegChoiceVisibility()">
+    <option value="sameAsImport">The same supplier as my electricity import, shown above</option>
+    <option value="different">A different export supplier — I'll pick one</option>
+    <option value="dontKnow">I don't know yet</option>
+  </select>
+
+  <div id="segDifferentField" style="display:none">
+    <label for="segTariff">Pick a tariff</label>
+    <select id="segTariff"></select>
+    <p class="note" id="segTariffEligibility"></p>
+    <label for="segRateManual">Or type a SEG rate manually instead, pence/kWh (overrides the dropdown)</label>
+    <input id="segRateManual" type="number" step="0.01" placeholder="leave blank to use the dropdown selection">
+  </div>
+  <p class="note" id="segSameAsImportNote"></p>
+</fieldset>
+
+<button onclick="runCalculation()">Calculate viability</button>
+<pre id="result">(results will appear here)</pre>
+
+<script>
+/**
+ * SunnySideUp viability calculator — core scoring logic.
+ * Inlined directly into this test page so there's no second file to keep
+ * in sync. This is the same logic as calculator.js in the repo; if that
+ * file changes, this block needs to be regenerated from it.
+ *
+ * Every constant is commented with its confidence tier and source, matching
+ * the Fact/Inference/Assumption discipline in grounding-research.md. This is
+ * a simplified prototype model, not a certified solar-yield or financial-
+ * advice calculation.
+ */
+
+// [Fact] Ofgem price cap, Direct Debit standard variable tariff, 1 Jul-30 Sep
+// 2026. grounding-research.md §Electricity price. Time-sensitive (changes
+// quarterly), and applies only to default/standard-variable tariffs — many
+// households are on a fixed deal above or below it, per the same section.
+const ELECTRICITY_PRICE_PENCE_PER_KWH_DEFAULT = 26.11;
+
+// [User-provided, 23 July 2026, partially spot-checked 23 Jul 2026] A named
+// supplier/tariff SEG rate table for Q2-Q3 2026, supplied by the user as a
+// CSV export. Nine rows (Ofgem SEG Licensee Register, Octopus's own pages,
+// British Gas's own page) have since been spot-checked directly against
+// those named sources — see calculator.js's copy of this table for the full
+// per-row spot-check commentary (Ofgem's register lists licensee names only,
+// never rates; British Gas's "Export & Earn Plus" no longer exists under
+// that name; Intelligent Octopus Flux isn't a flat rate; two rows came back
+// clean Facts). The remaining 21 rows (Solar Energy UK's League Table,
+// Uswitch's guide) are still unchecked. Sorted highest to lowest rate.
+const SEG_TARIFFS = [
+  { supplier: 'Good Energy', tariff: 'Solar Savings Exclusive', ratePencePerKwh: 25.0, rateType: 'Fixed', eligibility: 'Good Energy import customer + system installed by Good Energy', source: 'Solar Energy UK SEG League Table' },
+  { supplier: 'Octopus Energy', tariff: 'Intelligent Octopus Flux', ratePencePerKwh: 23.0, rateType: 'Smart/Variable', eligibility: 'Octopus import customer with compatible solar + battery setup', source: 'Octopus Energy Export Tariffs (checked 23 Jul 2026: no flat rate stated — peak/off-peak and postcode-variable; currently shown unavailable)' },
+  { supplier: 'OVO Energy', tariff: 'SEG Install Exclusive', ratePencePerKwh: 20.0, rateType: 'Variable', eligibility: 'OVO import customer + system bought through OVO', source: 'Solar Energy UK SEG League Table' },
+  { supplier: 'So Energy', tariff: 'So Bright', ratePencePerKwh: 20.0, rateType: 'Fixed', eligibility: 'Installed solar/battery via So Energy (no import switch needed)', source: 'Uswitch Solar Export Guide' },
+  { supplier: 'EDF Energy', tariff: 'Export Exclusive 12m V3', ratePencePerKwh: 18.0, rateType: 'Fixed', eligibility: 'EDF import customer + system installed by EDF / Contact Solar', source: 'Solar Energy UK SEG League Table' },
+  { supplier: 'E.ON Next', tariff: 'Next Export Premium v3', ratePencePerKwh: 17.5, rateType: 'Fixed', eligibility: 'E.ON import customer + system installed by E.ON', source: 'Solar Energy UK SEG League Table' },
+  { supplier: 'British Gas', tariff: 'Export & Earn Plus', ratePencePerKwh: 15.1, rateType: 'Variable', eligibility: 'British Gas electricity import customer', source: 'britishgas.co.uk (checked 23 Jul 2026): name/rate not found — closest current match is "Export Premium" at 12p' },
+  { supplier: 'EDF Energy', tariff: 'Export 12m', ratePencePerKwh: 15.0, rateType: 'Fixed', eligibility: 'EDF electricity import customer', source: 'Uswitch Solar Export Guide' },
+  { supplier: 'Good Energy', tariff: 'Solar Savings', ratePencePerKwh: 15.0, rateType: 'Variable', eligibility: 'Good Energy electricity import customer', source: 'Solar Energy UK SEG League Table' },
+  { supplier: 'ScottishPower', tariff: 'SmartGen Premium Plus', ratePencePerKwh: 15.0, rateType: 'Variable', eligibility: 'ScottishPower import customer + system installed by ScottishPower', source: 'Solar Energy UK SEG League Table' },
+  { supplier: 'E.ON Next', tariff: 'Next Export Exclusive v3', ratePencePerKwh: 13.0, rateType: 'Fixed', eligibility: 'E.ON electricity import customer', source: 'Uswitch Solar Export Guide' },
+  { supplier: '100Green', tariff: 'Export Tariff', ratePencePerKwh: 12.0, rateType: 'Variable', eligibility: '100Green electricity import customer', source: 'Ofgem SEG Licensee Register (checked 23 Jul 2026: name-only, no rates published; 100Green not found on current list)' },
+  { supplier: 'Octopus Energy', tariff: 'Outgoing Octopus', ratePencePerKwh: 12.0, rateType: 'Fixed', eligibility: 'Octopus electricity import customer', source: 'octopus.energy/smart/outgoing/ (fetched directly, 23 Jul 2026)' },
+  { supplier: 'OVO Energy', tariff: 'SEG Beyond Exclusive', ratePencePerKwh: 12.0, rateType: 'Fixed', eligibility: "OVO import customer on 'OVO Beyond' plan", source: 'Uswitch Solar Export Guide' },
+  { supplier: 'ScottishPower', tariff: 'SmartGen Premium', ratePencePerKwh: 12.0, rateType: 'Variable', eligibility: 'ScottishPower electricity import customer', source: 'Solar Energy UK SEG League Table' },
+  { supplier: 'Fuse Energy', tariff: 'Fuse Export', ratePencePerKwh: 10.0, rateType: 'Variable', eligibility: 'Fuse Energy electricity customer', source: 'Ofgem SEG Licensee Register (checked 23 Jul 2026: confirms Fuse Energy is a real licensee, but lists no rates)' },
+  { supplier: 'Octopus Energy', tariff: 'Outgoing Agile', ratePencePerKwh: 9.1, rateType: 'Wholesale Variable', eligibility: 'Octopus import customer (tracks 30-min market rates)', source: 'Octopus Energy Export Tariffs (checked 23 Jul 2026: inherently dynamic, no single primary rate to verify — secondary year-average ~9.4p)' },
+  { supplier: 'Utility Warehouse', tariff: 'UW SEG – Bundle', ratePencePerKwh: 8.0, rateType: 'Variable', eligibility: 'UW import customer bundling 2+ additional services', source: 'Solar Energy UK SEG League Table' },
+  { supplier: 'E.ON Next', tariff: 'Next Flex Export v1', ratePencePerKwh: 6.0, rateType: 'Variable', eligibility: 'Open to non-customers / E.ON import customers', source: 'Uswitch Solar Export Guide' },
+  { supplier: 'ScottishPower', tariff: 'SmartGen', ratePencePerKwh: 6.0, rateType: 'Variable', eligibility: 'Open to anyone (no switch needed)', source: 'Solar Energy UK SEG League Table' },
+  { supplier: 'EDF Energy', tariff: 'SEG Export Variable Value', ratePencePerKwh: 5.6, rateType: 'Variable', eligibility: 'EDF residential SEG customers', source: 'Solar Energy UK SEG League Table' },
+  { supplier: 'So Energy', tariff: 'So Export Flex', ratePencePerKwh: 4.5, rateType: 'Variable', eligibility: 'Open to anyone (no switch needed)', source: 'Uswitch Solar Export Guide' },
+  { supplier: 'Octopus Energy', tariff: 'Smart Export Guarantee', ratePencePerKwh: 4.1, rateType: 'Fixed', eligibility: 'Open to anyone (no switch needed)', source: 'octopus.energy/smart/smart-export-guarantee/ (fetched directly, 23 Jul 2026)' },
+  { supplier: 'OVO Energy', tariff: 'Standard SEG', ratePencePerKwh: 4.0, rateType: 'Variable', eligibility: 'Open to anyone (no switch needed)', source: 'Uswitch Solar Export Guide' },
+  { supplier: 'British Gas', tariff: 'Standard SEG', ratePencePerKwh: 3.02, rateType: 'Variable', eligibility: 'Open to anyone (no switch needed)', source: 'britishgas.co.uk (checked 23 Jul 2026): rate close to current "Export SEG" (3p); tariff name doesn\'t match exactly' },
+  { supplier: 'EDF Energy', tariff: 'SEG Export Variable', ratePencePerKwh: 3.0, rateType: 'Variable', eligibility: 'Open to anyone (no switch needed)', source: 'Uswitch Solar Export Guide' },
+  { supplier: 'Utilita', tariff: 'Smart Export Guarantee', ratePencePerKwh: 3.0, rateType: 'Variable', eligibility: 'Open to anyone (no switch needed)', source: 'Uswitch Solar Export Guide' },
+  { supplier: 'Utility Warehouse', tariff: 'UW SEG – Standard', ratePencePerKwh: 2.0, rateType: 'Variable', eligibility: 'Open to anyone (no switch needed)', source: 'Uswitch Solar Export Guide' },
+  { supplier: 'Outfox Energy', tariff: 'Outfox Export', ratePencePerKwh: 1.05, rateType: 'Variable', eligibility: 'Open to anyone (no switch needed)', source: 'Ofgem SEG Licensee Register (checked 23 Jul 2026: confirms Foxglove Energy Supply Ltd, Outfox\'s legal name, is a real licensee, but lists no rates)' },
+  { supplier: 'E (Gas & Electricity)', tariff: 'SEG Tariff', ratePencePerKwh: 1.0, rateType: 'Variable', eligibility: 'Open to anyone (no switch needed)', source: 'Uswitch Solar Export Guide' },
+];
+
+// [Inference, drawn from the table above] A realistic no-commitment default:
+// the median rate among tariffs explicitly "open to anyone, no switch
+// needed." Replaces an earlier flat 15p guess that sat far above what an
+// uncommitted household would actually receive. Corrected 24 Jul 2026: the
+// 10 qualifying rows are [1.0, 1.05, 2.0, 3.0, 3.0, 3.02, 4.0, 4.1, 4.5,
+// 6.0]p; the true median is 3.01p — this constant previously read 4.0p,
+// which didn't actually match its own "median" label.
+const SEG_RATE_PENCE_PER_KWH_DEFAULT = 3.01;
+
+// [Assumption — wide range, no single authoritative figure] Typical UK
+// domestic rooftop system cost estimates range £5,500-£8,700; £7,000 is
+// close to MCS's 2025 average. grounding-research.md §System cost, size, and generation.
+const ROOFTOP_SYSTEM_COST_GBP = 7000;
+
+// [Assumption, same section] Annual generation for a 4kW south-facing system
+// is commonly cited around 3,400-4,200kWh/year; 3,800 is a midpoint.
+// East/west and north-facing figures are NOT independently researched —
+// a prototype-only proportional estimate, flagged in assumptions output.
+const ROOFTOP_ANNUAL_GENERATION_KWH = {
+  southFacing: 3800,
+  eastWestFacing: 3000,
+  northFacing: 1900,
+};
+
+// [Fact — MCS's own reported average domestic system size] The figures
+// above and ROOFTOP_SYSTEM_COST_GBP are calibrated to roughly this
+// reference size (MCS's own reported UK average is 4.6kWp, close enough to
+// the "4kW system" this project's research was framed around).
+const REFERENCE_SYSTEM_SIZE_KWP = 4;
+
+// --- Roof-area-based system sizing ---------------------------------------
+// See calculator.js for the full sourcing reasoning. [Inference] usable
+// roof area per panel (incl. mounting/spacing clearance, more than a
+// panel's bare ~1.9m² footprint): derived from an MCS-anchored range (a
+// typical 3-bed semi's 22-30m² usable roof fits 9-12 panels). [Inference]
+// typical panel wattage, cross-checked against current UK panel specs
+// (350-460W depending on generation). [Fact] MCS's own installed-cost-per-
+// kWp figures are nonlinear: smaller systems cost more per kWp since fixed
+// costs (scaffolding, inverter) don't shrink with the array.
+const ROOF_AREA_PER_PANEL_M2 = 2.45;
+const PANEL_WATTAGE_KWP = 0.43;
+const COST_PER_KWP_GBP_BY_TIER = { smallSystemThresholdKwp: 3, smallSystemCostPerKwp: 1800, standardCostPerKwp: 1625 };
+// [Fact] 4kWp is the largest system covered by Permitted Development Rights
+// in England; Scotland/Wales have their own separate, unresearched thresholds.
+const PERMITTED_DEVELOPMENT_KWP_CEILING_ENGLAND = 4;
+
+function estimateSystemSizeFromRoofArea(roofAreaM2) {
+  const panelCount = Math.floor(Math.max(0, roofAreaM2) / ROOF_AREA_PER_PANEL_M2);
+  if (panelCount === 0) return null;
+  const systemSizeKwp = Math.round(panelCount * PANEL_WATTAGE_KWP * 100) / 100;
+  const costPerKwpGbp = systemSizeKwp <= COST_PER_KWP_GBP_BY_TIER.smallSystemThresholdKwp ? COST_PER_KWP_GBP_BY_TIER.smallSystemCostPerKwp : COST_PER_KWP_GBP_BY_TIER.standardCostPerKwp;
+  return {
+    panelCount,
+    systemSizeKwp,
+    costPerKwpGbp,
+    systemCostGbp: Math.round(systemSizeKwp * costPerKwpGbp),
+    exceedsPermittedDevelopmentEngland: systemSizeKwp > PERMITTED_DEVELOPMENT_KWP_CEILING_ENGLAND,
+  };
+}
+
+// [Inference — WebSearch findings, 24 Jul 2026, not independently fetched
+// against a primary source] South England ~900-1,100kWh/kW/yr vs Scotland
+// ~850-900kWh/kW/yr, England treated as the baseline (1.0x) that
+// ROOFTOP_ANNUAL_GENERATION_KWH above is already calibrated to. Wales and
+// Northern Ireland have no figure found in this search; both are
+// extrapolated from Scotland's climate/latitude band (weaker claim, flagged
+// separately below).
+const REGIONAL_GENERATION_MULTIPLIER = {
+  England: { value: 1.0, tier: 'Baseline', note: 'ROOFTOP_ANNUAL_GENERATION_KWH figures above are themselves England-calibrated; this is the reference point, not a separate finding.' },
+  Wales: { value: 0.93, tier: 'Assumption — extrapolated, not independently found', note: 'No Wales-specific figure found; placed between England and Scotland as a geographic estimate only.' },
+  Scotland: { value: 0.85, tier: 'Inference', note: 'General researched range ~850-900kWh/kW/yr vs England ~900-1,100kWh/kW/yr; low end of that ratio used. A separate specific-city example in the same research did not fully agree with this general range.' },
+  'Northern Ireland': { value: 0.85, tier: 'Assumption — extrapolated, not independently found', note: "No Northern Ireland-specific figure found; assumed similar to Scotland's climate/latitude band." },
+};
+
+// Scotland and Wales have differing permitted-development/building-regulation
+// regimes for solar installations, not researched in depth by this prototype.
+const REGIONS_WITH_UNRESEARCHED_REGULATORY_REGIME = {
+  Scotland: 'Scotland has its own permitted-development and building-regulation regime for solar installations, separate from England and Wales, which this prototype has not researched in depth. Check with your local authority before relying on this result for a Scottish address.',
+  Wales: 'Wales has its own permitted-development regime for solar installations, separate from England, which this prototype has not researched in depth. Check with your local authority before relying on this result for a Welsh address.',
+};
+
+const POSTCODES_IO_BASE_URL = 'https://api.postcodes.io/postcodes/';
+
+// [Fact — API contract per public documentation, needs a live check in a
+// real browser before fully trusting the exact response shape] postcodes.io
+// is a free, open, no-auth UK postcode lookup API.
+async function lookupPostcodeRegion(postcode) {
+  const cleaned = String(postcode || '').trim();
+  if (!cleaned) {
+    return { ok: false, error: 'No postcode entered.' };
+  }
+  const url = POSTCODES_IO_BASE_URL + encodeURIComponent(cleaned.replace(/\s+/g, ''));
+  let response;
+  try {
+    response = await fetch(url);
+  } catch (err) {
+    return { ok: false, error: `Couldn't reach the postcode lookup service (${err.message}). Falling back to the England-calibrated default.` };
+  }
+  if (response.status === 404) {
+    return { ok: false, error: `"${cleaned}" wasn't recognized as a valid UK postcode. Falling back to the England-calibrated default.` };
+  }
+  if (!response.ok) {
+    return { ok: false, error: `The postcode lookup service returned an unexpected error (HTTP ${response.status}). Falling back to the England-calibrated default.` };
+  }
+  const body = await response.json();
+  const result = body && body.result;
+  if (!result) {
+    return { ok: false, error: `"${cleaned}" wasn't recognized as a valid UK postcode. Falling back to the England-calibrated default.` };
+  }
+  return { ok: true, postcode: result.postcode, country: result.country, region: result.region || null, latitude: result.latitude, longitude: result.longitude };
+}
+
+// [Fact — confirmed via live browser test, 24 July 2026] PVGIS was tried
+// first for a coordinate-precise generation estimate and removed: it sends
+// no Access-Control-Allow-Origin header, so a browser blocks the request
+// regardless of calling origin — a permanent block for a pure static-site
+// prototype with no backend proxy, confirmed against a real request from a
+// live browser.
+//
+// [Inference — corroborated by multiple independent secondary sources, not
+// fetched directly against Open-Meteo's own docs (blocked, same as
+// elsewhere). Confirmed working end to end via a live browser test (Chrome
+// DevTools, 24 July 2026): a real London postcode resolved to
+// 1,104.3kWh/m²/yr with no CORS error, landing in the same range this
+// project's own separate research found for South England
+// (900-1,100kWh/kW/yr) — one location/orientation confirmed, not
+// exhaustive.] Open-Meteo's archive API returns hourly Global Tilted Irradiance (W/m²)
+// for a lat/lon/tilt/azimuth over a date range (same south=0/east=-90/
+// west=90/north=±180 azimuth convention as PVGIS). Converted to an annual
+// generation estimate via the standard PV yield formula: annual generation
+// (kWh) = annual in-plane irradiation (kWh/m²/yr) x system size (kWp) x
+// performance ratio — the same approach PVGIS uses internally.
+const OPEN_METEO_ARCHIVE_BASE_URL = 'https://archive-api.open-meteo.com/v1/archive';
+const OPEN_METEO_TILT_ANGLE_DEGREES = 35; // [Assumption] same near-optimal UK roof tilt used throughout
+const OPEN_METEO_PERFORMANCE_RATIO = 0.86; // [Assumption] derived like the earlier 14% system-loss figure (1 - 0.14)
+const OPEN_METEO_ASSUMED_PEAK_POWER_KWP = 4; // [Assumption] matches the ~4kW system ROOFTOP_ANNUAL_GENERATION_KWH is calibrated to
+const OPEN_METEO_AZIMUTH_BY_ORIENTATION = { southFacing: 0, eastWestFacing: 90, northFacing: 180 };
+
+async function lookupOpenMeteoGeneration(latitude, longitude, orientation) {
+  const azimuth = OPEN_METEO_AZIMUTH_BY_ORIENTATION[orientation];
+  const year = new Date().getFullYear() - 1;
+  const params = new URLSearchParams({ latitude: String(latitude), longitude: String(longitude), start_date: `${year}-01-01`, end_date: `${year}-12-31`, hourly: 'global_tilted_irradiance', tilt: String(OPEN_METEO_TILT_ANGLE_DEGREES), azimuth: String(azimuth) });
+  let response;
+  try {
+    response = await fetch(`${OPEN_METEO_ARCHIVE_BASE_URL}?${params.toString()}`, { signal: AbortSignal.timeout(15000) });
+  } catch (err) {
+    return { ok: false, error: `Couldn't reach Open-Meteo (${err.message}).` };
+  }
+  if (!response.ok) {
+    return { ok: false, error: `Open-Meteo returned an unexpected error (HTTP ${response.status}).` };
+  }
+  let body;
+  try {
+    body = await response.json();
+  } catch (err) {
+    return { ok: false, error: `Open-Meteo's response wasn't valid JSON (${err.message}).` };
+  }
+  const hourlyValues = body?.hourly?.global_tilted_irradiance;
+  if (!Array.isArray(hourlyValues) || hourlyValues.length === 0) {
+    return { ok: false, error: "Open-Meteo's response didn't contain the expected hourly.global_tilted_irradiance array." };
+  }
+  const validHours = hourlyValues.filter((v) => typeof v === 'number');
+  const annualInsolationKwhPerM2 = validHours.reduce((sum, v) => sum + v, 0) / 1000;
+  if (validHours.length < hourlyValues.length * 0.9) {
+    return { ok: false, error: `Open-Meteo's response was missing too much hourly data for ${year} (${validHours.length}/${hourlyValues.length} hours present) to trust an annual total.` };
+  }
+  const annualGenerationKwh = annualInsolationKwhPerM2 * OPEN_METEO_ASSUMED_PEAK_POWER_KWP * OPEN_METEO_PERFORMANCE_RATIO;
+  return { ok: true, annualGenerationKwh: Math.round(annualGenerationKwh), annualInsolationKwhPerM2: Math.round(annualInsolationKwhPerM2 * 10) / 10, peakPowerKwp: OPEN_METEO_ASSUMED_PEAK_POWER_KWP, tiltAngleDegrees: OPEN_METEO_TILT_ANGLE_DEGREES, performanceRatio: OPEN_METEO_PERFORMANCE_RATIO, yearUsed: year };
+}
+
+// [Fact — confirmed via GitHub source of a production Octopus Energy Home
+// Assistant integration, not fetched directly against Octopus's own docs
+// (blocked, same restriction as elsewhere). Octopus runs a genuinely
+// public, no-auth REST API for their product catalog and unit rates.
+// Needs a live browser test before being fully trusted end to end (longer
+// chained lookup than Open-Meteo: postcode -> GSP region -> current
+// default product -> that product's live unit rate).
+const OCTOPUS_BASE_URL = 'https://api.octopus.energy/v1';
+
+async function lookupGspRegion(postcode) {
+  const cleaned = String(postcode || '').trim();
+  if (!cleaned) return { ok: false, error: 'No postcode entered.' };
+  let response;
+  try {
+    response = await fetch(`${OCTOPUS_BASE_URL}/industry/grid-supply-points/?postcode=${encodeURIComponent(cleaned)}`, { signal: AbortSignal.timeout(8000) });
+  } catch (err) {
+    return { ok: false, error: `Couldn't reach Octopus's GSP lookup (${err.message}).` };
+  }
+  if (!response.ok) return { ok: false, error: `Octopus's GSP lookup returned an unexpected error (HTTP ${response.status}).` };
+  const body = await response.json();
+  const groupId = body?.results?.[0]?.group_id;
+  if (!groupId) return { ok: false, error: `Couldn't resolve a GSP region for "${cleaned}".` };
+  return { ok: true, groupId };
+}
+
+async function lookupCurrentOctopusVariableProduct() {
+  let response;
+  try {
+    response = await fetch(`${OCTOPUS_BASE_URL}/products/?brand=OCTOPUS_ENERGY&is_variable=true`, { signal: AbortSignal.timeout(10000) });
+  } catch (err) {
+    return { ok: false, error: `Couldn't reach Octopus's product list (${err.message}).` };
+  }
+  if (!response.ok) return { ok: false, error: `Octopus's product list returned an unexpected error (HTTP ${response.status}).` };
+  const body = await response.json();
+  const products = body?.results;
+  if (!Array.isArray(products)) return { ok: false, error: "Octopus's product list response didn't contain the expected results array." };
+  const candidates = products.filter(
+    (p) => !p.is_green && !p.is_tracker && !p.is_prepay && !p.is_business && !p.is_restricted && (p.available_to == null || new Date(p.available_to) > new Date())
+  );
+  if (candidates.length === 0) return { ok: false, error: 'No currently-available default variable Octopus product found matching the expected filters.' };
+  candidates.sort((a, b) => new Date(b.available_from) - new Date(a.available_from));
+  const product = candidates[0];
+  return { ok: true, productCode: product.code, displayName: product.display_name };
+}
+
+async function lookupOctopusUnitRate(productCode, groupId) {
+  const tariffCode = `E-1R-${productCode}-${groupId}`;
+  let response;
+  try {
+    response = await fetch(`${OCTOPUS_BASE_URL}/products/${productCode}/electricity-tariffs/${tariffCode}/standard-unit-rates/`, { signal: AbortSignal.timeout(10000) });
+  } catch (err) {
+    return { ok: false, error: `Couldn't reach Octopus's unit-rates endpoint (${err.message}).` };
+  }
+  if (!response.ok) return { ok: false, error: `Octopus's unit-rates endpoint returned an unexpected error (HTTP ${response.status}) for tariff code "${tariffCode}".` };
+  const body = await response.json();
+  const currentRate = body?.results?.[0];
+  const ratePencePerKwh = currentRate?.value_inc_vat;
+  if (typeof ratePencePerKwh !== 'number') return { ok: false, error: "Octopus's unit-rates response didn't contain the expected value_inc_vat field." };
+  return { ok: true, ratePencePerKwh, tariffCode, validFrom: currentRate.valid_from };
+}
+
+async function lookupLiveElectricityPrice(postcode) {
+  const gsp = await lookupGspRegion(postcode);
+  if (!gsp.ok) return { ok: false, error: gsp.error };
+  const product = await lookupCurrentOctopusVariableProduct();
+  if (!product.ok) return { ok: false, error: product.error };
+  const rate = await lookupOctopusUnitRate(product.productCode, gsp.groupId);
+  if (!rate.ok) return { ok: false, error: rate.error };
+  return { ok: true, ratePencePerKwh: rate.ratePencePerKwh, productDisplayName: product.displayName, tariffCode: rate.tariffCode, validFrom: rate.validFrom };
+}
+
+async function calculateRooftopViabilityByPostcode(postcode, otherInputs) {
+  const lookup = await lookupPostcodeRegion(postcode);
+  if (!lookup.ok) {
+    const result = calculateRooftopViability(otherInputs);
+    result.postcodeLookup = { ok: false, error: lookup.error };
+    return result;
+  }
+
+  const userProvidedElectricityPrice = otherInputs.electricityPricePencePerKwh != null;
+  const [openMeteo, electricityPrice] = await Promise.all([
+    lookupOpenMeteoGeneration(lookup.latitude, lookup.longitude, otherInputs.orientation),
+    userProvidedElectricityPrice ? Promise.resolve({ ok: false, error: 'Skipped: you provided your own rate.' }) : lookupLiveElectricityPrice(postcode),
+  ]);
+
+  const calcInputs = { ...otherInputs };
+  if (openMeteo.ok) {
+    calcInputs.generationOverride = {
+      value: openMeteo.annualGenerationKwh,
+      tier: 'Inference — Open-Meteo coordinate estimate, confirmed working via a live browser test (24 Jul 2026) but not exhaustively verified across locations/orientations',
+      note: `Derived from Open-Meteo's ${openMeteo.yearUsed} hourly irradiance data for this exact location (${openMeteo.annualInsolationKwhPerM2}kWh/m²/yr on a ${openMeteo.tiltAngleDegrees}° tilted plane), scaled to a ${openMeteo.peakPowerKwp}kWp system at a ${openMeteo.performanceRatio} performance ratio (both assumed, not your actual system). More precise than the country-level multiplier.`,
+    };
+  } else {
+    calcInputs.regionalGeneration = REGIONAL_GENERATION_MULTIPLIER[lookup.country];
+  }
+  if (!userProvidedElectricityPrice && electricityPrice.ok) {
+    calcInputs.electricityPriceOverride = {
+      value: electricityPrice.ratePencePerKwh,
+      tier: "Inference — live-fetched from Octopus Energy's public API, not yet confirmed via a live browser test",
+      note: `Octopus's current "${electricityPrice.productDisplayName}" rate for your region (tariff ${electricityPrice.tariffCode}, valid from ${electricityPrice.validFrom}), fetched live rather than assumed. This is Octopus's own price-cap-tracking rate, not necessarily your actual supplier's identical figure — Ofgem's price cap sets a regional ceiling every standard-variable-tariff supplier must match or beat, so this is a close proxy if you're on a standard variable deal, not a guarantee if you're on a fixed deal or with a different supplier. Enter your own rate above for an exact result.`,
+    };
+  }
+
+  const result = calculateRooftopViability(calcInputs);
+  result.openMeteoLookup = openMeteo.ok ? { ok: true } : { ok: false, error: openMeteo.error };
+  result.electricityPriceLookup = userProvidedElectricityPrice
+    ? { ok: false, note: 'Skipped: you provided your own rate.' }
+    : electricityPrice.ok
+      ? { ok: true, productDisplayName: electricityPrice.productDisplayName, tariffCode: electricityPrice.tariffCode, validFrom: electricityPrice.validFrom }
+      : { ok: false, error: electricityPrice.error };
+
+  result.postcodeLookup = { ok: true, postcode: lookup.postcode, country: lookup.country, region: lookup.region };
+  const regulatoryNote = REGIONS_WITH_UNRESEARCHED_REGULATORY_REGIME[lookup.country];
+  if (regulatoryNote) {
+    result.regulatoryFlag = { country: lookup.country, note: regulatoryNote };
+  }
+  if (!openMeteo.ok && !REGIONAL_GENERATION_MULTIPLIER[lookup.country]) {
+    result.postcodeLookup.note = `No regional generation figure for "${lookup.country}"; used the England-calibrated default.`;
+  }
+  return result;
+}
+
+// [Assumption — "the weakest data in this document," per grounding-research.md
+// §Plug-in/balcony solar cost and generation]. Kit cost reported £400-900,
+// generation 640-900kWh/year. Midpoints used below. Treated as the
+// south-facing baseline (the range itself doesn't specify an orientation).
+const PLUGIN_KIT_COST_GBP = 650;
+const PLUGIN_ANNUAL_GENERATION_KWH = 770;
+
+// [Assumption stacked on another Assumption] No orientation-specific
+// plug-in data exists, so this borrows rooftop's own east/west≈79%/north≈50%
+// ratios rather than presenting plug-in as orientation-agnostic — see
+// calculator.js's fuller comment on this same function.
+function pluginOrientationMultiplier(orientation) {
+  return ROOFTOP_ANNUAL_GENERATION_KWH[orientation] / ROOFTOP_ANNUAL_GENERATION_KWH.southFacing;
+}
+
+// Prototype-only simplification, not independently researched: self-
+// consumption rate modeled from occupancy as a rough two-tier proxy.
+const SELF_CONSUMPTION_RATE = { usuallyHome: 0.55, usuallyOut: 0.30 };
+
+// Payback thresholds for green/amber/red. Not a cited figure — a design
+// judgment loosely anchored to grounding-research.md's own reported payback
+// range ("roughly 6-14 years across sources" for rooftop).
+const ROOFTOP_PAYBACK_THRESHOLDS = { green: 8, amber: 13 };
+const PLUGIN_PAYBACK_THRESHOLDS = { green: 5, amber: 8 };
+
+// [Fact] SI 2026/848 legal status, verified directly against legislation.gov.uk.
+const PLUGIN_LEGAL_STATUS = {
+  electricianInstall: { legal: true, since: '2026-04-15', basis: 'BS 7671 Amendment 4' },
+  diySelfInstall: { legal: false, becomesLegal: '2026-08-27', basis: 'SI 2026/848', note: 'Made and dated, but not yet in force as of this check.' },
+  tenancyConsent: { status: 'unresolved', note: "The Renters' Rights Act 2025 has no provision on this either way. Whether your specific tenancy agreement requires landlord permission is a separate question this check cannot resolve." },
+};
+
+function scoreStatus(paybackYears, thresholds) {
+  if (paybackYears <= thresholds.green) return 'green';
+  if (paybackYears <= thresholds.amber) return 'amber';
+  return 'red';
+}
+
+function getSegTariffs() {
+  return SEG_TARIFFS;
+}
+
+// Deliberately not filtered further than supplier name match — see
+// calculator.js's fuller comment on this function for why (parsing
+// eligibility text to guess "achievable without switching install company"
+// would be fragile and could silently misclassify a row). Fixed-rate
+// tariffs ARE sorted first though (a structured field, not free text) —
+// sorting by raw rate alone surfaced Octopus's "Intelligent Octopus Flux"
+// (highest number, but its own source note says it isn't a flat rate and
+// is "currently shown unavailable") as the top pick, which a Fixed-rate
+// row further down is a more honest single-number answer than.
+function findSegTariffsBySupplier(supplier) {
+  return SEG_TARIFFS.filter((t) => t.supplier === supplier).sort((a, b) => {
+    if (a.rateType === 'Fixed' && b.rateType !== 'Fixed') return -1;
+    if (a.rateType !== 'Fixed' && b.rateType === 'Fixed') return 1;
+    return b.ratePencePerKwh - a.ratePencePerKwh;
+  });
+}
+
+// --- Annual consumption estimator ---------------------------------------------
+// See calculator.js for the full sourcing reasoning (grounding-research.md
+// §Household electricity consumption — TDCV, heat pumps, EVs, 24 Jul 2026).
+const TDCV_ELECTRICITY_KWH_BY_BAND = {
+  low: { value: 1600, description: 'flat or 1-bedroom house, 1-2 people' },
+  medium: { value: 2500, description: '2-3 bedroom house, 2-3 people' },
+  high: { value: 3800, description: '4+ bedroom house, 4-5 people' },
+};
+function tdcvBandForHouseholdSize(householdSize) {
+  if (householdSize <= 2) return 'low';
+  if (householdSize === 3) return 'medium';
+  return 'high';
+}
+const HEAT_PUMP_ANNUAL_KWH_ESTIMATE = 4300; // [Inference] DESNZ field-trial SPF 2.78 applied to an EST ~12,000kWh/yr heat-demand assumption
+const EV_ANNUAL_HOME_CHARGING_KWH_ESTIMATE = 1960; // [Inference] DfT BEV mileage (8,900mi/yr) x Zap-Map home-charging share (85%), Assumption-tier efficiency
+
+function estimateAnnualConsumptionKwh({ householdSize, hasHeatPump, hasEv, evCount }) {
+  const band = tdcvBandForHouseholdSize(householdSize);
+  const baseline = TDCV_ELECTRICITY_KWH_BY_BAND[band];
+  const resolvedEvCount = hasEv ? evCount ?? 1 : 0;
+  const heatPumpAddition = hasHeatPump ? HEAT_PUMP_ANNUAL_KWH_ESTIMATE : 0;
+  const evAddition = resolvedEvCount * EV_ANNUAL_HOME_CHARGING_KWH_ESTIMATE;
+  const totalKwh = baseline.value + heatPumpAddition + evAddition;
+
+  const breakdown = {
+    baseline: { value: baseline.value, tier: 'Fact', note: `Ofgem TDCV ${band} band (standard single-rate meter, effective 1 Jul 2026): ${baseline.description}. Household size ${householdSize} mapped to this band by this calculator's own tie-breaking rule, not an Ofgem-published cutoff.` },
+  };
+  if (hasHeatPump) {
+    breakdown.heatPump = { value: heatPumpAddition, tier: 'Inference', note: 'Derived from a DESNZ field-trial median efficiency figure (SPF 2.78, 742 monitored UK installations) and a named Energy Saving Trust heat-demand modelling assumption (~12,000kWh/yr) — a calculation, not a single published figure.' };
+  }
+  if (resolvedEvCount > 0) {
+    breakdown.ev = { value: evAddition, tier: 'Inference', note: `Derived from DfT's National Travel Survey (8,900 miles/yr average for battery-electric cars) and Zap-Map's home-charging share (85%), combined with an Assumption-tier efficiency figure (no government source found; ~3.5-4.3mi/kWh commercial-site convergence). ${EV_ANNUAL_HOME_CHARGING_KWH_ESTIMATE}kWh/yr per vehicle x ${resolvedEvCount}.` };
+  }
+  return { totalKwh: Math.round(totalKwh), breakdown };
+}
+
+function calculateRooftopViability({ orientation, occupancy, annualConsumptionKwh, electricityPricePencePerKwh, electricityPriceOverride, segRatePencePerKwh, segTariffLabel, segTariffSource, regionalGeneration, generationOverride, roofAreaM2 }) {
+  const baseGeneration = ROOFTOP_ANNUAL_GENERATION_KWH[orientation];
+  const preRoofAreaGeneration = generationOverride
+    ? generationOverride.value
+    : regionalGeneration
+      ? Math.round(baseGeneration * regionalGeneration.value)
+      : baseGeneration;
+
+  const roofAreaSizing = roofAreaM2 != null ? estimateSystemSizeFromRoofArea(roofAreaM2) : null;
+  const systemSizeKwp = roofAreaSizing ? roofAreaSizing.systemSizeKwp : REFERENCE_SYSTEM_SIZE_KWP;
+  const roofAreaMultiplier = roofAreaSizing ? roofAreaSizing.systemSizeKwp / REFERENCE_SYSTEM_SIZE_KWP : 1;
+  const generation = Math.round(preRoofAreaGeneration * roofAreaMultiplier);
+  const systemCostGbp = roofAreaSizing ? roofAreaSizing.systemCostGbp : ROOFTOP_SYSTEM_COST_GBP;
+
+  const selfConsumptionRate = SELF_CONSUMPTION_RATE[occupancy];
+  const selfConsumedKwh = Math.min(generation * selfConsumptionRate, annualConsumptionKwh);
+  const exportedKwh = generation - selfConsumedKwh;
+
+  const electricityPriceIsUserProvided = electricityPricePencePerKwh != null;
+  const usedElectricityPrice = electricityPriceIsUserProvided
+    ? electricityPricePencePerKwh
+    : electricityPriceOverride
+      ? electricityPriceOverride.value
+      : ELECTRICITY_PRICE_PENCE_PER_KWH_DEFAULT;
+  const usedSegRate = segRatePencePerKwh ?? SEG_RATE_PENCE_PER_KWH_DEFAULT;
+  const segRateIsUserProvided = segRatePencePerKwh != null;
+
+  const annualSavingsGbp = (selfConsumedKwh * usedElectricityPrice + exportedKwh * usedSegRate) / 100;
+  const paybackYears = systemCostGbp / annualSavingsGbp;
+  const status = scoreStatus(paybackYears, ROOFTOP_PAYBACK_THRESHOLDS);
+
+  const result = {
+    segment: 'rooftop',
+    status,
+    paybackYears: Math.round(paybackYears * 10) / 10,
+    annualSavingsGbp: Math.round(annualSavingsGbp),
+    systemCostGbp,
+    systemSizeKwp,
+    generationKwh: generation,
+    selfConsumedKwh: Math.round(selfConsumedKwh),
+    exportedKwh: Math.round(exportedKwh),
+    assumptions: {
+      electricityPricePencePerKwh: electricityPriceIsUserProvided
+        ? { value: usedElectricityPrice, tier: 'User-provided', note: 'Your own stated rate' }
+        : electricityPriceOverride
+          ? { value: usedElectricityPrice, tier: electricityPriceOverride.tier, note: electricityPriceOverride.note }
+          : { value: usedElectricityPrice, tier: 'Fact (default)', note: "Ofgem price cap, Jul-Sep 2026, changes quarterly, and applies only to default/standard-variable tariffs — if you're on a fixed deal, enter your own rate for an accurate result" },
+      segRatePencePerKwh: segRateIsUserProvided
+        ? { value: usedSegRate, tier: 'User-provided', note: segTariffLabel ? `${segTariffLabel}${segTariffSource ? `, per ${segTariffSource}` : ''} (SEG tariff table, user-provided 23 July 2026, not independently fetched or verified)` : 'Your own stated rate' }
+        : { value: usedSegRate, tier: 'Assumption (default)', note: 'The no-switch-needed baseline (median of tariffs open to anyone). Switching supplier or installing through a specific company can get a meaningfully higher rate, up to 25p/kWh — pick your actual tariff for an accurate result' },
+      systemCostGbp: roofAreaSizing
+        ? { value: systemCostGbp, tier: 'Inference — derived from your roof area', note: `${roofAreaSizing.panelCount} panels x ${PANEL_WATTAGE_KWP}kWp x £${roofAreaSizing.costPerKwpGbp}/kWp (MCS-sourced installed-cost rate for this system size). Not a quote for your specific roof — actual roof shape, shading, and access all affect a real quote.` }
+        : { value: systemCostGbp, tier: 'Assumption', note: `Industry-consensus range is £5,500-£8,700 for a ~${REFERENCE_SYSTEM_SIZE_KWP}kWp system (MCS's own reported UK average is 4.6kWp); not a quote for your specific roof. Give your usable roof area for a size-adjusted estimate instead of this flat default.` },
+      generationKwh: generationOverride
+        ? { value: generation, tier: generationOverride.tier, note: `${generationOverride.note}${roofAreaSizing ? ` Further scaled by your roof-area-derived system size (${systemSizeKwp}kWp vs the ${REFERENCE_SYSTEM_SIZE_KWP}kWp this figure and your postcode estimate are both otherwise calibrated to).` : ''}` }
+        : regionalGeneration
+          ? { value: generation, tier: regionalGeneration.tier, note: `England-baseline figure (${baseGeneration}kWh/yr) adjusted by a ${regionalGeneration.value}x regional multiplier${roofAreaSizing ? ` and a roof-area-derived ${systemSizeKwp}kWp system size (vs the ${REFERENCE_SYSTEM_SIZE_KWP}kWp reference)` : ''}. ${regionalGeneration.note}` }
+          : { value: generation, tier: orientation === 'southFacing' ? 'Assumption' : 'Prototype estimate, not independently researched', note: `Researched range is 3,400-4,200kWh/yr for a south-facing ${REFERENCE_SYSTEM_SIZE_KWP}kWp system, England-calibrated. No postcode given, so no regional adjustment applied.${roofAreaSizing ? ` Scaled to your roof-area-derived ${systemSizeKwp}kWp system size.` : ''}` },
+      selfConsumptionRate: { value: selfConsumptionRate, tier: 'Prototype simplification', note: 'Modeled from occupancy as a rough proxy, not an independently researched figure' },
+    },
+  };
+
+  if (roofAreaSizing) {
+    result.roofAreaSizing = { roofAreaM2, panelCount: roofAreaSizing.panelCount, systemSizeKwp: roofAreaSizing.systemSizeKwp };
+    if (roofAreaSizing.exceedsPermittedDevelopmentEngland) {
+      result.permittedDevelopmentFlag = {
+        systemSizeKwp: roofAreaSizing.systemSizeKwp,
+        ceilingKwp: PERMITTED_DEVELOPMENT_KWP_CEILING_ENGLAND,
+        note: `Your roof-area-derived system (${roofAreaSizing.systemSizeKwp}kWp) is larger than the ${PERMITTED_DEVELOPMENT_KWP_CEILING_ENGLAND}kWp ceiling covered by Permitted Development Rights in England — you may need planning permission for a system this size. Scotland and Wales have their own separate thresholds, not researched here.`,
+      };
+    }
+  }
+
+  return result;
+}
+
+function calculatePluginViability({ occupancy, orientation, electricityPricePencePerKwh }) {
+  const usedOrientation = orientation ?? 'southFacing';
+  const orientationMultiplier = pluginOrientationMultiplier(usedOrientation);
+  const generation = Math.round(PLUGIN_ANNUAL_GENERATION_KWH * orientationMultiplier);
+  const usedElectricityPrice = electricityPricePencePerKwh ?? ELECTRICITY_PRICE_PENCE_PER_KWH_DEFAULT;
+  const electricityPriceIsUserProvided = electricityPricePencePerKwh != null;
+  const annualSavingsGbp = (generation * usedElectricityPrice) / 100;
+  const paybackYears = PLUGIN_KIT_COST_GBP / annualSavingsGbp;
+  const status = scoreStatus(paybackYears, PLUGIN_PAYBACK_THRESHOLDS);
+
+  return {
+    segment: 'plugin',
+    status,
+    paybackYears: Math.round(paybackYears * 10) / 10,
+    annualSavingsGbp: Math.round(annualSavingsGbp),
+    kitCostGbp: PLUGIN_KIT_COST_GBP,
+    generationKwh: generation,
+    legalStatus: PLUGIN_LEGAL_STATUS,
+    assumptions: {
+      electricityPricePencePerKwh: electricityPriceIsUserProvided
+        ? { value: usedElectricityPrice, tier: 'User-provided', note: 'Your own stated rate' }
+        : { value: usedElectricityPrice, tier: 'Fact (default)', note: "Ofgem price cap, Jul-Sep 2026, changes quarterly, and applies only to default/standard-variable tariffs — if you're on a fixed deal, enter your own rate for an accurate result" },
+      kitCostGbp: { value: PLUGIN_KIT_COST_GBP, tier: 'Assumption — weakest-sourced figure in this calculator', note: 'Reported range £400-900; none of these figures trace to a government, MCS, or established consumer body' },
+      generationKwh: {
+        value: generation,
+        tier: 'Assumption, stacked on another Assumption — weakest-sourced figure in this calculator',
+        note:
+          usedOrientation === 'southFacing'
+            ? 'Reported range 640-900kWh/yr, same sourcing caveat as kit cost. Treated as the south-facing baseline (the range itself does not specify an assumed orientation).'
+            : `${PLUGIN_ANNUAL_GENERATION_KWH}kWh/yr south-facing baseline (reported range 640-900kWh/yr, same sourcing caveat as kit cost) adjusted by rooftop's own ${usedOrientation === 'eastWestFacing' ? 'east/west' : 'north-facing'} ratio (${Math.round(orientationMultiplier * 100)}% of south) — no orientation-specific plug-in data exists, so this borrows rooftop's proportional estimate rather than presenting plug-in as orientation-agnostic.`,
+      },
+    },
+  };
+}
+
+// --- Page wiring -------------------------------------------------------------
+
+(function populateSegTariffDropdown() {
+  const select = document.getElementById('segTariff');
+  const defaultOption = document.createElement('option');
+  defaultOption.value = '';
+  defaultOption.textContent = `No-switch default (${SEG_RATE_PENCE_PER_KWH_DEFAULT}p, open to anyone)`;
+  select.appendChild(defaultOption);
+  getSegTariffs().forEach((t, i) => {
+    const opt = document.createElement('option');
+    opt.value = i;
+    opt.textContent = `${t.supplier} — ${t.tariff} (${t.ratePencePerKwh}p)`;
+    select.appendChild(opt);
+  });
+  select.addEventListener('change', updateEligibilityNote);
+  updateEligibilityNote();
+})();
+
+// A dropdown, not free text — typing "Octopus" instead of the table's exact
+// "Octopus Energy" would silently fail to match anything in
+// findSegTariffsBySupplier() and fall back to the default without
+// explanation. A dropdown of the table's own supplier names makes a
+// mismatch impossible, and doubles as a real, if partial, list of who's in
+// the researched SEG table at all.
+(function populateImportSupplierDropdown() {
+  const select = document.getElementById('importSupplier');
+  const placeholder = document.createElement('option');
+  placeholder.value = '';
+  placeholder.textContent = '-- Select your supplier --';
+  select.appendChild(placeholder);
+  const suppliers = [...new Set(getSegTariffs().map((t) => t.supplier))].sort();
+  suppliers.forEach((supplier) => {
+    const opt = document.createElement('option');
+    opt.value = supplier;
+    opt.textContent = supplier;
+    select.appendChild(opt);
+  });
+  const notListed = document.createElement('option');
+  notListed.value = '';
+  notListed.textContent = 'My supplier isn\'t listed';
+  select.appendChild(notListed);
+})();
+
+function updateEligibilityNote() {
+  const select = document.getElementById('segTariff');
+  const note = document.getElementById('segTariffEligibility');
+  if (select.value === '') {
+    note.textContent = 'Requires: nothing — this is the baseline rate open to anyone, no supplier switch or specific installer needed.';
+  } else {
+    const t = getSegTariffs()[Number(select.value)];
+    note.textContent = `Requires: ${t.eligibility} (source: ${t.source})`;
+  }
+}
+
+// Number(str) returns NaN for a comma decimal separator (e.g. "0,01"),
+// which a European keyboard/locale produces naturally. Parse defensively.
+function parseLocaleNumber(str) {
+  if (str === '' || str == null) return undefined;
+  const normalized = String(str).trim().replace(',', '.');
+  const n = Number(normalized);
+  return Number.isNaN(n) ? undefined : n;
+}
+
+function updateSegmentVisibility() {
+  // Orientation matters for both segments (plug-in generation scales with
+  // orientation the same way rooftop does — see pluginOrientationMultiplier)
+  // — the export/SEG tariff and roof-area sizing are rooftop-specific
+  // (plug-in units are a fixed small kit, not sized against roof area, and
+  // are modeled as fully self-consumed with no export mechanism assumed).
+  const isRooftop = document.getElementById('segment').value === 'rooftop';
+  document.getElementById('segField').style.display = isRooftop ? '' : 'none';
+  document.getElementById('roofAreaField').style.display = isRooftop ? '' : 'none';
+}
+
+function toggleEvCount() {
+  document.getElementById('evCountField').style.display = document.getElementById('hasEv').checked ? '' : 'none';
+}
+
+function updateSegChoiceVisibility() {
+  const choice = document.getElementById('segChoice').value;
+  document.getElementById('segDifferentField').style.display = choice === 'different' ? '' : 'none';
+  const sameAsImportNote = document.getElementById('segSameAsImportNote');
+  if (choice === 'sameAsImport') {
+    const supplier = document.getElementById('importSupplier').value.trim();
+    if (!supplier) {
+      sameAsImportNote.textContent = 'Enter your current supplier above to see their export rate.';
+    } else {
+      const matches = findSegTariffsBySupplier(supplier);
+      sameAsImportNote.textContent = matches.length
+        ? `${supplier}'s best listed export tariff: ${matches[0].tariff} (${matches[0].ratePencePerKwh}p) — requires: ${matches[0].eligibility}.`
+        : `No SEG tariff found for "${supplier}" in the researched table — will use the no-switch default instead.`;
+    }
+  } else {
+    sameAsImportNote.textContent = '';
+  }
+}
+document.getElementById('importSupplier').addEventListener('change', updateSegChoiceVisibility);
+
+// Resolves annualConsumptionKwh: an exact typed figure always wins; otherwise
+// estimate from household size/heat pump/EV. Returns both the number to use
+// and the estimator's breakdown (null if an exact figure was given, since
+// there's nothing to explain in that case).
+function resolveConsumption() {
+  const exact = parseLocaleNumber(document.getElementById('consumption').value);
+  if (exact !== undefined) {
+    return { annualConsumptionKwh: exact, isUserProvided: true, breakdown: null };
+  }
+  const householdSize = parseLocaleNumber(document.getElementById('householdSize').value) ?? 3;
+  const hasHeatPump = document.getElementById('hasHeatPump').checked;
+  const hasEv = document.getElementById('hasEv').checked;
+  const evCount = hasEv ? (parseLocaleNumber(document.getElementById('evCount').value) ?? 1) : undefined;
+  const estimate = estimateAnnualConsumptionKwh({ householdSize, hasHeatPump, hasEv, evCount });
+  return { annualConsumptionKwh: estimate.totalKwh, isUserProvided: false, breakdown: estimate.breakdown };
+}
+
+// Resolves the SEG inputs for calculateRooftopViability based on the
+// segChoice select: same-as-import-supplier looks up that supplier's best
+// listed tariff, "different" uses the existing dropdown/manual-override
+// fields, "dontKnow" passes nothing through (falls back to the calculator's
+// own no-switch default).
+function resolveSegInputs() {
+  const choice = document.getElementById('segChoice').value;
+  if (choice === 'sameAsImport') {
+    const supplier = document.getElementById('importSupplier').value.trim();
+    const matches = supplier ? findSegTariffsBySupplier(supplier) : [];
+    if (matches.length === 0) {
+      return {};
+    }
+    const t = matches[0];
+    return { segRatePencePerKwh: t.ratePencePerKwh, segTariffLabel: `${t.supplier} — ${t.tariff}`, segTariffSource: t.source };
+  }
+  if (choice === 'different') {
+    const segRateManualRaw = document.getElementById('segRateManual').value;
+    const segTariffSelect = document.getElementById('segTariff');
+    const manualSegRate = parseLocaleNumber(segRateManualRaw);
+    if (manualSegRate !== undefined) {
+      return { segRatePencePerKwh: manualSegRate };
+    }
+    if (segTariffSelect.value !== '') {
+      const t = getSegTariffs()[Number(segTariffSelect.value)];
+      return { segRatePencePerKwh: t.ratePencePerKwh, segTariffLabel: `${t.supplier} — ${t.tariff}`, segTariffSource: t.source };
+    }
+    return {};
+  }
+  return {}; // dontKnow
+}
+
+async function runCalculation() {
+  const resultEl = document.getElementById('result');
+  const segment = document.getElementById('segment').value;
+  const elecPriceRaw = document.getElementById('elecPriceRoof').value;
+  const electricityPricePencePerKwh = parseLocaleNumber(elecPriceRaw);
+  const consumption = resolveConsumption();
+  const occupancy = document.getElementById('occupancy').value;
+  const postcode = document.getElementById('postcode').value.trim();
+
+  const orientation = document.getElementById('orientation').value;
+
+  let result;
+  if (segment === 'plugin') {
+    result = calculatePluginViability({ occupancy, orientation, electricityPricePencePerKwh });
+  } else {
+    const inputs = {
+      orientation,
+      occupancy,
+      annualConsumptionKwh: consumption.annualConsumptionKwh,
+      electricityPricePencePerKwh,
+      roofAreaM2: parseLocaleNumber(document.getElementById('roofArea').value),
+      ...resolveSegInputs(),
+    };
+    if (postcode) {
+      resultEl.textContent = 'Looking up postcode...';
+      result = await calculateRooftopViabilityByPostcode(postcode, inputs);
+    } else {
+      result = calculateRooftopViability(inputs);
+    }
+  }
+
+  result.consumptionEstimate = consumption.isUserProvided
+    ? { tier: 'User-provided', note: 'Your own stated annual consumption, from a bill.' }
+    : { tier: 'Derived estimate', breakdown: consumption.breakdown };
+
+  resultEl.textContent = JSON.stringify(result, null, 2);
+}
+
+updateSegmentVisibility();
+</script>
+</body>
+</html>
