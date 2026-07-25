@@ -343,9 +343,20 @@ async function lookupOpenMeteoGeneration(latitude, longitude, orientation) {
 // Assistant integration, not fetched directly against Octopus's own docs
 // (blocked, same restriction as elsewhere). Octopus runs a genuinely
 // public, no-auth REST API for their product catalog and unit rates.
-// Needs a live browser test before being fully trusted end to end (longer
-// chained lookup than Open-Meteo: postcode -> GSP region -> current
-// default product -> that product's live unit rate).
+//
+// [Fact — confirmed via a live end-to-end test, 25 Jul 2026, see
+// calculator.js's fuller comment on this same constant] The full chained
+// lookup (postcode -> GSP region -> current product -> live unit rate) was
+// tested against the real API across 4 real UK postcodes/regions, which
+// surfaced and fixed two real bugs: (1) the "most recent" product-selection
+// heuristic below picked a niche product over the actual flagship "Flexible
+// Octopus" default — fixed by preferring an exact name match; (2) the
+// tariff code was built with the GSP region's leading underscore left in
+// (e.g. "...-_C"), which the real API rejects — the real code drops it
+// (e.g. "...-C"). A literal browser test (Playwright/Chromium) could not be
+// run this session — all outbound HTTPS from a launched browser failed
+// (ERR_CONNECTION_RESET), a session-level network restriction confirmed via
+// the proxy status endpoint, not specific to Octopus.
 const OCTOPUS_BASE_URL = 'https://api.octopus.energy/v1';
 
 async function lookupGspRegion(postcode) {
@@ -379,13 +390,21 @@ async function lookupCurrentOctopusVariableProduct() {
     (p) => !p.is_green && !p.is_tracker && !p.is_prepay && !p.is_business && !p.is_restricted && (p.available_to == null || new Date(p.available_to) > new Date())
   );
   if (candidates.length === 0) return { ok: false, error: 'No currently-available default variable Octopus product found matching the expected filters.' };
+  // Prefer an exact name match on the flagship "Flexible Octopus" product —
+  // sorting by most-recently-launched alone picks niche specialty products
+  // instead (bug found via live test, see OCTOPUS_BASE_URL's comment).
+  const flagship = candidates.find((p) => p.display_name === 'Flexible Octopus');
   candidates.sort((a, b) => new Date(b.available_from) - new Date(a.available_from));
-  const product = candidates[0];
+  const product = flagship || candidates[0];
   return { ok: true, productCode: product.code, displayName: product.display_name };
 }
 
 async function lookupOctopusUnitRate(productCode, groupId) {
-  const tariffCode = `E-1R-${productCode}-${groupId}`;
+  // groupId comes back with a leading underscore (e.g. "_C"); the real
+  // tariff-code convention drops it (bug found via live test, see
+  // OCTOPUS_BASE_URL's comment).
+  const regionLetter = groupId.replace(/^_/, '');
+  const tariffCode = `E-1R-${productCode}-${regionLetter}`;
   let response;
   try {
     response = await fetch(`${OCTOPUS_BASE_URL}/products/${productCode}/electricity-tariffs/${tariffCode}/standard-unit-rates/`, { signal: AbortSignal.timeout(10000) });
@@ -437,7 +456,7 @@ async function calculateRooftopViabilityByPostcode(postcode, otherInputs) {
   if (!userProvidedElectricityPrice && electricityPrice.ok) {
     calcInputs.electricityPriceOverride = {
       value: electricityPrice.ratePencePerKwh,
-      tier: "Inference — live-fetched from Octopus Energy's public API, not yet confirmed via a live browser test",
+      tier: "Inference — live-fetched from Octopus Energy's public API, confirmed end-to-end via a direct-HTTP test across 4 real UK regions (25 Jul 2026, see OCTOPUS_BASE_URL's comment); a browser-specific CORS check could not be run this session (network-restricted)",
       note: `Octopus's current "${electricityPrice.productDisplayName}" rate for your region (tariff ${electricityPrice.tariffCode}, valid from ${electricityPrice.validFrom}), fetched live rather than assumed. This is Octopus's own price-cap-tracking rate, not necessarily your actual supplier's identical figure — Ofgem's price cap sets a regional ceiling every standard-variable-tariff supplier must match or beat, so this is a close proxy if you're on a standard variable deal, not a guarantee if you're on a fixed deal or with a different supplier. Enter your own rate above for an exact result.`,
     };
   }

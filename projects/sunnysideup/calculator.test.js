@@ -287,7 +287,11 @@ printResult(
       };
     }
     if (u.includes('/standard-unit-rates/')) {
-      if (!u.includes('E-1R-VAR-25-09-01-_M')) {
+      // Real tariff codes drop the GSP group's leading underscore (group_id
+      // "_M" -> tariff code "...-M", not "...-_M") — a live end-to-end test
+      // (25 Jul 2026, see calculator.js's comment on OCTOPUS_BASE_URL) found
+      // the code previously got this wrong.
+      if (!u.includes('E-1R-VAR-25-09-01-M')) {
         throw new Error('unexpected tariff code in stub URL: ' + u);
       }
       return { ok: true, status: 200, json: async () => ({ results: [{ value_inc_vat: 27.44, valid_from: '2026-07-01T00:00:00Z', valid_to: '2026-10-01T00:00:00Z' }] }) };
@@ -300,7 +304,7 @@ printResult(
     annualConsumptionKwh: 4000,
   });
   printResult('Rooftop by postcode — live electricity price chain succeeds (stubbed fetch: GSP -> current product -> unit rate)', electricityPriceResult);
-  console.log('- electricityPriceLookup.ok should be true, with productDisplayName "Flexible Octopus" and tariffCode "E-1R-VAR-25-09-01-_M" (the newer of the two matching stubbed products, by available_from — the older VAR-22-11-01 and the tracker-flagged Agile product should both be excluded by the filter). assumptions.electricityPricePencePerKwh.value should be 27.44, tier should start with "Inference — live-fetched".');
+  console.log('- electricityPriceLookup.ok should be true, with productDisplayName "Flexible Octopus" and tariffCode "E-1R-VAR-25-09-01-M" (VAR-22-11-01 is excluded by its own expired available_to date, and the tracker-flagged Agile product is excluded by the filter, leaving VAR-25-09-01 as the only — and thus also the flagship-name-matched — candidate). assumptions.electricityPricePencePerKwh.value should be 27.44, tier should start with "Inference — live-fetched".');
 
   global.fetch = async (url) => {
     if (String(url).includes('postcodes.io')) {
