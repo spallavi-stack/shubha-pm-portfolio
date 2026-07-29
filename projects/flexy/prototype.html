@@ -567,26 +567,38 @@
     width:100%;background:transparent;border:1.5px dashed var(--flexy-teal);color:var(--flexy-teal-dark);
     padding:14px;border-radius:14px;font-size:13.5px;font-weight:700;cursor:pointer;margin-bottom:16px;
   }
-  .ifthen-block{background:#fff;border-radius:16px;padding:16px;margin-bottom:14px;box-shadow:0 2px 10px rgba(20,30,40,.05);}
+  .rule-flow-card{background:#fff;border-radius:18px;box-shadow:0 2px 10px rgba(20,30,40,.05);margin-bottom:14px;}
+  .rule-flow-section{padding:18px 18px 20px 18px;}
+  .rule-flow-divider{height:1px;background:var(--line);margin:0 18px;position:relative;}
+  .rule-flow-connector{
+    position:absolute;left:50%;top:0;transform:translate(-50%,-50%);
+    width:26px;height:26px;border-radius:50%;background:var(--flexy-bg);
+    border:1.5px solid var(--line);display:flex;align-items:center;justify-content:center;
+    font-size:12px;color:var(--gray);
+  }
   .ifthen-tag{
-    display:inline-flex;align-items:center;justify-content:center;width:30px;height:22px;border-radius:7px;
-    font-size:11px;font-weight:800;color:#fff;margin-bottom:12px;letter-spacing:.02em;
+    display:inline-flex;align-items:center;justify-content:center;padding:4px 12px;border-radius:20px;
+    font-size:10.5px;font-weight:800;color:#fff;margin-bottom:12px;letter-spacing:.04em;
   }
   .ifthen-tag.if{background:var(--flexy-teal);}
   .ifthen-tag.then{background:var(--flexy-ink);}
-  .ifthen-connector{display:flex;justify-content:center;margin:-6px 0 8px 0;}
-  .ifthen-connector span{font-size:16px;color:var(--gray);}
   select.rule-select{
-    width:100%;padding:12px 14px;border:1.5px solid var(--line);border-radius:10px;font-size:14px;
-    font-weight:600;color:var(--flexy-ink);background:#fff;margin-bottom:12px;
+    width:100%;padding:12px 38px 12px 14px;border:1.5px solid var(--line);border-radius:10px;font-size:14px;
+    font-weight:600;color:var(--flexy-ink);background-color:#fff;margin-bottom:0;
     -webkit-appearance:none;appearance:none;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6'><path d='M1 1l4 4 4-4' stroke='%238A94A6' stroke-width='1.6' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+    background-repeat:no-repeat;background-position:right 14px center;
   }
-  .stepper-row{display:flex;align-items:center;justify-content:space-between;gap:10px;}
+  .threshold-stepper{
+    display:flex;align-items:center;justify-content:center;gap:2px;background:var(--flexy-bg);
+    border-radius:14px;padding:5px;margin-top:14px;
+  }
   .stepper-btn{
-    width:38px;height:38px;border-radius:10px;border:1.5px solid var(--line);background:#fff;
-    font-size:18px;font-weight:800;color:var(--flexy-teal-dark);cursor:pointer;flex-shrink:0;
+    width:34px;height:34px;border-radius:10px;border:none;background:#fff;
+    font-size:17px;font-weight:800;color:var(--flexy-teal-dark);cursor:pointer;flex-shrink:0;
+    box-shadow:0 1px 3px rgba(20,30,40,.12);
   }
-  .stepper-val{flex:1;text-align:center;font-size:19px;font-weight:800;color:var(--flexy-ink);}
+  .stepper-val{padding:0 18px;font-size:18px;font-weight:800;color:var(--flexy-ink);min-width:96px;text-align:center;}
   .rule-delete-btn{
     width:100%;background:none;border:1.5px solid #F0C7C7;color:#C0392B;border-radius:12px;
     padding:12px;font-size:13.5px;font-weight:700;cursor:pointer;margin-top:4px;
@@ -1298,28 +1310,28 @@
     </div>
     <div class="content" style="padding-top:6px;">
 
-      <div class="ifthen-block">
-        <div class="ifthen-tag if">IF</div>
-        <select class="rule-select" id="ruleCondType">
-          <option value="below">Price drops below</option>
-          <option value="above">Price rises above</option>
-        </select>
-        <div class="stepper-row">
-          <button class="stepper-btn" onclick="stepThreshold(-1)">&#8722;</button>
-          <div class="stepper-val"><span id="ruleThresholdVal">15</span>&cent;/kWh</div>
-          <button class="stepper-btn" onclick="stepThreshold(1)">+</button>
+      <div class="rule-flow-card">
+        <div class="rule-flow-section">
+          <div class="ifthen-tag if">IF</div>
+          <select class="rule-select" id="ruleCondType">
+            <option value="below">Price drops below</option>
+            <option value="above">Price rises above</option>
+          </select>
+          <div class="threshold-stepper">
+            <button class="stepper-btn" onclick="stepThreshold(-1)">&#8722;</button>
+            <div class="stepper-val"><span id="ruleThresholdVal">15</span>&cent;/kWh</div>
+            <button class="stepper-btn" onclick="stepThreshold(1)">+</button>
+          </div>
         </div>
-      </div>
-
-      <div class="ifthen-connector"><span>&#8595;</span></div>
-
-      <div class="ifthen-block">
-        <div class="ifthen-tag then">THEN</div>
-        <select class="rule-select" id="ruleAction" style="margin-bottom:0;">
-          <option value="start">Start charging</option>
-          <option value="pause">Pause charging</option>
-          <option value="notify">Notify me, don't change charging</option>
-        </select>
+        <div class="rule-flow-divider"><div class="rule-flow-connector">&#8595;</div></div>
+        <div class="rule-flow-section">
+          <div class="ifthen-tag then">THEN</div>
+          <select class="rule-select" id="ruleAction">
+            <option value="start">Start charging</option>
+            <option value="pause">Pause charging</option>
+            <option value="notify">Notify me, don't change charging</option>
+          </select>
+        </div>
       </div>
 
       <div class="card">
