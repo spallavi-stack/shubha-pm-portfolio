@@ -526,6 +526,83 @@
   .carousel-skip{
     position:absolute;top:22px;right:20px;font-size:12.5px;color:var(--gray);background:none;border:none;cursor:pointer;
   }
+
+  /* --- Charging schedule dial (Polestar-style drag-to-set window) --- */
+  .subpage-header{
+    padding:20px 20px 6px 20px;display:flex;justify-content:space-between;align-items:center;
+  }
+  .subpage-back{font-size:20px;color:var(--gray);cursor:pointer;line-height:1;}
+  .subpage-title{font-size:16px;font-weight:800;color:var(--flexy-ink);}
+  .subpage-save{font-size:13px;font-weight:800;color:var(--flexy-teal-dark);text-decoration:none;cursor:pointer;}
+  .dial-screen-content{display:flex;flex-direction:column;align-items:center;padding-top:6px;}
+  .dial-svg{touch-action:none;margin:8px 0 2px 0;}
+  .dial-handle{cursor:grab;}
+  .dial-handle:active{cursor:grabbing;}
+  .dial-tick-label{font-size:10px;fill:var(--gray);font-weight:600;}
+  .dial-duration{font-size:21px;font-weight:800;fill:var(--flexy-ink);}
+  .dial-duration-sub{font-size:9.5px;fill:var(--gray);font-weight:600;}
+  .dial-times{display:flex;width:100%;gap:12px;margin-top:16px;}
+  .dial-time-box{flex:1;background:#fff;border-radius:14px;padding:12px 14px;box-shadow:0 2px 10px rgba(20,30,40,.05);}
+  .dial-time-box .k{font-size:10.5px;color:var(--gray);font-weight:700;text-transform:uppercase;letter-spacing:.03em;}
+  .dial-time-box .v{font-size:17px;font-weight:800;color:var(--flexy-ink);margin-top:3px;}
+  .dial-time-box.start .v{color:var(--flexy-teal-dark);}
+  .suggest-banner{
+    width:100%;background:#F7E8C8;border-radius:14px;padding:14px 16px;margin-top:16px;
+    display:flex;align-items:center;justify-content:space-between;gap:10px;
+  }
+  .suggest-banner .txt{font-size:12px;color:#5C4712;line-height:1.4;}
+  .suggest-btn{
+    flex-shrink:0;background:var(--flexy-teal-dark);color:#fff;border:none;padding:9px 14px;
+    border-radius:10px;font-size:11.5px;font-weight:800;cursor:pointer;
+  }
+
+  /* --- Automation rules (SmartThings-style If/Then builder) --- */
+  .rule-card{background:#fff;border-radius:16px;padding:16px;margin-bottom:12px;box-shadow:0 2px 10px rgba(20,30,40,.05);cursor:pointer;}
+  .rule-card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;}
+  .rule-name{font-size:14px;font-weight:800;color:var(--flexy-ink);}
+  .rule-sentence{font-size:12px;color:var(--gray);margin-top:6px;line-height:1.5;}
+  .rule-sentence b{color:var(--flexy-ink);font-weight:700;}
+  .rule-empty{text-align:center;padding:40px 20px;color:var(--gray);font-size:13px;line-height:1.5;}
+  .add-rule-btn{
+    width:100%;background:transparent;border:1.5px dashed var(--flexy-teal);color:var(--flexy-teal-dark);
+    padding:14px;border-radius:14px;font-size:13.5px;font-weight:700;cursor:pointer;margin-bottom:16px;
+  }
+  .rule-flow-card{background:#fff;border-radius:18px;box-shadow:0 2px 10px rgba(20,30,40,.05);margin-bottom:14px;}
+  .rule-flow-section{padding:18px 18px 20px 18px;}
+  .rule-flow-divider{height:1px;background:var(--line);margin:0 18px;position:relative;}
+  .rule-flow-connector{
+    position:absolute;left:50%;top:0;transform:translate(-50%,-50%);
+    width:26px;height:26px;border-radius:50%;background:var(--flexy-bg);
+    border:1.5px solid var(--line);display:flex;align-items:center;justify-content:center;
+    font-size:12px;color:var(--gray);
+  }
+  .ifthen-tag{
+    display:inline-flex;align-items:center;justify-content:center;padding:4px 12px;border-radius:20px;
+    font-size:10.5px;font-weight:800;color:#fff;margin-bottom:12px;letter-spacing:.04em;
+  }
+  .ifthen-tag.if{background:var(--flexy-teal);}
+  .ifthen-tag.then{background:var(--flexy-ink);}
+  select.rule-select{
+    width:100%;padding:12px 38px 12px 14px;border:1.5px solid var(--line);border-radius:10px;font-size:14px;
+    font-weight:600;color:var(--flexy-ink);background-color:#fff;margin-bottom:0;
+    -webkit-appearance:none;appearance:none;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6'><path d='M1 1l4 4 4-4' stroke='%238A94A6' stroke-width='1.6' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+    background-repeat:no-repeat;background-position:right 14px center;
+  }
+  .threshold-stepper{
+    display:flex;align-items:center;justify-content:center;gap:2px;background:var(--flexy-bg);
+    border-radius:14px;padding:5px;margin-top:14px;
+  }
+  .stepper-btn{
+    width:34px;height:34px;border-radius:10px;border:none;background:#fff;
+    font-size:17px;font-weight:800;color:var(--flexy-teal-dark);cursor:pointer;flex-shrink:0;
+    box-shadow:0 1px 3px rgba(20,30,40,.12);
+  }
+  .stepper-val{padding:0 18px;font-size:18px;font-weight:800;color:var(--flexy-ink);min-width:96px;text-align:center;}
+  .rule-delete-btn{
+    width:100%;background:none;border:1.5px solid #F0C7C7;color:#C0392B;border-radius:12px;
+    padding:12px;font-size:13.5px;font-weight:700;cursor:pointer;margin-top:4px;
+  }
 </style>
 </head>
 <body>
@@ -1103,6 +1180,26 @@
         <button class="override-btn" onclick="alert('Charging started now, overriding price optimization.')">⚡ Charge now (override)</button>
       </div>
 
+      <div class="card" onclick="openDial()" style="cursor:pointer;margin-top:20px;">
+        <div class="row">
+          <div>
+            <div style="font-size:13px;font-weight:700;color:var(--flexy-ink);">Charging window</div>
+            <div style="font-size:12px;color:var(--gray);margin-top:3px;" id="s9dialSummary">11:00 PM &#8211; 6:00 AM &middot; 7h window</div>
+          </div>
+          <span style="font-size:22px;color:var(--gray);">&rsaquo;</span>
+        </div>
+      </div>
+
+      <div class="card" onclick="openRulesList()" style="cursor:pointer;">
+        <div class="row">
+          <div>
+            <div style="font-size:13px;font-weight:700;color:var(--flexy-ink);">Automation rules</div>
+            <div style="font-size:12px;color:var(--gray);margin-top:3px;" id="s9rulesSummary">2 active</div>
+          </div>
+          <span style="font-size:22px;color:var(--gray);">&rsaquo;</span>
+        </div>
+      </div>
+
       <div style="font-size:13px;font-weight:700;color:var(--flexy-ink);margin:20px 0 10px 0;">Charging history</div>
 
       <div class="card" style="padding:14px 16px;">
@@ -1122,6 +1219,136 @@
       </div>
     </div>
 
+    <div class="bottomnav">
+      <div class="navitem" onclick="goHome()"><span class="navicon">🏠</span>Home</div>
+      <div class="navitem" onclick="go('s8')"><span class="navicon">💵</span>Analytics</div>
+      <div class="navitem active" onclick="goSmartCharging()"><span class="navicon">🔌</span>Smart Charging</div>
+    </div>
+  </div>
+
+  <!-- SCREEN 9dial: Charging window, drag-to-set dial (Polestar-style) -->
+  <div class="screen flexy-bg" id="s9dial">
+    <div class="statusbar"><span>9:41</span><span>●●●● 🔋</span></div>
+    <div class="subpage-header">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span class="subpage-back" onclick="go('s9')">&#8592;</span>
+        <div class="subpage-title">Charging Window</div>
+      </div>
+      <span class="subpage-save" onclick="saveDial()">Save</span>
+    </div>
+    <div class="content dial-screen-content">
+      <div class="p-muted" style="margin:0 0 4px 0;max-width:280px;">Drag the handles to set the hours Flexy is allowed to charge in. Flexy still only charges during the cheapest hours inside this window.</div>
+
+      <svg class="dial-svg" id="dialSvg" width="270" height="270" viewBox="0 0 300 300">
+        <circle cx="150" cy="150" r="100" fill="none" stroke="#EDEFF3" stroke-width="16"/>
+        <path id="dialArc" fill="none" stroke="var(--flexy-teal)" stroke-width="16" stroke-linecap="round"/>
+        <text x="150" y="21" text-anchor="middle" class="dial-tick-label">12am</text>
+        <text x="279" y="154" text-anchor="middle" class="dial-tick-label">6am</text>
+        <text x="150" y="287" text-anchor="middle" class="dial-tick-label">12pm</text>
+        <text x="21" y="154" text-anchor="middle" class="dial-tick-label">6pm</text>
+        <text x="150" y="144" text-anchor="middle" class="dial-duration" id="dialDurationText">7h 0m</text>
+        <text x="150" y="162" text-anchor="middle" class="dial-duration-sub">charging window</text>
+        <circle id="dialStartHandle" class="dial-handle" cx="150" cy="50" r="16" fill="var(--flexy-teal)" stroke="#fff" stroke-width="3"/>
+        <text id="dialStartIcon" x="150" y="55" text-anchor="middle" font-size="14" fill="#fff" pointer-events="none">&#9889;</text>
+        <circle id="dialStopHandle" class="dial-handle" cx="250" cy="150" r="16" fill="var(--flexy-ink)" stroke="#fff" stroke-width="3"/>
+        <text id="dialStopIcon" x="250" y="155" text-anchor="middle" font-size="13" fill="#fff" pointer-events="none">&#10003;</text>
+      </svg>
+
+      <div class="dial-times">
+        <div class="dial-time-box start">
+          <div class="k">Start</div>
+          <div class="v" id="dialStartLabel">11:00 PM</div>
+        </div>
+        <div class="dial-time-box">
+          <div class="k">Stop by</div>
+          <div class="v" id="dialStopLabel">6:00 AM</div>
+        </div>
+      </div>
+
+      <div class="suggest-banner">
+        <div class="txt">Tonight's cheapest window is <b>11:00 PM&#8211;6:00 AM</b>, based on live ComEd prices.</div>
+        <button class="suggest-btn" onclick="useSuggestedWindow()">Use this</button>
+      </div>
+    </div>
+    <div class="bottomnav">
+      <div class="navitem" onclick="goHome()"><span class="navicon">🏠</span>Home</div>
+      <div class="navitem" onclick="go('s8')"><span class="navicon">💵</span>Analytics</div>
+      <div class="navitem active" onclick="goSmartCharging()"><span class="navicon">🔌</span>Smart Charging</div>
+    </div>
+  </div>
+
+  <!-- SCREEN 9rules: Automation rules list -->
+  <div class="screen flexy-bg" id="s9rules">
+    <div class="statusbar"><span>9:41</span><span>●●●● 🔋</span></div>
+    <div class="subpage-header">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span class="subpage-back" onclick="go('s9')">&#8592;</span>
+        <div class="subpage-title">Automation Rules</div>
+      </div>
+    </div>
+    <div class="content" style="padding-top:6px;">
+      <div class="p-muted" style="margin:0 0 14px 0;">Extra rules on top of Flexy's normal price optimization, checked continuously against live ComEd prices.</div>
+      <button class="add-rule-btn" onclick="openRuleEditor(null)">+ New rule</button>
+      <div id="rulesList"></div>
+    </div>
+    <div class="bottomnav">
+      <div class="navitem" onclick="goHome()"><span class="navicon">🏠</span>Home</div>
+      <div class="navitem" onclick="go('s8')"><span class="navicon">💵</span>Analytics</div>
+      <div class="navitem active" onclick="goSmartCharging()"><span class="navicon">🔌</span>Smart Charging</div>
+    </div>
+  </div>
+
+  <!-- SCREEN 9ruleEdit: If/Then rule editor (SmartThings-style) -->
+  <div class="screen flexy-bg" id="s9ruleEdit">
+    <div class="statusbar"><span>9:41</span><span>●●●● 🔋</span></div>
+    <div class="subpage-header">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span class="subpage-back" onclick="go('s9rules')">&#8592;</span>
+        <div class="subpage-title" id="ruleEditTitle">New Rule</div>
+      </div>
+      <span class="subpage-save" onclick="saveRule()">Save</span>
+    </div>
+    <div class="content" style="padding-top:6px;">
+
+      <div class="rule-flow-card">
+        <div class="rule-flow-section">
+          <div class="ifthen-tag if">IF</div>
+          <select class="rule-select" id="ruleCondType">
+            <option value="below">Price drops below</option>
+            <option value="above">Price rises above</option>
+          </select>
+          <div class="threshold-stepper">
+            <button class="stepper-btn" onclick="stepThreshold(-1)">&#8722;</button>
+            <div class="stepper-val"><span id="ruleThresholdVal">15</span>&cent;/kWh</div>
+            <button class="stepper-btn" onclick="stepThreshold(1)">+</button>
+          </div>
+        </div>
+        <div class="rule-flow-divider"><div class="rule-flow-connector">&#8595;</div></div>
+        <div class="rule-flow-section">
+          <div class="ifthen-tag then">THEN</div>
+          <select class="rule-select" id="ruleAction">
+            <option value="start">Start charging</option>
+            <option value="pause">Pause charging</option>
+            <option value="notify">Notify me, don't change charging</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="row">
+          <div>
+            <div style="font-size:13px;font-weight:700;color:var(--flexy-ink);">Rule active</div>
+            <div style="font-size:11px;color:var(--gray);margin-top:2px;">Turn off to keep this rule saved without running it.</div>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="ruleActiveToggle" checked>
+            <span class="slider-toggle"></span>
+          </label>
+        </div>
+      </div>
+
+      <button class="rule-delete-btn" id="ruleDeleteBtn" onclick="deleteRule()" style="display:none;">Delete rule</button>
+    </div>
     <div class="bottomnav">
       <div class="navitem" onclick="goHome()"><span class="navicon">🏠</span>Home</div>
       <div class="navitem" onclick="go('s8')"><span class="navicon">💵</span>Analytics</div>
@@ -1521,8 +1748,187 @@ function setRange(btn, range){
   link.textContent = 'Spot-check one of the real sampled days →';
   link.style.display = 'block';
 }
+// ---- Charging schedule dial (drag-to-set window) ----
+const dialState = { startAngle: 345, stopAngle: 90 }; // 11:00 PM -> 6:00 AM, 0deg=12am at top, clockwise
+const DIAL_CX = 150, DIAL_CY = 150, DIAL_R = 100, DIAL_VIEWBOX = 300;
+
+function dialPolarToXY(angleDeg){
+  const rad = (angleDeg - 90) * Math.PI / 180;
+  return { x: DIAL_CX + DIAL_R * Math.cos(rad), y: DIAL_CY + DIAL_R * Math.sin(rad) };
+}
+function dialAngleFromXY(x, y){
+  let deg = Math.atan2(y - DIAL_CY, x - DIAL_CX) * 180 / Math.PI + 90;
+  if (deg < 0) deg += 360;
+  return deg;
+}
+function dialSnap(angleDeg){
+  return Math.round(angleDeg / 7.5) * 7.5 % 360; // snap to nearest 15 minutes
+}
+function dialArcPath(startAngle, stopAngle){
+  const start = dialPolarToXY(startAngle);
+  const end = dialPolarToXY(stopAngle);
+  const sweep = (stopAngle - startAngle + 360) % 360;
+  const largeArcFlag = sweep > 180 ? 1 : 0;
+  return `M ${start.x.toFixed(1)} ${start.y.toFixed(1)} A ${DIAL_R} ${DIAL_R} 0 ${largeArcFlag} 1 ${end.x.toFixed(1)} ${end.y.toFixed(1)}`;
+}
+function dialAngleToTimeLabel(angleDeg){
+  let totalMin = Math.round((angleDeg / 360) * 24 * 60);
+  totalMin = ((totalMin % 1440) + 1440) % 1440;
+  const h = Math.floor(totalMin / 60), m = totalMin % 60;
+  const ampm = h < 12 ? 'AM' : 'PM';
+  let h12 = h % 12; if (h12 === 0) h12 = 12;
+  return h12 + ':' + String(m).padStart(2,'0') + ' ' + ampm;
+}
+function dialDurationLabel(startAngle, stopAngle){
+  const sweep = (stopAngle - startAngle + 360) % 360;
+  const totalMin = Math.round((sweep / 360) * 24 * 60);
+  return Math.floor(totalMin / 60) + 'h ' + (totalMin % 60) + 'm';
+}
+function renderDial(){
+  const start = dialPolarToXY(dialState.startAngle);
+  const stop = dialPolarToXY(dialState.stopAngle);
+  document.getElementById('dialArc').setAttribute('d', dialArcPath(dialState.startAngle, dialState.stopAngle));
+  document.getElementById('dialStartHandle').setAttribute('cx', start.x.toFixed(1));
+  document.getElementById('dialStartHandle').setAttribute('cy', start.y.toFixed(1));
+  document.getElementById('dialStartIcon').setAttribute('x', start.x.toFixed(1));
+  document.getElementById('dialStartIcon').setAttribute('y', (start.y+5).toFixed(1));
+  document.getElementById('dialStopHandle').setAttribute('cx', stop.x.toFixed(1));
+  document.getElementById('dialStopHandle').setAttribute('cy', stop.y.toFixed(1));
+  document.getElementById('dialStopIcon').setAttribute('x', stop.x.toFixed(1));
+  document.getElementById('dialStopIcon').setAttribute('y', (stop.y+5).toFixed(1));
+  document.getElementById('dialDurationText').textContent = dialDurationLabel(dialState.startAngle, dialState.stopAngle);
+  document.getElementById('dialStartLabel').textContent = dialAngleToTimeLabel(dialState.startAngle);
+  document.getElementById('dialStopLabel').textContent = dialAngleToTimeLabel(dialState.stopAngle);
+}
+function useSuggestedWindow(){
+  dialState.startAngle = 345;
+  dialState.stopAngle = 90;
+  renderDial();
+}
+function openDial(){
+  renderDial();
+  go('s9dial');
+}
+function saveDial(){
+  const summary = document.getElementById('s9dialSummary');
+  if (summary){
+    summary.textContent = dialAngleToTimeLabel(dialState.startAngle) + ' – ' + dialAngleToTimeLabel(dialState.stopAngle)
+      + ' · ' + dialDurationLabel(dialState.startAngle, dialState.stopAngle) + ' window';
+  }
+  go('s9');
+}
+function initDialDrag(){
+  const svg = document.getElementById('dialSvg');
+  let dragging = null; // 'start' | 'stop' | null
+  function svgXY(clientX, clientY){
+    const rect = svg.getBoundingClientRect();
+    return { x: (clientX - rect.left) * (DIAL_VIEWBOX / rect.width), y: (clientY - rect.top) * (DIAL_VIEWBOX / rect.height) };
+  }
+  function onDown(which){
+    return function(e){
+      dragging = which;
+      if (e.target.setPointerCapture) e.target.setPointerCapture(e.pointerId);
+      e.preventDefault();
+    };
+  }
+  function onMove(e){
+    if (!dragging) return;
+    const pt = svgXY(e.clientX, e.clientY);
+    const angle = dialSnap(dialAngleFromXY(pt.x, pt.y));
+    if (dragging === 'start') dialState.startAngle = angle; else dialState.stopAngle = angle;
+    renderDial();
+  }
+  function onUp(){ dragging = null; }
+  document.getElementById('dialStartHandle').addEventListener('pointerdown', onDown('start'));
+  document.getElementById('dialStopHandle').addEventListener('pointerdown', onDown('stop'));
+  svg.addEventListener('pointermove', onMove);
+  svg.addEventListener('pointerup', onUp);
+  svg.addEventListener('pointerleave', onUp);
+}
+
+// ---- Automation rules: If/Then price-threshold builder ----
+let rules = [
+  { id: 1, active: true, condType: 'below', threshold: 15, action: 'start' },
+  { id: 2, active: true, condType: 'above', threshold: 30, action: 'pause' }
+];
+let editingRuleId = null;
+let nextRuleId = 3;
+const RULE_ACTION_LABEL = { start: 'start charging', pause: 'pause charging', notify: "notify me, don't change charging" };
+
+function renderRulesList(){
+  const summary = document.getElementById('s9rulesSummary');
+  if (summary){
+    const activeCount = rules.filter(r => r.active).length;
+    summary.textContent = activeCount + ' active';
+  }
+  const list = document.getElementById('rulesList');
+  if (!list) return;
+  if (rules.length === 0){
+    list.innerHTML = '<div class="rule-empty">No automation rules yet.<br>Flexy already optimizes for the cheapest hours &#8212; rules let you add extra conditions on top.</div>';
+    return;
+  }
+  list.innerHTML = rules.map(r => `
+    <div class="rule-card" onclick="openRuleEditor(${r.id})">
+      <div class="rule-card-top">
+        <div class="rule-name">${r.condType === 'below' ? 'Price drops below' : 'Price rises above'} ${r.threshold}&cent;</div>
+        <label class="switch" onclick="event.stopPropagation()">
+          <input type="checkbox" ${r.active ? 'checked' : ''} onchange="toggleRule(${r.id}, this.checked)">
+          <span class="slider-toggle"></span>
+        </label>
+      </div>
+      <div class="rule-sentence"><b>If</b> price ${r.condType === 'below' ? 'drops below' : 'rises above'} <b>${r.threshold}&cent;/kWh</b> &rarr; <b>Then</b> ${RULE_ACTION_LABEL[r.action]}</div>
+    </div>
+  `).join('');
+}
+function toggleRule(id, active){
+  const r = rules.find(r => r.id === id);
+  if (r) r.active = active;
+  renderRulesList();
+}
+function openRulesList(){
+  renderRulesList();
+  go('s9rules');
+}
+function openRuleEditor(id){
+  editingRuleId = id;
+  const r = id ? rules.find(r => r.id === id) : { condType: 'below', threshold: 15, action: 'start', active: true };
+  document.getElementById('ruleEditTitle').textContent = id ? 'Edit Rule' : 'New Rule';
+  document.getElementById('ruleCondType').value = r.condType;
+  document.getElementById('ruleThresholdVal').textContent = r.threshold;
+  document.getElementById('ruleAction').value = r.action;
+  document.getElementById('ruleActiveToggle').checked = r.active;
+  document.getElementById('ruleDeleteBtn').style.display = id ? 'block' : 'none';
+  go('s9ruleEdit');
+}
+function stepThreshold(delta){
+  const el = document.getElementById('ruleThresholdVal');
+  const v = Math.max(1, Math.min(60, parseInt(el.textContent, 10) + delta));
+  el.textContent = v;
+}
+function saveRule(){
+  const condType = document.getElementById('ruleCondType').value;
+  const threshold = parseInt(document.getElementById('ruleThresholdVal').textContent, 10);
+  const action = document.getElementById('ruleAction').value;
+  const active = document.getElementById('ruleActiveToggle').checked;
+  if (editingRuleId){
+    Object.assign(rules.find(r => r.id === editingRuleId), { condType, threshold, action, active });
+  } else {
+    rules.push({ id: nextRuleId++, condType, threshold, action, active });
+  }
+  renderRulesList();
+  go('s9rules');
+}
+function deleteRule(){
+  rules = rules.filter(r => r.id !== editingRuleId);
+  renderRulesList();
+  go('s9rules');
+}
+
 renderTodayStats();
 loadRealComedData();
+renderDial();
+initDialDrag();
+renderRulesList();
 </script>
 
 </body>
