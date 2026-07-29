@@ -846,7 +846,7 @@
         <!-- Modeled from the three sample sessions in Charging history below: avg nightly
              saving ($7.23 / 3 = $2.41 vs. peak rate) x ~22 typical charging nights/month = $53.02.
              Same real-price-paid-vs-peak-rate baseline as the per-session savings, just rolled up. -->
-        <div class="savings-hero">
+        <div class="savings-hero" id="homeSavingsHero" style="display:none;">
           <div class="savings-hero-val">$53.02</div>
           <div class="savings-hero-lbl">Saved this month by charging in the cheapest hours, vs. ComEd's peak rate</div>
         </div>
@@ -1482,6 +1482,7 @@ function renderFlowDiagram(){
 function updateHomeChargingCard(){
   const t = document.getElementById('homeChargingTitle');
   const s = document.getElementById('homeChargingSub');
+  const hero = document.getElementById('homeSavingsHero');
   if(!t || !s) return;
   if(evConnected){
     t.textContent = 'Smart Charging is on';
@@ -1490,6 +1491,9 @@ function updateHomeChargingCard(){
     t.textContent = 'Set up smart charging';
     s.textContent = 'Connect your EV and Flexy will charge it in the cheapest hours, ready when you need it.';
   }
+  // The savings figure is specifically EV smart-charging savings vs. peak rate, so it
+  // shouldn't appear until there's actually a charging schedule generating it.
+  if (hero) hero.style.display = evConnected ? 'block' : 'none';
 }
 
 // ---- Price & Cost chart: real ComEd data, honestly labeled ----
