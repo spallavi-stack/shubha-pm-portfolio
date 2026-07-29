@@ -250,12 +250,19 @@
     text-align:center;cursor:pointer;background:#fff;
   }
   .ev-card:hover{border-color:var(--flexy-teal);}
-  .ev-card .emoji{font-size:26px;display:block;margin-bottom:8px;}
+  .ev-card .emoji{display:flex;justify-content:center;margin-bottom:8px;color:var(--flexy-teal-dark);}
   .ev-card .name{font-size:13px;font-weight:700;color:var(--flexy-ink);}
 
   .card{
     background:#fff;border-radius:16px;padding:16px;margin-bottom:16px;
     box-shadow:0 2px 10px rgba(20,30,40,.05);
+  }
+  /* Flatter, border-only tier for repeated list items (history entries, rule cards) —
+     shadow is reserved for primary/hero content so the screen doesn't read as a stack
+     of identical boxes. */
+  .card-flat{
+    background:#fff;border-radius:16px;padding:16px;margin-bottom:12px;
+    border:1px solid var(--line);box-shadow:none;
   }
   .row{display:flex;align-items:center;justify-content:space-between;}
   .slider-label{font-size:13px;font-weight:600;color:var(--flexy-ink);margin-bottom:6px;display:flex;justify-content:space-between;}
@@ -280,6 +287,10 @@
   .stat{flex:1;background:#fff;border-radius:14px;padding:12px;box-shadow:0 2px 10px rgba(20,30,40,.05);}
   .stat .val{font-size:17px;font-weight:800;color:var(--flexy-ink);}
   .stat .lbl{font-size:10.5px;color:var(--gray);margin-top:2px;line-height:1.3;}
+  /* The one number that matters most gets more visual weight than its neighbors,
+     instead of every stat in a row competing at the same size. */
+  .stat.primary{background:var(--flexy-bg);box-shadow:none;border:1px solid #EFE6D2;}
+  .stat.primary .val{font-size:21px;color:var(--flexy-teal-dark);}
 
   .savings-hero{
     background:#E9F7EE;border:1px solid #BCE6CA;border-radius:14px;
@@ -306,9 +317,12 @@
   input:checked + .slider-toggle{background:var(--flexy-teal);}
   input:checked + .slider-toggle:before{transform:translateX(18px);}
 
-  .legend{display:flex;gap:14px;font-size:10.5px;color:var(--gray);margin:8px 2px 14px 2px;}
-  .legend span{display:flex;align-items:center;gap:4px;}
-  .dot{width:8px;height:8px;border-radius:50%;display:inline-block;}
+  .legend{display:flex;gap:8px;flex-wrap:wrap;margin:8px 2px 14px 2px;}
+  .legend span{
+    display:flex;align-items:center;gap:6px;font-size:11px;font-weight:700;color:var(--flexy-ink);
+    background:#F4F1E7;padding:5px 10px 5px 8px;border-radius:20px;
+  }
+  .dot{width:9px;height:9px;border-radius:50%;display:inline-block;flex-shrink:0;}
 
   .chart-card{padding:14px 14px 10px;}
   .chart-title{display:flex;align-items:baseline;justify-content:space-between;font-size:12.5px;font-weight:700;color:var(--flexy-ink,#201A12);margin-bottom:4px;}
@@ -336,7 +350,8 @@
   }
   .navitem.active{color:var(--flexy-teal-dark);font-weight:700;}
   .navitem.disabled{opacity:.4;cursor:not-allowed;}
-  .navicon{font-size:18px;}
+  .navicon{display:flex;}
+  .navicon svg{display:block;}
 
   .charge-ring-wrap{display:flex;justify-content:center;margin:10px 0 4px 0;}
 
@@ -492,7 +507,7 @@
   .flow-node{display:flex;flex-direction:column;align-items:center;gap:8px;width:82px;}
   .flow-circle{
     width:68px;height:68px;border-radius:50%;background:#fff;border:2.5px solid var(--flexy-teal);
-    display:flex;align-items:center;justify-content:center;font-size:30px;
+    display:flex;align-items:center;justify-content:center;color:var(--flexy-teal-dark);
     box-shadow:0 4px 14px rgba(20,30,40,.08);
   }
   .flow-label{font-size:11.5px;color:var(--gray);font-weight:700;text-align:center;line-height:1.2;}
@@ -564,7 +579,7 @@
   }
 
   /* --- Automation rules (SmartThings-style If/Then builder) --- */
-  .rule-card{background:#fff;border-radius:16px;padding:16px;margin-bottom:12px;box-shadow:0 2px 10px rgba(20,30,40,.05);cursor:pointer;}
+  .rule-card{background:#fff;border-radius:16px;padding:16px;margin-bottom:12px;border:1px solid var(--line);box-shadow:none;cursor:pointer;}
   .rule-card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;}
   .rule-name{font-size:14px;font-weight:800;color:var(--flexy-ink);}
   .rule-sentence{font-size:12px;color:var(--gray);margin-top:6px;line-height:1.5;}
@@ -830,11 +845,11 @@
     <div class="content" style="padding-top:2px;">
 
       <div class="flow-wrap">
-        <div class="flow-node"><div class="flow-circle">⚡</div><div class="flow-label">ComEd Grid</div></div>
+        <div class="flow-node"><div class="flow-circle"><svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8z"/></svg></div><div class="flow-label">ComEd Grid</div></div>
         <div class="flow-line"></div>
-        <div class="flow-node"><div class="flow-circle">🏠</div><div class="flow-label">Your Home</div></div>
+        <div class="flow-node"><div class="flow-circle"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v9a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-9"/><path d="M9.5 20v-6h5v6"/></svg></div><div class="flow-label">Your Home</div></div>
         <div class="flow-line" id="flowLineCar" style="display:none;"></div>
-        <div class="flow-node" id="flowCarNode" style="display:none;"><div class="flow-circle">🚗</div><div class="flow-label">Your EV</div></div>
+        <div class="flow-node" id="flowCarNode" style="display:none;"><div class="flow-circle"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5V12l2.1-4.5A2 2 0 0 1 8.4 6.3h7.2a2 2 0 0 1 1.8 1.2L19.5 12v4.5"/><path d="M4.5 16.5h15"/><path d="M4.5 12h15"/><circle cx="7.5" cy="16.5" r="1.4" fill="currentColor" stroke="none"/><circle cx="16.5" cy="16.5" r="1.4" fill="currentColor" stroke="none"/></svg></div><div class="flow-label">Your EV</div></div>
       </div>
 
       <div class="card" style="padding:20px;">
@@ -866,7 +881,7 @@
       <div class="card" onclick="goSmartCharging()" style="cursor:pointer;padding:22px 20px;margin-top:4px;">
         <div class="row">
           <div style="display:flex;align-items:center;gap:14px;">
-            <div style="width:48px;height:48px;border-radius:14px;background:var(--flexy-bg);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;">🔌</div>
+            <div style="width:48px;height:48px;border-radius:14px;background:var(--flexy-bg);display:flex;align-items:center;justify-content:center;color:var(--flexy-teal-dark);flex-shrink:0;"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 7V3"/><path d="M15 7V3"/><path d="M7 7h10v4a5 5 0 0 1-5 5 5 5 0 0 1-5-5V7z"/><path d="M12 16v3"/><path d="M9 21h6"/></svg></div>
             <div>
               <div id="homeChargingTitle" style="font-size:15px;font-weight:800;color:var(--flexy-ink);">Set up smart charging</div>
               <div id="homeChargingSub" style="font-size:12.5px;color:var(--gray);margin-top:4px;max-width:230px;line-height:1.4;">Connect your EV and Flexy will charge it in the cheapest hours, ready when you need it.</div>
@@ -878,9 +893,9 @@
 
     </div>
     <div class="bottomnav">
-      <div class="navitem active" onclick="goHome()"><span class="navicon">🏠</span>Home</div>
-      <div class="navitem" onclick="go('s8')"><span class="navicon">💵</span>Analytics</div>
-      <div class="navitem" onclick="goSmartCharging()"><span class="navicon">🔌</span>Smart Charging</div>
+      <div class="navitem active" onclick="goHome()"><span class="navicon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v9a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-9"/><path d="M9.5 20v-6h5v6"/></svg></span>Home</div>
+      <div class="navitem" onclick="go('s8')"><span class="navicon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10"/><path d="M12 20V4"/><path d="M20 20v-7"/></svg></span>Analytics</div>
+      <div class="navitem" onclick="goSmartCharging()"><span class="navicon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 7V3"/><path d="M15 7V3"/><path d="M7 7h10v4a5 5 0 0 1-5 5 5 5 0 0 1-5-5V7z"/><path d="M12 16v3"/><path d="M9 21h6"/></svg></span>Smart Charging</div>
     </div>
   </div>
 
@@ -892,19 +907,19 @@
       <div class="h1" style="margin-top:14px;">Connect your EV</div>
       <div class="p-muted">Flexy uses Smartcar to securely connect to your car, across most major brands.</div>
       <div class="ev-grid">
-        <div class="ev-card" onclick="selectBrand('Chevrolet')"><span class="emoji">🚗</span><span class="name">Chevrolet</span></div>
-        <div class="ev-card" onclick="selectBrand('Tesla')"><span class="emoji">🚙</span><span class="name">Tesla</span></div>
-        <div class="ev-card" onclick="selectBrand('Ford')"><span class="emoji">🚘</span><span class="name">Ford</span></div>
-        <div class="ev-card" onclick="selectBrand('BMW')"><span class="emoji">🚗</span><span class="name">BMW</span></div>
-        <div class="ev-card" onclick="selectBrand('Rivian')"><span class="emoji">🚙</span><span class="name">Rivian</span></div>
-        <div class="ev-card" onclick="selectBrand('your vehicle')"><span class="emoji">🔌</span><span class="name">Other</span></div>
+        <div class="ev-card" onclick="selectBrand('Chevrolet')"><span class="emoji"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5V12l2.1-4.5A2 2 0 0 1 8.4 6.3h7.2a2 2 0 0 1 1.8 1.2L19.5 12v4.5"/><path d="M4.5 16.5h15"/><path d="M4.5 12h15"/><circle cx="7.5" cy="16.5" r="1.4" fill="currentColor" stroke="none"/><circle cx="16.5" cy="16.5" r="1.4" fill="currentColor" stroke="none"/></svg></span><span class="name">Chevrolet</span></div>
+        <div class="ev-card" onclick="selectBrand('Tesla')"><span class="emoji"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5V12l2.1-4.5A2 2 0 0 1 8.4 6.3h7.2a2 2 0 0 1 1.8 1.2L19.5 12v4.5"/><path d="M4.5 16.5h15"/><path d="M4.5 12h15"/><circle cx="7.5" cy="16.5" r="1.4" fill="currentColor" stroke="none"/><circle cx="16.5" cy="16.5" r="1.4" fill="currentColor" stroke="none"/></svg></span><span class="name">Tesla</span></div>
+        <div class="ev-card" onclick="selectBrand('Ford')"><span class="emoji"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5V12l2.1-4.5A2 2 0 0 1 8.4 6.3h7.2a2 2 0 0 1 1.8 1.2L19.5 12v4.5"/><path d="M4.5 16.5h15"/><path d="M4.5 12h15"/><circle cx="7.5" cy="16.5" r="1.4" fill="currentColor" stroke="none"/><circle cx="16.5" cy="16.5" r="1.4" fill="currentColor" stroke="none"/></svg></span><span class="name">Ford</span></div>
+        <div class="ev-card" onclick="selectBrand('BMW')"><span class="emoji"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5V12l2.1-4.5A2 2 0 0 1 8.4 6.3h7.2a2 2 0 0 1 1.8 1.2L19.5 12v4.5"/><path d="M4.5 16.5h15"/><path d="M4.5 12h15"/><circle cx="7.5" cy="16.5" r="1.4" fill="currentColor" stroke="none"/><circle cx="16.5" cy="16.5" r="1.4" fill="currentColor" stroke="none"/></svg></span><span class="name">BMW</span></div>
+        <div class="ev-card" onclick="selectBrand('Rivian')"><span class="emoji"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5V12l2.1-4.5A2 2 0 0 1 8.4 6.3h7.2a2 2 0 0 1 1.8 1.2L19.5 12v4.5"/><path d="M4.5 16.5h15"/><path d="M4.5 12h15"/><circle cx="7.5" cy="16.5" r="1.4" fill="currentColor" stroke="none"/><circle cx="16.5" cy="16.5" r="1.4" fill="currentColor" stroke="none"/></svg></span><span class="name">Rivian</span></div>
+        <div class="ev-card" onclick="selectBrand('your vehicle')"><span class="emoji"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 7V3"/><path d="M15 7V3"/><path d="M7 7h10v4a5 5 0 0 1-5 5 5 5 0 0 1-5-5V7z"/><path d="M12 16v3"/><path d="M9 21h6"/></svg></span><span class="name">Other</span></div>
       </div>
       <button class="btn-skip" onclick="goHome()">I don't have an EV yet, skip this</button>
     </div>
     <div class="bottomnav">
-      <div class="navitem" onclick="goHome()"><span class="navicon">🏠</span>Home</div>
-      <div class="navitem" onclick="go('s8')"><span class="navicon">💵</span>Analytics</div>
-      <div class="navitem active"><span class="navicon">🔌</span>Smart Charging</div>
+      <div class="navitem" onclick="goHome()"><span class="navicon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v9a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-9"/><path d="M9.5 20v-6h5v6"/></svg></span>Home</div>
+      <div class="navitem" onclick="go('s8')"><span class="navicon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10"/><path d="M12 20V4"/><path d="M20 20v-7"/></svg></span>Analytics</div>
+      <div class="navitem active"><span class="navicon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 7V3"/><path d="M15 7V3"/><path d="M7 7h10v4a5 5 0 0 1-5 5 5 5 0 0 1-5-5V7z"/><path d="M12 16v3"/><path d="M9 21h6"/></svg></span>Smart Charging</div>
     </div>
   </div>
 
@@ -980,9 +995,9 @@
       <button class="btn-primary" onclick="go('s7')">Set up charging preferences</button>
     </div>
     <div class="bottomnav">
-      <div class="navitem" onclick="goHome()"><span class="navicon">🏠</span>Home</div>
-      <div class="navitem" onclick="go('s8')"><span class="navicon">💵</span>Analytics</div>
-      <div class="navitem active"><span class="navicon">🔌</span>Smart Charging</div>
+      <div class="navitem" onclick="goHome()"><span class="navicon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v9a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-9"/><path d="M9.5 20v-6h5v6"/></svg></span>Home</div>
+      <div class="navitem" onclick="go('s8')"><span class="navicon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10"/><path d="M12 20V4"/><path d="M20 20v-7"/></svg></span>Analytics</div>
+      <div class="navitem active"><span class="navicon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 7V3"/><path d="M15 7V3"/><path d="M7 7h10v4a5 5 0 0 1-5 5 5 5 0 0 1-5-5V7z"/><path d="M12 16v3"/><path d="M9 21h6"/></svg></span>Smart Charging</div>
     </div>
   </div>
 
@@ -1066,9 +1081,9 @@
       <button class="btn-primary" id="s7SaveBtn" onclick="finishEVSetup()">Save & finish setup</button>
     </div>
     <div class="bottomnav">
-      <div class="navitem" onclick="goHome()"><span class="navicon">🏠</span>Home</div>
-      <div class="navitem" onclick="go('s8')"><span class="navicon">💵</span>Analytics</div>
-      <div class="navitem active"><span class="navicon">🔌</span>Smart Charging</div>
+      <div class="navitem" onclick="goHome()"><span class="navicon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v9a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-9"/><path d="M9.5 20v-6h5v6"/></svg></span>Home</div>
+      <div class="navitem" onclick="go('s8')"><span class="navicon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10"/><path d="M12 20V4"/><path d="M20 20v-7"/></svg></span>Analytics</div>
+      <div class="navitem active"><span class="navicon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 7V3"/><path d="M15 7V3"/><path d="M7 7h10v4a5 5 0 0 1-5 5 5 5 0 0 1-5-5V7z"/><path d="M12 16v3"/><path d="M9 21h6"/></svg></span>Smart Charging</div>
     </div>
   </div>
 
@@ -1088,7 +1103,7 @@
       </div>
 
       <div class="stat-row">
-        <div class="stat"><div class="val" id="costVal">$2.64</div><div class="lbl" id="costLbl">Cost so far (real price × modeled load)</div></div>
+        <div class="stat primary"><div class="val" id="costVal">$2.64</div><div class="lbl" id="costLbl">Cost so far (real price × modeled load)</div></div>
         <div class="stat"><div class="val" id="avgVal">21.4¢</div><div class="lbl">Avg price paid / kWh</div></div>
         <div class="stat"><div class="val" id="extraVal">&#8211;</div><div class="lbl" id="extraLbl">Cheapest hour today</div></div>
       </div>
@@ -1130,9 +1145,9 @@
     </div>
 
     <div class="bottomnav">
-      <div class="navitem" onclick="goHome()"><span class="navicon">🏠</span>Home</div>
-      <div class="navitem active" onclick="go('s8')"><span class="navicon">💵</span>Analytics</div>
-      <div class="navitem" onclick="goSmartCharging()"><span class="navicon">🔌</span>Smart Charging</div>
+      <div class="navitem" onclick="goHome()"><span class="navicon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v9a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-9"/><path d="M9.5 20v-6h5v6"/></svg></span>Home</div>
+      <div class="navitem active" onclick="go('s8')"><span class="navicon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10"/><path d="M12 20V4"/><path d="M20 20v-7"/></svg></span>Analytics</div>
+      <div class="navitem" onclick="goSmartCharging()"><span class="navicon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 7V3"/><path d="M15 7V3"/><path d="M7 7h10v4a5 5 0 0 1-5 5 5 5 0 0 1-5-5V7z"/><path d="M12 16v3"/><path d="M9 21h6"/></svg></span>Smart Charging</div>
     </div>
   </div>
 
@@ -1218,17 +1233,17 @@
 
       <div style="font-size:13px;font-weight:700;color:var(--flexy-ink);margin:20px 0 10px 0;">Charging history</div>
 
-      <div class="card" style="padding:14px 16px;">
+      <div class="card-flat" style="padding:14px 16px;">
         <div style="font-size:10.5px;color:var(--gray);margin-bottom:2px;">Last night &middot; 11:00 PM&#8211;6:40 AM</div>
         <div style="font-size:22px;font-weight:800;color:var(--flexy-ink);">$1.82</div>
         <div style="font-size:11px;color:var(--gray);margin-top:2px;">7.6 kWh &middot; avg 8.1&cent;/kWh &middot; saved $2.40 vs. peak rate</div>
       </div>
-      <div class="card" style="padding:14px 16px;">
+      <div class="card-flat" style="padding:14px 16px;">
         <div style="font-size:10.5px;color:var(--gray);margin-bottom:2px;">Tuesday &middot; 12:15 AM&#8211;5:50 AM</div>
         <div style="font-size:22px;font-weight:800;color:var(--flexy-ink);">$2.05</div>
         <div style="font-size:11px;color:var(--gray);margin-top:2px;">8.9 kWh &middot; avg 9.0&cent;/kWh &middot; saved $2.15 vs. peak rate</div>
       </div>
-      <div class="card" style="padding:14px 16px;">
+      <div class="card-flat" style="padding:14px 16px;">
         <div style="font-size:10.5px;color:var(--gray);margin-bottom:2px;">Sunday &middot; 1:00 AM&#8211;6:20 AM</div>
         <div style="font-size:22px;font-weight:800;color:var(--flexy-ink);">$1.64</div>
         <div style="font-size:11px;color:var(--gray);margin-top:2px;">7.1 kWh &middot; avg 7.8&cent;/kWh &middot; saved $2.68 vs. peak rate</div>
@@ -1236,9 +1251,9 @@
     </div>
 
     <div class="bottomnav">
-      <div class="navitem" onclick="goHome()"><span class="navicon">🏠</span>Home</div>
-      <div class="navitem" onclick="go('s8')"><span class="navicon">💵</span>Analytics</div>
-      <div class="navitem active" onclick="goSmartCharging()"><span class="navicon">🔌</span>Smart Charging</div>
+      <div class="navitem" onclick="goHome()"><span class="navicon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v9a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-9"/><path d="M9.5 20v-6h5v6"/></svg></span>Home</div>
+      <div class="navitem" onclick="go('s8')"><span class="navicon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10"/><path d="M12 20V4"/><path d="M20 20v-7"/></svg></span>Analytics</div>
+      <div class="navitem active" onclick="goSmartCharging()"><span class="navicon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 7V3"/><path d="M15 7V3"/><path d="M7 7h10v4a5 5 0 0 1-5 5 5 5 0 0 1-5-5V7z"/><path d="M12 16v3"/><path d="M9 21h6"/></svg></span>Smart Charging</div>
     </div>
   </div>
 
@@ -1287,9 +1302,9 @@
       </div>
     </div>
     <div class="bottomnav">
-      <div class="navitem" onclick="goHome()"><span class="navicon">🏠</span>Home</div>
-      <div class="navitem" onclick="go('s8')"><span class="navicon">💵</span>Analytics</div>
-      <div class="navitem active" onclick="goSmartCharging()"><span class="navicon">🔌</span>Smart Charging</div>
+      <div class="navitem" onclick="goHome()"><span class="navicon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v9a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-9"/><path d="M9.5 20v-6h5v6"/></svg></span>Home</div>
+      <div class="navitem" onclick="go('s8')"><span class="navicon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10"/><path d="M12 20V4"/><path d="M20 20v-7"/></svg></span>Analytics</div>
+      <div class="navitem active" onclick="goSmartCharging()"><span class="navicon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 7V3"/><path d="M15 7V3"/><path d="M7 7h10v4a5 5 0 0 1-5 5 5 5 0 0 1-5-5V7z"/><path d="M12 16v3"/><path d="M9 21h6"/></svg></span>Smart Charging</div>
     </div>
   </div>
 
@@ -1308,9 +1323,9 @@
       <div id="rulesList"></div>
     </div>
     <div class="bottomnav">
-      <div class="navitem" onclick="goHome()"><span class="navicon">🏠</span>Home</div>
-      <div class="navitem" onclick="go('s8')"><span class="navicon">💵</span>Analytics</div>
-      <div class="navitem active" onclick="goSmartCharging()"><span class="navicon">🔌</span>Smart Charging</div>
+      <div class="navitem" onclick="goHome()"><span class="navicon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v9a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-9"/><path d="M9.5 20v-6h5v6"/></svg></span>Home</div>
+      <div class="navitem" onclick="go('s8')"><span class="navicon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10"/><path d="M12 20V4"/><path d="M20 20v-7"/></svg></span>Analytics</div>
+      <div class="navitem active" onclick="goSmartCharging()"><span class="navicon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 7V3"/><path d="M15 7V3"/><path d="M7 7h10v4a5 5 0 0 1-5 5 5 5 0 0 1-5-5V7z"/><path d="M12 16v3"/><path d="M9 21h6"/></svg></span>Smart Charging</div>
     </div>
   </div>
 
@@ -1366,9 +1381,9 @@
       <button class="rule-delete-btn" id="ruleDeleteBtn" onclick="deleteRule()" style="display:none;">Delete rule</button>
     </div>
     <div class="bottomnav">
-      <div class="navitem" onclick="goHome()"><span class="navicon">🏠</span>Home</div>
-      <div class="navitem" onclick="go('s8')"><span class="navicon">💵</span>Analytics</div>
-      <div class="navitem active" onclick="goSmartCharging()"><span class="navicon">🔌</span>Smart Charging</div>
+      <div class="navitem" onclick="goHome()"><span class="navicon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v9a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-9"/><path d="M9.5 20v-6h5v6"/></svg></span>Home</div>
+      <div class="navitem" onclick="go('s8')"><span class="navicon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10"/><path d="M12 20V4"/><path d="M20 20v-7"/></svg></span>Analytics</div>
+      <div class="navitem active" onclick="goSmartCharging()"><span class="navicon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 7V3"/><path d="M15 7V3"/><path d="M7 7h10v4a5 5 0 0 1-5 5 5 5 0 0 1-5-5V7z"/><path d="M12 16v3"/><path d="M9 21h6"/></svg></span>Smart Charging</div>
     </div>
   </div>
 
