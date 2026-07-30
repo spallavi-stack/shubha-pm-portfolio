@@ -258,6 +258,51 @@
     });
   }
 
+  /* ---------- Case study cards: name flips in, screenshot crawls up from
+     below, bullets stagger in. Base CSS leaves everything visible, so this
+     only runs as a progressive enhancement when full motion is enabled. ---------- */
+  function initCaseCards(){
+    var cards = document.querySelectorAll('.case-card-v2.live');
+    if(!cards.length) return;
+    cards.forEach(function(card){
+      var name = card.querySelector('[data-case-split]');
+      var shot = card.querySelector('[data-case-shot]');
+      var bullets = card.querySelectorAll('[data-case-bullets] li');
+
+      if(!hasGSAP || !enableFullMotion){
+        if(name) name.style.visibility = 'visible';
+        return;
+      }
+
+      var trigger = { trigger: card, start: 'top 82%', once: true };
+
+      if(name && window.SplitText){
+        var split = new SplitText(name, { type:'lines', linesClass:'case-name-line' });
+        gsap.set(name, { visibility:'visible' });
+        gsap.from(split.lines, {
+          yPercent:100, rotateX:70, opacity:0, transformOrigin:'50% 100%',
+          duration:0.9, ease:'expo.out', stagger:0.08, scrollTrigger: trigger
+        });
+      } else if(name){
+        name.style.visibility = 'visible';
+      }
+
+      if(shot){
+        gsap.fromTo(shot, { yPercent:14, opacity:0 }, {
+          yPercent:0, opacity:1, duration:1.15, ease:'power3.out',
+          scrollTrigger: { trigger:card, start:'top 82%', once:true }
+        });
+      }
+
+      if(bullets.length){
+        gsap.fromTo(bullets, { autoAlpha:0, y:10 }, {
+          autoAlpha:1, y:0, duration:0.6, ease:'power2.out', stagger:0.12,
+          scrollTrigger: { trigger:card, start:'top 78%', once:true }
+        });
+      }
+    });
+  }
+
   /* ---------- Subtle hero parallax (full motion only) ---------- */
   function initHeroParallax(){
     if(!enableFullMotion || !hasGSAP) return;
@@ -276,6 +321,7 @@
     initStagger();
     initCountUp();
     initStakesRotator();
+    initCaseCards();
     initMagnetic();
     initEnergyDividers();
     initHeroParallax();

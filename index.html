@@ -110,33 +110,40 @@
   .car-dot{width:7px;height:7px;border-radius:50%;background:var(--border);border:none;padding:0;cursor:pointer;transition:all .2s ease;}
   .car-dot.active{background:var(--accent);width:22px;border-radius:5px;}
 
-  .case-card{
-    background:#fff;border:1px solid var(--border);border-radius:18px;overflow:hidden;
-    text-decoration:none;color:var(--ink);display:flex;flex-direction:column;
-    flex:0 0 420px;width:420px;scroll-snap-align:start;
+  /* Case cards v2: screenshot + name + What/Why/For-whom bullets, full-bleed brand color */
+  .case-card-v2{
+    border-radius:20px;overflow:hidden;text-decoration:none;color:#fff;
+    display:flex;align-items:flex-end;justify-content:space-between;gap:18px;
+    flex:0 0 640px;width:640px;min-height:400px;scroll-snap-align:start;
+    padding:34px;position:relative;
   }
-  .case-card.disabled{opacity:0.65;cursor:default;}
-  .case-banner{height:92px;display:flex;align-items:center;gap:12px;padding:0 22px;font-size:26px;font-family:var(--font-display);font-weight:600;color:#fff;letter-spacing:-0.01em;}
-  .banner-flexy{background:linear-gradient(120deg,#1E4B3B,#F0AE8C);}
-  .banner-sunnysideup{background:linear-gradient(120deg,#D4890B,#F5B942);}
-  .banner-placeholder{background:repeating-linear-gradient(135deg,var(--paper-soft),var(--paper-soft) 10px,var(--border) 10px,var(--border) 20px);}
-  .case-banner .logo-mark{flex-shrink:0;display:block;}
-  .case-body{padding:22px 24px 26px;flex:1;display:flex;flex-direction:column;}
-  .case-tags{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;}
-  .tag{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;padding:3px 10px;border-radius:999px;}
-  .tag-industry{background:#E8F6F4;color:var(--teal-dark);}
-  .tag-status-shipped{background:var(--teal);color:#fff;}
-  .tag-status-progress{background:var(--amber);color:#4A3410;}
-  .tag-status-soon{background:var(--paper-soft);color:var(--ink-soft);}
-  .case-card h3{font-family:var(--font-body);font-size:17px;font-weight:700;margin:0 0 8px;}
-  .thesis-facts{margin:0 0 16px;flex:1;}
-  .fact{display:flex;gap:8px;font-size:13px;padding:6px 0;border-bottom:1px solid var(--border);}
-  .fact:last-child{border-bottom:none;}
-  .fact-label{color:var(--ink-soft);font-weight:600;min-width:64px;flex-shrink:0;}
-  .fact-val{color:var(--ink);}
-  .thesis{font-size:13.5px;color:var(--ink-soft);margin:0 0 16px;flex:1;}
-  .case-card .cta{font-size:13px;font-weight:700;color:var(--accent-dark);}
-  .case-card.disabled .cta{color:var(--ink-faint);}
+  .case-card-v2.banner-flexy{background:linear-gradient(135deg,#1E4B3B,#3E6E58 55%,#F0AE8C);}
+  .case-card-v2.banner-sunnysideup{background:linear-gradient(135deg,#B8720A,#D4890B 55%,#F5B942);}
+  .case-v2-text{position:relative;z-index:1;max-width:290px;display:flex;flex-direction:column;}
+  .case-v2-tag{font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:rgba(255,255,255,0.75);margin-bottom:14px;}
+  .case-v2-name{font-family:var(--font-display);font-weight:600;font-size:34px;letter-spacing:-0.01em;margin:0 0 18px;visibility:hidden;}
+  .case-v2-name .case-name-line{visibility:visible;}
+  .case-v2-bullets{list-style:none;margin:0 0 22px;padding:0;display:flex;flex-direction:column;gap:12px;}
+  .case-v2-bullets li{font-size:13px;line-height:1.5;color:rgba(255,255,255,0.88);padding-left:16px;position:relative;}
+  .case-v2-bullets li::before{content:'';position:absolute;left:0;top:7px;width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.55);}
+  .bullet-label{display:block;font-weight:700;color:#fff;margin-bottom:2px;}
+  .case-card-v2 .cta{font-size:13px;font-weight:700;color:#fff;}
+  .case-v2-shot-wrap{position:relative;z-index:1;flex-shrink:0;align-self:flex-end;margin-bottom:-34px;margin-right:-14px;}
+  .case-v2-shot{display:block;width:200px;border-radius:14px 14px 0 0;box-shadow:0 20px 44px rgba(0,0,0,0.35);}
+  @media(max-width:640px){
+    .case-card-v2{flex:0 0 88vw;width:88vw;flex-direction:column;align-items:flex-start;}
+    .case-v2-text{max-width:none;}
+    .case-v2-shot-wrap{align-self:center;margin:20px 0 -34px;}
+  }
+
+  .case-v2-soon{
+    background:var(--paper-soft);color:var(--ink);
+    display:flex;align-items:flex-start;justify-content:center;flex-direction:column;
+    flex:0 0 320px;width:320px;min-height:400px;padding:34px;
+  }
+  .case-v2-soon .case-v2-tag{color:var(--ink-faint);}
+  .case-v2-soon .case-v2-name{visibility:visible;font-size:22px;color:var(--ink);margin-bottom:24px;}
+  .case-v2-soon .cta{color:var(--ink-faint);}
 
   /* Process */
   .approach-list{counter-reset:step;margin-top:8px;}
@@ -319,120 +326,66 @@
     <button class="car-btn car-prev" id="carPrev" aria-label="Previous case study" type="button">‹</button>
     <button class="car-btn car-next" id="carNext" aria-label="Next case study" type="button">›</button>
     <div class="case-grid" id="caseGrid">
-      <a class="case-card live" href="projects/flexy/index.html">
-        <div class="case-banner banner-flexy">
-          <svg class="logo-mark" viewBox="0 0 64 64" width="34" height="34" role="img" aria-label="Flexy logo">
-            <defs>
-              <linearGradient id="flexyLogoGradHub" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0" stop-color="#1E4B3B"/>
-                <stop offset="1" stop-color="#F0AE8C"/>
-              </linearGradient>
-              <clipPath id="flexyLogoClipHub"><rect x="0" y="0" width="64" height="64" rx="16"/></clipPath>
-            </defs>
-            <rect x="0" y="0" width="64" height="64" rx="16" fill="url(#flexyLogoGradHub)"/>
-            <g clip-path="url(#flexyLogoClipHub)"><circle cx="44" cy="34" r="13" fill="#E7B23A"/></g>
-            <path d="M10 24 L24 34 L36 30 L54 48" fill="none" stroke="#ffffff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-            <circle cx="10" cy="24" r="3.5" fill="#ffffff"/>
-            <circle cx="54" cy="48" r="3.5" fill="#ffffff"/>
-          </svg>
-          Flexy
-        </div>
-        <div class="case-body">
-          <div class="case-tags">
-            <span class="tag tag-industry">Energy Flexibility</span>
-            <span class="tag tag-status-progress">In progress</span>
-          </div>
-          <h3>Smart charge your EV using real dynamic prices</h3>
-          <div class="thesis-facts">
-            <div class="fact"><span class="fact-label">What</span><span class="fact-val">A white-label companion app for utility dynamic/TOU-rate customers: live price visibility and automated smart EV charging, piloted first on ComEd.</span></div>
-            <div class="fact"><span class="fact-label">Why</span><span class="fact-val">Real-time and time-of-use electricity pricing is too complex for most households to track and act on manually.</span></div>
-            <div class="fact"><span class="fact-label">For whom</span><span class="fact-val">ComEd customers in Illinois on, or eligible for, a real-time or time-of-use rate.</span></div>
-          </div>
+      <a class="case-card-v2 live banner-flexy" href="projects/flexy/index.html">
+        <div class="case-v2-text">
+          <div class="case-v2-tag">Energy Flexibility · In progress</div>
+          <h3 class="case-v2-name" data-case-split>Flexy</h3>
+          <ul class="case-v2-bullets" data-case-bullets>
+            <li><span class="bullet-label">What</span>A white-label companion app for utility dynamic/TOU-rate customers: live price visibility and automated smart EV charging, piloted first on ComEd.</li>
+            <li><span class="bullet-label">Why</span>Real-time and time-of-use electricity pricing is too complex for most households to track and act on manually.</li>
+            <li><span class="bullet-label">For whom</span>ComEd customers in Illinois on, or eligible for, a real-time or time-of-use rate.</li>
+          </ul>
           <div class="cta">View full case study →</div>
+        </div>
+        <div class="case-v2-shot-wrap">
+          <img class="case-v2-shot" data-case-shot src="projects/flexy/assets/carousel-screenshot.png" alt="Flexy home screen showing this month's smart-charging savings and live cost per kWh">
         </div>
       </a>
 
-      <a class="case-card live" href="projects/sunnysideup/index.html">
-        <div class="case-banner banner-sunnysideup">
-          <svg class="logo-mark" viewBox="0 0 64 64" width="34" height="34" role="img" aria-label="SunnySideUp logo, a cartoon fried egg">
-            <defs>
-              <clipPath id="ssuClipHub"><rect x="0" y="0" width="64" height="64" rx="16"/></clipPath>
-            </defs>
-            <rect x="0" y="0" width="64" height="64" rx="16" fill="#FFE9B8"/>
-            <g clip-path="url(#ssuClipHub)">
-              <path d="M9 33 C 6 21 18 11 30 12 C 41 13 47 8 54 15 C 61 22 59 33 55 40 C 50 49 38 53 27 50 C 15 47 11 43 9 33 Z" fill="#FFFDF6" stroke="#F0E4D0" stroke-width="1.5"/>
-              <circle cx="35" cy="31" r="13" fill="#F5B942" stroke="#D4890B" stroke-width="1.5"/>
-              <ellipse cx="30" cy="26" rx="4" ry="2.5" fill="#FFE9B8" opacity="0.85"/>
-              <circle cx="31" cy="31" r="1.7" fill="#2B2118"/>
-              <circle cx="39" cy="31" r="1.7" fill="#2B2118"/>
-              <path d="M31 36 Q 35 39.5 39 36" fill="none" stroke="#2B2118" stroke-width="1.8" stroke-linecap="round"/>
-            </g>
-          </svg>
-          SunnySideUp
-        </div>
-        <div class="case-body">
-          <div class="case-tags">
-            <span class="tag tag-industry">Solar · B2C</span>
-            <span class="tag tag-status-progress">In progress</span>
-          </div>
-          <h3>Is solar worth it for your home? An honest, independent read.</h3>
-          <div class="thesis-facts">
-            <div class="fact"><span class="fact-label">What</span><span class="fact-val">An independent, plain-English solar viability check for UK homeowners, renters, and leaseholders, covering both rooftop and newly-legal plug-in/balcony solar, with no referral fees from installers.</span></div>
-            <div class="fact"><span class="fact-label">Why</span><span class="fact-val">UK solar quotes are opaque and hard to compare, every existing comparison site runs a lead-generation model, and cold-call sales pressure is a documented regulatory concern (CMA, Which?).</span></div>
-            <div class="fact"><span class="fact-label">For whom</span><span class="fact-val">UK homeowners weighing rooftop solar before or after a quote, and renters/leaseholders considering a plug-in kit under the UK's newly-changing self-install rules.</span></div>
-          </div>
+      <a class="case-card-v2 live banner-sunnysideup" href="projects/sunnysideup/index.html">
+        <div class="case-v2-text">
+          <div class="case-v2-tag">Solar · B2C · In progress</div>
+          <h3 class="case-v2-name" data-case-split>SunnySideUp</h3>
+          <ul class="case-v2-bullets" data-case-bullets>
+            <li><span class="bullet-label">What</span>An independent, plain-English solar viability check for UK homeowners, renters, and leaseholders, covering both rooftop and newly-legal plug-in/balcony solar, with no referral fees from installers.</li>
+            <li><span class="bullet-label">Why</span>UK solar quotes are opaque and hard to compare, every existing comparison site runs a lead-generation model, and cold-call sales pressure is a documented regulatory concern (CMA, Which?).</li>
+            <li><span class="bullet-label">For whom</span>UK homeowners weighing rooftop solar before or after a quote, and renters/leaseholders considering a plug-in kit under the UK's newly-changing self-install rules.</li>
+          </ul>
           <div class="cta">View full case study →</div>
+        </div>
+        <div class="case-v2-shot-wrap">
+          <img class="case-v2-shot" data-case-shot src="projects/sunnysideup/assets/carousel-screenshot.png" alt="SunnySideUp result screen showing a Borderline viability verdict with payback period, annual saving, and a leasehold-consent flag">
         </div>
       </a>
 
-      <div class="case-card disabled">
-        <div class="case-banner banner-placeholder"></div>
-        <div class="case-body">
-          <div class="case-tags">
-            <span class="tag tag-industry">Energy Access · P2P</span>
-            <span class="tag tag-status-soon">Research next</span>
-          </div>
-          <h3>Next case study: Peer-to-Peer Energy Trading</h3>
-          <p class="thesis">Not yet started. Peer-to-peer energy trading, letting neighbors buy and sell surplus solar or battery power directly, is often pitched as a fix for energy access gaps in underserved and off-grid communities. Before assuming that's the right model, the plan is to research what's actually limiting energy access today: infrastructure, financing, regulation, or something else entirely.</p>
+      <div class="case-card-v2 disabled case-v2-soon">
+        <div class="case-v2-text">
+          <div class="case-v2-tag">Energy Access · P2P · Research next</div>
+          <h3 class="case-v2-name">Peer-to-Peer Energy Trading</h3>
           <div class="cta">Coming soon</div>
         </div>
       </div>
 
-      <div class="case-card disabled">
-        <div class="case-banner banner-placeholder"></div>
-        <div class="case-body">
-          <div class="case-tags">
-            <span class="tag tag-industry">Carbon Accounting · B2B</span>
-            <span class="tag tag-status-soon">Research next</span>
-          </div>
-          <h3>Next case study: Carbon Accounting Software</h3>
-          <p class="thesis">Not yet started. Enterprise tools like Greenly, Cogo, and Zevero automate carbon accounting so businesses can track and audit their energy use and emissions. Before assuming there's still a gap to fill in an increasingly crowded category, the plan is to research where these tools actually fall short for the businesses using them.</p>
+      <div class="case-card-v2 disabled case-v2-soon">
+        <div class="case-v2-text">
+          <div class="case-v2-tag">Carbon Accounting · B2B · Research next</div>
+          <h3 class="case-v2-name">Carbon Accounting Software</h3>
           <div class="cta">Coming soon</div>
         </div>
       </div>
 
-      <div class="case-card disabled">
-        <div class="case-banner banner-placeholder"></div>
-        <div class="case-body">
-          <div class="case-tags">
-            <span class="tag tag-industry">Climate NGOs · B2B2C</span>
-            <span class="tag tag-status-soon">Research next</span>
-          </div>
-          <h3>Next case study: FundTheFuture</h3>
-          <p class="thesis">Not yet started. Exploring a donation facilitation app for improving fundraising efforts, focused specifically on the climate change NGO sector: what's actually broken in how these organizations raise money online today, before assuming the product answer.</p>
+      <div class="case-card-v2 disabled case-v2-soon">
+        <div class="case-v2-text">
+          <div class="case-v2-tag">Climate NGOs · B2B2C · Research next</div>
+          <h3 class="case-v2-name">FundTheFuture</h3>
           <div class="cta">Coming soon</div>
         </div>
       </div>
 
-      <div class="case-card disabled">
-        <div class="case-banner banner-placeholder"></div>
-        <div class="case-body">
-          <div class="case-tags">
-            <span class="tag tag-industry">Climate Adaptation · B2G</span>
-            <span class="tag tag-status-soon">Research next</span>
-          </div>
-          <h3>Next case study: Firstwatch</h3>
-          <p class="thesis">Not yet started. A predictive outreach coordination platform for homeless services NGOs and city agencies: combining NWS forecast data (heat, cold, flood, hurricane) with known encampment locations and HUD's public point-in-time count data, so outreach teams can pre-position blankets, water, and staff before a heat wave or cold snap, not after. The people most exposed to climate extremes are often the least reachable by any consumer app, so this one is built for the outreach coordinator, not the individual.</p>
+      <div class="case-card-v2 disabled case-v2-soon">
+        <div class="case-v2-text">
+          <div class="case-v2-tag">Climate Adaptation · B2G · Research next</div>
+          <h3 class="case-v2-name">Firstwatch</h3>
           <div class="cta">Coming soon</div>
         </div>
       </div>
@@ -475,7 +428,7 @@
     var prevBtn = document.getElementById('carPrev');
     var nextBtn = document.getElementById('carNext');
     if(!grid || !dotsWrap) return;
-    var cards = Array.prototype.slice.call(grid.querySelectorAll('.case-card'));
+    var cards = Array.prototype.slice.call(grid.querySelectorAll('.case-card-v2'));
     if(cards.length < 2){
       if(prevBtn) prevBtn.style.display = 'none';
       if(nextBtn) nextBtn.style.display = 'none';
