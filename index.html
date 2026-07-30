@@ -74,6 +74,14 @@
   .stakes-dots .car-dot{background:rgba(255,255,255,0.22);}
   .stakes-dots .car-dot.active{background:var(--amber);}
 
+  /* Bridge section: picks up the stakes section's amber accent on its kicker,
+     and fades the stakes' navy into the paper background instead of a hard cut. */
+  .about-bridge{position:relative;overflow:hidden;}
+  .about-bridge .section-kicker{color:var(--amber);}
+  .about-bridge .section-kicker::before{background:var(--amber);}
+  .about-fade{position:absolute;top:0;left:0;right:0;height:200px;z-index:0;pointer-events:none;background:linear-gradient(to bottom, var(--navy), transparent);}
+  .about-bridge .wrap{position:relative;z-index:1;}
+
   /* Focus areas */
   .focus-chips{display:flex;flex-wrap:wrap;gap:10px;margin:24px 0 40px;}
   .focus-chip{
@@ -265,7 +273,8 @@
   </div>
 </section>
 
-<section>
+<section class="about-bridge">
+  <div class="about-fade" aria-hidden="true"></div>
   <div class="wrap">
     <div class="section-kicker">What this portfolio is about</div>
     <h2 class="section-title">Climate mitigation and adaptation, energy efficiency, the energy transition, B2C.</h2>
