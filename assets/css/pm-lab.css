@@ -1,0 +1,302 @@
+/* ============================================================
+   PM Strategy & Execution Lab — section-specific styles.
+   Lives inside .dark-section on index.html; reuses tokens
+   (color, type, motion) from design-system.css rather than
+   redefining them.
+   ============================================================ */
+
+.pm-lab{position:relative;overflow:hidden;}
+.pm-lab .wrap{position:relative;z-index:1;}
+
+/* ---------- Tabs ---------- */
+.pm-lab-tabs{
+  display:flex;flex-wrap:wrap;gap:6px;margin-top:32px;
+  border-bottom:1px solid rgba(255,255,255,0.14);
+}
+.pm-lab-tab{
+  font-family:var(--font-body);font-size:14px;font-weight:600;color:#B9C0DD;
+  background:transparent;border:none;padding:14px 18px;cursor:pointer;
+  position:relative;display:flex;align-items:center;gap:10px;
+  transition:color var(--dur-fast) var(--ease-out);
+}
+.pm-lab-tab:hover{color:#fff;}
+.pm-lab-tab:focus-visible{outline:2px solid var(--amber);outline-offset:-2px;}
+.pm-lab-tab::after{
+  content:'';position:absolute;left:18px;right:18px;bottom:-1px;height:2px;
+  background:var(--amber);transform:scaleX(0);transform-origin:center;
+  transition:transform var(--dur-fast) var(--ease-out);
+}
+.pm-lab-tab.is-active{color:#fff;}
+.pm-lab-tab.is-active::after{transform:scaleX(1);}
+
+.pm-lab-tab-num{
+  font-family:var(--font-display);font-size:12px;font-weight:600;color:#2B2118;
+  background:rgba(255,255,255,0.35);width:20px;height:20px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  transition:background var(--dur-fast) var(--ease-out);
+}
+.pm-lab-tab.is-active .pm-lab-tab-num{background:var(--amber);}
+
+/* ---------- Panels ---------- */
+.pm-lab-panels{margin-top:36px;}
+.pm-lab-panel{display:none;}
+.pm-lab-panel.is-active{display:block;animation:pmLabFadeIn .35s var(--ease-out);}
+@keyframes pmLabFadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+
+.pm-lab-panel-intro{max-width:640px;color:#C6CBE6;font-size:14.5px;margin:0 0 24px;}
+
+.pm-lab-tool{
+  background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.12);
+  border-radius:16px;padding:32px;min-height:220px;
+}
+
+@media(max-width:640px){
+  .pm-lab-tabs{gap:2px;}
+  .pm-lab-tab{padding:12px 12px;font-size:13px;gap:8px;}
+  .pm-lab-tab::after{left:12px;right:12px;}
+  .pm-lab-tab-num{width:18px;height:18px;font-size:11px;}
+  .pm-lab-tool{padding:22px;}
+}
+
+@media (prefers-reduced-motion: reduce){
+  .pm-lab-panel.is-active{animation:none;}
+}
+
+/* ============================================================
+   Tool 1 — GTM Trade-Off Engine
+   ============================================================ */
+.gtm-grid{display:grid;grid-template-columns:1.1fr 1fr;gap:40px;align-items:start;}
+@media(max-width:820px){.gtm-grid{grid-template-columns:1fr;}}
+
+.gtm-field{margin-bottom:28px;}
+.gtm-field:last-child{margin-bottom:0;}
+.gtm-label{font-size:12.5px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;color:#B9C0DD;margin-bottom:12px;display:block;}
+
+/* Range slider */
+.gtm-range{
+  -webkit-appearance:none;appearance:none;width:100%;height:4px;border-radius:999px;
+  background:rgba(255,255,255,0.18);accent-color:var(--amber);cursor:pointer;
+}
+.gtm-range::-webkit-slider-thumb{
+  -webkit-appearance:none;appearance:none;width:18px;height:18px;border-radius:50%;
+  background:var(--amber);border:3px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,0.3);cursor:pointer;
+}
+.gtm-range::-moz-range-thumb{
+  width:18px;height:18px;border-radius:50%;background:var(--amber);border:3px solid #fff;
+  box-shadow:0 2px 6px rgba(0,0,0,0.3);cursor:pointer;
+}
+.gtm-range-scale{display:flex;justify-content:space-between;font-size:11.5px;color:#8B90B3;margin-top:8px;}
+.gtm-range-value{font-size:14px;color:#fff;margin-top:8px;font-weight:600;}
+.gtm-range-value span{color:var(--amber);}
+
+/* Segmented controls */
+.gtm-segmented{display:flex;flex-wrap:wrap;gap:8px;}
+.gtm-segment{
+  font-family:var(--font-body);font-size:13px;font-weight:600;color:#C6CBE6;
+  background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.16);border-radius:999px;
+  padding:9px 16px;cursor:pointer;transition:all var(--dur-fast) var(--ease-out);
+}
+.gtm-segment:hover{border-color:rgba(255,255,255,0.4);color:#fff;}
+.gtm-segment.is-active{background:var(--amber);border-color:var(--amber);color:#2B2118;}
+.gtm-segment:focus-visible{outline:2px solid var(--amber);outline-offset:2px;}
+
+/* Dial */
+.gtm-result{display:flex;flex-direction:column;align-items:center;}
+.gtm-dial{width:100%;max-width:280px;position:relative;}
+.gtm-dial svg{width:100%;height:auto;display:block;overflow:visible;}
+.gtm-dial-track{fill:none;stroke:rgba(255,255,255,0.14);stroke-width:14;stroke-linecap:round;}
+.gtm-dial-fill{fill:none;stroke:var(--amber);stroke-width:14;stroke-linecap:round;transition:stroke-dashoffset var(--dur) var(--ease-out);}
+.gtm-dial-needle{stroke:#fff;stroke-width:3;stroke-linecap:round;transform-origin:100px 110px;transition:transform var(--dur) var(--ease-out);}
+.gtm-dial-hub{fill:#fff;}
+.gtm-dial-labels{display:flex;justify-content:space-between;margin-top:-6px;padding:0 6px;font-size:11.5px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;color:#8B90B3;}
+
+/* Summary card */
+.gtm-summary{
+  width:100%;margin-top:20px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.14);
+  border-radius:14px;padding:22px 24px;text-align:left;
+}
+.gtm-summary-tag{font-size:11.5px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--amber);margin-bottom:8px;}
+.gtm-summary-title{font-size:20px;color:#fff;margin:0 0 10px;letter-spacing:-0.01em;}
+.gtm-summary-desc{font-size:13.5px;color:#C6CBE6;margin:0 0 18px;line-height:1.55;}
+.gtm-metrics-label{font-size:11.5px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:#8B90B3;margin-bottom:10px;}
+.gtm-metrics{display:flex;flex-wrap:wrap;gap:8px;}
+.gtm-metric-pill{
+  font-size:12.5px;font-weight:600;color:#fff;background:rgba(231,178,58,0.14);
+  border:1px solid rgba(231,178,58,0.4);border-radius:999px;padding:6px 14px;
+}
+
+@media(max-width:640px){
+  .gtm-summary{padding:18px;}
+}
+
+/* ============================================================
+   Tool 2 — Prioritization & ROI Stress-Tester
+   ============================================================ */
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;}
+
+.rice-table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid rgba(255,255,255,0.14);border-radius:14px;}
+.rice-table{width:100%;border-collapse:collapse;min-width:760px;}
+.rice-table th, .rice-table td{padding:12px 10px;text-align:left;vertical-align:middle;}
+.rice-table thead th{
+  font-size:11px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;color:#B9C0DD;
+  background:rgba(255,255,255,0.05);border-bottom:1px solid rgba(255,255,255,0.14);white-space:nowrap;
+}
+.rice-th-sub{display:block;font-size:10px;font-weight:500;text-transform:none;letter-spacing:0;color:#8B90B3;margin-top:2px;}
+.rice-th-name{min-width:220px;}
+.rice-th-remove{width:36px;}
+.rice-row + .rice-row td{border-top:1px solid rgba(255,255,255,0.08);}
+
+.rice-input{
+  width:100%;font-family:var(--font-body);font-size:13.5px;color:#fff;
+  background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.16);border-radius:8px;
+  padding:8px 10px;transition:border-color var(--dur-fast) var(--ease-out);
+}
+.rice-input:focus{outline:none;border-color:var(--amber);}
+.rice-input-num{width:80px;}
+.rice-input-name{min-width:200px;}
+
+.rice-td-check{text-align:center;}
+.rice-check{width:18px;height:18px;accent-color:var(--amber);cursor:pointer;}
+
+.rice-td-score{white-space:nowrap;}
+.rice-score-value{font-family:var(--font-display);font-size:18px;font-weight:600;color:var(--amber);}
+.rice-rank-badge{
+  display:inline-block;margin-left:8px;font-size:11px;font-weight:700;color:#fff;
+  background:rgba(255,255,255,0.14);border-radius:999px;padding:2px 8px;vertical-align:middle;
+}
+.rice-rank-badge[data-rank="1"]{background:var(--amber);color:#2B2118;}
+
+.rice-td-remove{text-align:center;}
+.rice-remove-btn{
+  width:28px;height:28px;border-radius:50%;border:1px solid rgba(255,255,255,0.16);
+  background:transparent;color:#B9C0DD;font-size:16px;line-height:1;cursor:pointer;
+  transition:all var(--dur-fast) var(--ease-out);
+}
+.rice-remove-btn:hover{background:rgba(255,90,90,0.16);border-color:rgba(255,90,90,0.5);color:#FF9E9E;}
+
+.rice-actions{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:14px;margin-top:20px;}
+.rice-add-btn{
+  font-family:var(--font-body);font-size:13.5px;font-weight:600;color:#2B2118;
+  background:var(--amber);border:none;border-radius:999px;padding:10px 20px;cursor:pointer;
+  transition:transform var(--dur-fast) var(--ease-out);
+}
+.rice-add-btn:hover{transform:translateY(-2px);}
+.rice-formula-note{font-size:12px;color:#8B90B3;}
+
+.rice-risk-panel{
+  margin-top:22px;background:rgba(231,120,58,0.1);border:1px solid rgba(231,120,58,0.4);
+  border-radius:14px;padding:20px 24px;
+}
+.rice-risk-title{font-size:13px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;color:#F0AE8C;margin-bottom:12px;}
+.rice-risk-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px;}
+.rice-risk-list li{font-size:13.5px;color:#F3E3D8;line-height:1.55;padding-left:18px;position:relative;}
+.rice-risk-list li::before{content:'!';position:absolute;left:0;top:0;font-weight:800;color:#F0AE8C;}
+.rice-risk-list strong{color:#fff;}
+
+@media(max-width:640px){
+  .rice-actions{align-items:flex-start;flex-direction:column;}
+}
+
+/* ============================================================
+   Tool 3 — AI Spec & PRD Auditor
+   ============================================================ */
+.prd-input-controls{display:flex;gap:12px;flex-wrap:wrap;}
+.prd-input{
+  flex:1 1 320px;font-family:var(--font-body);font-size:14px;color:#fff;
+  background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.16);border-radius:10px;
+  padding:12px 14px;
+}
+.prd-input:focus{outline:none;border-color:var(--amber);}
+.prd-analyze-btn{flex:0 0 auto;}
+
+.prd-presets{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;}
+.prd-preset-btn{font-size:12.5px;}
+
+.prd-empty-state{max-width:560px;color:#8B90B3;font-size:13.5px;line-height:1.6;margin:24px 0 0;}
+.prd-empty-state strong{color:#C6CBE6;}
+
+.prd-result{margin-top:28px;}
+.prd-result-heading{font-size:12.5px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:#8B90B3;margin-bottom:16px;}
+.prd-result-heading span{color:var(--amber);text-transform:none;letter-spacing:0;font-weight:600;}
+
+/* Nested result tabs — deliberately separate class names from
+   .pm-lab-tab/.pm-lab-panel so pm-lab.js's page-wide tab query
+   doesn't pick these up as top-level tabs. */
+.prd-tabs{display:flex;flex-wrap:wrap;gap:4px;border-bottom:1px solid rgba(255,255,255,0.14);}
+.prd-tab{
+  font-family:var(--font-body);font-size:13.5px;font-weight:600;color:#B9C0DD;
+  background:transparent;border:none;padding:12px 16px;cursor:pointer;
+  position:relative;display:flex;align-items:center;gap:8px;
+  transition:color var(--dur-fast) var(--ease-out);
+}
+.prd-tab:hover{color:#fff;}
+.prd-tab:focus-visible{outline:2px solid var(--amber);outline-offset:-2px;}
+.prd-tab::after{
+  content:'';position:absolute;left:16px;right:16px;bottom:-1px;height:2px;
+  background:var(--amber);transform:scaleX(0);transition:transform var(--dur-fast) var(--ease-out);
+}
+.prd-tab.is-active{color:#fff;}
+.prd-tab.is-active::after{transform:scaleX(1);}
+.prd-tab-num{
+  font-family:var(--font-display);font-size:11px;font-weight:600;color:#2B2118;
+  background:rgba(255,255,255,0.35);width:18px;height:18px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.prd-tab.is-active .prd-tab-num{background:var(--amber);}
+
+.prd-result-panels{margin-top:24px;}
+.prd-result-panel{display:none;}
+.prd-result-panel.is-active{display:block;animation:pmLabFadeIn .35s var(--ease-out);}
+
+/* Edge cases */
+.prd-edge-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;}
+.prd-edge-card{
+  display:flex;gap:14px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.12);
+  border-radius:12px;padding:18px;
+}
+.prd-edge-num{font-family:var(--font-display);font-size:13px;font-weight:600;color:var(--amber);flex-shrink:0;}
+.prd-edge-title{font-size:14px;color:#fff;margin:0 0 6px;}
+.prd-edge-desc{font-size:13px;color:#C6CBE6;margin:0;line-height:1.55;}
+
+/* Metric tree */
+.prd-tree{display:flex;flex-direction:column;align-items:center;padding:8px 0 4px;}
+.prd-tree-kicker{display:block;font-size:11px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:#8B90B3;margin-bottom:8px;text-align:center;}
+.prd-tree-node-north{
+  font-family:var(--font-display);font-size:16px;color:#fff;text-align:center;max-width:420px;
+  background:rgba(231,178,58,0.14);border:1px solid rgba(231,178,58,0.5);border-radius:12px;padding:14px 20px;
+}
+.prd-tree-connector{width:2px;height:22px;background:rgba(255,255,255,0.2);}
+.prd-tree-l1-row{
+  display:flex;flex-wrap:wrap;justify-content:center;gap:28px;width:100%;
+  border-top:1px solid rgba(255,255,255,0.16);padding-top:0;margin-top:0;
+}
+.prd-tree-branch{display:flex;flex-direction:column;align-items:center;flex:1 1 200px;max-width:260px;padding-top:18px;}
+.prd-tree-tick{width:2px;height:18px;background:rgba(255,255,255,0.2);margin-top:-19px;margin-bottom:6px;}
+.prd-tree-node-l1{
+  font-size:13.5px;font-weight:600;color:#fff;text-align:center;
+  background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.18);border-radius:10px;
+  padding:10px 14px;margin-bottom:12px;width:100%;
+}
+.prd-tree-l2-list{display:flex;flex-direction:column;gap:8px;width:100%;}
+.prd-tree-node-l2{
+  font-size:12px;color:#C6CBE6;text-align:center;background:rgba(255,255,255,0.03);
+  border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:7px 10px;
+}
+
+/* Gherkin acceptance criteria */
+.prd-gherkin-list{display:flex;flex-direction:column;gap:16px;}
+.prd-gherkin-card{
+  background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.12);
+  border-radius:12px;padding:18px 20px;
+}
+.prd-gherkin-title{font-size:13.5px;font-weight:700;color:#fff;margin-bottom:10px;}
+.prd-gherkin-line{
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12.5px;
+  color:#C6CBE6;line-height:1.9;
+}
+.prd-kw{color:var(--amber);font-weight:700;margin-right:6px;}
+
+@media(max-width:640px){
+  .prd-input-controls{flex-direction:column;align-items:stretch;}
+  .prd-tree-l1-row{gap:18px;}
+}

@@ -8,6 +8,7 @@
 <link rel="preload" href="assets/fonts/fraunces-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="assets/fonts/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="assets/css/design-system.css">
+<link rel="stylesheet" href="assets/css/pm-lab.css">
 <style>
   /* ---------- Homepage-only styling ---------- */
   header.hero{
@@ -287,6 +288,211 @@
   </div>
 </section>
 
+<section class="dark-section pm-lab" id="pm-lab">
+  <div class="wrap">
+    <div class="section-kicker">PM Strategy &amp; Execution Lab</div>
+    <h2 class="section-title">An interactive PM operating system.</h2>
+    <p class="lede">Three tools I use to make strategic trade-offs, prioritization calls, and spec quality explicit and defensible instead of gut feel. Built to run entirely in your browser.</p>
+
+    <div class="pm-lab-tabs" role="tablist" aria-label="PM Strategy &amp; Execution Lab tools">
+      <button class="pm-lab-tab" type="button" role="tab" id="pm-lab-tab-gtm" aria-controls="pm-lab-panel-gtm" aria-selected="false">
+        <span class="pm-lab-tab-num">1</span> GTM Trade-Off Engine
+      </button>
+      <button class="pm-lab-tab" type="button" role="tab" id="pm-lab-tab-rice" aria-controls="pm-lab-panel-rice" aria-selected="false">
+        <span class="pm-lab-tab-num">2</span> Prioritization &amp; ROI Stress-Tester
+      </button>
+      <button class="pm-lab-tab" type="button" role="tab" id="pm-lab-tab-prd" aria-controls="pm-lab-panel-prd" aria-selected="false">
+        <span class="pm-lab-tab-num">3</span> AI Spec &amp; PRD Auditor
+      </button>
+    </div>
+
+    <div class="pm-lab-panels">
+      <div class="pm-lab-panel" id="pm-lab-panel-gtm" role="tabpanel" aria-labelledby="pm-lab-tab-gtm">
+        <p class="pm-lab-panel-intro">A PLG-vs-enterprise sales motion trade-off calculator, grounded in growth benchmarks.</p>
+        <div class="pm-lab-tool" id="gtm-engine-root" data-pm-tool="gtm-engine">
+          <div class="gtm-grid">
+            <div class="gtm-controls">
+              <div class="gtm-field">
+                <label class="gtm-label" for="gtmAcv">Annual Contract Value (ACV)</label>
+                <input type="range" id="gtmAcv" class="gtm-range" min="1000" max="100000" step="500" value="15000" aria-describedby="gtmAcvValue">
+                <div class="gtm-range-scale"><span>$1,000</span><span>$100,000</span></div>
+                <div class="gtm-range-value">Selected: <span id="gtmAcvValue">$15,000</span></div>
+              </div>
+
+              <div class="gtm-field">
+                <div class="gtm-label" id="gtmCycleLabel">Sales Cycle Length</div>
+                <div class="gtm-segmented" role="radiogroup" aria-labelledby="gtmCycleLabel" id="gtmCycleGroup">
+                  <button type="button" class="gtm-segment" data-value="instant" role="radio" aria-checked="false">Instant</button>
+                  <button type="button" class="gtm-segment is-active" data-value="1-3" role="radio" aria-checked="true">1&ndash;3 Months</button>
+                  <button type="button" class="gtm-segment" data-value="3-6" role="radio" aria-checked="false">3&ndash;6 Months</button>
+                  <button type="button" class="gtm-segment" data-value="6-12" role="radio" aria-checked="false">6&ndash;12 Months</button>
+                </div>
+              </div>
+
+              <div class="gtm-field">
+                <div class="gtm-label" id="gtmPersonaLabel">Target Persona</div>
+                <div class="gtm-segmented" role="radiogroup" aria-labelledby="gtmPersonaLabel" id="gtmPersonaGroup">
+                  <button type="button" class="gtm-segment is-active" data-value="end-user" role="radio" aria-checked="true">Individual End-User</button>
+                  <button type="button" class="gtm-segment" data-value="team-lead" role="radio" aria-checked="false">Team Lead</button>
+                  <button type="button" class="gtm-segment" data-value="exec-vp" role="radio" aria-checked="false">Executive VP</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="gtm-result">
+              <div class="gtm-dial" aria-hidden="true">
+                <svg viewBox="0 0 200 116">
+                  <path class="gtm-dial-track" d="M20 110 A 80 80 0 0 1 180 110"/>
+                  <path class="gtm-dial-fill" id="gtmDialFill" d="M20 110 A 80 80 0 0 1 180 110"/>
+                  <line class="gtm-dial-needle" id="gtmDialNeedle" x1="100" y1="110" x2="100" y2="38"/>
+                  <circle class="gtm-dial-hub" cx="100" cy="110" r="6"/>
+                </svg>
+                <div class="gtm-dial-labels"><span>PLG</span><span>Enterprise</span></div>
+              </div>
+
+              <div class="gtm-summary">
+                <div class="gtm-summary-tag" id="gtmSummaryTag">Recommended motion</div>
+                <h4 class="gtm-summary-title" id="gtmSummaryTitle">&nbsp;</h4>
+                <p class="gtm-summary-desc" id="gtmSummaryDesc"></p>
+                <div class="gtm-metrics-label">Metrics to watch</div>
+                <div class="gtm-metrics" id="gtmMetrics"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="pm-lab-panel" id="pm-lab-panel-rice" role="tabpanel" aria-labelledby="pm-lab-tab-rice">
+        <p class="pm-lab-panel-intro">A dynamic RICE feature matrix that calculates strategic blindspot penalties and retention risk.</p>
+        <div class="pm-lab-tool" id="prioritization-root" data-pm-tool="prioritization">
+          <div class="rice-table-wrap">
+            <table class="rice-table" id="riceTable">
+              <thead>
+                <tr>
+                  <th class="rice-th-name">Feature</th>
+                  <th>Reach<span class="rice-th-sub">users/quarter</span></th>
+                  <th>Impact<span class="rice-th-sub">0.25&ndash;3</span></th>
+                  <th>Confidence<span class="rice-th-sub">%</span></th>
+                  <th>Effort<span class="rice-th-sub">person-months</span></th>
+                  <th>High Tech<br>Debt Risk</th>
+                  <th>Missing<br>Retention Loop</th>
+                  <th>RICE Score</th>
+                  <th class="rice-th-remove"><span class="sr-only">Remove</span></th>
+                </tr>
+              </thead>
+              <tbody id="riceTableBody">
+                <tr class="rice-row" data-rice-row>
+                  <td><input type="text" class="rice-input rice-input-name" data-field="name" value="Self-Service Team Invite Flow"></td>
+                  <td><input type="number" class="rice-input rice-input-num" data-field="reach" value="1200" min="0" step="10"></td>
+                  <td><input type="number" class="rice-input rice-input-num" data-field="impact" value="2" min="0.25" max="3" step="0.25"></td>
+                  <td><input type="number" class="rice-input rice-input-num" data-field="confidence" value="80" min="0" max="100" step="5"></td>
+                  <td><input type="number" class="rice-input rice-input-num" data-field="effort" value="1.5" min="0.1" step="0.1"></td>
+                  <td class="rice-td-check"><input type="checkbox" class="rice-check" data-field="techDebt"></td>
+                  <td class="rice-td-check"><input type="checkbox" class="rice-check" data-field="retentionGap"></td>
+                  <td class="rice-td-score"><span class="rice-score-value" data-rice-score>0</span><span class="rice-rank-badge" data-rice-rank></span></td>
+                  <td class="rice-td-remove"><button type="button" class="rice-remove-btn" aria-label="Remove this feature row">&times;</button></td>
+                </tr>
+                <tr class="rice-row" data-rice-row>
+                  <td><input type="text" class="rice-input rice-input-name" data-field="name" value="Custom Enterprise SSO"></td>
+                  <td><input type="number" class="rice-input rice-input-num" data-field="reach" value="150" min="0" step="10"></td>
+                  <td><input type="number" class="rice-input rice-input-num" data-field="impact" value="3" min="0.25" max="3" step="0.25"></td>
+                  <td><input type="number" class="rice-input rice-input-num" data-field="confidence" value="90" min="0" max="100" step="5"></td>
+                  <td><input type="number" class="rice-input rice-input-num" data-field="effort" value="3" min="0.1" step="0.1"></td>
+                  <td class="rice-td-check"><input type="checkbox" class="rice-check" data-field="techDebt" checked></td>
+                  <td class="rice-td-check"><input type="checkbox" class="rice-check" data-field="retentionGap"></td>
+                  <td class="rice-td-score"><span class="rice-score-value" data-rice-score>0</span><span class="rice-rank-badge" data-rice-rank></span></td>
+                  <td class="rice-td-remove"><button type="button" class="rice-remove-btn" aria-label="Remove this feature row">&times;</button></td>
+                </tr>
+                <tr class="rice-row" data-rice-row>
+                  <td><input type="text" class="rice-input rice-input-name" data-field="name" value="AI Automated Summary Widget"></td>
+                  <td><input type="number" class="rice-input rice-input-num" data-field="reach" value="2000" min="0" step="10"></td>
+                  <td><input type="number" class="rice-input rice-input-num" data-field="impact" value="1" min="0.25" max="3" step="0.25"></td>
+                  <td><input type="number" class="rice-input rice-input-num" data-field="confidence" value="50" min="0" max="100" step="5"></td>
+                  <td><input type="number" class="rice-input rice-input-num" data-field="effort" value="1" min="0.1" step="0.1"></td>
+                  <td class="rice-td-check"><input type="checkbox" class="rice-check" data-field="techDebt"></td>
+                  <td class="rice-td-check"><input type="checkbox" class="rice-check" data-field="retentionGap" checked></td>
+                  <td class="rice-td-score"><span class="rice-score-value" data-rice-score>0</span><span class="rice-rank-badge" data-rice-rank></span></td>
+                  <td class="rice-td-remove"><button type="button" class="rice-remove-btn" aria-label="Remove this feature row">&times;</button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <template id="riceRowTemplate">
+            <tr class="rice-row" data-rice-row>
+              <td><input type="text" class="rice-input rice-input-name" data-field="name" value="New feature" placeholder="Feature name"></td>
+              <td><input type="number" class="rice-input rice-input-num" data-field="reach" value="500" min="0" step="10"></td>
+              <td><input type="number" class="rice-input rice-input-num" data-field="impact" value="1" min="0.25" max="3" step="0.25"></td>
+              <td><input type="number" class="rice-input rice-input-num" data-field="confidence" value="50" min="0" max="100" step="5"></td>
+              <td><input type="number" class="rice-input rice-input-num" data-field="effort" value="1" min="0.1" step="0.1"></td>
+              <td class="rice-td-check"><input type="checkbox" class="rice-check" data-field="techDebt"></td>
+              <td class="rice-td-check"><input type="checkbox" class="rice-check" data-field="retentionGap"></td>
+              <td class="rice-td-score"><span class="rice-score-value" data-rice-score>0</span><span class="rice-rank-badge" data-rice-rank></span></td>
+              <td class="rice-td-remove"><button type="button" class="rice-remove-btn" aria-label="Remove this feature row">&times;</button></td>
+            </tr>
+          </template>
+
+          <div class="rice-actions">
+            <button type="button" class="rice-add-btn" id="riceAddRow">+ Add feature</button>
+            <div class="rice-formula-note">RICE Score = (Reach &times; Impact &times; Confidence) &divide; Effort, then &minus;20% per active risk flag.</div>
+          </div>
+
+          <div class="rice-risk-panel" id="riceRiskPanel" hidden>
+            <div class="rice-risk-title">Strategic Risk Flags</div>
+            <ul class="rice-risk-list" id="riceRiskList"></ul>
+          </div>
+        </div>
+      </div>
+      <div class="pm-lab-panel" id="pm-lab-panel-prd" role="tabpanel" aria-labelledby="pm-lab-tab-prd">
+        <p class="pm-lab-panel-intro">See a raw feature idea turned into an edge-case audit, a metric tree, and engineering-ready user stories.</p>
+        <div class="pm-lab-tool" id="prd-analyzer-root" data-pm-tool="prd-analyzer">
+          <div class="prd-input-row">
+            <label class="gtm-label" for="prdInput">Feature idea</label>
+            <div class="prd-input-controls">
+              <input type="text" id="prdInput" class="prd-input" value="Add 2FA via SMS to login flow" placeholder="Describe a feature idea…">
+              <button type="button" class="rice-add-btn prd-analyze-btn" id="prdAnalyzeBtn">Analyze Spec Complexity</button>
+            </div>
+            <div class="prd-presets" id="prdPresets">
+              <button type="button" class="gtm-segment prd-preset-btn is-active" data-preset="Add 2FA via SMS to login flow">Add 2FA via SMS to login flow</button>
+              <button type="button" class="gtm-segment prd-preset-btn" data-preset="Implement Team Member Permissions Grid">Implement Team Member Permissions Grid</button>
+              <button type="button" class="gtm-segment prd-preset-btn" data-preset="Build CSV Export for Analytics Reports">Build CSV Export for Analytics Reports</button>
+            </div>
+          </div>
+
+          <p class="prd-empty-state" id="prdEmptyState">Pick a preset above (or write your own feature idea) and click <strong>Analyze Spec Complexity</strong> to see it turned into a full spec.</p>
+
+          <div class="prd-result" id="prdResult" hidden>
+            <div class="prd-result-heading">Spec audit for <span id="prdResultFeature"></span></div>
+
+            <div class="prd-tabs" role="tablist" aria-label="Spec audit sections">
+              <button class="prd-tab is-active" type="button" role="tab" id="prd-tab-edge" aria-controls="prd-panel-edge" aria-selected="true">
+                <span class="prd-tab-num">1</span> Edge Cases &amp; Risks
+              </button>
+              <button class="prd-tab" type="button" role="tab" id="prd-tab-metrics" aria-controls="prd-panel-metrics" aria-selected="false">
+                <span class="prd-tab-num">2</span> Metric Tree
+              </button>
+              <button class="prd-tab" type="button" role="tab" id="prd-tab-gherkin" aria-controls="prd-panel-gherkin" aria-selected="false">
+                <span class="prd-tab-num">3</span> Acceptance Criteria
+              </button>
+            </div>
+
+            <div class="prd-result-panels">
+              <div class="prd-result-panel is-active" id="prd-panel-edge" role="tabpanel" aria-labelledby="prd-tab-edge">
+                <div class="prd-edge-list" id="prdEdgeList"></div>
+              </div>
+              <div class="prd-result-panel" id="prd-panel-metrics" role="tabpanel" aria-labelledby="prd-tab-metrics">
+                <div class="prd-metric-tree" id="prdMetricTree"></div>
+              </div>
+              <div class="prd-result-panel" id="prd-panel-gherkin" role="tabpanel" aria-labelledby="prd-tab-gherkin">
+                <div class="prd-gherkin-list" id="prdGherkinList"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <section class="dark-section case-bridge" id="case-studies">
   <div class="about-fade" aria-hidden="true"></div>
   <div class="wrap">
@@ -406,6 +612,10 @@
 <script src="assets/vendor/ScrollTrigger.min.js"></script>
 <script src="assets/vendor/SplitText.min.js"></script>
 <script src="assets/js/motion.js"></script>
+<script src="assets/js/pm-lab.js"></script>
+<script src="assets/js/gtm-engine.js"></script>
+<script src="assets/js/prioritization.js"></script>
+<script src="assets/js/prd-analyzer.js"></script>
 <script>
 (function(){
   function initCarousel(){
