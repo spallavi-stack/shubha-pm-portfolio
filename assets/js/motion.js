@@ -217,7 +217,8 @@
     function start(){
       if(started) return;
       started = true;
-      setTimeout(function(){ show(0); scheduleNext(3000); }, 2000);
+      show(0);
+      scheduleNext(3000);
     }
     if(window.ScrollTrigger){
       ScrollTrigger.create({ trigger: container, start:'top 85%', once:true, onEnter: start });
