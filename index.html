@@ -106,16 +106,22 @@
   .case-bridge .car-dot.active{background:var(--amber);}
 
   /* Case cards v2: screenshot + name + What/Why/For-whom bullets, full-bleed
-     brand color. One card fills the full carousel width so exactly one is
-     visible at a time (flex:0 0 100% + scroll-snap), not a peek of the next. */
+     brand color. .case-card-v2 is just the carousel slot - flex:0 0 100%
+     so exactly one is visible at a time (scroll-snap) - and .case-v2-inner
+     is the actual visual card, capped narrower than the slot so it doesn't
+     stretch edge to edge with a lot of empty middle space. */
   .case-card-v2{
-    border-radius:20px;overflow:hidden;text-decoration:none;color:#fff;
+    text-decoration:none;color:#fff;display:flex;justify-content:center;
+    flex:0 0 100%;width:100%;scroll-snap-align:start;
+  }
+  .case-v2-inner{
+    border-radius:20px;overflow:hidden;
     display:flex;align-items:flex-end;justify-content:space-between;gap:18px;
-    flex:0 0 100%;width:100%;min-height:420px;scroll-snap-align:start;
+    width:100%;max-width:840px;min-height:420px;
     padding:44px;position:relative;
   }
-  .case-card-v2.banner-flexy{background:linear-gradient(135deg,#1E4B3B,#3E6E58 55%,#F0AE8C);}
-  .case-card-v2.banner-sunnysideup{background:linear-gradient(135deg,#B8720A,#D4890B 55%,#F5B942);}
+  .case-v2-inner.banner-flexy{background:linear-gradient(135deg,#1E4B3B,#3E6E58 55%,#F0AE8C);}
+  .case-v2-inner.banner-sunnysideup{background:linear-gradient(135deg,#B8720A,#D4890B 55%,#F5B942);}
   .case-v2-text{position:relative;z-index:1;max-width:380px;display:flex;flex-direction:column;}
   .case-v2-tag{font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:rgba(255,255,255,0.75);margin-bottom:14px;}
   .case-v2-name{font-family:var(--font-display);font-weight:600;font-size:38px;letter-spacing:-0.01em;margin:0 0 20px;visibility:hidden;}
@@ -124,11 +130,11 @@
   .case-v2-bullets li{font-size:13.5px;line-height:1.55;color:rgba(255,255,255,0.88);padding-left:16px;position:relative;}
   .case-v2-bullets li::before{content:'';position:absolute;left:0;top:7px;width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.55);}
   .bullet-label{display:block;font-weight:700;color:#fff;margin-bottom:2px;}
-  .case-card-v2 .cta{font-size:13px;font-weight:700;color:#fff;}
+  .case-v2-inner .cta{font-size:13px;font-weight:700;color:#fff;}
   .case-v2-shot-wrap{position:relative;z-index:1;flex-shrink:0;align-self:flex-end;margin-bottom:-44px;margin-right:10px;}
-  .case-v2-shot{display:block;width:260px;border-radius:14px 14px 0 0;box-shadow:0 20px 44px rgba(0,0,0,0.35);}
+  .case-v2-shot{display:block;width:220px;border-radius:14px 14px 0 0;box-shadow:0 20px 44px rgba(0,0,0,0.35);}
   @media(max-width:760px){
-    .case-card-v2{flex-direction:column;align-items:flex-start;}
+    .case-v2-inner{flex-direction:column;align-items:flex-start;max-width:none;}
     .case-v2-text{max-width:none;}
     .case-v2-shot-wrap{align-self:center;margin:20px 0 -44px;}
   }
@@ -136,7 +142,6 @@
   .case-v2-soon{
     background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);color:#fff;
     display:flex;align-items:flex-start;justify-content:center;flex-direction:column;
-    flex:0 0 100%;width:100%;min-height:420px;padding:44px;
   }
   .case-v2-soon .case-v2-tag{color:rgba(255,255,255,0.5);}
   .case-v2-soon .case-v2-name{visibility:visible;font-size:22px;color:#fff;margin-bottom:24px;}
@@ -291,67 +296,79 @@
     <button class="car-btn car-prev" id="carPrev" aria-label="Previous case study" type="button">‹</button>
     <button class="car-btn car-next" id="carNext" aria-label="Next case study" type="button">›</button>
     <div class="case-grid" id="caseGrid">
-      <a class="case-card-v2 live banner-flexy" href="projects/flexy/index.html">
-        <div class="case-v2-text">
-          <div class="case-v2-tag">Energy Flexibility · In progress</div>
-          <h3 class="case-v2-name" data-case-split>Flexy</h3>
-          <ul class="case-v2-bullets" data-case-bullets>
-            <li><span class="bullet-label">What</span>A white-label companion app for utility dynamic/TOU-rate customers: live price visibility and automated smart EV charging, piloted first on ComEd.</li>
-            <li><span class="bullet-label">Why</span>Real-time and time-of-use electricity pricing is too complex for most households to track and act on manually.</li>
-            <li><span class="bullet-label">For whom</span>ComEd customers in Illinois on, or eligible for, a real-time or time-of-use rate.</li>
-          </ul>
-          <div class="cta">View full case study →</div>
-        </div>
-        <div class="case-v2-shot-wrap">
-          <img class="case-v2-shot" data-case-shot src="projects/flexy/assets/carousel-screenshot.png" alt="Flexy home screen showing this month's smart-charging savings and live cost per kWh">
-        </div>
-      </a>
-
-      <a class="case-card-v2 live banner-sunnysideup" href="projects/sunnysideup/index.html">
-        <div class="case-v2-text">
-          <div class="case-v2-tag">Solar · B2C · In progress</div>
-          <h3 class="case-v2-name" data-case-split>SunnySideUp</h3>
-          <ul class="case-v2-bullets" data-case-bullets>
-            <li><span class="bullet-label">What</span>An independent, plain-English solar viability check for UK homeowners, renters, and leaseholders, covering both rooftop and newly-legal plug-in/balcony solar, with no referral fees from installers.</li>
-            <li><span class="bullet-label">Why</span>UK solar quotes are opaque and hard to compare, every existing comparison site runs a lead-generation model, and cold-call sales pressure is a documented regulatory concern (CMA, Which?).</li>
-            <li><span class="bullet-label">For whom</span>UK homeowners weighing rooftop solar before or after a quote, and renters/leaseholders considering a plug-in kit under the UK's newly-changing self-install rules.</li>
-          </ul>
-          <div class="cta">View full case study →</div>
-        </div>
-        <div class="case-v2-shot-wrap">
-          <img class="case-v2-shot" data-case-shot src="projects/sunnysideup/assets/carousel-screenshot.png" alt="SunnySideUp result screen showing a Borderline viability verdict with payback period, annual saving, and a leasehold-consent flag">
+      <a class="case-card-v2 live" href="projects/flexy/index.html">
+        <div class="case-v2-inner banner-flexy">
+          <div class="case-v2-text">
+            <div class="case-v2-tag">Energy Flexibility · In progress</div>
+            <h3 class="case-v2-name" data-case-split>Flexy</h3>
+            <ul class="case-v2-bullets" data-case-bullets>
+              <li><span class="bullet-label">What</span>A white-label companion app for utility dynamic/TOU-rate customers: live price visibility and automated smart EV charging, piloted first on ComEd.</li>
+              <li><span class="bullet-label">Why</span>Real-time and time-of-use electricity pricing is too complex for most households to track and act on manually.</li>
+              <li><span class="bullet-label">For whom</span>ComEd customers in Illinois on, or eligible for, a real-time or time-of-use rate.</li>
+            </ul>
+            <div class="cta">View full case study →</div>
+          </div>
+          <div class="case-v2-shot-wrap">
+            <img class="case-v2-shot" data-case-shot src="projects/flexy/assets/carousel-screenshot.png" alt="Flexy home screen showing this month's smart-charging savings and live cost per kWh">
+          </div>
         </div>
       </a>
 
-      <div class="case-card-v2 disabled case-v2-soon">
-        <div class="case-v2-text">
-          <div class="case-v2-tag">Energy Access · P2P · Research next</div>
-          <h3 class="case-v2-name">Peer-to-Peer Energy Trading</h3>
-          <div class="cta">Coming soon</div>
+      <a class="case-card-v2 live" href="projects/sunnysideup/index.html">
+        <div class="case-v2-inner banner-sunnysideup">
+          <div class="case-v2-text">
+            <div class="case-v2-tag">Solar · B2C · In progress</div>
+            <h3 class="case-v2-name" data-case-split>SunnySideUp</h3>
+            <ul class="case-v2-bullets" data-case-bullets>
+              <li><span class="bullet-label">What</span>An independent, plain-English solar viability check for UK homeowners, renters, and leaseholders, covering both rooftop and newly-legal plug-in/balcony solar, with no referral fees from installers.</li>
+              <li><span class="bullet-label">Why</span>UK solar quotes are opaque and hard to compare, every existing comparison site runs a lead-generation model, and cold-call sales pressure is a documented regulatory concern (CMA, Which?).</li>
+              <li><span class="bullet-label">For whom</span>UK homeowners weighing rooftop solar before or after a quote, and renters/leaseholders considering a plug-in kit under the UK's newly-changing self-install rules.</li>
+            </ul>
+            <div class="cta">View full case study →</div>
+          </div>
+          <div class="case-v2-shot-wrap">
+            <img class="case-v2-shot" data-case-shot src="projects/sunnysideup/assets/carousel-screenshot.png" alt="SunnySideUp result screen showing a Borderline viability verdict with payback period, annual saving, and a leasehold-consent flag">
+          </div>
+        </div>
+      </a>
+
+      <div class="case-card-v2 disabled">
+        <div class="case-v2-inner case-v2-soon">
+          <div class="case-v2-text">
+            <div class="case-v2-tag">Energy Access · P2P · Research next</div>
+            <h3 class="case-v2-name">Peer-to-Peer Energy Trading</h3>
+            <div class="cta">Coming soon</div>
+          </div>
         </div>
       </div>
 
-      <div class="case-card-v2 disabled case-v2-soon">
-        <div class="case-v2-text">
-          <div class="case-v2-tag">Carbon Accounting · B2B · Research next</div>
-          <h3 class="case-v2-name">Carbon Accounting Software</h3>
-          <div class="cta">Coming soon</div>
+      <div class="case-card-v2 disabled">
+        <div class="case-v2-inner case-v2-soon">
+          <div class="case-v2-text">
+            <div class="case-v2-tag">Carbon Accounting · B2B · Research next</div>
+            <h3 class="case-v2-name">Carbon Accounting Software</h3>
+            <div class="cta">Coming soon</div>
+          </div>
         </div>
       </div>
 
-      <div class="case-card-v2 disabled case-v2-soon">
-        <div class="case-v2-text">
-          <div class="case-v2-tag">Climate NGOs · B2B2C · Research next</div>
-          <h3 class="case-v2-name">FundTheFuture</h3>
-          <div class="cta">Coming soon</div>
+      <div class="case-card-v2 disabled">
+        <div class="case-v2-inner case-v2-soon">
+          <div class="case-v2-text">
+            <div class="case-v2-tag">Climate NGOs · B2B2C · Research next</div>
+            <h3 class="case-v2-name">FundTheFuture</h3>
+            <div class="cta">Coming soon</div>
+          </div>
         </div>
       </div>
 
-      <div class="case-card-v2 disabled case-v2-soon">
-        <div class="case-v2-text">
-          <div class="case-v2-tag">Climate Adaptation · B2G · Research next</div>
-          <h3 class="case-v2-name">Firstwatch</h3>
-          <div class="cta">Coming soon</div>
+      <div class="case-card-v2 disabled">
+        <div class="case-v2-inner case-v2-soon">
+          <div class="case-v2-text">
+            <div class="case-v2-tag">Climate Adaptation · B2G · Research next</div>
+            <h3 class="case-v2-name">Firstwatch</h3>
+            <div class="cta">Coming soon</div>
+          </div>
         </div>
       </div>
     </div>
