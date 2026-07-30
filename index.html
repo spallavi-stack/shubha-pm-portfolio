@@ -8,6 +8,7 @@
 <link rel="preload" href="assets/fonts/fraunces-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="assets/fonts/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="assets/css/design-system.css">
+<link rel="stylesheet" href="assets/css/pm-lab.css">
 <style>
   /* ---------- Homepage-only styling ---------- */
   header.hero{
@@ -287,6 +288,41 @@
   </div>
 </section>
 
+<section class="dark-section pm-lab" id="pm-lab">
+  <div class="wrap">
+    <div class="section-kicker">PM Strategy &amp; Execution Lab</div>
+    <h2 class="section-title">An interactive PM operating system.</h2>
+    <p class="lede">Three tools I use to make strategic trade-offs, prioritization calls, and spec quality explicit and defensible instead of gut feel. Built to run entirely in your browser.</p>
+
+    <div class="pm-lab-tabs" role="tablist" aria-label="PM Strategy &amp; Execution Lab tools">
+      <button class="pm-lab-tab" type="button" role="tab" id="pm-lab-tab-gtm" aria-controls="pm-lab-panel-gtm" aria-selected="false">
+        <span class="pm-lab-tab-num">1</span> GTM Trade-Off Engine
+      </button>
+      <button class="pm-lab-tab" type="button" role="tab" id="pm-lab-tab-rice" aria-controls="pm-lab-panel-rice" aria-selected="false">
+        <span class="pm-lab-tab-num">2</span> Prioritization &amp; ROI Stress-Tester
+      </button>
+      <button class="pm-lab-tab" type="button" role="tab" id="pm-lab-tab-prd" aria-controls="pm-lab-panel-prd" aria-selected="false">
+        <span class="pm-lab-tab-num">3</span> AI Spec &amp; PRD Auditor
+      </button>
+    </div>
+
+    <div class="pm-lab-panels">
+      <div class="pm-lab-panel" id="pm-lab-panel-gtm" role="tabpanel" aria-labelledby="pm-lab-tab-gtm">
+        <p class="pm-lab-panel-intro">A PLG-vs-enterprise sales motion trade-off calculator, grounded in growth benchmarks.</p>
+        <div class="pm-lab-tool" id="gtm-engine-root" data-pm-tool="gtm-engine"></div>
+      </div>
+      <div class="pm-lab-panel" id="pm-lab-panel-rice" role="tabpanel" aria-labelledby="pm-lab-tab-rice">
+        <p class="pm-lab-panel-intro">A dynamic RICE feature matrix that calculates strategic blindspot penalties and retention risk.</p>
+        <div class="pm-lab-tool" id="prioritization-root" data-pm-tool="prioritization"></div>
+      </div>
+      <div class="pm-lab-panel" id="pm-lab-panel-prd" role="tabpanel" aria-labelledby="pm-lab-tab-prd">
+        <p class="pm-lab-panel-intro">See a raw feature idea turned into an edge-case audit, a metric tree, and engineering-ready user stories.</p>
+        <div class="pm-lab-tool" id="prd-analyzer-root" data-pm-tool="prd-analyzer"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <section class="dark-section case-bridge" id="case-studies">
   <div class="about-fade" aria-hidden="true"></div>
   <div class="wrap">
@@ -406,6 +442,7 @@
 <script src="assets/vendor/ScrollTrigger.min.js"></script>
 <script src="assets/vendor/SplitText.min.js"></script>
 <script src="assets/js/motion.js"></script>
+<script src="assets/js/pm-lab.js"></script>
 <script>
 (function(){
   function initCarousel(){

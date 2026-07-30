@@ -1,0 +1,63 @@
+/* ============================================================
+   PM Strategy & Execution Lab — section-specific styles.
+   Lives inside .dark-section on index.html; reuses tokens
+   (color, type, motion) from design-system.css rather than
+   redefining them.
+   ============================================================ */
+
+.pm-lab{position:relative;overflow:hidden;}
+.pm-lab .wrap{position:relative;z-index:1;}
+
+/* ---------- Tabs ---------- */
+.pm-lab-tabs{
+  display:flex;flex-wrap:wrap;gap:6px;margin-top:32px;
+  border-bottom:1px solid rgba(255,255,255,0.14);
+}
+.pm-lab-tab{
+  font-family:var(--font-body);font-size:14px;font-weight:600;color:#B9C0DD;
+  background:transparent;border:none;padding:14px 18px;cursor:pointer;
+  position:relative;display:flex;align-items:center;gap:10px;
+  transition:color var(--dur-fast) var(--ease-out);
+}
+.pm-lab-tab:hover{color:#fff;}
+.pm-lab-tab:focus-visible{outline:2px solid var(--amber);outline-offset:-2px;}
+.pm-lab-tab::after{
+  content:'';position:absolute;left:18px;right:18px;bottom:-1px;height:2px;
+  background:var(--amber);transform:scaleX(0);transform-origin:center;
+  transition:transform var(--dur-fast) var(--ease-out);
+}
+.pm-lab-tab.is-active{color:#fff;}
+.pm-lab-tab.is-active::after{transform:scaleX(1);}
+
+.pm-lab-tab-num{
+  font-family:var(--font-display);font-size:12px;font-weight:600;color:#2B2118;
+  background:rgba(255,255,255,0.35);width:20px;height:20px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  transition:background var(--dur-fast) var(--ease-out);
+}
+.pm-lab-tab.is-active .pm-lab-tab-num{background:var(--amber);}
+
+/* ---------- Panels ---------- */
+.pm-lab-panels{margin-top:36px;}
+.pm-lab-panel{display:none;}
+.pm-lab-panel.is-active{display:block;animation:pmLabFadeIn .35s var(--ease-out);}
+@keyframes pmLabFadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+
+.pm-lab-panel-intro{max-width:640px;color:#C6CBE6;font-size:14.5px;margin:0 0 24px;}
+
+.pm-lab-tool{
+  background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.12);
+  border-radius:16px;padding:32px;min-height:220px;
+}
+
+@media(max-width:640px){
+  .pm-lab-tabs{gap:2px;}
+  .pm-lab-tab{padding:12px 12px;font-size:13px;gap:8px;}
+  .pm-lab-tab::after{left:12px;right:12px;}
+  .pm-lab-tab-num{width:18px;height:18px;font-size:11px;}
+  .pm-lab-tool{padding:22px;}
+}
+
+@media (prefers-reduced-motion: reduce){
+  .pm-lab-panel.is-active{animation:none;}
+}
