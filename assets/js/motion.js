@@ -90,6 +90,7 @@
     var stats = document.querySelectorAll('[data-count]');
     if(!stats.length) return;
     stats.forEach(function(el){
+      if(el.closest('[data-stakes-rotator]')) return; // handled by initStakesRotator instead
       var target = parseFloat(el.getAttribute('data-count'));
       var suffix = el.getAttribute('data-suffix') || '';
       var decimals = el.getAttribute('data-decimals') ? parseInt(el.getAttribute('data-decimals'),10) : 0;
@@ -116,6 +117,104 @@
         run();
       }
     });
+  }
+
+  /* ---------- Stakes rotator: one shocking climate fact at a time ----------
+     Base CSS shows every .stake stacked and fully visible, so this works
+     with no JS at all. JS only switches to absolute-positioned crossfade
+     mode when it actually runs, and skips auto-rotation under reduced
+     motion (falls back to the static stacked list instead). New facts can
+     be added later by just appending another .stake block in the HTML —
+     nothing here needs to change. */
+  function initStakesRotator(){
+    var container = document.querySelector('[data-stakes-rotator]');
+    if(!container) return;
+    var stakes = Array.prototype.slice.call(container.querySelectorAll('.stake'));
+    if(stakes.length < 2){ runCount(stakes[0]); return; }
+
+    function runCount(stake){
+      if(!stake) return;
+      var span = stake.querySelector('[data-count]');
+      if(!span || span.getAttribute('data-counted')) return;
+      span.setAttribute('data-counted', '1');
+      var target = parseFloat(span.getAttribute('data-count'));
+      var suffix = span.getAttribute('data-suffix') || '';
+      var decimals = span.getAttribute('data-decimals') ? parseInt(span.getAttribute('data-decimals'),10) : 0;
+      if(hasGSAP){
+        var obj = { v:0 };
+        gsap.to(obj, {
+          v:target, duration:1.1, ease:'power2.out',
+          onUpdate:function(){ span.textContent = obj.v.toFixed(decimals) + suffix; }
+        });
+      } else {
+        span.textContent = target.toFixed(decimals) + suffix;
+      }
+    }
+
+    if(!hasGSAP || !enableFullMotion){
+      // Static stacked fallback: no rotation, just count up everything once.
+      stakes.forEach(runCount);
+      return;
+    }
+
+    container.classList.add('is-rotating');
+    gsap.set(stakes, { autoAlpha:0 });
+
+    var dotsWrap = document.getElementById('stakesDots');
+    var dots = [];
+    if(dotsWrap){
+      stakes.forEach(function(_, i){
+        var dot = document.createElement('button');
+        dot.type = 'button';
+        dot.className = 'car-dot';
+        dot.setAttribute('aria-label', 'Show stat ' + (i + 1) + ' of ' + stakes.length);
+        dotsWrap.appendChild(dot);
+        dots.push(dot);
+      });
+    }
+
+    var current = 0, timer = null, paused = false;
+
+    function show(i){
+      current = i;
+      stakes.forEach(function(el, idx){
+        gsap.to(el, { autoAlpha: idx === i ? 1 : 0, duration:0.6, ease:'power2.inOut' });
+      });
+      dots.forEach(function(d, idx){ d.classList.toggle('active', idx === i); });
+      runCount(stakes[i]);
+    }
+
+    function scheduleNext(delay){
+      clearTimeout(timer);
+      if(paused) return;
+      timer = setTimeout(function(){
+        show((current + 1) % stakes.length);
+        scheduleNext(3000);
+      }, delay);
+    }
+
+    dots.forEach(function(dot, i){
+      dot.addEventListener('click', function(){
+        show(i);
+        scheduleNext(3000);
+      });
+    });
+    container.addEventListener('mouseenter', function(){ paused = true; clearTimeout(timer); });
+    container.addEventListener('mouseleave', function(){ paused = false; scheduleNext(3000); });
+    container.addEventListener('focusin', function(){ paused = true; clearTimeout(timer); });
+    container.addEventListener('focusout', function(){ paused = false; scheduleNext(3000); });
+
+    var started = false;
+    function start(){
+      if(started) return;
+      started = true;
+      setTimeout(function(){ show(0); scheduleNext(3000); }, 2000);
+    }
+    if(window.ScrollTrigger){
+      ScrollTrigger.create({ trigger: container, start:'top 85%', once:true, onEnter: start });
+    } else {
+      start();
+    }
   }
 
   /* ---------- Magnetic hover (desktop only) ---------- */
@@ -168,6 +267,7 @@
     initReveal();
     initStagger();
     initCountUp();
+    initStakesRotator();
     initMagnetic();
     initEnergyDividers();
     initHeroParallax();
