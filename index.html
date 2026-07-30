@@ -36,10 +36,12 @@
   /* The stakes: blunt, oversized numbers, but in the site's own navy/amber system.
      Rotates one fact at a time; base CSS (no JS / reduced motion) shows them
      stacked and fully visible, JS only switches to crossfade mode when it runs. */
-  section.stakes{background:var(--navy);color:#fff;}
-  section.stakes .section-kicker{color:var(--amber);}
+  section.stakes{background:var(--navy);color:#fff;text-align:center;}
+  section.stakes .section-kicker{color:var(--amber);justify-content:center;}
   section.stakes .section-kicker::before{background:var(--amber);}
-  .stakes-slot{position:relative;margin-top:8px;}
+  .stakes-slot{position:relative;margin-top:8px;display:flex;flex-direction:column;align-items:center;}
+  .stakes-slot.is-rotating .stake{display:flex;flex-direction:column;align-items:center;}
+  .stakes-dots{justify-content:center;}
   .stakes-slot .stake{margin-bottom:40px;}
   .stakes-slot .stake:last-child{margin-bottom:0;}
   .stakes-slot.is-rotating{min-height:190px;}
