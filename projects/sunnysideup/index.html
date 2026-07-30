@@ -4,6 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SunnySideUp - Product Case Study | Shubha's PM Portfolio</title>
+<link rel="preload" href="../../assets/fonts/fraunces-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../../assets/fonts/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../../assets/css/design-system.css">
 <style>
   :root{
     --teal:#D4890B;
@@ -19,51 +22,34 @@
     --now:#A8690A;
     --next:#D4890B;
     --later:#B8A483;
-  }
-  *{box-sizing:border-box;}
-  body{
-    margin:0;
-    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
-    color:var(--ink);
-    background:var(--paper);
-    line-height:1.6;
+    --accent:var(--teal);
+    --accent-dark:var(--teal-dark);
   }
   .wrap{max-width:920px;margin:0 auto;padding:0 24px;}
 
-  nav{
-    position:sticky;top:0;z-index:50;
-    background:rgba(255,255,255,0.92);
-    backdrop-filter:blur(8px);
-    border-bottom:1px solid var(--border);
-  }
-  nav .wrap{display:flex;align-items:center;justify-content:space-between;padding:14px 24px;max-width:920px;}
-  nav .brand{font-weight:700;letter-spacing:-0.02em;color:var(--navy);font-size:16px;display:flex;align-items:center;gap:8px;}
-  nav .brand span{color:var(--teal);}
-  nav ul{list-style:none;display:flex;gap:22px;margin:0;padding:0;}
-  nav a{color:var(--ink-soft);text-decoration:none;font-size:13.5px;font-weight:500;}
-  nav a:hover{color:var(--teal-dark);}
-  @media(max-width:720px){ nav ul{display:none;} }
+  /* Nav: brand accent dot only - everything else comes from design-system.css */
+  nav .brand span{color:var(--accent);}
 
   header.hero{
-    background:linear-gradient(160deg, var(--navy) 0%, #7A4E12 55%, var(--gold) 130%);
-    color:#fff;padding:40px 0 34px;
+    position:relative;overflow:hidden;
+    background:linear-gradient(165deg, var(--navy) 0%, #7A4E12 55%, var(--gold) 130%);
+    color:#fff;padding:88px 0 64px;
   }
-  .eyebrow{
-    display:inline-block;font-size:12px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;
-    color:#FFE9B8;background:rgba(245,185,66,0.25);border:1px solid rgba(255,233,184,0.35);
-    padding:5px 12px;border-radius:999px;margin-bottom:18px;
+  h1.title{
+    font-family:var(--font-display);font-style:italic;font-weight:600;
+    font-variation-settings:'SOFT' 30,'opsz' 60;
+    font-size:clamp(32px,4.8vw,50px);line-height:1.1;margin:0 0 14px;letter-spacing:-0.02em;
+    visibility:hidden;
   }
-  h1.title{font-size:42px;line-height:1.1;margin:0 0 14px;letter-spacing:-0.02em;}
+  .split-line{overflow:hidden;padding-bottom:0.08em;}
   .subtitle{font-size:18px;color:#F5E8D0;max-width:640px;margin:0 0 28px;}
-  .hero-meta{display:flex;flex-wrap:wrap;gap:28px;margin-top:16px;}
+  .hero-ctas{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:8px;}
+  .hero-meta{display:flex;flex-wrap:wrap;gap:28px;margin-top:28px;}
   .hero-meta div{font-size:12.5px;color:#E8D4A8;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:4px;}
   .hero-meta strong{display:block;font-size:15px;color:#fff;text-transform:none;letter-spacing:0;font-weight:600;}
 
   section{padding:22px 0;}
   section.alt{background:var(--paper-soft);}
-  h2.section-title{font-size:26px;letter-spacing:-0.01em;margin:0 0 8px;}
-  .section-kicker{font-size:12.5px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--teal-dark);margin-bottom:10px;}
-  .lede{color:var(--ink-soft);font-size:15.5px;max-width:680px;margin-bottom:16px;}
 
   .tldr-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:24px;}
   @media(max-width:760px){.tldr-grid{grid-template-columns:repeat(2,1fr);}}
@@ -145,14 +131,6 @@
     iframe.proto{height:340px;}
   }
   .proto-actions{display:flex;gap:12px;justify-content:center;margin-top:18px;flex-wrap:wrap;}
-  .btn{
-    display:inline-block;padding:10px 20px;border-radius:8px;font-size:13.5px;font-weight:600;
-    text-decoration:none;border:1px solid transparent;
-  }
-  .btn-primary{background:var(--teal);color:#fff;}
-  .btn-primary:hover{background:var(--teal-dark);}
-  .btn-ghost{border:1px solid var(--border);color:var(--ink);}
-  .btn-ghost:hover{border-color:var(--teal);color:var(--teal-dark);}
 
   .doc-category{margin-top:28px;}
   .doc-category:first-child{margin-top:0;}
@@ -241,10 +219,14 @@
   </div>
 </nav>
 
-<header class="hero">
+<header class="hero grain">
   <div class="wrap">
-    <h1 class="title">Is solar worth it for your home? An honest, independent read.</h1>
+    <h1 class="title" data-split-reveal>Is solar worth it for your home? An honest, independent read.</h1>
     <p class="subtitle">An end-to-end PM case study: problem framing, sourced UK market and regulatory research, three personas, synthetic user interviews, an ICE-prioritized roadmap, and a working interactive viability-check prototype.</p>
+    <div class="hero-ctas">
+      <a class="btn" data-magnetic href="#prototype">View the prototype</a>
+      <a class="btn btn-ghost" data-magnetic href="../../index.html" style="background:rgba(255,255,255,0.08);color:#fff;border-color:rgba(255,255,255,0.25);">← Back to portfolio</a>
+    </div>
     <div class="hero-meta">
       <div>First market<strong>United Kingdom</strong></div>
       <div>Deliverables<strong>Brief · Personas · Interviews · Roadmap · Working calculator</strong></div>
@@ -438,7 +420,7 @@
       </div>
     </div>
     <div class="proto-actions">
-      <a class="btn btn-primary" href="prototype.html" target="_blank">Open prototype full-screen</a>
+      <a class="btn" data-magnetic href="prototype.html" target="_blank">Open prototype full-screen</a>
     </div>
   </div>
 </section>
@@ -540,6 +522,11 @@
   </div>
 </footer>
 
+<script src="../../assets/vendor/lenis.min.js"></script>
+<script src="../../assets/vendor/gsap.min.js"></script>
+<script src="../../assets/vendor/ScrollTrigger.min.js"></script>
+<script src="../../assets/vendor/SplitText.min.js"></script>
+<script src="../../assets/js/motion.js"></script>
 <script>
 (function(){
   function openTarget(){
