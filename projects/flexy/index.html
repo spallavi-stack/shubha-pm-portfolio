@@ -4,6 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Flexy - Product Case Study | Shubha's PM Portfolio</title>
+<link rel="preload" href="../../assets/fonts/fraunces-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../../assets/fonts/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../../assets/css/design-system.css">
 <style>
   :root{
     --teal:#9AC55C;
@@ -20,11 +23,13 @@
     --now:#2F6B4F;
     --next:#E8A33D;
     --later:#8A93A6;
+    --accent:var(--teal);
+    --accent-dark:var(--teal-dark);
   }
   *{box-sizing:border-box;}
   body{
     margin:0;
-    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+    font-family:var(--font-body);
     color:var(--ink);
     background:var(--paper);
     line-height:1.6;
@@ -48,15 +53,21 @@
 
   /* Hero */
   header.hero{
+    position:relative;overflow:hidden;
     background:linear-gradient(160deg, var(--navy) 0%, #2F6B4F 55%, var(--peach) 130%);
-    color:#fff;padding:40px 0 34px;
+    color:#fff;padding:56px 0 44px;
   }
   .eyebrow{
     display:inline-block;font-size:12px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;
     color:#BFF3EC;background:rgba(15,157,143,0.25);border:1px solid rgba(191,243,236,0.35);
     padding:5px 12px;border-radius:999px;margin-bottom:18px;
   }
-  h1.title{font-size:42px;line-height:1.1;margin:0 0 14px;letter-spacing:-0.02em;}
+  h1.title{
+    font-family:var(--font-display);font-style:italic;font-weight:600;
+    font-variation-settings:'SOFT' 30,'opsz' 60;
+    font-size:42px;line-height:1.1;margin:0 0 14px;letter-spacing:-0.02em;
+    visibility:hidden;
+  }
   .subtitle{font-size:18px;color:#D9DEEF;max-width:640px;margin:0 0 28px;}
   .hero-meta{display:flex;flex-wrap:wrap;gap:28px;margin-top:16px;}
   .hero-meta div{font-size:12.5px;color:#B9C0DD;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:4px;}
@@ -247,9 +258,9 @@
   </div>
 </nav>
 
-<header class="hero">
+<header class="hero grain">
   <div class="wrap">
-    <h1 class="title">Smart charge your EV using real dynamic prices</h1>
+    <h1 class="title" data-split-reveal>Smart charge your EV using real dynamic prices</h1>
     <p class="subtitle">An end-to-end PM case study: problem framing, market research, four personas, synthetic user interviews, an ICE-prioritized roadmap, and a working interactive prototype.</p>
     <div class="hero-meta">
       <div>First market<strong>ComEd / Illinois, USA</strong></div>
@@ -258,13 +269,15 @@
   </div>
 </header>
 
+<div class="energy-divider" aria-hidden="true"><svg viewBox="0 0 1200 60" preserveAspectRatio="none"><path d="M0 30 C 150 0, 250 60, 400 30 S 650 0, 800 30 S 1050 60, 1200 30"/></svg></div>
+
 <section id="tldr">
   <div class="wrap">
     <div class="section-kicker">The short version</div>
     <div class="summary-box">
       Flexy shows what electricity costs right now and automatically shifts EV charging into the cheapest hours.
     </div>
-    <div class="tldr-grid">
+    <div class="tldr-grid" data-reveal-stagger>
       <a class="tldr-card" href="#problem"><div class="num">01</div><h3>Problem &amp; positioning</h3><p>Why Illinois, why now, and where Flexy sits against Tibber, Octopus, Ohme, Optiwatt and WeaveGrid.</p></a>
       <a class="tldr-card" href="#research"><div class="num">02</div><h3>Research</h3><p>Four personas, JTBD statements, and synthetic interviews with a cross-persona synthesis.</p></a>
       <a class="tldr-card" href="#roadmap"><div class="num">03</div><h3>Roadmap</h3><p>ICE-prioritized Now/Next/Later, with the reasoning behind every score.</p></a>
@@ -273,7 +286,7 @@
   </div>
 </section>
 
-<section class="alt" id="problem">
+<section class="alt" id="problem" data-reveal>
   <div class="wrap">
     <details class="section-collapse">
     <summary>
@@ -348,7 +361,7 @@
   </div>
 </section>
 
-<section id="research">
+<section id="research" data-reveal>
   <div class="wrap">
     <details class="section-collapse">
     <summary>
@@ -407,7 +420,7 @@
   </div>
 </section>
 
-<section class="alt" id="roadmap">
+<section class="alt" id="roadmap" data-reveal>
   <div class="wrap">
     <details class="section-collapse">
     <summary>
@@ -443,7 +456,7 @@
   </div>
 </section>
 
-<section id="prototype">
+<section id="prototype" data-reveal>
   <div class="wrap">
     <div class="section-kicker">Prototype</div>
     <p class="lede">A full coded phone-frame prototype covering the entire MVP flow: discovering Flexy through a ComEd email, installing it, connecting a ComEd account, an intro carousel, connecting an EV (brand selection → manufacturer login → permissions, matching how Smartcar-style integrations actually work), setting charging preferences, and the live Price &amp; Cost and Smart Charging dashboards.</p>
@@ -451,17 +464,18 @@
       <iframe class="proto" src="prototype.html" title="Flexy interactive prototype"></iframe>
     </div>
     <div class="proto-actions">
-      <a class="btn btn-primary" href="prototype.html" target="_blank">Open prototype full-screen</a>
+      <a class="btn btn-primary" data-magnetic href="prototype.html" target="_blank">Open prototype full-screen</a>
     </div>
   </div>
 </section>
 
+<div class="energy-divider" aria-hidden="true"><svg viewBox="0 0 1200 60" preserveAspectRatio="none"><path d="M0 30 C 150 60, 250 0, 400 30 S 650 60, 800 30 S 1050 0, 1200 30"/></svg></div>
 
-<section id="limitations">
+<section id="limitations" data-reveal>
   <div class="wrap">
     <div class="section-kicker">Limitations</div>
     <p class="lede">Industry commentary on AI-assisted prototypes in 2025-2026 converges on one point: a polished demo and a shippable product are different things, and it's easy to mistake one for the other. A few of the gaps commonly named by product practitioners, applied honestly to Flexy:</p>
-    <div class="limitation-grid">
+    <div class="limitation-grid" data-reveal-stagger>
       <div class="limitation-card">
         <h4>A working demo isn't 10% of the way to done</h4>
         <ul>
@@ -498,7 +512,7 @@
   </div>
 </section>
 
-<section id="documents">
+<section id="documents" data-reveal>
   <div class="wrap">
     <div class="section-kicker">Full documentation</div>
     <p class="lede">For anyone who wants to go deeper than this page, the full source documents are linked below.</p>
@@ -557,6 +571,11 @@
   </div>
 </footer>
 
+<script src="../../assets/vendor/lenis.min.js"></script>
+<script src="../../assets/vendor/gsap.min.js"></script>
+<script src="../../assets/vendor/ScrollTrigger.min.js"></script>
+<script src="../../assets/vendor/SplitText.min.js"></script>
+<script src="../../assets/js/motion.js"></script>
 <script>
 (function(){
   function openTarget(){
