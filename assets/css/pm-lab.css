@@ -196,3 +196,107 @@
 @media(max-width:640px){
   .rice-actions{align-items:flex-start;flex-direction:column;}
 }
+
+/* ============================================================
+   Tool 3 — AI Spec & PRD Auditor
+   ============================================================ */
+.prd-input-controls{display:flex;gap:12px;flex-wrap:wrap;}
+.prd-input{
+  flex:1 1 320px;font-family:var(--font-body);font-size:14px;color:#fff;
+  background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.16);border-radius:10px;
+  padding:12px 14px;
+}
+.prd-input:focus{outline:none;border-color:var(--amber);}
+.prd-analyze-btn{flex:0 0 auto;}
+
+.prd-presets{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;}
+.prd-preset-btn{font-size:12.5px;}
+
+.prd-empty-state{max-width:560px;color:#8B90B3;font-size:13.5px;line-height:1.6;margin:24px 0 0;}
+.prd-empty-state strong{color:#C6CBE6;}
+
+.prd-result{margin-top:28px;}
+.prd-result-heading{font-size:12.5px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:#8B90B3;margin-bottom:16px;}
+.prd-result-heading span{color:var(--amber);text-transform:none;letter-spacing:0;font-weight:600;}
+
+/* Nested result tabs — deliberately separate class names from
+   .pm-lab-tab/.pm-lab-panel so pm-lab.js's page-wide tab query
+   doesn't pick these up as top-level tabs. */
+.prd-tabs{display:flex;flex-wrap:wrap;gap:4px;border-bottom:1px solid rgba(255,255,255,0.14);}
+.prd-tab{
+  font-family:var(--font-body);font-size:13.5px;font-weight:600;color:#B9C0DD;
+  background:transparent;border:none;padding:12px 16px;cursor:pointer;
+  position:relative;display:flex;align-items:center;gap:8px;
+  transition:color var(--dur-fast) var(--ease-out);
+}
+.prd-tab:hover{color:#fff;}
+.prd-tab:focus-visible{outline:2px solid var(--amber);outline-offset:-2px;}
+.prd-tab::after{
+  content:'';position:absolute;left:16px;right:16px;bottom:-1px;height:2px;
+  background:var(--amber);transform:scaleX(0);transition:transform var(--dur-fast) var(--ease-out);
+}
+.prd-tab.is-active{color:#fff;}
+.prd-tab.is-active::after{transform:scaleX(1);}
+.prd-tab-num{
+  font-family:var(--font-display);font-size:11px;font-weight:600;color:#2B2118;
+  background:rgba(255,255,255,0.35);width:18px;height:18px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.prd-tab.is-active .prd-tab-num{background:var(--amber);}
+
+.prd-result-panels{margin-top:24px;}
+.prd-result-panel{display:none;}
+.prd-result-panel.is-active{display:block;animation:pmLabFadeIn .35s var(--ease-out);}
+
+/* Edge cases */
+.prd-edge-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;}
+.prd-edge-card{
+  display:flex;gap:14px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.12);
+  border-radius:12px;padding:18px;
+}
+.prd-edge-num{font-family:var(--font-display);font-size:13px;font-weight:600;color:var(--amber);flex-shrink:0;}
+.prd-edge-title{font-size:14px;color:#fff;margin:0 0 6px;}
+.prd-edge-desc{font-size:13px;color:#C6CBE6;margin:0;line-height:1.55;}
+
+/* Metric tree */
+.prd-tree{display:flex;flex-direction:column;align-items:center;padding:8px 0 4px;}
+.prd-tree-kicker{display:block;font-size:11px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:#8B90B3;margin-bottom:8px;text-align:center;}
+.prd-tree-node-north{
+  font-family:var(--font-display);font-size:16px;color:#fff;text-align:center;max-width:420px;
+  background:rgba(231,178,58,0.14);border:1px solid rgba(231,178,58,0.5);border-radius:12px;padding:14px 20px;
+}
+.prd-tree-connector{width:2px;height:22px;background:rgba(255,255,255,0.2);}
+.prd-tree-l1-row{
+  display:flex;flex-wrap:wrap;justify-content:center;gap:28px;width:100%;
+  border-top:1px solid rgba(255,255,255,0.16);padding-top:0;margin-top:0;
+}
+.prd-tree-branch{display:flex;flex-direction:column;align-items:center;flex:1 1 200px;max-width:260px;padding-top:18px;}
+.prd-tree-tick{width:2px;height:18px;background:rgba(255,255,255,0.2);margin-top:-19px;margin-bottom:6px;}
+.prd-tree-node-l1{
+  font-size:13.5px;font-weight:600;color:#fff;text-align:center;
+  background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.18);border-radius:10px;
+  padding:10px 14px;margin-bottom:12px;width:100%;
+}
+.prd-tree-l2-list{display:flex;flex-direction:column;gap:8px;width:100%;}
+.prd-tree-node-l2{
+  font-size:12px;color:#C6CBE6;text-align:center;background:rgba(255,255,255,0.03);
+  border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:7px 10px;
+}
+
+/* Gherkin acceptance criteria */
+.prd-gherkin-list{display:flex;flex-direction:column;gap:16px;}
+.prd-gherkin-card{
+  background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.12);
+  border-radius:12px;padding:18px 20px;
+}
+.prd-gherkin-title{font-size:13.5px;font-weight:700;color:#fff;margin-bottom:10px;}
+.prd-gherkin-line{
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12.5px;
+  color:#C6CBE6;line-height:1.9;
+}
+.prd-kw{color:var(--amber);font-weight:700;margin-right:6px;}
+
+@media(max-width:640px){
+  .prd-input-controls{flex-direction:column;align-items:stretch;}
+  .prd-tree-l1-row{gap:18px;}
+}

@@ -444,7 +444,50 @@
       </div>
       <div class="pm-lab-panel" id="pm-lab-panel-prd" role="tabpanel" aria-labelledby="pm-lab-tab-prd">
         <p class="pm-lab-panel-intro">See a raw feature idea turned into an edge-case audit, a metric tree, and engineering-ready user stories.</p>
-        <div class="pm-lab-tool" id="prd-analyzer-root" data-pm-tool="prd-analyzer"></div>
+        <div class="pm-lab-tool" id="prd-analyzer-root" data-pm-tool="prd-analyzer">
+          <div class="prd-input-row">
+            <label class="gtm-label" for="prdInput">Feature idea</label>
+            <div class="prd-input-controls">
+              <input type="text" id="prdInput" class="prd-input" value="Add 2FA via SMS to login flow" placeholder="Describe a feature idea…">
+              <button type="button" class="rice-add-btn prd-analyze-btn" id="prdAnalyzeBtn">Analyze Spec Complexity</button>
+            </div>
+            <div class="prd-presets" id="prdPresets">
+              <button type="button" class="gtm-segment prd-preset-btn is-active" data-preset="Add 2FA via SMS to login flow">Add 2FA via SMS to login flow</button>
+              <button type="button" class="gtm-segment prd-preset-btn" data-preset="Implement Team Member Permissions Grid">Implement Team Member Permissions Grid</button>
+              <button type="button" class="gtm-segment prd-preset-btn" data-preset="Build CSV Export for Analytics Reports">Build CSV Export for Analytics Reports</button>
+            </div>
+          </div>
+
+          <p class="prd-empty-state" id="prdEmptyState">Pick a preset above (or write your own feature idea) and click <strong>Analyze Spec Complexity</strong> to see it turned into a full spec.</p>
+
+          <div class="prd-result" id="prdResult" hidden>
+            <div class="prd-result-heading">Spec audit for <span id="prdResultFeature"></span></div>
+
+            <div class="prd-tabs" role="tablist" aria-label="Spec audit sections">
+              <button class="prd-tab is-active" type="button" role="tab" id="prd-tab-edge" aria-controls="prd-panel-edge" aria-selected="true">
+                <span class="prd-tab-num">1</span> Edge Cases &amp; Risks
+              </button>
+              <button class="prd-tab" type="button" role="tab" id="prd-tab-metrics" aria-controls="prd-panel-metrics" aria-selected="false">
+                <span class="prd-tab-num">2</span> Metric Tree
+              </button>
+              <button class="prd-tab" type="button" role="tab" id="prd-tab-gherkin" aria-controls="prd-panel-gherkin" aria-selected="false">
+                <span class="prd-tab-num">3</span> Acceptance Criteria
+              </button>
+            </div>
+
+            <div class="prd-result-panels">
+              <div class="prd-result-panel is-active" id="prd-panel-edge" role="tabpanel" aria-labelledby="prd-tab-edge">
+                <div class="prd-edge-list" id="prdEdgeList"></div>
+              </div>
+              <div class="prd-result-panel" id="prd-panel-metrics" role="tabpanel" aria-labelledby="prd-tab-metrics">
+                <div class="prd-metric-tree" id="prdMetricTree"></div>
+              </div>
+              <div class="prd-result-panel" id="prd-panel-gherkin" role="tabpanel" aria-labelledby="prd-tab-gherkin">
+                <div class="prd-gherkin-list" id="prdGherkinList"></div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -572,6 +615,7 @@
 <script src="assets/js/pm-lab.js"></script>
 <script src="assets/js/gtm-engine.js"></script>
 <script src="assets/js/prioritization.js"></script>
+<script src="assets/js/prd-analyzer.js"></script>
 <script>
 (function(){
   function initCarousel(){
