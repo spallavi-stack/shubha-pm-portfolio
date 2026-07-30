@@ -3,268 +3,374 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Shubha's PM Portfolio - AI-forward product case studies</title>
+<title>Shubha's PM Portfolio — Product case studies for the energy transition</title>
+<meta name="description" content="0-to-1 product case studies in climate mitigation, energy efficiency, and consumer clean-energy products: real research, honest process, working prototypes.">
+<link rel="preload" href="assets/fonts/fraunces-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="assets/css/design-system.css">
 <style>
-  :root{
-    --teal:#0F9D8F;
-    --teal-dark:#0B7A70;
-    --navy:#180D67;
-    --ink:#1B1F23;
-    --ink-soft:#4B5560;
-    --paper:#FFFFFF;
-    --paper-soft:#F6F8F8;
-    --border:#E3E8E8;
-  }
-  *{box-sizing:border-box;}
-  body{
-    margin:0;
-    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
-    color:var(--ink);
-    background:var(--paper);
-    line-height:1.6;
-  }
-  .wrap{max-width:960px;margin:0 auto;padding:0 24px;}
-
-  nav{position:sticky;top:0;z-index:50;background:rgba(255,255,255,0.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--border);}
-  nav .wrap{display:flex;align-items:center;justify-content:space-between;padding:14px 24px;max-width:960px;}
-  nav .brand{font-weight:700;letter-spacing:-0.02em;color:var(--navy);font-size:16px;}
-  nav .brand span{color:var(--teal);}
-  nav a.contact{color:var(--teal-dark);text-decoration:none;font-size:13.5px;font-weight:600;}
-
+  /* ---------- Homepage-only styling ---------- */
   header.hero{
-    background:linear-gradient(160deg, var(--navy) 0%, #241559 55%, var(--teal-dark) 130%);
-    color:#fff;padding:64px 0 48px;
+    position:relative;overflow:hidden;color:#fff;
+    background:linear-gradient(165deg, var(--navy) 0%, var(--navy-soft) 45%, #6B3F52 78%, var(--amber) 130%);
+    padding:120px 0 96px;
   }
-  .eyebrow{
-    display:inline-block;font-size:12px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;
-    color:#BFF3EC;background:rgba(15,157,143,0.25);border:1px solid rgba(191,243,236,0.35);
-    padding:5px 12px;border-radius:999px;margin-bottom:18px;
+  .hero-bg{position:absolute;inset:-10% -10% -10% -10%;z-index:0;pointer-events:none;}
+  .hero-bg svg{width:100%;height:100%;}
+  .hero-fade{position:absolute;left:0;right:0;bottom:0;height:220px;z-index:1;pointer-events:none;background:linear-gradient(to bottom, transparent, var(--navy));}
+  .hero .wrap{position:relative;z-index:2;}
+  h1.title{
+    font-family:var(--font-display);font-weight:600;font-style:italic;
+    font-variation-settings:'SOFT' 40,'opsz' 72;
+    font-size:clamp(38px,5.6vw,64px);line-height:1.08;margin:0 0 22px;letter-spacing:-0.01em;max-width:820px;
+    visibility:hidden;
   }
-  h1.title{font-size:40px;line-height:1.15;margin:0;letter-spacing:-0.02em;max-width:680px;}
-  .subtitle{font-size:17px;color:#D9DEEF;max-width:620px;margin:0 0 0;}
+  .split-line{overflow:hidden;padding-bottom:0.08em;}
+  .subtitle{font-size:18px;color:#E4E1F5;max-width:600px;margin:0 0 36px;}
+  .hero-ctas{display:flex;gap:16px;flex-wrap:wrap;}
 
-  section{padding:56px 0;}
-  section.alt{background:var(--paper-soft);}
-  .section-kicker{font-size:12.5px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--teal-dark);margin-bottom:10px;}
-  h2.section-title{font-size:26px;letter-spacing:-0.01em;margin:0 0 8px;}
-  .lede{color:var(--ink-soft);font-size:15px;max-width:680px;margin-bottom:8px;}
+  /* The stakes: blunt, oversized numbers, but in the site's own navy/amber system.
+     Rotates one fact at a time; base CSS (no JS / reduced motion) shows them
+     stacked and fully visible, JS only switches to crossfade mode when it runs. */
+  section.stakes{position:relative;overflow:hidden;background:var(--navy);color:#fff;text-align:center;padding-bottom:150px;}
+  section.stakes .section-kicker{color:var(--amber);justify-content:center;}
+  section.stakes .section-kicker::before{background:var(--amber);}
+  section.stakes .wrap{position:relative;z-index:1;}
 
-  .pillars{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:28px;}
-  @media(max-width:760px){.pillars{grid-template-columns:1fr;}}
-  .pillar{background:#fff;border:1px solid var(--border);border-radius:12px;padding:20px;}
-  .pillar .ic{font-size:22px;margin-bottom:10px;display:block;}
-  .pillar h3{font-size:15px;margin:0 0 6px;}
-  .pillar p{font-size:13.5px;color:var(--ink-soft);margin:0;}
+  /* Per-fact illustrated backdrop, content-matched, hidden until JS enables rotation */
+  .stakes-bg{position:absolute;inset:0;z-index:0;display:none;}
+  section.stakes.is-rotating .stakes-bg{display:block;}
+  .stakes-bottom-fade{position:absolute;left:0;right:0;bottom:0;height:110px;z-index:0;pointer-events:none;background:linear-gradient(to bottom, transparent, var(--navy) 90%);}
+  .stakes-bg .scene{position:absolute;inset:0;width:100%;height:100%;opacity:0;transition:opacity 0.8s ease;}
+  .stakes-bg .scene.is-active{opacity:1;}
+  .stakes-bg .shimmer-line{animation:shimmerDrift 6s ease-in-out infinite;}
+  .stakes-bg .shimmer-line-slow{animation-duration:9s;animation-direction:reverse;}
+  @keyframes shimmerDrift{ 0%,100%{transform:translateX(0);} 50%{transform:translateX(24px);} }
+  .stakes-bg .drift-cloud{animation:cloudDrift 14s ease-in-out infinite;}
+  .stakes-bg .drift-cloud-slow{animation-duration:20s;animation-direction:reverse;}
+  @keyframes cloudDrift{ 0%,100%{transform:translateX(0);} 50%{transform:translateX(40px);} }
+  .stakes-bg .bolt{animation:boltFlicker 5s ease-in-out infinite;}
+  @keyframes boltFlicker{
+    0%,88%,92%{opacity:0;} 89%{opacity:0.9;} 90%{opacity:0.2;} 91%{opacity:0.7;}
+  }
 
-  .carousel{position:relative;margin-top:28px;}
-  .case-grid{display:flex;gap:20px;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;-ms-overflow-style:none;}
+  .stakes-slot{position:relative;margin-top:8px;display:flex;flex-direction:column;align-items:center;}
+  .stakes-slot.is-rotating .stake{display:flex;flex-direction:column;align-items:center;}
+  .stakes-dots{justify-content:center;}
+  .stakes-slot .stake{margin-bottom:40px;}
+  .stakes-slot .stake:last-child{margin-bottom:0;}
+  .stakes-slot.is-rotating{min-height:190px;}
+  @media(max-width:640px){.stakes-slot.is-rotating{min-height:280px;}}
+  .stakes-slot.is-rotating .stake{position:absolute;inset:0;opacity:0;margin-bottom:0;}
+  .stake-num{
+    font-family:var(--font-body);font-weight:800;font-size:clamp(48px,7vw,84px);line-height:1;
+    letter-spacing:-0.02em;color:var(--amber);margin-bottom:16px;
+  }
+  .stake-num-text{font-size:clamp(32px,4.6vw,52px);}
+  .stake-arrow{color:#B9C0DD;margin:0 4px;font-weight:600;}
+  .stake-label{font-size:15px;color:#B9C0DD;max-width:400px;line-height:1.5;margin-bottom:10px;}
+  .stake-src a{font-size:11.5px;text-transform:uppercase;letter-spacing:0.06em;color:#8B90B3;text-decoration:none;border-bottom:1px solid rgba(139,144,179,0.4);}
+  .stake-src a:hover{color:var(--amber);border-color:var(--amber);}
+  .stakes-dots{display:flex;gap:7px;margin-top:32px;}
+  .stakes-dots .car-dot{background:rgba(255,255,255,0.22);}
+  .stakes-dots .car-dot.active{background:var(--amber);}
+
+  /* Dark section: hero, stakes, case studies, and process all share one
+     continuous navy backdrop now (only Process's own bg differs slightly
+     to add rhythm), so product-brand card colors read as accents within
+     one consistent dark stage instead of floating on unrelated cream. */
+  .dark-section{background:var(--navy);color:#fff;}
+  .dark-section .section-kicker{color:var(--amber);}
+  .dark-section .section-kicker::before{background:var(--amber);}
+  .dark-section h2.section-title{color:#fff;}
+  .dark-section .lede{color:#C6CBE6;}
+
+  .case-bridge{position:relative;overflow:hidden;}
+  .about-fade{position:absolute;top:0;left:0;right:0;height:200px;z-index:0;pointer-events:none;background:linear-gradient(to bottom, var(--navy), transparent);}
+  .case-bridge .wrap{position:relative;z-index:1;}
+
+  /* Case study carousel */
+  .carousel{position:relative;margin-top:40px;}
+  .case-grid{display:flex;gap:22px;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;-ms-overflow-style:none;padding-bottom:6px;}
   .case-grid::-webkit-scrollbar{display:none;}
-
-  .car-btn{position:absolute;top:44%;transform:translateY(-50%);width:36px;height:36px;border-radius:50%;background:#fff;border:1px solid var(--border);box-shadow:0 4px 14px rgba(0,0,0,0.1);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;line-height:1;color:var(--navy);z-index:5;padding:0;}
+  .car-btn{position:absolute;top:44%;transform:translateY(-50%);width:38px;height:38px;border-radius:50%;background:#fff;border:1px solid var(--border);box-shadow:0 6px 18px rgba(14,11,46,0.1);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;line-height:1;color:var(--navy);z-index:5;padding:0;}
   .car-btn:hover{background:var(--paper-soft);}
-  .car-btn:disabled{opacity:0.35;cursor:default;}
-  .car-prev{left:-14px;}
-  .car-next{right:-14px;}
+  .car-btn:disabled{opacity:0.3;cursor:default;}
+  .car-prev{left:-16px;}
+  .car-next{right:-16px;}
   @media(max-width:640px){.car-btn{display:none;}}
-
-  .car-dots{display:flex;justify-content:center;align-items:center;gap:7px;margin-top:18px;}
+  .car-dots{display:flex;justify-content:center;align-items:center;gap:7px;margin-top:22px;}
   .car-dot{width:7px;height:7px;border-radius:50%;background:var(--border);border:none;padding:0;cursor:pointer;transition:all .2s ease;}
-  .car-dot.active{background:var(--teal);width:20px;border-radius:5px;}
+  .car-dot.active{background:var(--accent);width:22px;border-radius:5px;}
+  .case-bridge .car-dot{background:rgba(255,255,255,0.22);}
+  .case-bridge .car-dot.active{background:var(--amber);}
 
-  .case-card{
-    background:#fff;border:1px solid var(--border);border-radius:14px;overflow:hidden;
-    text-decoration:none;color:var(--ink);display:flex;flex-direction:column;
-    transition:transform .15s, box-shadow .15s;
-    flex:0 0 420px;width:420px;scroll-snap-align:start;
+  /* Case cards v2: screenshot + name + What/Why/For-whom bullets, full-bleed
+     brand color. .case-card-v2 is just the carousel slot - flex:0 0 100%
+     so exactly one is visible at a time (scroll-snap) - and .case-v2-inner
+     is the actual visual card, capped narrower than the slot so it doesn't
+     stretch edge to edge with a lot of empty middle space. */
+  .case-card-v2{
+    text-decoration:none;color:#fff;display:flex;justify-content:center;
+    flex:0 0 100%;width:100%;scroll-snap-align:start;
   }
-  .case-card.live:hover{transform:translateY(-3px);box-shadow:0 10px 26px rgba(0,0,0,0.08);}
-  .case-card.disabled{opacity:0.6;cursor:default;}
-  .case-banner{height:88px;display:flex;align-items:center;gap:12px;padding:0 22px;font-size:26px;font-weight:800;color:#fff;letter-spacing:-0.02em;}
-  .case-banner .logo-mark{flex-shrink:0;display:block;}
-  .case-body{padding:20px 22px 22px;flex:1;display:flex;flex-direction:column;}
-  .case-tags{display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;}
-  .tag{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;padding:3px 9px;border-radius:999px;}
-  .tag-industry{background:#E8F6F4;color:var(--teal-dark);}
-  .tag-status-shipped{background:#0F9D8F;color:#fff;}
-  .tag-status-progress{background:#F5A623;color:#fff;}
-  .tag-status-soon{background:#EDEFF3;color:var(--ink-soft);}
-  .case-card h3{font-size:17px;margin:0 0 6px;}
-  .case-card p.thesis{font-size:13.5px;color:var(--ink-soft);margin:0 0 14px;flex:1;}
-  .thesis-facts{margin:0 0 14px;flex:1;}
-  .fact{display:flex;gap:8px;font-size:13px;padding:5px 0;border-bottom:1px solid #EEE;}
-  .fact:last-child{border-bottom:none;}
-  .fact-label{color:var(--ink-soft);font-weight:600;min-width:64px;flex-shrink:0;}
-  .fact-val{color:var(--ink);}
-  .case-card .cta{font-size:13px;font-weight:700;color:var(--teal-dark);}
-  .case-card.disabled .cta{color:var(--ink-soft);}
+  .case-v2-inner{
+    border-radius:20px;overflow:hidden;
+    display:flex;align-items:flex-end;justify-content:space-between;gap:18px;
+    width:100%;max-width:840px;min-height:420px;
+    padding:44px;position:relative;
+  }
+  .case-v2-inner.banner-flexy{background:linear-gradient(135deg,#1E4B3B,#3E6E58 55%,#F0AE8C);}
+  .case-v2-inner.banner-sunnysideup{background:linear-gradient(135deg,#B8720A,#D4890B 55%,#F5B942);}
+  .case-v2-text{position:relative;z-index:1;max-width:380px;display:flex;flex-direction:column;}
+  .case-v2-tag{font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:rgba(255,255,255,0.75);margin-bottom:14px;}
+  .case-v2-name{font-family:var(--font-display);font-weight:600;font-size:38px;letter-spacing:-0.01em;margin:0 0 20px;visibility:hidden;}
+  .case-v2-name .case-name-line{visibility:visible;}
+  .case-v2-bullets{list-style:none;margin:0 0 24px;padding:0;display:flex;flex-direction:column;gap:14px;}
+  .case-v2-bullets li{font-size:13.5px;line-height:1.55;color:rgba(255,255,255,0.88);padding-left:16px;position:relative;}
+  .case-v2-bullets li::before{content:'';position:absolute;left:0;top:7px;width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.55);}
+  .bullet-label{display:block;font-weight:700;color:#fff;margin-bottom:2px;}
+  .case-v2-inner .cta{font-size:13px;font-weight:700;color:#fff;}
+  .case-v2-shot-wrap{position:relative;z-index:1;flex-shrink:0;align-self:flex-end;margin-bottom:-44px;margin-right:10px;}
+  .case-v2-shot{display:block;width:220px;border-radius:14px 14px 0 0;box-shadow:0 20px 44px rgba(0,0,0,0.35);}
+  @media(max-width:760px){
+    .case-v2-inner{flex-direction:column;align-items:flex-start;max-width:none;}
+    .case-v2-text{max-width:none;}
+    .case-v2-shot-wrap{align-self:center;margin:20px 0 -44px;}
+  }
 
-  .banner-flexy{background:linear-gradient(120deg,#1E4B3B,#F0AE8C);}
-  .banner-sunnysideup{background:linear-gradient(120deg,#D4890B,#F5B942);}
-  .banner-placeholder{background:repeating-linear-gradient(135deg,#EDEFF3,#EDEFF3 10px,#E3E8E8 10px,#E3E8E8 20px);}
+  .case-v2-soon{
+    background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);color:#fff;
+    display:flex;align-items:flex-start;justify-content:center;flex-direction:column;
+  }
+  .case-v2-soon .case-v2-tag{color:rgba(255,255,255,0.5);}
+  .case-v2-soon .case-v2-name{visibility:visible;font-size:22px;color:#fff;margin-bottom:24px;}
+  .case-v2-soon .cta{color:rgba(255,255,255,0.5);}
 
-  .approach-list{counter-reset:step;margin-top:24px;}
-  .approach-item{display:flex;gap:16px;padding:16px 0;border-bottom:1px solid var(--border);}
+  /* Process */
+  .process-dark{background:var(--navy-soft);position:relative;overflow:hidden;}
+  .process-dark .wrap{position:relative;z-index:1;}
+  .process-fade{position:absolute;top:0;left:0;right:0;height:160px;z-index:0;pointer-events:none;background:linear-gradient(to bottom, var(--navy), transparent);}
+  .approach-list{counter-reset:step;margin-top:8px;}
+  .approach-item{display:flex;gap:18px;padding:20px 0;border-bottom:1px solid rgba(255,255,255,0.14);}
   .approach-item:last-child{border-bottom:none;}
-  .approach-num{counter-increment:step;font-size:13px;font-weight:800;color:#fff;background:var(--teal);width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .approach-num{counter-increment:step;font-family:var(--font-display);font-size:14px;font-weight:600;color:#2B2118;background:var(--amber);width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
   .approach-num::before{content:counter(step);}
-  .approach-item h4{margin:0 0 4px;font-size:14.5px;}
-  .approach-item p{margin:0;font-size:13.5px;color:var(--ink-soft);}
+  .approach-item h4{margin:0 0 5px;font-size:15px;font-family:var(--font-body);font-weight:700;color:#fff;}
+  .approach-item p{margin:0;font-size:13.5px;color:#B9C0DD;}
 
-  footer{background:var(--navy);color:#C6CBE6;padding:40px 0;text-align:center;font-size:13px;}
-  footer a{color:#BFF3EC;}
+  footer{background:var(--navy);color:#C6CBE6;padding:44px 0;text-align:center;font-size:13px;}
+  footer a{color:var(--amber);}
 </style>
 </head>
 <body>
 
 <nav>
   <div class="wrap">
-    <div class="brand">Shubha<span>.</span> PM Portfolio</div>
+    <a class="brand" href="index.html">Shubha<em>.</em> PM Portfolio</a>
     <a class="contact" href="contact.html">Get in touch →</a>
   </div>
 </nav>
 
-<header class="hero">
+<header class="hero grain">
+  <div class="hero-bg" data-parallax aria-hidden="true">
+    <svg viewBox="0 0 1200 700" preserveAspectRatio="xMidYMax slice">
+      <path d="M0 640 Q 300 560 600 620 T 1200 600 V 700 H 0 Z" fill="#0B0824" opacity="0.35"/>
+    </svg>
+  </div>
+  <div class="hero-fade" aria-hidden="true"></div>
   <div class="wrap">
-    <h1 class="title">Real problems | Working prototypes | Delivered fast</h1>
+    <h1 class="title" data-split-reveal>The energy transition needs better products.</h1>
+    <p class="subtitle">Hi! I'm Shubha, a Product Manager with a bone to pick with the climate crisis. I am currently working on 0-to-1 product case studies that tackle overlooked gaps in climate change mitigation and adaptation. Every case study is end-to-end: real research, solid documentation, and a working prototype. If you're working on a climate solution and need product support, I'd love to connect.</p>
+    <div class="hero-ctas">
+      <a class="btn" data-magnetic href="#case-studies">View case studies</a>
+      <a class="btn btn-ghost" data-magnetic href="contact.html" style="background:rgba(255,255,255,0.08);color:#fff;border-color:rgba(255,255,255,0.25);">Get in touch →</a>
+    </div>
   </div>
 </header>
 
-<section>
+<section class="stakes">
+  <div class="stakes-bg" aria-hidden="true">
+    <svg class="scene" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMax slice">
+      <defs><radialGradient id="scn0" cx="30%" cy="90%" r="70%"><stop offset="0" stop-color="#6B5A3E" stop-opacity="0.55"/><stop offset="1" stop-color="#6B5A3E" stop-opacity="0"/></radialGradient></defs>
+      <rect width="1200" height="700" fill="url(#scn0)"/>
+      <ellipse cx="250" cy="620" rx="420" ry="90" fill="#4A4032" opacity="0.4"/>
+      <ellipse cx="750" cy="660" rx="360" ry="70" fill="#4A4032" opacity="0.3"/>
+      <path d="M180 640 Q 205 560 190 500 Q 178 460 200 420" stroke="#8A8168" stroke-width="9" fill="none" opacity="0.35" stroke-linecap="round"/>
+      <path d="M760 650 Q 785 580 770 530" stroke="#8A8168" stroke-width="7" fill="none" opacity="0.28" stroke-linecap="round"/>
+    </svg>
+    <svg class="scene" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMax slice">
+      <circle cx="950" cy="560" r="260" fill="#FF7A3D" opacity="0.22"/>
+      <circle cx="950" cy="560" r="150" fill="#FFAE42" opacity="0.28"/>
+      <path d="M0 660 Q 300 600 600 650 T 1200 630 V 700 H 0 Z" fill="#3D1A12" opacity="0.4"/>
+    </svg>
+    <svg class="scene" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMax slice">
+      <circle cx="620" cy="320" r="110" fill="#FF5A36" opacity="0.3"/>
+      <path class="shimmer-line" d="M-100 420 Q -40 400 20 420 T 140 420 T 260 420 T 380 420 T 500 420 T 620 420 T 740 420 T 860 420 T 980 420 T 1100 420 T 1220 420 T 1300 420" stroke="#FF8A5C" stroke-width="3" fill="none" opacity="0.32"/>
+      <path class="shimmer-line shimmer-line-slow" d="M-100 490 Q -40 470 20 490 T 140 490 T 260 490 T 380 490 T 500 490 T 620 490 T 740 490 T 860 490 T 980 490 T 1100 490 T 1220 490 T 1300 490" stroke="#FF8A5C" stroke-width="3" fill="none" opacity="0.22"/>
+    </svg>
+    <svg class="scene" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMax slice">
+      <ellipse cx="600" cy="680" rx="700" ry="60" fill="#5C4A32" opacity="0.35"/>
+      <path d="M300 640 L330 595 L312 555 M330 595 L362 606" stroke="#7A6648" stroke-width="4" fill="none" opacity="0.4" stroke-linecap="round"/>
+      <path d="M860 650 L828 598 L846 556 M828 598 L802 612" stroke="#7A6648" stroke-width="4" fill="none" opacity="0.4" stroke-linecap="round"/>
+      <path d="M0 662 Q 200 650 400 666 T 800 660 T 1200 666" stroke="#8A7856" stroke-width="2" fill="none" opacity="0.3"/>
+      <path d="M150 400 Q168 380 186 400 Q204 380 222 400" stroke="#C9BFA0" stroke-width="4" fill="none" opacity="0.55" stroke-linecap="round"/>
+      <path d="M240 350 Q254 334 268 350 Q282 334 296 350" stroke="#C9BFA0" stroke-width="3.5" fill="none" opacity="0.48" stroke-linecap="round"/>
+      <path d="M990 380 Q1006 362 1022 380 Q1038 362 1054 380" stroke="#C9BFA0" stroke-width="4" fill="none" opacity="0.55" stroke-linecap="round"/>
+      <path d="M920 440 Q933 425 946 440 Q959 425 972 440" stroke="#C9BFA0" stroke-width="3" fill="none" opacity="0.45" stroke-linecap="round"/>
+    </svg>
+    <svg class="scene" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMax slice">
+      <path d="M0 560 Q 150 528 300 560 T 600 560 T 900 560 T 1200 560 V 700 H 0 Z" fill="#0D5C6B" opacity="0.4"/>
+      <path d="M0 615 Q 150 585 300 615 T 600 615 T 900 615 T 1200 615 V 700 H 0 Z" fill="#0A4A56" opacity="0.45"/>
+      <ellipse class="drift-cloud" cx="260" cy="340" rx="120" ry="34" fill="#1B2440" opacity="0.4"/>
+      <ellipse class="drift-cloud drift-cloud-slow" cx="480" cy="300" rx="150" ry="40" fill="#1B2440" opacity="0.32"/>
+      <path class="bolt" d="M790 320 L748 440 L796 440 L738 545" stroke="#CFE8EA" stroke-width="4" fill="none" opacity="0" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <svg class="scene" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMax slice">
+      <polygon points="150,650 260,510 380,650" fill="#BFE3EA" opacity="0.25"/>
+      <polygon points="700,650 830,470 980,650" fill="#BFE3EA" opacity="0.3"/>
+      <path d="M830 470 L852 512 L808 522 Z" fill="#0A2A33" opacity="0.32"/>
+      <path d="M0 662 Q 300 640 600 662 T 1200 656" stroke="#E4F4F6" stroke-width="2" fill="none" opacity="0.3"/>
+    </svg>
+    <svg class="scene" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMax slice">
+      <circle cx="600" cy="820" r="220" fill="#FFC24B" opacity="0.22"/>
+      <circle cx="600" cy="820" r="120" fill="#FFE9A8" opacity="0.24"/>
+      <g opacity="0.4">
+        <rect x="80" y="640" width="90" height="50" fill="#1E4B6B" transform="skewX(-20)"/>
+        <rect x="195" y="640" width="90" height="50" fill="#1E4B6B" transform="skewX(-20)"/>
+        <rect x="960" y="640" width="90" height="50" fill="#1E4B6B" transform="skewX(-20)"/>
+        <rect x="1075" y="640" width="90" height="50" fill="#1E4B6B" transform="skewX(-20)"/>
+      </g>
+    </svg>
+  </div>
+  <div class="stakes-bottom-fade" aria-hidden="true"></div>
   <div class="wrap">
-    <div class="section-kicker">Explainer</div>
-    <p class="lede">A growing collection of deeply-researched 0-to-1 product case studies across climate, energy, and civic tech, spanning mitigation and adaptation. Each one runs the same tried and tested process: Refining the problem statement, conducting user research, running synthetic interviews, creating a prioritized roadmap, freezing a working prototype, and proposing concrete ways to measure success.</p>
-    <div class="pillars">
-      <div class="pillar"><span class="ic">🔍</span><h3>Product Research</h3><p>Market sizing, competitors, regulatory/program data and technical specifications are researched and cited where necessary. Personas, interviews, validations are synthetic to exhibit missing components of a full product development cycle.</p></div>
-      <div class="pillar"><span class="ic">⚖️</span><h3>Judgment over output</h3><p>AI drafts research and prototype code fast; the harder work is scoping what matters, prioritizing tradeoffs, catching what it got wrong, and deciding what not to build.</p></div>
-      <div class="pillar"><span class="ic">🛠️</span><h3>Full 0-to-1 cycle</h3><p>Problem framing → personas → interviews → prioritized roadmap → clickable prototype, with buildability and PMF thinking layered in over time.</p></div>
+    <div class="section-kicker">The stakes</div>
+    <div class="stakes-slot" data-stakes-rotator>
+      <div class="stake">
+        <div class="stake-num"><span data-count="38.1" data-decimals="1" data-suffix="B">0</span></div>
+        <div class="stake-label">Tonnes of CO2 from fossil fuels and industry in 2025, a new record high.</div>
+        <div class="stake-src"><a href="https://globalcarbonbudget.org/fossil-fuel-co2-emissions-hit-record-high-in-2025/" target="_blank" rel="noopener">Global Carbon Budget, 2025</a></div>
+      </div>
+      <div class="stake">
+        <div class="stake-num stake-num-text">2015&ndash;2024</div>
+        <div class="stake-label">The warmest ten-year period ever recorded.</div>
+        <div class="stake-src"><a href="https://wmo.int/news/media-centre/wmo-confirms-2024-warmest-year-record-about-155degc-above-pre-industrial-level" target="_blank" rel="noopener">World Meteorological Organization</a></div>
+      </div>
+      <div class="stake">
+        <div class="stake-num"><span data-count="30" data-suffix="%">0</span></div>
+        <div class="stake-label">Of the world's population already faces potentially deadly heat for 20+ days a year.</div>
+        <div class="stake-src"><a href="https://www.nature.com/articles/nclimate3322" target="_blank" rel="noopener">Mora et al., Nature Climate Change</a></div>
+      </div>
+      <div class="stake">
+        <div class="stake-num"><span data-count="73" data-suffix="%">0</span></div>
+        <div class="stake-label">Decline in the average size of monitored wildlife populations since 1970.</div>
+        <div class="stake-src"><a href="https://www.worldwildlife.org/publications/2024-living-planet-report/" target="_blank" rel="noopener">WWF / ZSL Living Planet Report, 2024</a></div>
+      </div>
+      <div class="stake">
+        <div class="stake-num stake-num-text">2.1<span class="stake-arrow">&rarr;</span>4.5mm</div>
+        <div class="stake-label">The rate of global sea level rise, per year, more than doubled between 1993 and 2024.</div>
+        <div class="stake-src"><a href="https://www.earthdata.nasa.gov/learn/data-in-action/rate-global-sea-level-rise-doubled-during-past-three-decades" target="_blank" rel="noopener">NASA Sea Level Change Portal</a></div>
+      </div>
+      <div class="stake">
+        <div class="stake-num"><span data-count="12.1" data-decimals="1" data-suffix="%">0</span></div>
+        <div class="stake-label">Per-decade decline in Arctic sea ice minimum extent since the 1979 satellite record began.</div>
+        <div class="stake-src"><a href="https://nsidc.org/sea-ice-today/analyses/2025-arctic-sea-ice-minimum-squeezes-ten-lowest-minimums" target="_blank" rel="noopener">NASA / NSIDC</a></div>
+      </div>
+      <div class="stake">
+        <div class="stake-num"><span data-count="34" data-suffix="%">0</span></div>
+        <div class="stake-label">Of global electricity now comes from renewables, which overtook coal for the first time in over a century in 2025.</div>
+        <div class="stake-src"><a href="https://www.iea.org/reports/global-energy-review-2026/electricity-supply" target="_blank" rel="noopener">IEA, Global Energy Review 2026</a></div>
+      </div>
     </div>
+    <div class="stakes-dots" id="stakesDots"></div>
   </div>
 </section>
 
-<section class="alt">
+<section class="dark-section case-bridge" id="case-studies">
+  <div class="about-fade" aria-hidden="true"></div>
   <div class="wrap">
     <div class="section-kicker">Case studies</div>
-    <p class="lede">Case studies so far, with more problem areas and industries in the pipeline.</p>
+    <h2 class="section-title">Real problems, working prototypes.</h2>
+    <p class="lede">Case studies so far, with more industries in the pipeline.</p>
 
     <div class="carousel">
     <button class="car-btn car-prev" id="carPrev" aria-label="Previous case study" type="button">‹</button>
     <button class="car-btn car-next" id="carNext" aria-label="Next case study" type="button">›</button>
     <div class="case-grid" id="caseGrid">
-      <a class="case-card live" href="projects/flexy/index.html">
-        <div class="case-banner banner-flexy">
-          <svg class="logo-mark" viewBox="0 0 64 64" width="34" height="34" role="img" aria-label="Flexy logo">
-            <defs>
-              <linearGradient id="flexyLogoGradHub" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0" stop-color="#1E4B3B"/>
-                <stop offset="1" stop-color="#F0AE8C"/>
-              </linearGradient>
-              <clipPath id="flexyLogoClipHub"><rect x="0" y="0" width="64" height="64" rx="16"/></clipPath>
-            </defs>
-            <rect x="0" y="0" width="64" height="64" rx="16" fill="url(#flexyLogoGradHub)"/>
-            <g clip-path="url(#flexyLogoClipHub)"><circle cx="44" cy="34" r="13" fill="#E7B23A"/></g>
-            <path d="M10 24 L24 34 L36 30 L54 48" fill="none" stroke="#ffffff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-            <circle cx="10" cy="24" r="3.5" fill="#ffffff"/>
-            <circle cx="54" cy="48" r="3.5" fill="#ffffff"/>
-          </svg>
-          Flexy
-        </div>
-        <div class="case-body">
-          <div class="case-tags">
-            <span class="tag tag-industry">Energy Flexibility</span>
-            <span class="tag tag-status-progress">In progress</span>
+      <a class="case-card-v2 live" href="projects/flexy/index.html">
+        <div class="case-v2-inner banner-flexy">
+          <div class="case-v2-text">
+            <div class="case-v2-tag">Energy Flexibility · In progress</div>
+            <h3 class="case-v2-name" data-case-split>Flexy</h3>
+            <ul class="case-v2-bullets" data-case-bullets>
+              <li><span class="bullet-label">What</span>A white-label companion app for utility dynamic/TOU-rate customers: live price visibility and automated smart EV charging, piloted first on ComEd.</li>
+              <li><span class="bullet-label">Why</span>Real-time and time-of-use electricity pricing is too complex for most households to track and act on manually.</li>
+              <li><span class="bullet-label">For whom</span>ComEd customers in Illinois on, or eligible for, a real-time or time-of-use rate.</li>
+            </ul>
+            <div class="cta">View full case study →</div>
           </div>
-          <h3>Smart charge your EV using real dynamic prices</h3>
-          <div class="thesis-facts">
-            <div class="fact"><span class="fact-label">What</span><span class="fact-val">A white-label companion app for utility dynamic/TOU-rate customers: live price visibility and automated smart EV charging, piloted first on ComEd.</span></div>
-            <div class="fact"><span class="fact-label">Why</span><span class="fact-val">Real-time and time-of-use electricity pricing is too complex for most households to track and act on manually.</span></div>
-            <div class="fact"><span class="fact-label">For whom</span><span class="fact-val">ComEd customers in Illinois on, or eligible for, a real-time or time-of-use rate.</span></div>
+          <div class="case-v2-shot-wrap">
+            <img class="case-v2-shot" data-case-shot src="projects/flexy/assets/carousel-screenshot.png" alt="Flexy home screen showing this month's smart-charging savings and live cost per kWh">
           </div>
-          <div class="cta">View full case study →</div>
         </div>
       </a>
 
-      <a class="case-card live" href="projects/sunnysideup/index.html">
-        <div class="case-banner banner-sunnysideup">
-          <svg class="logo-mark" viewBox="0 0 64 64" width="34" height="34" role="img" aria-label="SunnySideUp logo, a cartoon fried egg">
-            <defs>
-              <clipPath id="ssuClipHub"><rect x="0" y="0" width="64" height="64" rx="16"/></clipPath>
-            </defs>
-            <rect x="0" y="0" width="64" height="64" rx="16" fill="#FFE9B8"/>
-            <g clip-path="url(#ssuClipHub)">
-              <path d="M9 33 C6 21 18 11 30 12 C41 13 47 8 54 15 C61 22 59 33 55 40 C50 49 38 53 27 50 C15 47 11 43 9 33 Z" fill="#FFFDF6" stroke="#F0E4D0" stroke-width="1.5"/>
-              <circle cx="35" cy="31" r="13" fill="#F5B942" stroke="#D4890B" stroke-width="1.5"/>
-              <ellipse cx="30" cy="26" rx="4" ry="2.5" fill="#FFE9B8" opacity="0.85"/>
-              <circle cx="31" cy="31" r="1.7" fill="#2B2118"/>
-              <circle cx="39" cy="31" r="1.7" fill="#2B2118"/>
-              <path d="M31 36 Q35 39.5 39 36" fill="none" stroke="#2B2118" stroke-width="1.8" stroke-linecap="round"/>
-            </g>
-          </svg>
-          SunnySideUp
-        </div>
-        <div class="case-body">
-          <div class="case-tags">
-            <span class="tag tag-industry">Solar · B2C</span>
-            <span class="tag tag-status-progress">In progress</span>
+      <a class="case-card-v2 live" href="projects/sunnysideup/index.html">
+        <div class="case-v2-inner banner-sunnysideup">
+          <div class="case-v2-text">
+            <div class="case-v2-tag">Solar · B2C · In progress</div>
+            <h3 class="case-v2-name" data-case-split>SunnySideUp</h3>
+            <ul class="case-v2-bullets" data-case-bullets>
+              <li><span class="bullet-label">What</span>An independent, plain-English solar viability check for UK homeowners, renters, and leaseholders, covering both rooftop and newly-legal plug-in/balcony solar.</li>
+              <li><span class="bullet-label">Why</span>UK solar quotes are opaque and hard to compare, every existing comparison site runs a lead-generation model.</li>
+              <li><span class="bullet-label">For whom</span>UK homeowners and renters/leaseholders considering a solar solution for their homes.</li>
+            </ul>
+            <div class="cta">View full case study →</div>
           </div>
-          <h3>Is solar worth it for your home? An honest, independent read.</h3>
-          <div class="thesis-facts">
-            <div class="fact"><span class="fact-label">What</span><span class="fact-val">An independent, plain-English solar viability check for UK homeowners, renters, and leaseholders, covering both rooftop and newly-legal plug-in/balcony solar, with no referral fees from installers.</span></div>
-            <div class="fact"><span class="fact-label">Why</span><span class="fact-val">UK solar quotes are opaque and hard to compare, every existing comparison site runs a lead-generation model, and cold-call sales pressure is a documented regulatory concern (CMA, Which?).</span></div>
-            <div class="fact"><span class="fact-label">For whom</span><span class="fact-val">UK homeowners weighing rooftop solar before or after a quote, and renters/leaseholders considering a plug-in kit under the UK's newly-changing self-install rules.</span></div>
+          <div class="case-v2-shot-wrap">
+            <img class="case-v2-shot" data-case-shot src="projects/sunnysideup/assets/carousel-screenshot.png" alt="SunnySideUp result screen showing a Borderline viability verdict with payback period, annual saving, and a leasehold-consent flag">
           </div>
-          <div class="cta">View full case study →</div>
         </div>
       </a>
 
-      <div class="case-card disabled">
-        <div class="case-banner banner-placeholder"></div>
-        <div class="case-body">
-          <div class="case-tags">
-            <span class="tag tag-industry">Energy Access · P2P</span>
-            <span class="tag tag-status-soon">Research next</span>
+      <div class="case-card-v2 disabled">
+        <div class="case-v2-inner case-v2-soon">
+          <div class="case-v2-text">
+            <div class="case-v2-tag">Energy Access · P2P · Research next</div>
+            <h3 class="case-v2-name">Peer-to-Peer Energy Trading</h3>
+            <div class="cta">Coming soon</div>
           </div>
-          <h3>Next case study: Peer-to-Peer Energy Trading</h3>
-          <p class="thesis">Not yet started. Peer-to-peer energy trading, letting neighbors buy and sell surplus solar or battery power directly, is often pitched as a fix for energy access gaps in underserved and off-grid communities. Before assuming that's the right model, the plan is to research what's actually limiting energy access today: infrastructure, financing, regulation, or something else entirely.</p>
-          <div class="cta">Coming soon</div>
         </div>
       </div>
 
-      <div class="case-card disabled">
-        <div class="case-banner banner-placeholder"></div>
-        <div class="case-body">
-          <div class="case-tags">
-            <span class="tag tag-industry">Carbon Accounting · B2B</span>
-            <span class="tag tag-status-soon">Research next</span>
+      <div class="case-card-v2 disabled">
+        <div class="case-v2-inner case-v2-soon">
+          <div class="case-v2-text">
+            <div class="case-v2-tag">Carbon Accounting · B2B · Research next</div>
+            <h3 class="case-v2-name">Carbon Accounting Software</h3>
+            <div class="cta">Coming soon</div>
           </div>
-          <h3>Next case study: Carbon Accounting Software</h3>
-          <p class="thesis">Not yet started. Enterprise tools like Greenly, Cogo, and Zevero automate carbon accounting so businesses can track and audit their energy use and emissions. Before assuming there's still a gap to fill in an increasingly crowded category, the plan is to research where these tools actually fall short for the businesses using them.</p>
-          <div class="cta">Coming soon</div>
         </div>
       </div>
 
-      <div class="case-card disabled">
-        <div class="case-banner banner-placeholder"></div>
-        <div class="case-body">
-          <div class="case-tags">
-            <span class="tag tag-industry">Climate NGOs · B2B2C</span>
-            <span class="tag tag-status-soon">Research next</span>
+      <div class="case-card-v2 disabled">
+        <div class="case-v2-inner case-v2-soon">
+          <div class="case-v2-text">
+            <div class="case-v2-tag">Climate NGOs · B2B2C · Research next</div>
+            <h3 class="case-v2-name">FundTheFuture</h3>
+            <div class="cta">Coming soon</div>
           </div>
-          <h3>Next case study: FundTheFuture</h3>
-          <p class="thesis">Not yet started. Exploring a donation facilitation app for improving fundraising efforts, focused specifically on the climate change NGO sector: what's actually broken in how these organizations raise money online today, before assuming the product answer.</p>
-          <div class="cta">Coming soon</div>
         </div>
       </div>
 
-      <div class="case-card disabled">
-        <div class="case-banner banner-placeholder"></div>
-        <div class="case-body">
-          <div class="case-tags">
-            <span class="tag tag-industry">Climate Adaptation · B2G</span>
-            <span class="tag tag-status-soon">Research next</span>
+      <div class="case-card-v2 disabled">
+        <div class="case-v2-inner case-v2-soon">
+          <div class="case-v2-text">
+            <div class="case-v2-tag">Climate Adaptation · B2G · Research next</div>
+            <h3 class="case-v2-name">Firstwatch</h3>
+            <div class="cta">Coming soon</div>
           </div>
-          <h3>Next case study: Firstwatch</h3>
-          <p class="thesis">Not yet started. A predictive outreach coordination platform for homeless services NGOs and city agencies: combining NWS forecast data (heat, cold, flood, hurricane) with known encampment locations and HUD's public point-in-time count data, so outreach teams can pre-position blankets, water, and staff before a heat wave or cold snap, not after. The people most exposed to climate extremes are often the least reachable by any consumer app, so this one is built for the outreach coordinator, not the individual.</p>
-          <div class="cta">Coming soon</div>
         </div>
       </div>
     </div>
@@ -273,10 +379,13 @@
   </div>
 </section>
 
-<section>
+<section class="dark-section process-dark">
+  <div class="process-fade" aria-hidden="true"></div>
   <div class="wrap">
     <div class="section-kicker">Process</div>
-    <div class="approach-list">
+    <h2 class="section-title">A refined system for tackling each new project</h2>
+    <p class="lede">AI accelerates execution, but human judgment sets the direction. I use AI to move fast, while focusing my process on deep user empathy, rigorous trade-offs, and decisive scoping.</p>
+    <div class="approach-list" data-reveal-stagger>
       <div class="approach-item"><div class="approach-num"></div><div><h4>Research the real problem first</h4><p>Pick an industry, research what's broken for the target user today, using real market/regulatory data, before framing a product solution.</p></div></div>
       <div class="approach-item"><div class="approach-num"></div><div><h4>Build personas &amp; run interviews</h4><p>Ground personas in that real research; run synthetic interviews with them to pressure-test assumptions before roadmapping.</p></div></div>
       <div class="approach-item"><div class="approach-num"></div><div><h4>Prioritize with a defensible framework</h4><p>ICE, RICE, Value vs. Effort - chosen deliberately per project, every score tied to a specific persona, JTBD, interview finding, or pressing regulatory update.</p></div></div>
@@ -292,6 +401,11 @@
   </div>
 </footer>
 
+<script src="assets/vendor/lenis.min.js"></script>
+<script src="assets/vendor/gsap.min.js"></script>
+<script src="assets/vendor/ScrollTrigger.min.js"></script>
+<script src="assets/vendor/SplitText.min.js"></script>
+<script src="assets/js/motion.js"></script>
 <script>
 (function(){
   function initCarousel(){
@@ -300,7 +414,7 @@
     var prevBtn = document.getElementById('carPrev');
     var nextBtn = document.getElementById('carNext');
     if(!grid || !dotsWrap) return;
-    var cards = Array.prototype.slice.call(grid.querySelectorAll('.case-card'));
+    var cards = Array.prototype.slice.call(grid.querySelectorAll('.case-card-v2'));
     if(cards.length < 2){
       if(prevBtn) prevBtn.style.display = 'none';
       if(nextBtn) nextBtn.style.display = 'none';
@@ -335,11 +449,16 @@
       grid.scrollTo({left: target, behavior: 'smooth'});
     }
 
+    var lastIdx = currentIndex();
     function updateUI(){
       var idx = currentIndex();
       dots.forEach(function(d, i){ d.classList.toggle('active', i === idx); });
       if(prevBtn) prevBtn.disabled = idx === 0;
       if(nextBtn) nextBtn.disabled = idx === cards.length - 1;
+      if(idx !== lastIdx){
+        lastIdx = idx;
+        if(window.replayCaseCardReveal) window.replayCaseCardReveal(cards[idx]);
+      }
     }
 
     var scrollTimer;
