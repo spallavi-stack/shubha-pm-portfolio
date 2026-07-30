@@ -40,7 +40,7 @@
   /* Per-fact illustrated backdrop, content-matched, hidden until JS enables rotation */
   .stakes-bg{position:absolute;inset:0;z-index:0;display:none;}
   section.stakes.is-rotating .stakes-bg{display:block;}
-  .stakes-bottom-fade{position:absolute;left:0;right:0;bottom:0;height:240px;z-index:0;pointer-events:none;background:linear-gradient(to bottom, transparent, var(--navy) 65%);}
+  .stakes-bottom-fade{position:absolute;left:0;right:0;bottom:0;height:110px;z-index:0;pointer-events:none;background:linear-gradient(to bottom, transparent, var(--navy) 90%);}
   .stakes-bg .scene{position:absolute;inset:0;width:100%;height:100%;opacity:0;transition:opacity 0.8s ease;}
   .stakes-bg .scene.is-active{opacity:1;}
   .stakes-bg .shimmer-line{animation:shimmerDrift 6s ease-in-out infinite;}
@@ -110,36 +110,38 @@
   .car-dot{width:7px;height:7px;border-radius:50%;background:var(--border);border:none;padding:0;cursor:pointer;transition:all .2s ease;}
   .car-dot.active{background:var(--accent);width:22px;border-radius:5px;}
 
-  /* Case cards v2: screenshot + name + What/Why/For-whom bullets, full-bleed brand color */
+  /* Case cards v2: screenshot + name + What/Why/For-whom bullets, full-bleed
+     brand color. One card fills the full carousel width so exactly one is
+     visible at a time (flex:0 0 100% + scroll-snap), not a peek of the next. */
   .case-card-v2{
     border-radius:20px;overflow:hidden;text-decoration:none;color:#fff;
     display:flex;align-items:flex-end;justify-content:space-between;gap:18px;
-    flex:0 0 640px;width:640px;min-height:400px;scroll-snap-align:start;
-    padding:34px;position:relative;
+    flex:0 0 100%;width:100%;min-height:420px;scroll-snap-align:start;
+    padding:44px;position:relative;
   }
   .case-card-v2.banner-flexy{background:linear-gradient(135deg,#1E4B3B,#3E6E58 55%,#F0AE8C);}
   .case-card-v2.banner-sunnysideup{background:linear-gradient(135deg,#B8720A,#D4890B 55%,#F5B942);}
-  .case-v2-text{position:relative;z-index:1;max-width:290px;display:flex;flex-direction:column;}
+  .case-v2-text{position:relative;z-index:1;max-width:380px;display:flex;flex-direction:column;}
   .case-v2-tag{font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:rgba(255,255,255,0.75);margin-bottom:14px;}
-  .case-v2-name{font-family:var(--font-display);font-weight:600;font-size:34px;letter-spacing:-0.01em;margin:0 0 18px;visibility:hidden;}
+  .case-v2-name{font-family:var(--font-display);font-weight:600;font-size:38px;letter-spacing:-0.01em;margin:0 0 20px;visibility:hidden;}
   .case-v2-name .case-name-line{visibility:visible;}
-  .case-v2-bullets{list-style:none;margin:0 0 22px;padding:0;display:flex;flex-direction:column;gap:12px;}
-  .case-v2-bullets li{font-size:13px;line-height:1.5;color:rgba(255,255,255,0.88);padding-left:16px;position:relative;}
+  .case-v2-bullets{list-style:none;margin:0 0 24px;padding:0;display:flex;flex-direction:column;gap:14px;}
+  .case-v2-bullets li{font-size:13.5px;line-height:1.55;color:rgba(255,255,255,0.88);padding-left:16px;position:relative;}
   .case-v2-bullets li::before{content:'';position:absolute;left:0;top:7px;width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.55);}
   .bullet-label{display:block;font-weight:700;color:#fff;margin-bottom:2px;}
   .case-card-v2 .cta{font-size:13px;font-weight:700;color:#fff;}
-  .case-v2-shot-wrap{position:relative;z-index:1;flex-shrink:0;align-self:flex-end;margin-bottom:-34px;margin-right:-14px;}
-  .case-v2-shot{display:block;width:200px;border-radius:14px 14px 0 0;box-shadow:0 20px 44px rgba(0,0,0,0.35);}
-  @media(max-width:640px){
-    .case-card-v2{flex:0 0 88vw;width:88vw;flex-direction:column;align-items:flex-start;}
+  .case-v2-shot-wrap{position:relative;z-index:1;flex-shrink:0;align-self:flex-end;margin-bottom:-44px;margin-right:10px;}
+  .case-v2-shot{display:block;width:260px;border-radius:14px 14px 0 0;box-shadow:0 20px 44px rgba(0,0,0,0.35);}
+  @media(max-width:760px){
+    .case-card-v2{flex-direction:column;align-items:flex-start;}
     .case-v2-text{max-width:none;}
-    .case-v2-shot-wrap{align-self:center;margin:20px 0 -34px;}
+    .case-v2-shot-wrap{align-self:center;margin:20px 0 -44px;}
   }
 
   .case-v2-soon{
     background:var(--paper-soft);color:var(--ink);
     display:flex;align-items:flex-start;justify-content:center;flex-direction:column;
-    flex:0 0 320px;width:320px;min-height:400px;padding:34px;
+    flex:0 0 100%;width:100%;min-height:420px;padding:44px;
   }
   .case-v2-soon .case-v2-tag{color:var(--ink-faint);}
   .case-v2-soon .case-v2-name{visibility:visible;font-size:22px;color:var(--ink);margin-bottom:24px;}
