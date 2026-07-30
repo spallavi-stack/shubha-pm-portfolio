@@ -421,11 +421,16 @@
       grid.scrollTo({left: target, behavior: 'smooth'});
     }
 
+    var lastIdx = currentIndex();
     function updateUI(){
       var idx = currentIndex();
       dots.forEach(function(d, i){ d.classList.toggle('active', i === idx); });
       if(prevBtn) prevBtn.disabled = idx === 0;
       if(nextBtn) nextBtn.disabled = idx === cards.length - 1;
+      if(idx !== lastIdx){
+        lastIdx = idx;
+        if(window.replayCaseCardReveal) window.replayCaseCardReveal(cards[idx]);
+      }
     }
 
     var scrollTimer;
