@@ -128,3 +128,71 @@
 @media(max-width:640px){
   .gtm-summary{padding:18px;}
 }
+
+/* ============================================================
+   Tool 2 — Prioritization & ROI Stress-Tester
+   ============================================================ */
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;}
+
+.rice-table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid rgba(255,255,255,0.14);border-radius:14px;}
+.rice-table{width:100%;border-collapse:collapse;min-width:760px;}
+.rice-table th, .rice-table td{padding:12px 10px;text-align:left;vertical-align:middle;}
+.rice-table thead th{
+  font-size:11px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;color:#B9C0DD;
+  background:rgba(255,255,255,0.05);border-bottom:1px solid rgba(255,255,255,0.14);white-space:nowrap;
+}
+.rice-th-sub{display:block;font-size:10px;font-weight:500;text-transform:none;letter-spacing:0;color:#8B90B3;margin-top:2px;}
+.rice-th-name{min-width:220px;}
+.rice-th-remove{width:36px;}
+.rice-row + .rice-row td{border-top:1px solid rgba(255,255,255,0.08);}
+
+.rice-input{
+  width:100%;font-family:var(--font-body);font-size:13.5px;color:#fff;
+  background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.16);border-radius:8px;
+  padding:8px 10px;transition:border-color var(--dur-fast) var(--ease-out);
+}
+.rice-input:focus{outline:none;border-color:var(--amber);}
+.rice-input-num{width:80px;}
+.rice-input-name{min-width:200px;}
+
+.rice-td-check{text-align:center;}
+.rice-check{width:18px;height:18px;accent-color:var(--amber);cursor:pointer;}
+
+.rice-td-score{white-space:nowrap;}
+.rice-score-value{font-family:var(--font-display);font-size:18px;font-weight:600;color:var(--amber);}
+.rice-rank-badge{
+  display:inline-block;margin-left:8px;font-size:11px;font-weight:700;color:#fff;
+  background:rgba(255,255,255,0.14);border-radius:999px;padding:2px 8px;vertical-align:middle;
+}
+.rice-rank-badge[data-rank="1"]{background:var(--amber);color:#2B2118;}
+
+.rice-td-remove{text-align:center;}
+.rice-remove-btn{
+  width:28px;height:28px;border-radius:50%;border:1px solid rgba(255,255,255,0.16);
+  background:transparent;color:#B9C0DD;font-size:16px;line-height:1;cursor:pointer;
+  transition:all var(--dur-fast) var(--ease-out);
+}
+.rice-remove-btn:hover{background:rgba(255,90,90,0.16);border-color:rgba(255,90,90,0.5);color:#FF9E9E;}
+
+.rice-actions{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:14px;margin-top:20px;}
+.rice-add-btn{
+  font-family:var(--font-body);font-size:13.5px;font-weight:600;color:#2B2118;
+  background:var(--amber);border:none;border-radius:999px;padding:10px 20px;cursor:pointer;
+  transition:transform var(--dur-fast) var(--ease-out);
+}
+.rice-add-btn:hover{transform:translateY(-2px);}
+.rice-formula-note{font-size:12px;color:#8B90B3;}
+
+.rice-risk-panel{
+  margin-top:22px;background:rgba(231,120,58,0.1);border:1px solid rgba(231,120,58,0.4);
+  border-radius:14px;padding:20px 24px;
+}
+.rice-risk-title{font-size:13px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;color:#F0AE8C;margin-bottom:12px;}
+.rice-risk-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px;}
+.rice-risk-list li{font-size:13.5px;color:#F3E3D8;line-height:1.55;padding-left:18px;position:relative;}
+.rice-risk-list li::before{content:'!';position:absolute;left:0;top:0;font-weight:800;color:#F0AE8C;}
+.rice-risk-list strong{color:#fff;}
+
+@media(max-width:640px){
+  .rice-actions{align-items:flex-start;flex-direction:column;}
+}

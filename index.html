@@ -363,7 +363,84 @@
       </div>
       <div class="pm-lab-panel" id="pm-lab-panel-rice" role="tabpanel" aria-labelledby="pm-lab-tab-rice">
         <p class="pm-lab-panel-intro">A dynamic RICE feature matrix that calculates strategic blindspot penalties and retention risk.</p>
-        <div class="pm-lab-tool" id="prioritization-root" data-pm-tool="prioritization"></div>
+        <div class="pm-lab-tool" id="prioritization-root" data-pm-tool="prioritization">
+          <div class="rice-table-wrap">
+            <table class="rice-table" id="riceTable">
+              <thead>
+                <tr>
+                  <th class="rice-th-name">Feature</th>
+                  <th>Reach<span class="rice-th-sub">users/quarter</span></th>
+                  <th>Impact<span class="rice-th-sub">0.25&ndash;3</span></th>
+                  <th>Confidence<span class="rice-th-sub">%</span></th>
+                  <th>Effort<span class="rice-th-sub">person-months</span></th>
+                  <th>High Tech<br>Debt Risk</th>
+                  <th>Missing<br>Retention Loop</th>
+                  <th>RICE Score</th>
+                  <th class="rice-th-remove"><span class="sr-only">Remove</span></th>
+                </tr>
+              </thead>
+              <tbody id="riceTableBody">
+                <tr class="rice-row" data-rice-row>
+                  <td><input type="text" class="rice-input rice-input-name" data-field="name" value="Self-Service Team Invite Flow"></td>
+                  <td><input type="number" class="rice-input rice-input-num" data-field="reach" value="1200" min="0" step="10"></td>
+                  <td><input type="number" class="rice-input rice-input-num" data-field="impact" value="2" min="0.25" max="3" step="0.25"></td>
+                  <td><input type="number" class="rice-input rice-input-num" data-field="confidence" value="80" min="0" max="100" step="5"></td>
+                  <td><input type="number" class="rice-input rice-input-num" data-field="effort" value="1.5" min="0.1" step="0.1"></td>
+                  <td class="rice-td-check"><input type="checkbox" class="rice-check" data-field="techDebt"></td>
+                  <td class="rice-td-check"><input type="checkbox" class="rice-check" data-field="retentionGap"></td>
+                  <td class="rice-td-score"><span class="rice-score-value" data-rice-score>0</span><span class="rice-rank-badge" data-rice-rank></span></td>
+                  <td class="rice-td-remove"><button type="button" class="rice-remove-btn" aria-label="Remove this feature row">&times;</button></td>
+                </tr>
+                <tr class="rice-row" data-rice-row>
+                  <td><input type="text" class="rice-input rice-input-name" data-field="name" value="Custom Enterprise SSO"></td>
+                  <td><input type="number" class="rice-input rice-input-num" data-field="reach" value="150" min="0" step="10"></td>
+                  <td><input type="number" class="rice-input rice-input-num" data-field="impact" value="3" min="0.25" max="3" step="0.25"></td>
+                  <td><input type="number" class="rice-input rice-input-num" data-field="confidence" value="90" min="0" max="100" step="5"></td>
+                  <td><input type="number" class="rice-input rice-input-num" data-field="effort" value="3" min="0.1" step="0.1"></td>
+                  <td class="rice-td-check"><input type="checkbox" class="rice-check" data-field="techDebt" checked></td>
+                  <td class="rice-td-check"><input type="checkbox" class="rice-check" data-field="retentionGap"></td>
+                  <td class="rice-td-score"><span class="rice-score-value" data-rice-score>0</span><span class="rice-rank-badge" data-rice-rank></span></td>
+                  <td class="rice-td-remove"><button type="button" class="rice-remove-btn" aria-label="Remove this feature row">&times;</button></td>
+                </tr>
+                <tr class="rice-row" data-rice-row>
+                  <td><input type="text" class="rice-input rice-input-name" data-field="name" value="AI Automated Summary Widget"></td>
+                  <td><input type="number" class="rice-input rice-input-num" data-field="reach" value="2000" min="0" step="10"></td>
+                  <td><input type="number" class="rice-input rice-input-num" data-field="impact" value="1" min="0.25" max="3" step="0.25"></td>
+                  <td><input type="number" class="rice-input rice-input-num" data-field="confidence" value="50" min="0" max="100" step="5"></td>
+                  <td><input type="number" class="rice-input rice-input-num" data-field="effort" value="1" min="0.1" step="0.1"></td>
+                  <td class="rice-td-check"><input type="checkbox" class="rice-check" data-field="techDebt"></td>
+                  <td class="rice-td-check"><input type="checkbox" class="rice-check" data-field="retentionGap" checked></td>
+                  <td class="rice-td-score"><span class="rice-score-value" data-rice-score>0</span><span class="rice-rank-badge" data-rice-rank></span></td>
+                  <td class="rice-td-remove"><button type="button" class="rice-remove-btn" aria-label="Remove this feature row">&times;</button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <template id="riceRowTemplate">
+            <tr class="rice-row" data-rice-row>
+              <td><input type="text" class="rice-input rice-input-name" data-field="name" value="New feature" placeholder="Feature name"></td>
+              <td><input type="number" class="rice-input rice-input-num" data-field="reach" value="500" min="0" step="10"></td>
+              <td><input type="number" class="rice-input rice-input-num" data-field="impact" value="1" min="0.25" max="3" step="0.25"></td>
+              <td><input type="number" class="rice-input rice-input-num" data-field="confidence" value="50" min="0" max="100" step="5"></td>
+              <td><input type="number" class="rice-input rice-input-num" data-field="effort" value="1" min="0.1" step="0.1"></td>
+              <td class="rice-td-check"><input type="checkbox" class="rice-check" data-field="techDebt"></td>
+              <td class="rice-td-check"><input type="checkbox" class="rice-check" data-field="retentionGap"></td>
+              <td class="rice-td-score"><span class="rice-score-value" data-rice-score>0</span><span class="rice-rank-badge" data-rice-rank></span></td>
+              <td class="rice-td-remove"><button type="button" class="rice-remove-btn" aria-label="Remove this feature row">&times;</button></td>
+            </tr>
+          </template>
+
+          <div class="rice-actions">
+            <button type="button" class="rice-add-btn" id="riceAddRow">+ Add feature</button>
+            <div class="rice-formula-note">RICE Score = (Reach &times; Impact &times; Confidence) &divide; Effort, then &minus;20% per active risk flag.</div>
+          </div>
+
+          <div class="rice-risk-panel" id="riceRiskPanel" hidden>
+            <div class="rice-risk-title">Strategic Risk Flags</div>
+            <ul class="rice-risk-list" id="riceRiskList"></ul>
+          </div>
+        </div>
       </div>
       <div class="pm-lab-panel" id="pm-lab-panel-prd" role="tabpanel" aria-labelledby="pm-lab-tab-prd">
         <p class="pm-lab-panel-intro">See a raw feature idea turned into an edge-case audit, a metric tree, and engineering-ready user stories.</p>
@@ -494,6 +571,7 @@
 <script src="assets/js/motion.js"></script>
 <script src="assets/js/pm-lab.js"></script>
 <script src="assets/js/gtm-engine.js"></script>
+<script src="assets/js/prioritization.js"></script>
 <script>
 (function(){
   function initCarousel(){
