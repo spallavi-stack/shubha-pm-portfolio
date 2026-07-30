@@ -40,6 +40,7 @@
   /* Per-fact illustrated backdrop, content-matched, hidden until JS enables rotation */
   .stakes-bg{position:absolute;inset:0;z-index:0;display:none;}
   section.stakes.is-rotating .stakes-bg{display:block;}
+  .stakes-bottom-fade{position:absolute;left:0;right:0;bottom:0;height:240px;z-index:0;pointer-events:none;background:linear-gradient(to bottom, transparent, var(--navy) 65%);}
   .stakes-bg .scene{position:absolute;inset:0;width:100%;height:100%;opacity:0;transition:opacity 0.8s ease;}
   .stakes-bg .scene.is-active{opacity:1;}
   .stakes-bg .shimmer-line{animation:shimmerDrift 6s ease-in-out infinite;}
@@ -230,6 +231,7 @@
       </g>
     </svg>
   </div>
+  <div class="stakes-bottom-fade" aria-hidden="true"></div>
   <div class="wrap">
     <div class="section-kicker">The stakes</div>
     <div class="stakes-slot" data-stakes-rotator>
