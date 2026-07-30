@@ -148,7 +148,9 @@
   .case-v2-soon .cta{color:rgba(255,255,255,0.5);}
 
   /* Process */
-  .process-dark{background:var(--navy-soft);}
+  .process-dark{background:var(--navy-soft);position:relative;overflow:hidden;}
+  .process-dark .wrap{position:relative;z-index:1;}
+  .process-fade{position:absolute;top:0;left:0;right:0;height:160px;z-index:0;pointer-events:none;background:linear-gradient(to bottom, var(--navy), transparent);}
   .approach-list{counter-reset:step;margin-top:8px;}
   .approach-item{display:flex;gap:18px;padding:20px 0;border-bottom:1px solid rgba(255,255,255,0.14);}
   .approach-item:last-child{border-bottom:none;}
@@ -378,6 +380,7 @@
 </section>
 
 <section class="dark-section process-dark">
+  <div class="process-fade" aria-hidden="true"></div>
   <div class="wrap">
     <div class="section-kicker">Process</div>
     <h2 class="section-title">A refined system for tackling each new project</h2>
