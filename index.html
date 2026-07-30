@@ -75,26 +75,14 @@
   .stakes-dots .car-dot{background:rgba(255,255,255,0.22);}
   .stakes-dots .car-dot.active{background:var(--amber);}
 
-  /* Bridge section: picks up the stakes section's amber accent on its kicker,
-     and fades the stakes' navy into the paper background instead of a hard cut. */
-  .about-bridge{position:relative;overflow:hidden;}
-  .about-bridge .section-kicker{color:var(--amber);}
-  .about-bridge .section-kicker::before{background:var(--amber);}
+  /* Case studies now sits directly after stakes, so it picks up the amber
+     accent on its kicker and fades the stakes' navy into the paper
+     background instead of a hard cut. */
+  .case-bridge{position:relative;overflow:hidden;}
+  .case-bridge .section-kicker{color:var(--amber);}
+  .case-bridge .section-kicker::before{background:var(--amber);}
   .about-fade{position:absolute;top:0;left:0;right:0;height:200px;z-index:0;pointer-events:none;background:linear-gradient(to bottom, var(--navy), transparent);}
-  .about-bridge .wrap{position:relative;z-index:1;}
-
-  /* Focus areas */
-  .focus-chips{display:flex;flex-wrap:wrap;gap:10px;margin:24px 0 40px;}
-  .focus-chip{
-    font-size:13px;font-weight:600;color:var(--accent-dark);background:#fff;border:1px solid var(--border);
-    padding:8px 16px;border-radius:999px;
-  }
-  .pillars{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:12px;}
-  @media(max-width:760px){.pillars{grid-template-columns:1fr;}}
-  .pillar{padding:24px;}
-  .pillar .ic{width:30px;height:30px;margin-bottom:16px;color:var(--accent-dark);}
-  .pillar h3{font-family:var(--font-body);font-size:15.5px;font-weight:700;margin:0 0 8px;}
-  .pillar p{font-size:13.5px;color:var(--ink-soft);margin:0;line-height:1.55;}
+  .case-bridge .wrap{position:relative;z-index:1;}
 
   /* Case study carousel */
   .carousel{position:relative;margin-top:8px;}
@@ -284,41 +272,8 @@
   </div>
 </section>
 
-<section class="about-bridge">
+<section class="alt case-bridge" id="case-studies">
   <div class="about-fade" aria-hidden="true"></div>
-  <div class="wrap">
-    <div class="section-kicker">What this portfolio is about</div>
-    <h2 class="section-title">Climate mitigation and adaptation, energy efficiency, the energy transition, B2C.</h2>
-    <p class="lede">Every case study here picks a real problem in one of these areas, researches what's actually broken for the target user with cited market and regulatory data, and builds toward a product answer, not the other way round.</p>
-    <div class="focus-chips" data-reveal-stagger>
-      <span class="focus-chip">Climate mitigation</span>
-      <span class="focus-chip">Climate adaptation</span>
-      <span class="focus-chip">Energy efficiency</span>
-      <span class="focus-chip">Energy transition</span>
-      <span class="focus-chip">Consumer / B2C</span>
-    </div>
-
-    <div class="pillars" data-reveal-stagger>
-      <div class="pillar card">
-        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 L21 21" stroke-linecap="round"/></svg>
-        <h3>Product research</h3>
-        <p>Market sizing, competitors, regulatory/program data, and technical specifications are researched and cited where necessary. Personas, interviews, and validations are synthetic to exhibit the missing pieces of a full product development cycle.</p>
-      </div>
-      <div class="pillar card">
-        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3v3M12 18v3M12 6l-6 2 2 6 4-1 4 1 2-6-6-2Z" stroke-linejoin="round"/></svg>
-        <h3>Judgment over output</h3>
-        <p>AI drafts research and prototype code fast. The harder work is scoping what matters, prioritizing tradeoffs, catching what it got wrong, and deciding what not to build.</p>
-      </div>
-      <div class="pillar card">
-        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M14 7l3 3-8 8H6v-3l8-8Z" stroke-linejoin="round"/><path d="M13 4l3 3" stroke-linecap="round"/></svg>
-        <h3>Full 0-to-1 cycle</h3>
-        <p>Problem framing, personas, interviews, a prioritized roadmap, and a clickable prototype, with buildability and PMF thinking layered in over time.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="alt" id="case-studies">
   <div class="wrap">
     <div class="section-kicker">Case studies</div>
     <h2 class="section-title">Real problems, working prototypes.</h2>
@@ -401,6 +356,7 @@
   <div class="wrap">
     <div class="section-kicker">Process</div>
     <h2 class="section-title">A refined system for tackling each new project</h2>
+    <p class="lede">AI drafts research and prototype code fast. The real work is scoping what matters, prioritizing tradeoffs, catching what it got wrong, and deciding what not to build.</p>
     <div class="approach-list" data-reveal-stagger>
       <div class="approach-item"><div class="approach-num"></div><div><h4>Research the real problem first</h4><p>Pick an industry, research what's broken for the target user today, using real market/regulatory data, before framing a product solution.</p></div></div>
       <div class="approach-item"><div class="approach-num"></div><div><h4>Build personas &amp; run interviews</h4><p>Ground personas in that real research; run synthetic interviews with them to pressure-test assumptions before roadmapping.</p></div></div>
