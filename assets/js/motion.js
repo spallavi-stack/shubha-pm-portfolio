@@ -158,7 +158,11 @@
     }
 
     container.classList.add('is-rotating');
+    var section = container.closest('section.stakes');
+    if(section) section.classList.add('is-rotating');
     gsap.set(stakes, { autoAlpha:0 });
+
+    var scenes = section ? Array.prototype.slice.call(section.querySelectorAll('.stakes-bg .scene')) : [];
 
     var dotsWrap = document.getElementById('stakesDots');
     var dots = [];
@@ -180,6 +184,11 @@
       stakes.forEach(function(el, idx){
         gsap.to(el, { autoAlpha: idx === i ? 1 : 0, duration:0.6, ease:'power2.inOut' });
       });
+      if(scenes.length === stakes.length){
+        scenes.forEach(function(scene, idx){
+          scene.classList.toggle('is-active', idx === i);
+        });
+      }
       dots.forEach(function(d, idx){ d.classList.toggle('active', idx === i); });
       runCount(stakes[i]);
     }
