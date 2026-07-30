@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flexy for Utilities — Operator Dashboard (Prototype)</title>
+<style>
+  @font-face{
+    font-family:'Inter Variable';
+    font-style:normal;
+    font-display:swap;
+    font-weight:100 900;
+    src:url('../../assets/fonts/inter-latin-wght-normal.woff2') format('woff2-variations');
+    unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+  }
+  :root{
+    /* Flexy for Utilities — same brand system as index.html / prototype.html (see docs/design-system.md) */
+    --teal:#6D28D9;
+    --teal-dark:#54219E;
+    --navy:#1E1A2E;
+    --gold:#B45309;
+    --ink:#1C1A22;
+    --ink-soft:#565061;
+    --ink-faint:#8A8496;
+    --paper:#FFFFFF;
+    --paper-soft:#F6F4F9;
+    --border:#E4E0EC;
+    --comed-blue:#0059A4;
+    --good:#1E9E5A;
+    --warning:#B45309;
+    --critical:#D6473C;
+    --tou-cheap:#5B8DEF;
+    --gray:#8A94A6;
+    --font-body:'Inter Variable', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+    --font-mono: ui-monospace, 'SF Mono', 'Cascadia Mono', 'JetBrains Mono', Menlo, Consolas, monospace;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:var(--font-body);
+    color:var(--ink);
+    background:var(--paper-soft);
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:inherit;}
+
+  /* ---------- Shell layout ---------- */
+  .shell{display:flex;min-height:100vh;}
+
+  .sidebar{
+    width:236px;flex:0 0 236px;background:var(--navy);color:#fff;
+    padding:22px 16px;display:flex;flex-direction:column;gap:22px;position:sticky;top:0;height:100vh;
+  }
+  .brand{display:flex;align-items:center;gap:9px;padding:0 6px;}
+  .brand .dot{width:9px;height:9px;border-radius:50%;background:var(--teal);}
+  .brand strong{font-size:15px;font-weight:700;letter-spacing:-0.01em;}
+  .brand span{font-size:11px;color:#B5AECB;display:block;margin-top:1px;}
+
+  .partner-chip{
+    display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.06);
+    border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:9px 10px;font-size:12px;color:#D7D2E6;
+  }
+  .partner-chip .sw{width:8px;height:8px;border-radius:2px;background:var(--comed-blue);flex:0 0 auto;}
+
+  nav.side-nav{display:flex;flex-direction:column;gap:2px;}
+  nav.side-nav button{
+    all:unset;cursor:pointer;font-size:13.5px;font-weight:500;color:#C7C1DA;
+    padding:9px 10px;border-radius:8px;display:flex;align-items:center;gap:10px;
+  }
+  nav.side-nav button .ic{width:16px;height:16px;flex:0 0 auto;opacity:0.85;}
+  nav.side-nav button:hover{background:rgba(255,255,255,0.06);color:#fff;}
+  nav.side-nav button.active{background:var(--teal);color:#fff;}
+
+  .sidebar-foot{margin-top:auto;font-size:11px;color:#8B84A3;line-height:1.5;padding:0 6px;}
+
+  .main{flex:1;min-width:0;}
+
+  .topbar{
+    position:sticky;top:0;z-index:5;background:rgba(255,255,255,0.92);backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--border);padding:16px 32px;display:flex;align-items:baseline;justify-content:space-between;gap:16px;
+  }
+  .topbar h1{font-size:19px;font-weight:700;margin:0;letter-spacing:-0.01em;}
+  .topbar .as-of{font-size:12px;color:var(--ink-faint);font-family:var(--font-mono);}
+
+  .illustrative-banner{
+    background:#FBF2E4;border-bottom:1px solid #EFDFC0;color:#7A4E12;
+    font-size:12.5px;padding:8px 32px;display:flex;align-items:center;gap:8px;
+  }
+  .illustrative-banner b{font-weight:700;}
+
+  .view{display:none;padding:26px 32px 60px;}
+  .view.active{display:block;}
+
+  .section-label{font-size:12px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--ink-faint);margin:28px 0 12px;}
+  .section-label:first-child{margin-top:0;}
+
+  /* ---------- Grid / cards ---------- */
+  .grid{display:grid;gap:14px;}
+  .grid.cols-4{grid-template-columns:repeat(4,1fr);}
+  .grid.cols-2{grid-template-columns:repeat(2,1fr);}
+  .grid.cols-3{grid-template-columns:repeat(3,1fr);}
+  @media(max-width:1100px){.grid.cols-4{grid-template-columns:repeat(2,1fr);} .grid.cols-3{grid-template-columns:repeat(2,1fr);}}
+
+  .card{
+    background:#fff;border:1px solid var(--border);border-radius:10px;padding:18px 18px 16px;
+  }
+  .card-title{font-size:12.5px;font-weight:600;color:var(--ink-soft);margin:0 0 2px;}
+  .card-sub{font-size:11.5px;color:var(--ink-faint);margin:0 0 12px;}
+
+  /* ---------- Stat tiles ---------- */
+  .stat-value{font-family:var(--font-mono);font-size:26px;font-weight:700;color:var(--ink);line-height:1.1;display:flex;align-items:baseline;gap:6px;}
+  .stat-value .unit{font-size:13px;font-weight:600;color:var(--ink-faint);}
+  .stat-delta{font-size:12px;font-weight:600;margin-top:6px;display:flex;align-items:center;gap:5px;font-family:var(--font-mono);}
+  .stat-delta.up{color:var(--good);}
+  .stat-delta.down{color:var(--critical);}
+  .stat-delta .ctx{font-family:var(--font-body);font-weight:500;color:var(--ink-faint);}
+
+  .badge{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;padding:4px 10px;border-radius:999px;}
+  .badge.idle{background:var(--paper-soft);color:var(--ink-soft);}
+  .badge.idle .dot{background:var(--gray);}
+  .badge.active{background:#EFE7FB;color:var(--teal-dark);}
+  .badge.active .dot{background:var(--teal);}
+  .badge .dot{width:7px;height:7px;border-radius:50%;}
+  .badge-reason{font-size:12px;color:var(--ink-faint);margin-top:8px;line-height:1.4;}
+
+  /* ---------- Charts (shared svg/tooltip machinery) ---------- */
+  .chart-wrap{position:relative;}
+  svg.chart{width:100%;display:block;overflow:visible;}
+  .axis-line{stroke:var(--border);stroke-width:1;}
+  .tick-label{font-size:10.5px;fill:var(--ink-faint);font-family:var(--font-mono);}
+  .crosshair{stroke:var(--ink-faint);stroke-width:1;stroke-dasharray:2,3;opacity:0;pointer-events:none;}
+  .hover-dot{opacity:0;pointer-events:none;}
+  .chart-tooltip{
+    position:absolute;pointer-events:none;background:var(--navy);color:#fff;font-size:11.5px;
+    padding:6px 9px;border-radius:7px;line-height:1.4;opacity:0;transform:translate(-50%,-115%);white-space:nowrap;z-index:10;
+    font-family:var(--font-mono);
+  }
+  .chart-tooltip .k{font-family:var(--font-body);color:#C7C1DA;font-weight:500;margin-right:4px;}
+  .legend{display:flex;gap:16px;margin-top:10px;flex-wrap:wrap;}
+  .legend-item{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--ink-soft);}
+  .legend-swatch{width:10px;height:10px;border-radius:3px;}
+  .bar-tip-label{font-family:var(--font-mono);font-size:11px;fill:var(--ink-soft);}
+
+  /* ---------- Funnel ---------- */
+  .funnel{display:flex;flex-direction:column;gap:10px;}
+  .funnel-row{display:grid;grid-template-columns:150px 1fr 100px;align-items:center;gap:12px;}
+  .funnel-label{font-size:13px;color:var(--ink-soft);font-weight:500;}
+  .funnel-track{height:26px;background:var(--paper-soft);border-radius:6px;overflow:hidden;position:relative;}
+  .funnel-fill{height:100%;border-radius:6px 0 0 6px;background:var(--teal);}
+  .funnel-val{font-family:var(--font-mono);font-size:12.5px;color:var(--ink);text-align:right;}
+  .funnel-val .pct{color:var(--ink-faint);font-size:11px;margin-left:6px;}
+
+  /* ---------- Ranked list (geo) ---------- */
+  .ranked-row{display:grid;grid-template-columns:70px 1fr 60px;align-items:center;gap:10px;padding:7px 0;}
+  .ranked-row + .ranked-row{border-top:1px solid var(--border);}
+  .ranked-zip{font-family:var(--font-mono);font-size:12.5px;color:var(--ink-soft);}
+  .ranked-track{height:10px;background:var(--paper-soft);border-radius:4px;overflow:hidden;}
+  .ranked-fill{height:100%;background:var(--tou-cheap);border-radius:4px;}
+  .ranked-count{font-family:var(--font-mono);font-size:12.5px;text-align:right;color:var(--ink);}
+
+  /* ---------- Table ---------- */
+  table.event-log{width:100%;border-collapse:collapse;font-size:13px;}
+  table.event-log th{
+    text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;
+    color:var(--ink-faint);padding:0 10px 8px;border-bottom:1px solid var(--border);
+  }
+  table.event-log td{padding:11px 10px;border-bottom:1px solid var(--border);color:var(--ink);font-variant-numeric:tabular-nums;font-family:var(--font-mono);font-size:12.5px;}
+  table.event-log td.txt{font-family:var(--font-body);font-variant-numeric:normal;}
+  table.event-log tr:last-child td{border-bottom:none;}
+  .flag{display:inline-flex;align-items:center;gap:5px;font-family:var(--font-body);font-size:11.5px;font-weight:600;padding:3px 8px;border-radius:6px;}
+  .flag.none{background:var(--paper-soft);color:var(--ink-faint);}
+  .flag.watch{background:#FBF2E4;color:var(--warning);}
+  .flag.reliable{background:#E6F6EC;color:var(--good);}
+
+  /* ---------- Empty state (Compliance screen) ---------- */
+  .empty-state{
+    border:1.5px dashed var(--border);border-radius:12px;padding:40px 32px;text-align:center;
+    color:var(--ink-soft);background:#fff;
+  }
+  .empty-state h3{margin:0 0 8px;font-size:15px;color:var(--ink);}
+  .empty-state p{margin:0 auto;max-width:480px;font-size:13.5px;line-height:1.6;}
+  .empty-state .tag{display:inline-block;margin-top:14px;font-size:11px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:var(--warning);background:#FBF2E4;padding:4px 10px;border-radius:999px;}
+
+  .doc-note{font-size:12px;color:var(--ink-faint);margin-top:6px;line-height:1.5;}
+  .doc-note a{color:var(--teal-dark);text-decoration:none;font-weight:600;}
+</style>
+</head>
+<body>
+
+<div class="shell">
+  <aside class="sidebar">
+    <div class="brand">
+      <span class="dot"></span>
+      <div><strong>Flexy</strong><span>for Utilities</span></div>
+    </div>
+    <div class="partner-chip"><span class="sw"></span> ComEd — pilot partner</div>
+    <nav class="side-nav" id="sideNav">
+      <button data-view="overview" class="active">Overview</button>
+      <button data-view="enrollment">Enrollment &amp; Reach</button>
+      <button data-view="events">Grid Events</button>
+      <button data-view="consumer">Consumer Impact</button>
+      <button data-view="compliance">Compliance &amp; Reporting</button>
+    </nav>
+    <div class="sidebar-foot">
+      Coded prototype — operator-facing dashboard concept for the offer described in <em>docs/utility-partnership-offer.md</em>. KPI definitions in <em>docs/utility-dashboard-kpi-framework.md</em>.
+    </div>
+  </aside>
+
+  <div class="main">
+    <div class="illustrative-banner">
+      <b>Illustrative data.</b>&nbsp;This prototype is not connected to a live ComEd account or real enrollment data — every figure below is a stand-in shaped to be internally consistent, the same convention used in the consumer prototype's Limitations section.
+    </div>
+
+    <!-- ============ OVERVIEW ============ -->
+    <div class="view active" id="view-overview">
+      <div class="topbar" style="position:static;border:none;padding:0;margin-bottom:4px;">
+        <h1>Overview</h1>
+        <span class="as-of">as of Jul 30, 2026, 14:32 CT</span>
+      </div>
+
+      <div class="grid cols-4" style="margin-top:18px;">
+        <div class="card">
+          <p class="card-title">Aggregated flexible capacity</p>
+          <p class="card-sub">Enrolled EV charging available to shift right now</p>
+          <div class="stat-value">4,820 <span class="unit">kW</span></div>
+          <div class="stat-delta up">▲ 6.4% <span class="ctx">vs. same time last week</span></div>
+        </div>
+        <div class="card">
+          <p class="card-title">Dispatch status</p>
+          <p class="card-sub">Current grid event, if any</p>
+          <span class="badge active"><span class="dot"></span> Active — peak shave</span>
+          <p class="badge-reason">Dispatched 13:00–19:00 CT: high demand forecast, PJM real-time price elevated.</p>
+        </div>
+        <div class="card">
+          <p class="card-title">Enrolled devices</p>
+          <p class="card-sub">EVs under active management</p>
+          <div class="stat-value" id="statEnrolled">3,140</div>
+          <svg class="spark" id="sparkEnrolled" height="28"></svg>
+        </div>
+        <div class="card">
+          <p class="card-title">Dispatch reliability</p>
+          <p class="card-sub">Most recent event, delivered vs. targeted</p>
+          <div class="stat-value">94.2 <span class="unit">%</span></div>
+          <div class="stat-delta up">▲ 2.1pt <span class="ctx">vs. prior event</span></div>
+        </div>
+      </div>
+
+      <p class="section-label">Aggregated capacity, last 7 days</p>
+      <div class="card">
+        <p class="card-title">Flexible capacity available (kW)</p>
+        <p class="card-sub">Hourly, last 7 days — the "virtual battery" size over time</p>
+        <div class="chart-wrap" id="chartCapacity"></div>
+      </div>
+    </div>
+
+    <!-- ============ ENROLLMENT & REACH ============ -->
+    <div class="view" id="view-enrollment">
+      <div class="topbar" style="position:static;border:none;padding:0;margin-bottom:4px;">
+        <h1>Enrollment &amp; Reach</h1>
+        <span class="as-of">as of Jul 30, 2026</span>
+      </div>
+
+      <p class="section-label">Enrollment funnel</p>
+      <div class="card">
+        <p class="card-title">Invited → activated</p>
+        <p class="card-sub">Same funnel tracked as a consumer PMF signal — reused here, not a second definition</p>
+        <div class="funnel" id="funnel"></div>
+      </div>
+
+      <div class="grid cols-2" style="margin-top:16px;">
+        <div class="card">
+          <p class="card-title">Enrolled devices, growth</p>
+          <p class="card-sub">Cumulative, last 12 weeks</p>
+          <div class="chart-wrap" id="chartGrowth"></div>
+        </div>
+        <div class="card">
+          <p class="card-title">Enrollment by ZIP code</p>
+          <p class="card-sub">Top areas by enrolled devices</p>
+          <div id="geoList"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ GRID EVENTS ============ -->
+    <div class="view" id="view-events">
+      <div class="topbar" style="position:static;border:none;padding:0;margin-bottom:4px;">
+        <h1>Grid Events</h1>
+        <span class="as-of">as of Jul 30, 2026</span>
+      </div>
+
+      <p class="section-label">Forecast vs. delivered</p>
+      <div class="card">
+        <p class="card-title">Targeted vs. actual load reduction, last 6 events</p>
+        <p class="card-sub">Forecast accuracy — can ComEd plan around this resource</p>
+        <div class="chart-wrap" id="chartForecast"></div>
+        <div class="legend">
+          <span class="legend-item"><span class="legend-swatch" style="background:var(--teal)"></span>Targeted</span>
+          <span class="legend-item"><span class="legend-swatch" style="background:var(--tou-cheap)"></span>Delivered</span>
+        </div>
+      </div>
+
+      <p class="section-label">Event log</p>
+      <div class="card" style="padding:14px 18px 10px;">
+        <table class="event-log" id="eventTable"></table>
+      </div>
+    </div>
+
+    <!-- ============ CONSUMER IMPACT ============ -->
+    <div class="view" id="view-consumer">
+      <div class="topbar" style="position:static;border:none;padding:0;margin-bottom:4px;">
+        <h1>Consumer Impact</h1>
+        <span class="as-of">as of Jul 30, 2026</span>
+      </div>
+
+      <div class="grid cols-3" style="margin-top:18px;">
+        <div class="card">
+          <p class="card-title">Aggregate savings delivered</p>
+          <p class="card-sub">Cumulative, all enrolled households</p>
+          <div class="stat-value">$186,400</div>
+          <div class="stat-delta up">▲ $9,200 <span class="ctx">this week</span></div>
+        </div>
+        <div class="card">
+          <p class="card-title">Average savings per household</p>
+          <p class="card-sub">Annualized, current enrollment</p>
+          <div class="stat-value">$59 <span class="unit">/ yr</span></div>
+          <div class="doc-note">Benchmark range from grounding research: $145–$575/EV/yr at full active management — see <a href="docs/utility-offer-grounding-research.md">§A5</a>. Illustrative figure below shows partial-year, partial-optimization pilot data, not the target run-rate.</div>
+        </div>
+        <div class="card">
+          <p class="card-title">Retention</p>
+          <p class="card-sub">Enrolled households still active</p>
+          <div class="stat-value">96.8 <span class="unit">%</span></div>
+          <div class="stat-delta down">▼ 0.4pt <span class="ctx">vs. last month</span></div>
+        </div>
+      </div>
+
+      <p class="section-label">Aggregate savings over time</p>
+      <div class="card">
+        <p class="card-title">Cumulative savings delivered ($)</p>
+        <p class="card-sub">Last 12 weeks</p>
+        <div class="chart-wrap" id="chartSavings"></div>
+      </div>
+    </div>
+
+    <!-- ============ COMPLIANCE & REPORTING ============ -->
+    <div class="view" id="view-compliance">
+      <div class="topbar" style="position:static;border:none;padding:0;margin-bottom:4px;">
+        <h1>Compliance &amp; Reporting</h1>
+        <span class="as-of">as of Jul 30, 2026</span>
+      </div>
+
+      <div class="empty-state" style="margin-top:24px;">
+        <h3>Not designed yet — on purpose</h3>
+        <p>This screen would export whatever ComEd's own compliance team actually needs for CRGA and Beneficial Electrification Plan reporting. No specific field list exists anywhere in this project's research, so nothing is mocked up here — that would mean guessing at a regulator-facing report's contents without ComEd's input.</p>
+        <span class="tag">Pending direct input from ComEd</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+/* ================= Chart helpers (line/area with crosshair+tooltip, grouped bars with hover) ================= */
+
+function niceMax(v){
+  const mag = Math.pow(10, Math.floor(Math.log10(v || 1)));
+  const n = v / mag;
+  const step = n <= 1 ? 1 : n <= 2 ? 2 : n <= 5 ? 5 : 10;
+  return step * mag;
+}
+
+function lineAreaChart(container, {values, labels, color, unit, fmt}){
+  const w = container.clientWidth || 560, h = 180, padL = 42, padR = 12, padT = 10, padB = 24;
+  const innerW = w - padL - padR, innerH = h - padT - padB;
+  const max = niceMax(Math.max(...values) * 1.15);
+  const min = 0;
+  const x = i => padL + (innerW * i) / (values.length - 1);
+  const y = v => padT + innerH - (innerH * (v - min)) / (max - min);
+
+  const svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
+  svg.setAttribute('class','chart');
+  svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
+  svg.setAttribute('preserveAspectRatio','none');
+
+  // gridlines (2 steps)
+  [0, 0.5, 1].forEach(f=>{
+    const gy = padT + innerH * (1-f);
+    const line = document.createElementNS('http://www.w3.org/2000/svg','line');
+    line.setAttribute('x1', padL); line.setAttribute('x2', w-padR);
+    line.setAttribute('y1', gy); line.setAttribute('y2', gy);
+    line.setAttribute('class','axis-line');
+    svg.appendChild(line);
+    const t = document.createElementNS('http://www.w3.org/2000/svg','text');
+    t.setAttribute('x', padL-6); t.setAttribute('y', gy+3); t.setAttribute('text-anchor','end');
+    t.setAttribute('class','tick-label');
+    t.textContent = fmt ? fmt(max*f) : Math.round(max*f).toLocaleString();
+    svg.appendChild(t);
+  });
+
+  // area path
+  let d = `M ${x(0)} ${y(values[0])}`;
+  values.forEach((v,i)=>{ if(i>0) d += ` L ${x(i)} ${y(v)}`; });
+  const areaD = d + ` L ${x(values.length-1)} ${padT+innerH} L ${x(0)} ${padT+innerH} Z`;
+  const area = document.createElementNS('http://www.w3.org/2000/svg','path');
+  area.setAttribute('d', areaD);
+  area.setAttribute('fill', color);
+  area.setAttribute('opacity', '0.1');
+  area.setAttribute('stroke', 'none');
+  svg.appendChild(area);
+
+  const line = document.createElementNS('http://www.w3.org/2000/svg','path');
+  line.setAttribute('d', d);
+  line.setAttribute('fill', 'none');
+  line.setAttribute('stroke', color);
+  line.setAttribute('stroke-width', '2');
+  line.setAttribute('stroke-linejoin', 'round');
+  line.setAttribute('stroke-linecap', 'round');
+  svg.appendChild(line);
+
+  // end marker
+  const endDot = document.createElementNS('http://www.w3.org/2000/svg','circle');
+  endDot.setAttribute('cx', x(values.length-1)); endDot.setAttribute('cy', y(values[values.length-1]));
+  endDot.setAttribute('r', 4); endDot.setAttribute('fill', color);
+  endDot.setAttribute('stroke', '#fff'); endDot.setAttribute('stroke-width', '2');
+  svg.appendChild(endDot);
+
+  // crosshair + hover dot
+  const crosshair = document.createElementNS('http://www.w3.org/2000/svg','line');
+  crosshair.setAttribute('class','crosshair');
+  crosshair.setAttribute('y1', padT); crosshair.setAttribute('y2', padT+innerH);
+  svg.appendChild(crosshair);
+  const hoverDot = document.createElementNS('http://www.w3.org/2000/svg','circle');
+  hoverDot.setAttribute('class','hover-dot');
+  hoverDot.setAttribute('r', 5); hoverDot.setAttribute('fill', color);
+  hoverDot.setAttribute('stroke', '#fff'); hoverDot.setAttribute('stroke-width', '2');
+  svg.appendChild(hoverDot);
+
+  // hit rect
+  const hit = document.createElementNS('http://www.w3.org/2000/svg','rect');
+  hit.setAttribute('x', padL); hit.setAttribute('y', 0); hit.setAttribute('width', innerW); hit.setAttribute('height', h);
+  hit.setAttribute('fill','transparent'); hit.style.cursor='crosshair';
+  svg.appendChild(hit);
+
+  container.innerHTML = '';
+  container.appendChild(svg);
+  const tip = document.createElement('div');
+  tip.className = 'chart-tooltip';
+  container.appendChild(tip);
+
+  hit.addEventListener('mousemove', e=>{
+    const rect = svg.getBoundingClientRect();
+    const px = (e.clientX - rect.left) * (w / rect.width);
+    let i = Math.round((px - padL) / innerW * (values.length-1));
+    i = Math.max(0, Math.min(values.length-1, i));
+    crosshair.setAttribute('x1', x(i)); crosshair.setAttribute('x2', x(i)); crosshair.style.opacity = 1;
+    hoverDot.setAttribute('cx', x(i)); hoverDot.setAttribute('cy', y(values[i])); hoverDot.style.opacity = 1;
+    const tipVal = fmt ? fmt(values[i]) : values[i].toLocaleString();
+    tip.innerHTML = `<span class="k">${labels[i]}</span>${tipVal}${unit?(' '+unit):''}`;
+    const cRect = container.getBoundingClientRect();
+    tip.style.left = (rect.left - cRect.left + (x(i) * rect.width/w)) + 'px';
+    tip.style.top = (rect.top - cRect.top + (y(values[i]) * rect.height/h)) + 'px';
+    tip.style.opacity = 1;
+  });
+  hit.addEventListener('mouseleave', ()=>{ crosshair.style.opacity=0; hoverDot.style.opacity=0; tip.style.opacity=0; });
+}
+
+function groupedBarChart(container, {categories, series, colors, unit}){
+  const w = container.clientWidth || 560, h = 200, padL = 40, padR = 12, padT = 10, padB = 32;
+  const innerW = w - padL - padR, innerH = h - padT - padB;
+  const allVals = series.flatMap(s=>s.values);
+  const max = niceMax(Math.max(...allVals) * 1.2);
+  const groupW = innerW / categories.length;
+  const barW = Math.min(20, groupW / (series.length+1.5));
+  const y = v => padT + innerH - (innerH * v) / max;
+
+  const svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
+  svg.setAttribute('class','chart');
+  svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
+  svg.setAttribute('preserveAspectRatio','none');
+
+  [0,0.5,1].forEach(f=>{
+    const gy = padT + innerH*(1-f);
+    const line = document.createElementNS('http://www.w3.org/2000/svg','line');
+    line.setAttribute('x1', padL); line.setAttribute('x2', w-padR); line.setAttribute('y1', gy); line.setAttribute('y2', gy);
+    line.setAttribute('class','axis-line');
+    svg.appendChild(line);
+    const t = document.createElementNS('http://www.w3.org/2000/svg','text');
+    t.setAttribute('x', padL-6); t.setAttribute('y', gy+3); t.setAttribute('text-anchor','end'); t.setAttribute('class','tick-label');
+    t.textContent = Math.round(max*f).toLocaleString();
+    svg.appendChild(t);
+  });
+
+  const tip = document.createElement('div');
+  tip.className = 'chart-tooltip';
+
+  categories.forEach((cat,ci)=>{
+    const groupX = padL + groupW*ci;
+    const totalBarsW = barW*series.length + 2*(series.length-1);
+    let startX = groupX + (groupW - totalBarsW)/2;
+    series.forEach((s,si)=>{
+      const v = s.values[ci];
+      const bx = startX + si*(barW+2);
+      const by = y(v);
+      const rect = document.createElementNS('http://www.w3.org/2000/svg','rect');
+      rect.setAttribute('x', bx); rect.setAttribute('y', by);
+      rect.setAttribute('width', barW); rect.setAttribute('height', padT+innerH-by);
+      rect.setAttribute('rx', 3); rect.setAttribute('fill', colors[si]);
+      rect.style.cursor = 'pointer';
+      rect.addEventListener('mousemove', e=>{
+        const cRect = container.getBoundingClientRect();
+        const rRect = rect.getBoundingClientRect();
+        tip.innerHTML = `<span class="k">${s.name} · ${cat}</span>${v.toLocaleString()}${unit?(' '+unit):''}`;
+        tip.style.left = (rRect.left - cRect.left + rRect.width/2) + 'px';
+        tip.style.top = (rRect.top - cRect.top) + 'px';
+        tip.style.opacity = 1;
+      });
+      rect.addEventListener('mouseleave', ()=>{ tip.style.opacity = 0; });
+      svg.appendChild(rect);
+    });
+    const lbl = document.createElementNS('http://www.w3.org/2000/svg','text');
+    lbl.setAttribute('x', groupX+groupW/2); lbl.setAttribute('y', h-10); lbl.setAttribute('text-anchor','middle');
+    lbl.setAttribute('class','tick-label');
+    lbl.textContent = cat;
+    svg.appendChild(lbl);
+  });
+
+  container.innerHTML = '';
+  container.appendChild(svg);
+  container.appendChild(tip);
+}
+
+function sparkline(el, values, color){
+  const w = el.clientWidth || 90, h = 28;
+  const max = Math.max(...values), min = Math.min(...values);
+  const x = i => (w * i) / (values.length-1);
+  const y = v => h - 3 - ((h-6) * (v-min)) / ((max-min) || 1);
+  let d = `M ${x(0)} ${y(values[0])}`;
+  values.forEach((v,i)=>{ if(i>0) d += ` L ${x(i)} ${y(v)}`; });
+  el.setAttribute('viewBox', `0 0 ${w} ${h}`);
+  el.innerHTML = `
+    <path d="${d}" fill="none" stroke="var(--ink-faint)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.55"/>
+    <circle cx="${x(values.length-1)}" cy="${y(values[values.length-1])}" r="3" fill="${color}"/>
+  `;
+}
+
+/* ================= Illustrative data ================= */
+
+const capacityValues = [3980,4120,3860,4340,4510,4290,4680,4590,4820,4710,4980,5040,4870,4820];
+const capacityLabels = capacityValues.map((_,i)=>`Day ${Math.floor(i/2)+1}, ${i%2?'PM':'AM'}`);
+
+const enrolledSpark = [2680,2740,2810,2860,2910,2980,3020,3060,3090,3110,3125,3140];
+
+const growthValues = [420,680,940,1260,1580,1890,2150,2430,2680,2890,3020,3140];
+const growthLabels = growthValues.map((_,i)=>`Wk ${i+1}`);
+
+const savingsValues = [8200,17600,28900,42100,57800,74200,92500,111800,132400,153900,171200,186400];
+const savingsLabels = savingsValues.map((_,i)=>`Wk ${i+1}`);
+
+const forecastCats = ['Jul 12','Jul 16','Jul 19','Jul 23','Jul 27','Jul 30'];
+const forecastTargeted = [520, 610, 480, 700, 640, 590];
+const forecastDelivered = [498, 574, 471, 659, 583, 556];
+
+const events = [
+  {date:'2026-07-30', window:'13:00–19:00', targeted:590, delivered:556, reliability:94.2, snapback:'none'},
+  {date:'2026-07-27', window:'14:00–20:00', targeted:640, delivered:583, reliability:91.1, snapback:'watch'},
+  {date:'2026-07-23', window:'13:00–18:00', targeted:700, delivered:659, reliability:94.1, snapback:'none'},
+  {date:'2026-07-19', window:'15:00–19:00', targeted:480, delivered:471, reliability:98.1, snapback:'reliable'},
+  {date:'2026-07-16', window:'14:00–20:00', targeted:610, delivered:574, reliability:94.1, snapback:'none'},
+  {date:'2026-07-12', window:'13:00–18:00', targeted:520, delivered:498, reliability:95.8, snapback:'reliable'},
+];
+
+const geoRanked = [
+  {zip:'60614', count:412}, {zip:'60622', count:365}, {zip:'60540', count:298},
+  {zip:'60067', count:241}, {zip:'60148', count:198}, {zip:'60016', count:164},
+];
+
+const funnelStages = [
+  {label:'Invited by ComEd', value:18400},
+  {label:'Downloaded app', value:7360},
+  {label:'Connected EV', value:4416},
+  {label:'Activated smart charging', value:3140},
+];
+
+/* ================= Render ================= */
+
+lineAreaChart(document.getElementById('chartCapacity'), {
+  values: capacityValues, labels: capacityLabels, color: '#6D28D9',
+  unit: 'kW', fmt: v => Math.round(v).toLocaleString()
+});
+sparkline(document.getElementById('sparkEnrolled'), enrolledSpark, '#6D28D9');
+lineAreaChart(document.getElementById('chartGrowth'), { values: growthValues, labels: growthLabels, color: '#6D28D9', unit: 'devices' });
+lineAreaChart(document.getElementById('chartSavings'), { values: savingsValues, labels: savingsLabels, color: '#6D28D9', unit: '$', fmt: v => '$'+Math.round(v).toLocaleString() });
+
+groupedBarChart(document.getElementById('chartForecast'), {
+  categories: forecastCats,
+  series: [ {name:'Targeted', values:forecastTargeted}, {name:'Delivered', values:forecastDelivered} ],
+  colors: ['#6D28D9', '#5B8DEF'],
+  unit: 'kW'
+});
+
+// funnel
+const funnelEl = document.getElementById('funnel');
+const funnelMax = funnelStages[0].value;
+funnelEl.innerHTML = funnelStages.map((s,i)=>{
+  const pct = Math.round((s.value/funnelMax)*100);
+  const dropoff = i>0 ? Math.round((1 - s.value/funnelStages[i-1].value)*100) : null;
+  return `<div class="funnel-row">
+    <div class="funnel-label">${s.label}</div>
+    <div class="funnel-track"><div class="funnel-fill" style="width:${pct}%"></div></div>
+    <div class="funnel-val">${s.value.toLocaleString()}<span class="pct">${dropoff!==null ? '−'+dropoff+'%' : pct+'%'}</span></div>
+  </div>`;
+}).join('');
+
+// geo ranked list
+const geoEl = document.getElementById('geoList');
+const geoMax = Math.max(...geoRanked.map(g=>g.count));
+geoEl.innerHTML = geoRanked.map(g=>`
+  <div class="ranked-row">
+    <div class="ranked-zip">${g.zip}</div>
+    <div class="ranked-track"><div class="ranked-fill" style="width:${Math.round((g.count/geoMax)*100)}%"></div></div>
+    <div class="ranked-count">${g.count}</div>
+  </div>
+`).join('');
+
+// event table
+const flagMeta = {
+  none: {cls:'none', label:'—'},
+  watch: {cls:'watch', label:'Snapback watch'},
+  reliable: {cls:'reliable', label:'Clean recovery'},
+};
+const tableEl = document.getElementById('eventTable');
+tableEl.innerHTML = `
+  <thead><tr>
+    <th>Date</th><th>Window</th><th>Targeted (kW)</th><th>Delivered (kW)</th><th>Reliability</th><th class="txt">Post-event load</th>
+  </tr></thead>
+  <tbody>
+    ${events.map(e=>`
+      <tr>
+        <td>${e.date}</td>
+        <td>${e.window}</td>
+        <td>${e.targeted.toLocaleString()}</td>
+        <td>${e.delivered.toLocaleString()}</td>
+        <td>${e.reliability}%</td>
+        <td class="txt"><span class="flag ${flagMeta[e.snapback].cls}">${flagMeta[e.snapback].label}</span></td>
+      </tr>
+    `).join('')}
+  </tbody>
+`;
+
+/* ================= Nav switching ================= */
+document.getElementById('sideNav').addEventListener('click', e=>{
+  const btn = e.target.closest('button[data-view]');
+  if(!btn) return;
+  document.querySelectorAll('#sideNav button').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById('view-'+btn.dataset.view).classList.add('active');
+});
+</script>
+</body>
+</html>
