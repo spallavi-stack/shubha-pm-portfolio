@@ -208,7 +208,7 @@
         scheduleNext(3000);
       });
     });
-    container.addEventListener('mouseenter', function(){ paused = true; clearTimeout(timer); });
+    container.addEventListener('mousemove', function(){ if(!paused){ paused = true; clearTimeout(timer); } });
     container.addEventListener('mouseleave', function(){ paused = false; scheduleNext(3000); });
     container.addEventListener('focusin', function(){ paused = true; clearTimeout(timer); });
     container.addEventListener('focusout', function(){ paused = false; scheduleNext(3000); });
