@@ -76,7 +76,38 @@ Historically the largest third-party residential DR provider in North America (a
 
 ---
 
-## Synthesis — what this means for the offer
+## Track C — Pricing benchmarks and a savings-to-ComEd model
+
+Added to answer a direct question: what should Flexy charge ComEd. Two inputs are needed before a number means anything — what comparable platforms charge, and what Flexy would actually save ComEd. Searched specifically for both; neither was fully public, so this section builds the best available range from what is.
+
+### C1. No competitor discloses utility-partnership pricing
+
+Searched directly for WeaveGrid, Optiwatt, and AutoGrid/Uplight contract values, dollar figures in regulatory filings, and any RFP or procurement record naming a real number. None surfaced. **[Confirmed absence, not an unsearched gap — this matches Track B's earlier finding that Optiwatt's own results page also didn't disclose pricing.]**
+
+### C2. A real, third-party benchmark for utility DR/DERMS SaaS pricing exists
+
+An industry vendor guide (Codibly, a software consultancy publishing DR-platform buyer guidance, not a party selling into this specific deal) states: utility-deployed SaaS DR/DERMS platforms typically run **$5–$20 per participant per year, plus implementation services**; aggregator-model platforms (paid from wholesale market revenue, not a utility relationship) run 5–15% of that revenue instead; a utility building the equivalent capability in-house/custom runs $1M (accelerator-based) to $5M+ (green-field, utility-grade). **[Fact — directly fetched from the source, industry-guide-sourced rather than a regulatory filing or a specific vendor's disclosed contract, so treat as a benchmark range, not a confirmed ComEd-specific number.]** Flexy's existing model (a per-registered-customer fee, ComEd pays directly, no wholesale-market revenue share) matches the SaaS category, not the aggregator category.
+
+### C3. A savings-to-ComEd model, built from figures already sourced in Track A
+
+Using ComEd's own EV projection (900k EVs in its territory by 2030, per the WeaveGrid pilot's market sizing, §A3) and the Brattle/ev.energy avoided-cost figure ($145–$575 per actively-managed EV per year, §A5), annual value to ComEd scales with enrollment:
+
+| Share of ComEd's projected 900k EVs enrolled | Enrolled EVs | Annual value to ComEd (at $145–$575/EV) |
+|---|---|---|
+| 1% | 9,000 | $1.3M – $5.2M |
+| 5% | 45,000 | $6.5M – $25.9M |
+| 10% | 90,000 | $13.1M – $51.8M |
+| 25% | 225,000 | $32.6M – $129.4M |
+
+**[Inference — the enrolled-EV figures are simple arithmetic on two already-sourced Fact-tier inputs; the enrollment-share rows themselves are illustrative scenarios, not a forecast, since no real pilot has run yet to know which one is realistic.]**
+
+### C4. Cross-checking the SaaS benchmark against the savings model
+
+At the $5–20/participant/year SaaS benchmark, Flexy's fee would represent roughly **1%–14% of the per-EV value ComEd realizes** (calculated against the $145–$575 range: $5/$575 ≈ 0.9%, $20/$145 ≈ 13.8%). That's a defensible vendor share regardless of which enrollment scenario in C3 plays out, since it's a per-participant rate, not tied to scale. **[Inference from C2 and A5's already-sourced figures.]**
+
+---
+
+
 
 1. **The sharpest "why ComEd, why now" available is A1 + A2**: state law already requires an EV-charger VPP; ComEd's one live VPP doesn't have one. This should sit alongside, or replace, the TOU-rollout framing currently anchoring `product-brief.md`'s "why Illinois, why now" for the utility-facing doc specifically.
 2. **A3 is the strongest evidence in this entire pass.** A primary-sourced, dated, ComEd-commissioned document where ComEd's own current EV-managed-charging vendor recommends exactly the category of program Flexy is built to be. Cite it directly and precisely in the offer doc — this is real, unprompted validation, not invented rationale.
@@ -113,7 +144,8 @@ Historically the largest third-party residential DR provider in North America (a
 - [CPS Energy Demand Response Program Named POWERGRID International Project of the Year — Black & Veatch](https://www.bv.com/en-US/news/cps-energy-demand-response-program-named-powergrid-international-project-of)
 - [Leap and Enel Partner to Accelerate Nationwide Growth of Virtual Power Plants](https://www.leap.energy/news/leap-and-enel-partner-to-accelerate-nationwide-growth-of-virtual-power-plants)
 - [Sense and OhmConnect partner to increase participant savings by 160%](https://www.prnewswire.com/news-releases/sense-and-ohmconnect-partner-to-increase-participant-savings-by-160-301414758.html)
+- [Demand Response Software & Platform: A Vendor Guide for Utilities, Aggregators, and C&I Buyers — Codibly](https://codibly.com/blog/articles/demand-response-software)
 
 ## Status
 
-Draft v1. Track A and Track B research complete per `utility-offer-scope.md`'s research questions. Not yet run through `research-auditor`. Ready for Checkpoint 2 review before drafting `utility-partnership-offer.md`.
+Draft v2. Track A and Track B research complete per `utility-offer-scope.md`'s research questions. Track C (pricing benchmarks + savings-to-ComEd model) added to answer a direct pricing question. Not yet run through `research-auditor`. Ready for review before updating `utility-partnership-offer.md`'s Business Model section.

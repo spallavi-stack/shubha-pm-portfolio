@@ -43,9 +43,21 @@ An operator dashboard (built out in the next phase of this work) giving ComEd:
 - **Data access.** A Green Button Connect My Data partnership for live interval usage data, beyond the self-service manual export Flexy can already use without a formal relationship (see `technical-feasibility.md`).
 - **Program design input.** ComEd's own read on which flexibility mechanism (a CRGA-aligned VPP tariff, a BE Plan-funded pilot, a PJM-facing program, or some combination) it wants Flexy's aggregated load to plug into. This offer identifies the opportunity; ComEd's own regulatory and market position determines which specific mechanism it becomes.
 
-## Business model
+## Business model and pricing
 
-Unchanged from the consumer-facing offer already defined in `product-brief.md`: ComEd pays a fee per customer registered through the rollout plus an annual platform license fee. This document adds the case for why that fee is worth paying; it doesn't propose a new pricing structure. If Track A/B research or ComEd's own program design surfaces a reason to add a performance-based or capacity-value-linked component (e.g., tied to verified MW of flexible capacity delivered), that's a genuine option worth raising with ComEd directly rather than assumed here.
+Structure unchanged from `product-brief.md`: ComEd pays a fee per customer registered through the rollout, plus an annual platform license fee.
+
+The per-customer fee can now be grounded in two figures rather than left unset. No competitor publishes what it actually charges a utility, but a third-party industry guide (not a party selling into this deal) puts utility-deployed DR/DERMS SaaS platforms at **$5–$20 per participant per year, plus implementation services** — the category Flexy's model matches, as distinct from an aggregator's revenue-share model.[^6] Checked against what ComEd would actually realize per enrolled EV ($145–$575/year, per the Brattle/ev.energy avoided-cost figure already cited above), that benchmark represents roughly 1%–14% of the value delivered per vehicle, a defensible share regardless of how many households ultimately enroll.[^6][^7]
+
+That gives a workable **per-customer fee range of $5–$20/year** to anchor a real negotiation, not a single frozen number, since the low and high ends both fall inside what comparable platforms already charge. What the total contract is worth to Flexy still depends on enrollment scale, which no pilot has established yet:
+
+| Share of ComEd's projected 900k EVs (2030) enrolled | Enrolled EVs | Flexy's annual fee revenue (at $5–$20/participant) | ComEd's annual value realized (at $145–$575/EV) |
+|---|---|---|---|
+| 1% | 9,000 | $45k – $180k | $1.3M – $5.2M |
+| 5% | 45,000 | $225k – $900k | $6.5M – $25.9M |
+| 10% | 90,000 | $450k – $1.8M | $13.1M – $51.8M |
+
+The annual platform license fee stays a separate, unbenchmarked component — no source found this pass prices that piece specifically, so it remains a number to set in direct negotiation with ComEd, not one to estimate here. If ComEd's own program design ties Flexy's fee to verified capacity delivered (a performance-based component) rather than a flat per-participant rate, that's a real option worth raising directly rather than assumed in this document.
 
 ## Partnership success metrics
 
@@ -63,7 +75,7 @@ Distinct from the consumer PMF signals already defined in `product-brief.md` (pi
 - Which CRGA-aligned mechanism (VPP tariff, BE Plan program, a PJM-facing structure, or something ComEd designs) this offer should actually target is ComEd's call, not something this document can settle unilaterally.
 
 ## Status
-Draft v1. Positioning, why-ComEd-cares argument, the WeaveGrid-relationship framing, offer structure, and partnership success metrics are drafted from `utility-offer-grounding-research.md`. Not yet run through `research-auditor`. KPI framework above is a first pass, to be validated and expanded in Phase 4 before the dashboard build.
+Draft v2. Positioning, why-ComEd-cares argument, the WeaveGrid-relationship framing, offer structure, and partnership success metrics are drafted from `utility-offer-grounding-research.md`. Business Model section updated with a sourced per-customer fee range ($5–$20/year) and a savings-to-ComEd model at three enrollment scenarios, replacing the earlier unset placeholder. Platform license fee remains explicitly unbenchmarked. Not yet run through `research-auditor`. KPI framework above is a first pass, to be validated and expanded in Phase 4 before the dashboard build.
 
 ## Sources
 [^1]: `utility-offer-grounding-research.md` §A4. PJM capacity market economics
@@ -71,3 +83,5 @@ Draft v1. Positioning, why-ComEd-cares argument, the WeaveGrid-relationship fram
 [^3]: `utility-offer-grounding-research.md` §A6. Ancillary services / frequency regulation — the overclaim check
 [^4]: `utility-offer-grounding-research.md` §A1. Illinois's Clean and Reliable Grid Affordability Act
 [^5]: `utility-offer-grounding-research.md` §A2. ComEd's currently-approved VPP is battery-only
+[^6]: `utility-offer-grounding-research.md` §Track C. Pricing benchmarks and a savings-to-ComEd model
+[^7]: `utility-offer-grounding-research.md` §A5. What managed EV charging is worth to a utility, per a named independent methodology
