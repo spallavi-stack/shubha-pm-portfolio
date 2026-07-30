@@ -10,6 +10,7 @@
 <link rel="stylesheet" href="assets/css/design-system.css">
 <style>
   /* ---------- Homepage-only styling ---------- */
+  :root{ --stake-red:#FF5A46; }
   header.hero{
     position:relative;overflow:hidden;color:#fff;
     background:linear-gradient(165deg, var(--navy) 0%, var(--navy-soft) 45%, #6B3F52 78%, var(--amber) 130%);
@@ -32,6 +33,19 @@
   .split-line{overflow:hidden;padding-bottom:0.08em;}
   .subtitle{font-size:18px;color:#E4E1F5;max-width:600px;margin:0 0 36px;}
   .hero-ctas{display:flex;gap:16px;flex-wrap:wrap;}
+
+  /* The stakes: deliberately blunter than the polished personal stat rings below */
+  section.stakes{background:#0A0710;color:#F2EFEA;}
+  .stakes-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:40px;margin-top:8px;}
+  @media(max-width:820px){.stakes-grid{grid-template-columns:1fr;gap:44px;}}
+  .stake-num{
+    font-family:var(--font-body);font-weight:800;font-size:clamp(48px,7vw,84px);line-height:1;
+    letter-spacing:-0.02em;color:var(--stake-red);margin-bottom:16px;
+  }
+  .stake-num-text{font-size:clamp(32px,4.6vw,52px);}
+  .stake-label{font-size:15px;color:#C9C3D6;max-width:320px;line-height:1.5;margin-bottom:10px;}
+  .stake-src a{font-size:11.5px;text-transform:uppercase;letter-spacing:0.06em;color:#847D96;text-decoration:none;border-bottom:1px solid rgba(132,125,150,0.4);}
+  .stake-src a:hover{color:var(--stake-red);border-color:var(--stake-red);}
 
   /* Focus areas */
   .focus-chips{display:flex;flex-wrap:wrap;gap:10px;margin:24px 0 40px;}
@@ -129,6 +143,29 @@
 </header>
 
 <div class="energy-divider" aria-hidden="true"><svg viewBox="0 0 1200 60" preserveAspectRatio="none"><path d="M0 30 C 150 0, 250 60, 400 30 S 650 0, 800 30 S 1050 60, 1200 30"/></svg></div>
+
+<section class="stakes">
+  <div class="wrap">
+    <div class="section-kicker" style="color:var(--stake-red);">The stakes</div>
+    <div class="stakes-grid" data-reveal-stagger>
+      <div class="stake">
+        <div class="stake-num"><span data-count="38.1" data-decimals="1" data-suffix="B">0</span></div>
+        <div class="stake-label">Tonnes of CO2 from fossil fuels and industry in 2025, a new record high.</div>
+        <div class="stake-src"><a href="https://globalcarbonbudget.org/fossil-fuel-co2-emissions-hit-record-high-in-2025/" target="_blank" rel="noopener">Global Carbon Budget, 2025</a></div>
+      </div>
+      <div class="stake">
+        <div class="stake-num stake-num-text">2015&ndash;2024</div>
+        <div class="stake-label">The warmest ten-year period ever recorded.</div>
+        <div class="stake-src"><a href="https://wmo.int/news/media-centre/wmo-confirms-2024-warmest-year-record-about-155degc-above-pre-industrial-level" target="_blank" rel="noopener">World Meteorological Organization</a></div>
+      </div>
+      <div class="stake">
+        <div class="stake-num"><span data-count="30" data-suffix="%">0</span></div>
+        <div class="stake-label">Of the world's population already faces potentially deadly heat for 20+ days a year.</div>
+        <div class="stake-src"><a href="https://www.nature.com/articles/nclimate3322" target="_blank" rel="noopener">Mora et al., Nature Climate Change</a></div>
+      </div>
+    </div>
+  </div>
+</section>
 
 <section>
   <div class="wrap">
