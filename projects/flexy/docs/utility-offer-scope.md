@@ -7,7 +7,7 @@ Flexy's B2B2C model (see `product-brief.md`) has only ever been shown from the c
 ## In scope for this pass
 
 - **Grounding research, Track A — what ComEd/grid operators actually value, with a real mechanism behind each claim.** Not "reduces grid costs" as an abstract good; the specific demand-response/virtual-power-plant value-stack categories (capacity value, energy arbitrage, ancillary services, T&D deferral, avoided unscheduled outage/load-shedding cost) checked against what's real and claimable for an EV-charging aggregation specifically, and against ComEd's actual market context (PJM capacity and demand-response programs, ComEd's own DR tariffs).
-- **Grounding research, Track B — what utility-facing competitors actually offer and price.** WeaveGrid, AutoGrid/Uplight, Itron/EnergyHub, Leap, Voltus, OhmConnect: their utility-facing dashboard/reporting offer, partnership/pricing structure where public, and any case study with a utility naming a real MW or dollar figure.
+- **Grounding research, Track B — what utility-facing competitors actually offer and price.** WeaveGrid, AutoGrid/Uplight, Itron/EnergyHub, Leap, Voltus, OhmConnect, and Optiwatt: their utility-facing dashboard/reporting offer, partnership/pricing structure where public, and any case study with a utility naming a real MW or dollar figure.
 - **`utility-partnership-offer.md`** — positioning, why-ComEd-cares argument (sourced), offer structure, partnership success metrics distinct from the consumer PMF signals already in `product-brief.md`.
 - **KPI framework** for the operator dashboard, validated against Track A/B research rather than asserted from first principles.
 - **`utility-dashboard.html`** — a coded operator-dashboard prototype.
@@ -33,6 +33,10 @@ Flexy's B2B2C model (see `product-brief.md`) has only ever been shown from the c
 3. Is there a named case study anywhere with a real utility, a real MW or dollar figure, and a citable source (press release, case study page, regulatory filing)?
 4. What gap, if any, is visible across these competitors that Flexy's offer could credibly claim to fill?
 
+## Preliminary Track B data point (collected during scope review, to carry into Phase 2)
+
+**Optiwatt** (optiwatt.com/#results, fetched during scoping): publishes real production numbers — 31,224+ enrolled devices (27,597 EVs, 3,195 thermostats, 432 chargers), 1.3+ GWh cumulative load shifted out of peak hours, 44 programs deployed, 36 utility partners. [Fact — directly fetched from their own marketing page, not independently corroborated against a third-party source yet.] Their utility portal offers role-based access, device-level/load analytics, event management/reporting, and self-serve data downloads. Names "snapback demand" (a new spike when many devices resume simultaneously after a naive load shift) as a failure mode their "peak smoothing" strategy specifically targets — a real technical risk worth checking Flexy's own KPI framework against. No partnership pricing or utility-specific financial case study was disclosed on this page.
+
 ## Status
 
-Scope drafted, ready for review before Track A/B research begins.
+Scope drafted, ready for review before Track A/B research begins. Optiwatt added to the Track B competitor list with one preliminary data point already collected.
