@@ -195,9 +195,28 @@
   .limitation-card .src a{color:var(--teal-dark);}
 
   section[id]{scroll-margin-top:70px;}
+
+  /* Audience toggle */
+  .audience-toggle-wrap{padding:26px 0 4px;}
+  .audience-toggle{
+    display:inline-flex;background:var(--paper-soft);border:1px solid var(--border);
+    border-radius:999px;padding:4px;gap:4px;
+  }
+  .audience-btn{
+    font-family:inherit;font-size:13.5px;font-weight:700;color:var(--ink-soft);
+    background:transparent;border:0;border-radius:999px;padding:9px 20px;cursor:pointer;
+    transition:background .15s, color .15s;
+  }
+  .audience-btn.active{background:var(--teal);color:#fff;}
+  .audience-hint{font-size:12.5px;color:var(--ink-soft);margin:10px 0 0;}
+
+  body:not([data-audience="utility"]) .aud-utility{display:none;}
+  body[data-audience="utility"] .aud-homeowner{display:none;}
+  body[data-audience="utility"] .tldr-grid{grid-template-columns:repeat(3,1fr);}
+  @media(max-width:760px){body[data-audience="utility"] .tldr-grid{grid-template-columns:repeat(2,1fr);}}
 </style>
 </head>
-<body>
+<body data-audience="homeowner">
 
 <nav>
   <div class="wrap">
@@ -222,7 +241,7 @@
       <li><a href="../../index.html">← Home</a></li>
       <li><a href="#tldr">Summary</a></li>
       <li><a href="#problem">Problem</a></li>
-      <li><a href="#research">Research</a></li>
+      <li class="aud-homeowner"><a href="#research">Research</a></li>
       <li><a href="#roadmap">Roadmap</a></li>
       <li><a href="#prototype">Prototype</a></li>
       <li><a href="#limitations">Limitations</a></li>
@@ -246,17 +265,36 @@
 </header>
 
 
+<section class="audience-toggle-wrap">
+  <div class="wrap">
+    <div class="audience-toggle" role="group" aria-label="View Flexy's value proposition for">
+      <button type="button" class="audience-btn" data-audience-btn="homeowner">For homeowners</button>
+      <button type="button" class="audience-btn" data-audience-btn="utility">For utilities</button>
+    </div>
+    <p class="audience-hint aud-homeowner">Flexy's homeowner-facing case study: what it saves you and how it works.</p>
+    <p class="audience-hint aud-utility">Flexy's utility-facing case study: what it does for your customers, your program, and your rollout.</p>
+  </div>
+</section>
+
 <section id="tldr">
   <div class="wrap">
     <div class="section-kicker">The short version</div>
-    <div class="summary-box">
+    <div class="summary-box aud-homeowner">
       Flexy shows what electricity costs right now and automatically shifts EV charging into the cheapest hours.
     </div>
-    <div class="tldr-grid" data-reveal-stagger>
+    <div class="summary-box aud-utility">
+      Flexy is a white-label layer you hand to your customers: it turns your dynamic or Time-of-Use rate into something they actually act on, showing them live prices and shifting their EV charging into your cheapest, lowest-strain hours automatically.
+    </div>
+    <div class="tldr-grid aud-homeowner" data-reveal-stagger>
       <a class="tldr-card" href="#problem"><div class="num">01</div><h3>Problem &amp; positioning</h3><p>Why Illinois, why now, and where Flexy sits against Tibber, Octopus, Ohme, Optiwatt and WeaveGrid.</p></a>
       <a class="tldr-card" href="#research"><div class="num">02</div><h3>Research</h3><p>Four personas, JTBD statements, and synthetic interviews with a cross-persona synthesis.</p></a>
       <a class="tldr-card" href="#roadmap"><div class="num">03</div><h3>Roadmap</h3><p>ICE-prioritized Now/Next/Later, with the reasoning behind every score.</p></a>
       <a class="tldr-card" href="#prototype"><div class="num">04</div><h3>Prototype</h3><p>A full interactive click-dummy, from onboarding through the smart charging dashboard.</p></a>
+    </div>
+    <div class="tldr-grid aud-utility" data-reveal-stagger>
+      <a class="tldr-card" href="#problem"><div class="num">01</div><h3>Problem &amp; positioning</h3><p>Why a white-label layer, sized against the US utility population, and where Flexy sits against Optiwatt, WeaveGrid and Jedlix.</p></a>
+      <a class="tldr-card" href="#roadmap"><div class="num">02</div><h3>Roadmap</h3><p>ICE-prioritized Now/Next/Later - the build-out your customers would see first.</p></a>
+      <a class="tldr-card" href="#prototype"><div class="num">03</div><h3>Prototype</h3><p>The full interactive click-dummy your customers would use, from onboarding through the dashboard.</p></a>
     </div>
   </div>
 </section>
@@ -270,7 +308,7 @@
       </div>
       <span class="toggle-ic"></span>
     </summary>
-    <div class="grid-2">
+    <div class="grid-2 aud-homeowner">
       <div class="card">
         <h3 class="subhead" style="margin-top:0;">The market signal</h3>
         <ul class="plain">
@@ -283,10 +321,27 @@
       </div>
       <div class="card">
         <h3 class="subhead" style="margin-top:0;">Positioning</h3>
-        <p style="font-size:14px;">Flexy is not a utility and doesn't compete with one. It's a white-label plug-in layer a utility can hand to its own customers (B2B2C), the same model Optiwatt and WeaveGrid already use in the US. ComEd/Illinois is the first pilot market - it's the closest US equivalent to Octopus Agile in the UK or Tibber in the Nordics: a dynamic tariff that has immense potential to benefit its users and reward them for using it, and a template for any utility running a comparable dynamic or TOU rate.</p>
+        <p style="font-size:14px;">Flexy is not a utility and doesn't replace yours. It's a companion app your utility can offer alongside your existing account: it shows what electricity costs right now, in plain terms, and shifts your EV charging into the cheapest hours automatically. You keep your existing utility account and rate plan - Flexy just makes the dynamic-pricing part usable day to day.</p>
       </div>
     </div>
 
+    <div class="grid-2 aud-utility">
+      <div class="card">
+        <h3 class="subhead" style="margin-top:0;">The market signal</h3>
+        <ul class="plain">
+          <li>ComEd is finalizing a mandatory residential Time-of-Use rate for 2026, after a voluntary Hourly Pricing pilot that cut peak demand 6.5-9.7% each summer - but enrollment on that existing voluntary rate sits at ~38,591 customers, a small fraction of the eligible base.</li>
+          <li>SEPA's 2023 Utility Transformation Profile, surveying 100+ utility members representing over half of US customer accounts, found 71% already offer a time-of-day rate and 19% offer real-time pricing (<a href="https://pv-magazine-usa.com/2023/02/10/sepa-survey-shows-utilities-favored-approaches-to-become-carbon-free/" target="_blank" rel="noopener">SEPA, 2023</a>).</li>
+          <li>The gap between offering a dynamic rate and customers actually engaging with it is a documented adoption barrier, not a rate-design problem: 93% of energy bill payers are loss-averse, weighing the risk of a higher bill more heavily than the promise of savings (<a href="https://discovery.ucl.ac.uk/id/eprint/1541213/" target="_blank" rel="noopener">Nicolson et al., Energy Research &amp; Social Science</a>).</li>
+          <li>That gap is exactly where Flexy sits: a front-end layer that converts "customer is on the rate" into "customer is actually saving and satisfied," without you having to build and maintain that layer yourselves.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3 class="subhead" style="margin-top:0;">Positioning</h3>
+        <p style="font-size:14px;">Flexy isn't a utility and doesn't compete with yours. It's a white-label plug-in layer you hand to your own customers (B2B2C), the same model Optiwatt and WeaveGrid already run with US utilities. ComEd/Illinois is Flexy's first pilot market - the closest US equivalent to Octopus Agile in the UK or Tibber in the Nordics: a dynamic tariff with real potential to benefit enrolled customers, if they have a way to act on it. Flexy is built to be handed to any utility running a comparable dynamic or TOU rate, not only ComEd.</p>
+      </div>
+    </div>
+
+    <div class="aud-homeowner">
     <h3 class="subhead">TAM / SAM / SOM - sized to the pilot</h3>
     <p style="font-size:13.5px;color:var(--ink-soft);max-width:680px;">Sized tightly to the ComEd pilot rather than a speculative national number, using ComEd's and the Illinois Commerce Commission's own filings where possible.</p>
     <div class="tam-grid">
@@ -311,6 +366,34 @@
       <li>"Commonwealth Edison Company's Hourly Pricing 2023 Annual Report," filed with the Illinois Commerce Commission, Docket P2015-0602, reports 38,591 Hourly Pricing participants in 2023. <a href="https://www.icc.illinois.gov/docket/P2015-0602/documents/350023/files/611973.pdf" target="_blank" rel="noopener">Source (ICC docket filing, PDF)</a> - a primary regulatory filing; figure sourced via search summary of the filing rather than independently re-extracted from the PDF text, flagged here for transparency. ICC Docket 24-0378 separately confirms ComEd is required to launch a mandatory residential Time-of-Use rate in 2026, which will substantially expand this SAM.</li>
       <li>~1% figure per testimony referenced in ICC hourly-pricing proceedings, describing enrollment as a small fraction of the eligible residential base - used here as a conservative, sourced starting point for pilot-year adoption, not a Flexy-specific projection.</li>
     </ol>
+    </div>
+
+    <div class="aud-utility">
+    <h3 class="subhead">TAM / SAM / SOM - sized to Flexy's actual customer</h3>
+    <p style="font-size:13.5px;color:var(--ink-soft);max-width:680px;">Flexy's paying customer in this model is the utility, not the household - so this is sized by utility count, not resident count, using EIA and SEPA data.</p>
+    <div class="tam-grid">
+      <div class="tam-card">
+        <div class="tam-label">TAM</div>
+        <div class="tam-num">~3,000</div>
+        <p>US electric utilities nationwide - the full population Flexy's white-label model could in principle serve.<sup>1</sup></p>
+      </div>
+      <div class="tam-card">
+        <div class="tam-label">SAM</div>
+        <div class="tam-num">~168</div>
+        <p>US investor-owned utilities, serving ~72% of US electricity customers - large enough to run a program like ComEd's, and the closest fit to Flexy's B2B2C model.<sup>1</sup></p>
+      </div>
+      <div class="tam-card">
+        <div class="tam-label">SOM</div>
+        <div class="tam-num">1-3</div>
+        <p>Pilot utility partnerships targeted in year one, following the ComEd model, before expanding to additional dynamic-rate utilities.<sup>3</sup></p>
+      </div>
+    </div>
+    <ol class="footnotes">
+      <li>EIA, "Investor-owned utilities served 72% of U.S. electricity customers in 2017": ~3,000 total US electric utilities, of which 168 are investor-owned. <a href="https://www.eia.gov/todayinenergy/detail.php?id=40913" target="_blank" rel="noopener">Source (EIA, Today in Energy)</a> - primary source, independently fetched and confirmed. Figure is from 2017, the most recent EIA breakdown found; utility count is stable over time and unlikely to have shifted materially.</li>
+      <li>Inference: SEPA's 2023 Utility Transformation Profile found 71% of its ~100+ surveyed utility members already offer a time-of-day rate and 19% offer real-time pricing (<a href="https://pv-magazine-usa.com/2023/02/10/sepa-survey-shows-utilities-favored-approaches-to-become-carbon-free/" target="_blank" rel="noopener">SEPA, 2023</a>). Applied here only to size the SAM as "utilities large enough to plausibly run this kind of program," not as a claim that 71% of all 168 IOUs specifically have a live dynamic rate today - the survey sample and the IOU population overlap but aren't identical.</li>
+      <li>Assumption: 1-3 partnerships is a conservative, sourced-nowhere starting estimate for a first-year enterprise sales motion in this space, comparable in scale to how a young entrant like Optiwatt or WeaveGrid would realistically ramp utility partnerships, not a projection tied to a specific pipeline.</li>
+    </ol>
+    </div>
 
     <h3 class="subhead">Competitive landscape</h3>
     <table>
@@ -324,9 +407,11 @@
       <tr><td><strong>Emporia</strong> (US)</td><td>Hardware + app, consumption + scheduling</td><td>Requires buying hardware; not utility-distributed</td></tr>
       <tr><td><strong>Span / Sense</strong> (US)</td><td>Premium smart panel hardware</td><td>Sense is pivoting to utility-licensed software, validating Flexy's model</td></tr>
     </table>
-    <p style="font-size:13.5px;color:var(--ink-soft);margin-top:10px;">No single US player currently combines live dynamic-price visibility, real-time consumption, and hardware-agnostic EV charging in one utility-distributed layer. That combination is Flexy's bet.</p>
+    <p style="font-size:13.5px;color:var(--ink-soft);margin-top:10px;" class="aud-homeowner">No single US player currently combines live dynamic-price visibility, real-time consumption, and hardware-agnostic EV charging in one utility-distributed layer. That combination is Flexy's bet.</p>
+    <p style="font-size:13.5px;color:var(--ink-soft);margin-top:10px;" class="aud-utility">No single US vendor currently combines live dynamic-price visibility, real-time consumption, and hardware-agnostic EV charging in one white-label layer - Optiwatt and WeaveGrid are the closest peer set, and both are EV-only. That gap is Flexy's pitch to you.</p>
 
-    <h3 class="subhead">The household journey</h3>
+    <h3 class="subhead aud-homeowner">The household journey</h3>
+    <h3 class="subhead aud-utility">The journey your customers get</h3>
     <div class="journey">
       <div class="journey-step"><h4>1. Understand what you're paying</h4><p>Price &amp; Cost view: yesterday / today / tomorrow / monthly / annual</p></div>
       <div class="journey-step"><h4>2. Understand your usage</h4><p>Real-time consumption view (standard residential load profile for MVP)</p></div>
@@ -336,7 +421,7 @@
   </div>
 </section>
 
-<section id="research" data-reveal>
+<section id="research" class="aud-homeowner" data-reveal>
   <div class="wrap">
     <details class="section-collapse">
     <summary>
@@ -434,7 +519,8 @@
 <section id="prototype" data-reveal>
   <div class="wrap">
     <div class="section-kicker">Prototype</div>
-    <p class="lede">A full coded phone-frame prototype covering the entire MVP flow: discovering Flexy through a ComEd email, installing it, connecting a ComEd account, an intro carousel, connecting an EV (brand selection → manufacturer login → permissions, matching how Smartcar-style integrations actually work), setting charging preferences, and the live Price &amp; Cost and Smart Charging dashboards.</p>
+    <p class="lede aud-homeowner">A full coded phone-frame prototype covering the entire MVP flow: discovering Flexy through a ComEd email, installing it, connecting a ComEd account, an intro carousel, connecting an EV (brand selection → manufacturer login → permissions, matching how Smartcar-style integrations actually work), setting charging preferences, and the live Price &amp; Cost and Smart Charging dashboards.</p>
+    <p class="lede aud-utility">This is what you'd be handing your customers: a full coded phone-frame prototype of the entire MVP flow, from discovering Flexy through a ComEd-branded email, connecting their ComEd account, connecting an EV (brand selection → manufacturer login → permissions, matching how Smartcar-style integrations actually work), setting charging preferences, and the live Price &amp; Cost and Smart Charging dashboards.</p>
     <div class="proto-frame-wrap">
       <iframe class="proto" src="prototype.html" title="Flexy interactive prototype"></iframe>
     </div>
@@ -481,6 +567,13 @@
           <li>Flexy's click-dummy is static HTML/CSS/JS with no data layer, no security review, and no compliance pass - relevant since a real version would handle utility account data and OAuth tokens to EV manufacturer APIs.</li>
         </ul>
         <span class="src">Source: <a href="https://monday.com/blog/vibe-coding/vibe-coding-product-managers/" target="_blank" rel="noopener">monday.com, "Vibe coding for product managers"</a></span>
+      </div>
+      <div class="limitation-card aud-utility">
+        <h4>No utility-side tooling was prototyped</h4>
+        <ul>
+          <li>Everything built is the customer-facing app. There's no admin console, demand-response reporting dashboard, or enrollment/billing-system integration view - the operational surface a utility would actually need to run and measure a Flexy rollout.</li>
+          <li>That gap is real and undemonstrated here, not a claim that it's simple to build once the consumer app exists.</li>
+        </ul>
       </div>
     </div>
   </div>
@@ -551,6 +644,26 @@
 <script src="../../assets/vendor/SplitText.min.js"></script>
 <script src="../../assets/js/motion.js"></script>
 <script>
+(function(){
+  var body = document.body;
+  var btns = document.querySelectorAll('[data-audience-btn]');
+  function setAudience(aud, updateUrl){
+    body.setAttribute('data-audience', aud);
+    btns.forEach(function(b){
+      b.classList.toggle('active', b.getAttribute('data-audience-btn') === aud);
+    });
+    if(updateUrl){
+      var params = new URLSearchParams(location.search);
+      params.set('audience', aud);
+      history.replaceState(null, '', location.pathname + '?' + params.toString() + location.hash);
+    }
+  }
+  var initial = new URLSearchParams(location.search).get('audience') === 'utility' ? 'utility' : 'homeowner';
+  setAudience(initial, false);
+  btns.forEach(function(b){
+    b.addEventListener('click', function(){ setAudience(b.getAttribute('data-audience-btn'), true); });
+  });
+})();
 (function(){
   function openTarget(){
     var id = location.hash.slice(1);
