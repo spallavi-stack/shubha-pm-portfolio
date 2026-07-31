@@ -101,46 +101,42 @@
   .car-prev{left:-16px;}
   .car-next{right:-16px;}
   @media(max-width:640px){.car-btn{display:none;}}
-  .car-dots{display:flex;justify-content:center;align-items:center;gap:7px;margin-top:22px;}
   .car-dot{width:7px;height:7px;border-radius:50%;background:var(--border);border:none;padding:0;cursor:pointer;transition:all .2s ease;}
   .car-dot.active{background:var(--accent);width:22px;border-radius:5px;}
-  .case-bridge .car-dot{background:rgba(255,255,255,0.22);}
-  .case-bridge .car-dot.active{background:var(--amber);}
 
   /* Case cards v2: screenshot + name + What/Why/For-whom bullets, full-bleed
      brand color. .case-card-v2 is just the carousel slot - flex:0 0 100%
      so exactly one is visible at a time (scroll-snap) - and .case-v2-inner
      is the actual visual card, capped narrower than the slot so it doesn't
-     stretch edge to edge with a lot of empty middle space. Sized to sit in
-     the ~55%-width left column of the case-studies/process grid, so it's
-     compressed from the old full-width layout. */
+     stretch edge to edge with a lot of empty middle space. Sized to fill
+     the ~80%-width left column of the case-studies/process grid. */
   .case-card-v2{
     text-decoration:none;color:#fff;display:flex;justify-content:center;
     flex:0 0 100%;width:100%;scroll-snap-align:start;
   }
   .case-v2-inner{
     border-radius:20px;overflow:hidden;
-    display:flex;align-items:flex-end;justify-content:space-between;gap:14px;
-    width:100%;max-width:600px;min-height:380px;
-    padding:32px;position:relative;
+    display:flex;align-items:flex-end;justify-content:space-between;gap:18px;
+    width:100%;max-width:820px;min-height:420px;
+    padding:44px;position:relative;
   }
   .case-v2-inner.banner-flexy{background:linear-gradient(135deg,#1E4B3B,#3E6E58 55%,#F0AE8C);}
   .case-v2-inner.banner-sunnysideup{background:linear-gradient(135deg,#B8720A,#D4890B 55%,#F5B942);}
-  .case-v2-text{position:relative;z-index:1;max-width:280px;display:flex;flex-direction:column;}
-  .case-v2-tag{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:rgba(255,255,255,0.75);margin-bottom:12px;}
-  .case-v2-name{font-family:var(--font-display);font-weight:600;font-size:28px;letter-spacing:-0.01em;margin:0 0 16px;visibility:hidden;}
+  .case-v2-text{position:relative;z-index:1;max-width:380px;display:flex;flex-direction:column;}
+  .case-v2-tag{font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:rgba(255,255,255,0.75);margin-bottom:14px;}
+  .case-v2-name{font-family:var(--font-display);font-weight:600;font-size:38px;letter-spacing:-0.01em;margin:0 0 20px;visibility:hidden;}
   .case-v2-name .case-name-line{visibility:visible;}
-  .case-v2-bullets{list-style:none;margin:0 0 20px;padding:0;display:flex;flex-direction:column;gap:12px;}
-  .case-v2-bullets li{font-size:12.5px;line-height:1.5;color:rgba(255,255,255,0.88);padding-left:14px;position:relative;}
-  .case-v2-bullets li::before{content:'';position:absolute;left:0;top:6px;width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,0.55);}
+  .case-v2-bullets{list-style:none;margin:0 0 24px;padding:0;display:flex;flex-direction:column;gap:14px;}
+  .case-v2-bullets li{font-size:13.5px;line-height:1.55;color:rgba(255,255,255,0.88);padding-left:16px;position:relative;}
+  .case-v2-bullets li::before{content:'';position:absolute;left:0;top:7px;width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.55);}
   .bullet-label{display:block;font-weight:700;color:#fff;margin-bottom:2px;}
-  .case-v2-inner .cta{font-size:12.5px;font-weight:700;color:#fff;}
-  .case-v2-shot-wrap{position:relative;z-index:1;flex-shrink:0;align-self:flex-end;margin-bottom:-32px;margin-right:6px;}
-  .case-v2-shot{display:block;width:160px;border-radius:12px 12px 0 0;box-shadow:0 16px 36px rgba(0,0,0,0.35);}
+  .case-v2-inner .cta{font-size:13px;font-weight:700;color:#fff;}
+  .case-v2-shot-wrap{position:relative;z-index:1;flex-shrink:0;align-self:flex-end;margin-bottom:-44px;margin-right:10px;}
+  .case-v2-shot{display:block;width:220px;border-radius:14px 14px 0 0;box-shadow:0 20px 44px rgba(0,0,0,0.35);}
   @media(max-width:760px){
     .case-v2-inner{flex-direction:column;align-items:flex-start;max-width:none;}
     .case-v2-text{max-width:none;}
-    .case-v2-shot-wrap{align-self:center;margin:20px 0 -32px;}
+    .case-v2-shot-wrap{align-self:center;margin:20px 0 -44px;}
   }
 
   .case-v2-soon{
@@ -148,7 +144,7 @@
     display:flex;align-items:flex-start;justify-content:center;flex-direction:column;
   }
   .case-v2-soon .case-v2-tag{color:rgba(255,255,255,0.5);}
-  .case-v2-soon .case-v2-name{visibility:visible;font-size:20px;color:#fff;margin-bottom:20px;}
+  .case-v2-soon .case-v2-name{visibility:visible;font-size:22px;color:#fff;margin-bottom:24px;}
   .case-v2-soon .cta{color:rgba(255,255,255,0.5);}
 
   /* Process: right-hand column of the case-studies/process grid - header
@@ -380,7 +376,6 @@
       </div>
     </div>
     </div>
-    <div class="car-dots" id="carDots"></div>
     </div>
 
     <div class="case-process-steps">
@@ -624,28 +619,15 @@
 (function(){
   function initCarousel(){
     var grid = document.getElementById('caseGrid');
-    var dotsWrap = document.getElementById('carDots');
     var prevBtn = document.getElementById('carPrev');
     var nextBtn = document.getElementById('carNext');
-    if(!grid || !dotsWrap) return;
+    if(!grid) return;
     var cards = Array.prototype.slice.call(grid.querySelectorAll('.case-card-v2'));
     if(cards.length < 2){
       if(prevBtn) prevBtn.style.display = 'none';
       if(nextBtn) nextBtn.style.display = 'none';
       return;
     }
-
-    cards.forEach(function(card, i){
-      var dot = document.createElement('button');
-      dot.type = 'button';
-      dot.className = 'car-dot';
-      dot.setAttribute('aria-label', 'Go to project ' + (i + 1));
-      dot.addEventListener('click', function(){
-        scrollToIndex(i);
-      });
-      dotsWrap.appendChild(dot);
-    });
-    var dots = Array.prototype.slice.call(dotsWrap.querySelectorAll('.car-dot'));
 
     function currentIndex(){
       var gridLeft = grid.getBoundingClientRect().left;
@@ -666,7 +648,6 @@
     var lastIdx = currentIndex();
     function updateUI(){
       var idx = currentIndex();
-      dots.forEach(function(d, i){ d.classList.toggle('active', i === idx); });
       if(prevBtn) prevBtn.disabled = idx === 0;
       if(nextBtn) nextBtn.disabled = idx === cards.length - 1;
       if(idx !== lastIdx){
