@@ -12,6 +12,15 @@
 
   var DIAL_PATH_LENGTH = Math.PI * 80; // semicircle, r=80
 
+  var STAGE_DEFAULTS = {
+    '0to1': {acv: 2000, cycle: 'instant', persona: 'end-user'},
+    '1ton': {acv: 40000, cycle: '3-6', persona: 'team-lead'}
+  };
+  var STAGE_NOTES = {
+    '0to1': 'At this stage, treat this as a hypothesis about your eventual motion, not a commitment — you likely don’t have enough closed deals yet to know your real numbers.',
+    '1ton': 'With real deal data now, revisit these inputs quarterly as ACV and cycle length actually shift.'
+  };
+
   function clamp(v, min, max){ return Math.max(min, Math.min(max, v)); }
 
   function formatCurrency(n){
@@ -85,6 +94,7 @@
     var summaryTitle = document.getElementById('gtmSummaryTitle');
     var summaryDesc = document.getElementById('gtmSummaryDesc');
     var metricsWrap = document.getElementById('gtmMetrics');
+    var stageNoteEl = document.getElementById('gtmStageNote');
     if(!acvInput || !cycleGroup || !personaGroup || !dialFill || !dialNeedle) return;
 
     var state = {
@@ -146,8 +156,24 @@
       render();
     });
 
-    if(acvValueEl) acvValueEl.textContent = formatCurrency(state.acv);
-    render();
+    function applyStage(stage){
+      var defaults = STAGE_DEFAULTS[stage] || STAGE_DEFAULTS['0to1'];
+      state.acv = defaults.acv;
+      state.cycle = defaults.cycle;
+      state.persona = defaults.persona;
+      acvInput.value = String(defaults.acv);
+      if(acvValueEl) acvValueEl.textContent = formatCurrency(state.acv);
+      setSegmentGroup(cycleGroup, state.cycle);
+      setSegmentGroup(personaGroup, state.persona);
+      if(stageNoteEl) stageNoteEl.textContent = STAGE_NOTES[stage] || '';
+      render();
+    }
+
+    window.addEventListener('pmlab:stage', function(e){
+      applyStage(e.detail.stage);
+    });
+
+    applyStage(window.pmLabStage);
   }
 
   if(document.readyState === 'loading'){

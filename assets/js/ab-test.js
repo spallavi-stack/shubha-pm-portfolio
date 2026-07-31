@@ -12,6 +12,11 @@
 (function(){
   var MIN_RELIABLE_REACH = 1000; // monthly visitors; my own threshold, not Kohavi's literal number
 
+  var STAGE_DEFAULTS = {
+    '0to1': {reach: 250, a: "Welcome! Let's get your account set up", b: "You're in — here's your first step"},
+    '1ton': {reach: 4000, a: 'Save 20% when you upgrade to our new plan', b: 'Try it free for 14 days, no credit card required'}
+  };
+
   var VAGUE_WORDS = ['innovative', 'revolutionize', 'revolutionary', 'solution', 'synergy', 'leverage', 'best-in-class', 'cutting-edge', 'game-changing', 'robust', 'seamless'];
   var FRICTION_PHRASES = ['no credit card', 'no signup', 'no commitment', 'cancel anytime', 'free', 'instant', 'in seconds'];
   var URGENCY_WORDS = ['today', 'this week', 'limited', 'now', 'hurry'];
@@ -122,7 +127,21 @@
       result.hidden = false;
     }
 
+    function applyStage(stage){
+      var defaults = STAGE_DEFAULTS[stage] || STAGE_DEFAULTS['0to1'];
+      variantAInput.value = defaults.a;
+      variantBInput.value = defaults.b;
+      reachInput.value = String(defaults.reach);
+      result.hidden = true;
+      if(emptyState) emptyState.hidden = false;
+    }
+
     runBtn.addEventListener('click', runTest);
+    window.addEventListener('pmlab:stage', function(e){
+      applyStage(e.detail.stage);
+    });
+
+    applyStage(window.pmLabStage);
   }
 
   if(document.readyState === 'loading'){
