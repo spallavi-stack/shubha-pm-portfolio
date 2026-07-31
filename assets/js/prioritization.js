@@ -4,11 +4,21 @@
    20% penalty to the raw score (multiplicative, so both together
    is a 36% penalty), surfaced in a Strategic Risk Flag panel that
    explains why the flagged feature ranked lower than its raw score
-   would suggest. */
+   would suggest. That penalty is my own addition, not part of RICE.
+
+   Each row can also be stress-tested DRICE-style (Darius Contractor
+   & Alexey Komissarouk, "Introducing DRICE"): a Hypothesis, a
+   dollarized annual impact estimate, and an engineering-days
+   estimate, computed out to a real ROI-per-engineering-week. */
 (function(){
   var PENALTY_PER_FLAG = 0.2;
+  var WORK_DAYS_PER_WEEK = 5;
 
   function clamp(v, min, max){ return Math.max(min, Math.min(max, v)); }
+
+  function formatCurrency(n){
+    return '$' + Math.round(n).toLocaleString('en-US');
+  }
 
   function readRow(row){
     var get = function(field){ return row.querySelector('[data-field="' + field + '"]'); };
@@ -43,6 +53,19 @@
     return '<strong>' + item.name + '</strong> ranks lower than its raw RICE score suggests: flagged for ' +
       reasons.join(' and ') + ', a combined &minus;' + penaltyPct + '% penalty (' +
       item.rawScore.toFixed(1) + ' &rarr; ' + item.penalizedScore.toFixed(1) + ').';
+  }
+
+  function computeDriceRoi(driceRow){
+    var get = function(field){ return driceRow.querySelector('[data-drice-field="' + field + '"]'); };
+    var dollarImpact = Number(get('dollarImpact').value) || 0;
+    var engDays = Math.max(Number(get('engDays').value) || 0, 0.5);
+    var engWeeks = engDays / WORK_DAYS_PER_WEEK;
+    var roiEl = driceRow.querySelector('[data-drice-roi]');
+    if(roiEl){
+      roiEl.textContent = engWeeks > 0
+        ? formatCurrency(dollarImpact / engWeeks) + '/eng-week'
+        : '—';
+    }
   }
 
   function initPrioritization(){
@@ -87,26 +110,52 @@
       }
     }
 
-    function wireRow(row){
+    function wireDriceRow(driceRow){
+      computeDriceRoi(driceRow);
+      driceRow.addEventListener('input', function(){ computeDriceRoi(driceRow); });
+    }
+
+    function wireRow(row, driceRow){
       row.addEventListener('input', computeAll);
       row.addEventListener('change', computeAll);
+
       var removeBtn = row.querySelector('.rice-remove-btn');
       if(removeBtn){
         removeBtn.addEventListener('click', function(){
           row.remove();
+          if(driceRow) driceRow.remove();
           computeAll();
         });
       }
+
+      var driceToggle = row.querySelector('[data-drice-toggle]');
+      if(driceToggle && driceRow){
+        driceToggle.addEventListener('click', function(){
+          var isOpen = driceRow.hidden;
+          driceRow.hidden = !isOpen;
+          driceToggle.classList.toggle('is-open', isOpen);
+          driceToggle.innerHTML = isOpen ? 'Stress-test (DRICE) &#9662;' : 'Stress-test (DRICE) &#9656;';
+        });
+      }
+
+      if(driceRow) wireDriceRow(driceRow);
     }
 
-    Array.prototype.forEach.call(tbody.querySelectorAll('[data-rice-row]'), wireRow);
+    var mainRows = Array.prototype.slice.call(tbody.querySelectorAll('[data-rice-row]'));
+    mainRows.forEach(function(row){
+      var driceRow = row.nextElementSibling && row.nextElementSibling.hasAttribute('data-rice-drice')
+        ? row.nextElementSibling
+        : null;
+      wireRow(row, driceRow);
+    });
 
     if(addBtn){
       addBtn.addEventListener('click', function(){
         var fragment = template.content.cloneNode(true);
         var row = fragment.querySelector('[data-rice-row]');
+        var driceRow = fragment.querySelector('[data-rice-drice]');
         tbody.appendChild(fragment);
-        wireRow(row);
+        wireRow(row, driceRow);
         computeAll();
         var nameInput = row.querySelector('[data-field="name"]');
         if(nameInput){ nameInput.focus(); nameInput.select(); }
