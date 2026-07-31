@@ -396,11 +396,11 @@
 
 <section class="dark-section pm-lab" id="pm-lab">
   <div class="wrap">
-    <div class="section-kicker">PM Strategy &amp; Execution Lab</div>
+    <div class="section-kicker">Playground</div>
     <h2 class="section-title">An interactive PM operating system.</h2>
     <p class="lede">3 micro-tools you can use right now to make better product decisions, with logic and benchmarks pulled directly from Lenny's Newsletter archive.</p>
 
-    <div class="pm-lab-tabs" role="tablist" aria-label="PM Strategy &amp; Execution Lab tools">
+    <div class="pm-lab-tabs" role="tablist" aria-label="Playground tools">
       <button class="pm-lab-tab" type="button" role="tab" id="pm-lab-tab-gtm" aria-controls="pm-lab-panel-gtm" aria-selected="false">
         <span class="pm-lab-tab-num">1</span> GTM Trade-Off Engine
       </button>
@@ -409,6 +409,9 @@
       </button>
       <button class="pm-lab-tab" type="button" role="tab" id="pm-lab-tab-prd" aria-controls="pm-lab-panel-prd" aria-selected="false">
         <span class="pm-lab-tab-num">3</span> AI Spec &amp; PRD Auditor
+      </button>
+      <button class="pm-lab-tab" type="button" role="tab" id="pm-lab-tab-ab" aria-controls="pm-lab-panel-ab" aria-selected="false">
+        <span class="pm-lab-tab-num">4</span> A/B Test It
       </button>
     </div>
 
@@ -466,6 +469,15 @@
             </div>
           </div>
         </div>
+
+        <div class="pm-lab-sources">
+          <div class="pm-lab-sources-title">Sources</div>
+          <ul class="pm-lab-sources-list">
+            <li><a href="https://www.youtube.com/watch?v=Pm7QSWDIEUc" target="_blank" rel="noopener">"How to achieve hypergrowth in your business and career" — Carilu Dietrich (Atlassian, Miro, Segment, 1Password)</a>, podcast, Apr 2023</li>
+            <li>"Elena Verna 4.0" — Elena Verna, podcast, Dec 2025</li>
+            <li>"The ultimate guide to adding a PLG motion" — Hila Qu (Reforge, GitLab), newsletter, Aug 2024</li>
+          </ul>
+        </div>
       </div>
       <div class="pm-lab-panel" id="pm-lab-panel-rice" role="tabpanel" aria-labelledby="pm-lab-tab-rice">
         <p class="pm-lab-panel-intro">A dynamic RICE feature matrix that calculates strategic blindspot penalties and retention risk.</p>
@@ -494,8 +506,30 @@
                   <td><input type="number" class="rice-input rice-input-num" data-field="effort" value="1.5" min="0.1" step="0.1"></td>
                   <td class="rice-td-check"><input type="checkbox" class="rice-check" data-field="techDebt"></td>
                   <td class="rice-td-check"><input type="checkbox" class="rice-check" data-field="retentionGap"></td>
-                  <td class="rice-td-score"><span class="rice-score-value" data-rice-score>0</span><span class="rice-rank-badge" data-rice-rank></span></td>
+                  <td class="rice-td-score"><span class="rice-score-value" data-rice-score>0</span><span class="rice-rank-badge" data-rice-rank></span><button type="button" class="rice-drice-toggle" data-drice-toggle>Stress-test (DRICE) &#9656;</button></td>
                   <td class="rice-td-remove"><button type="button" class="rice-remove-btn" aria-label="Remove this feature row">&times;</button></td>
+                </tr>
+                <tr class="rice-drice-row" data-rice-drice hidden>
+                  <td colspan="9">
+                    <div class="rice-drice-panel">
+                      <div class="rice-drice-field rice-drice-field-wide">
+                        <label>Hypothesis</label>
+                        <input type="text" class="rice-drice-input" data-drice-field="hypothesis" placeholder="If we build X, we believe Y will happen because Z" value="If self-serve invites remove the need for IT to add teammates manually, we believe more teams activate within their first week.">
+                      </div>
+                      <div class="rice-drice-field">
+                        <label>$ Impact estimate (annual)</label>
+                        <input type="number" class="rice-drice-input" data-drice-field="dollarImpact" min="0" step="1000" value="180000">
+                      </div>
+                      <div class="rice-drice-field">
+                        <label>Engineering estimate (days)</label>
+                        <input type="number" class="rice-drice-input" data-drice-field="engDays" min="0.5" step="0.5" value="7">
+                      </div>
+                      <div class="rice-drice-result">
+                        <span class="rice-drice-result-label">ROI</span>
+                        <span class="rice-drice-result-value" data-drice-roi>&mdash;</span>
+                      </div>
+                    </div>
+                  </td>
                 </tr>
                 <tr class="rice-row" data-rice-row>
                   <td><input type="text" class="rice-input rice-input-name" data-field="name" value="Custom Enterprise SSO"></td>
@@ -505,8 +539,30 @@
                   <td><input type="number" class="rice-input rice-input-num" data-field="effort" value="3" min="0.1" step="0.1"></td>
                   <td class="rice-td-check"><input type="checkbox" class="rice-check" data-field="techDebt" checked></td>
                   <td class="rice-td-check"><input type="checkbox" class="rice-check" data-field="retentionGap"></td>
-                  <td class="rice-td-score"><span class="rice-score-value" data-rice-score>0</span><span class="rice-rank-badge" data-rice-rank></span></td>
+                  <td class="rice-td-score"><span class="rice-score-value" data-rice-score>0</span><span class="rice-rank-badge" data-rice-rank></span><button type="button" class="rice-drice-toggle" data-drice-toggle>Stress-test (DRICE) &#9656;</button></td>
                   <td class="rice-td-remove"><button type="button" class="rice-remove-btn" aria-label="Remove this feature row">&times;</button></td>
+                </tr>
+                <tr class="rice-drice-row" data-rice-drice hidden>
+                  <td colspan="9">
+                    <div class="rice-drice-panel">
+                      <div class="rice-drice-field rice-drice-field-wide">
+                        <label>Hypothesis</label>
+                        <input type="text" class="rice-drice-input" data-drice-field="hypothesis" placeholder="If we build X, we believe Y will happen because Z" value="If we replace per-seat SSO setup calls with a self-serve SAML config, we believe the security-review blocker disappears for mid-market deals.">
+                      </div>
+                      <div class="rice-drice-field">
+                        <label>$ Impact estimate (annual)</label>
+                        <input type="number" class="rice-drice-input" data-drice-field="dollarImpact" min="0" step="1000" value="90000">
+                      </div>
+                      <div class="rice-drice-field">
+                        <label>Engineering estimate (days)</label>
+                        <input type="number" class="rice-drice-input" data-drice-field="engDays" min="0.5" step="0.5" value="15">
+                      </div>
+                      <div class="rice-drice-result">
+                        <span class="rice-drice-result-label">ROI</span>
+                        <span class="rice-drice-result-value" data-drice-roi>&mdash;</span>
+                      </div>
+                    </div>
+                  </td>
                 </tr>
                 <tr class="rice-row" data-rice-row>
                   <td><input type="text" class="rice-input rice-input-name" data-field="name" value="AI Automated Summary Widget"></td>
@@ -516,8 +572,30 @@
                   <td><input type="number" class="rice-input rice-input-num" data-field="effort" value="1" min="0.1" step="0.1"></td>
                   <td class="rice-td-check"><input type="checkbox" class="rice-check" data-field="techDebt"></td>
                   <td class="rice-td-check"><input type="checkbox" class="rice-check" data-field="retentionGap" checked></td>
-                  <td class="rice-td-score"><span class="rice-score-value" data-rice-score>0</span><span class="rice-rank-badge" data-rice-rank></span></td>
+                  <td class="rice-td-score"><span class="rice-score-value" data-rice-score>0</span><span class="rice-rank-badge" data-rice-rank></span><button type="button" class="rice-drice-toggle" data-drice-toggle>Stress-test (DRICE) &#9656;</button></td>
                   <td class="rice-td-remove"><button type="button" class="rice-remove-btn" aria-label="Remove this feature row">&times;</button></td>
+                </tr>
+                <tr class="rice-drice-row" data-rice-drice hidden>
+                  <td colspan="9">
+                    <div class="rice-drice-panel">
+                      <div class="rice-drice-field rice-drice-field-wide">
+                        <label>Hypothesis</label>
+                        <input type="text" class="rice-drice-input" data-drice-field="hypothesis" placeholder="If we build X, we believe Y will happen because Z" value="If summaries save reviewers time, we believe weekly active usage rises, but without a reason to return, usage may fade after the novelty wears off.">
+                      </div>
+                      <div class="rice-drice-field">
+                        <label>$ Impact estimate (annual)</label>
+                        <input type="number" class="rice-drice-input" data-drice-field="dollarImpact" min="0" step="1000" value="60000">
+                      </div>
+                      <div class="rice-drice-field">
+                        <label>Engineering estimate (days)</label>
+                        <input type="number" class="rice-drice-input" data-drice-field="engDays" min="0.5" step="0.5" value="4">
+                      </div>
+                      <div class="rice-drice-result">
+                        <span class="rice-drice-result-label">ROI</span>
+                        <span class="rice-drice-result-value" data-drice-roi>&mdash;</span>
+                      </div>
+                    </div>
+                  </td>
                 </tr>
               </tbody>
             </table>
@@ -532,20 +610,51 @@
               <td><input type="number" class="rice-input rice-input-num" data-field="effort" value="1" min="0.1" step="0.1"></td>
               <td class="rice-td-check"><input type="checkbox" class="rice-check" data-field="techDebt"></td>
               <td class="rice-td-check"><input type="checkbox" class="rice-check" data-field="retentionGap"></td>
-              <td class="rice-td-score"><span class="rice-score-value" data-rice-score>0</span><span class="rice-rank-badge" data-rice-rank></span></td>
+              <td class="rice-td-score"><span class="rice-score-value" data-rice-score>0</span><span class="rice-rank-badge" data-rice-rank></span><button type="button" class="rice-drice-toggle" data-drice-toggle>Stress-test (DRICE) &#9656;</button></td>
               <td class="rice-td-remove"><button type="button" class="rice-remove-btn" aria-label="Remove this feature row">&times;</button></td>
+            </tr>
+            <tr class="rice-drice-row" data-rice-drice hidden>
+              <td colspan="9">
+                <div class="rice-drice-panel">
+                  <div class="rice-drice-field rice-drice-field-wide">
+                    <label>Hypothesis</label>
+                    <input type="text" class="rice-drice-input" data-drice-field="hypothesis" placeholder="If we build X, we believe Y will happen because Z" value="">
+                  </div>
+                  <div class="rice-drice-field">
+                    <label>$ Impact estimate (annual)</label>
+                    <input type="number" class="rice-drice-input" data-drice-field="dollarImpact" min="0" step="1000" value="0">
+                  </div>
+                  <div class="rice-drice-field">
+                    <label>Engineering estimate (days)</label>
+                    <input type="number" class="rice-drice-input" data-drice-field="engDays" min="0.5" step="0.5" value="5">
+                  </div>
+                  <div class="rice-drice-result">
+                    <span class="rice-drice-result-label">ROI</span>
+                    <span class="rice-drice-result-value" data-drice-roi>&mdash;</span>
+                  </div>
+                </div>
+              </td>
             </tr>
           </template>
 
           <div class="rice-actions">
             <button type="button" class="rice-add-btn" id="riceAddRow">+ Add feature</button>
-            <div class="rice-formula-note">RICE Score = (Reach &times; Impact &times; Confidence) &divide; Effort, then &minus;20% per active risk flag.</div>
+            <div class="rice-formula-note">RICE Score = (Reach &times; Impact &times; Confidence) &divide; Effort, then &minus;20% per active risk flag. Stress-test each row DRICE-style: dollarize the impact and estimate engineering days to get a real ROI-per-eng-week.</div>
           </div>
 
           <div class="rice-risk-panel" id="riceRiskPanel" hidden>
             <div class="rice-risk-title">Strategic Risk Flags</div>
             <ul class="rice-risk-list" id="riceRiskList"></ul>
           </div>
+        </div>
+
+        <div class="pm-lab-sources">
+          <div class="pm-lab-sources-title">Sources</div>
+          <ul class="pm-lab-sources-list">
+            <li><a href="https://www.lennysnewsletter.com/p/introducing-drice-a-modern-prioritization-framework" target="_blank" rel="noopener">"Introducing DRICE: a modern prioritization framework"</a> — Darius Contractor &amp; Alexey Komissarouk, newsletter, Nov 2023 (source of the Hypothesis / $ impact / eng-days / ROI-per-eng-week stress-test)</li>
+            <li><a href="https://www.youtube.com/watch?v=VjJ6xcv7e8s" target="_blank" rel="noopener">"The original growth hacker reveals his secrets" — Sean Ellis</a>, podcast, Sep 2024 (originator of the ICE framework RICE builds on)</li>
+          </ul>
+          <p class="pm-lab-sources-note">The 20%-per-flag penalty for High Tech Debt Risk / Missing Retention Loop is my own addition for this demo, not part of RICE or DRICE.</p>
         </div>
       </div>
       <div class="pm-lab-panel" id="pm-lab-panel-prd" role="tabpanel" aria-labelledby="pm-lab-tab-prd">
@@ -594,6 +703,75 @@
             </div>
           </div>
         </div>
+
+        <div class="pm-lab-sources">
+          <div class="pm-lab-sources-title">Sources</div>
+          <ul class="pm-lab-sources-list">
+            <li><a href="https://www.lennysnewsletter.com/p/product-manager-is-an-unfair-role-so-work-unfairly" target="_blank" rel="noopener">"Product manager is an unfair role. So work unfairly."</a>, newsletter, Nov 2024 (source of the GIVEN/WHEN/THEN acceptance-criteria template used here)</li>
+            <li>"Bending the universe in your favor" — Claire Vo (LaunchDarkly, Color, Optimizely, ChatPRD), podcast, Apr 2024</li>
+            <li>"How Anthropic's product team moves faster than anyone else" — Cat Wu (Head of Product, Claude Code), podcast, Apr 2026</li>
+          </ul>
+          <p class="pm-lab-sources-note">Edge cases and the metric tree are standard PM/eng practice I wrote myself, not sourced from these episodes.</p>
+        </div>
+      </div>
+
+      <div class="pm-lab-panel" id="pm-lab-panel-ab" role="tabpanel" aria-labelledby="pm-lab-tab-ab">
+        <p class="pm-lab-panel-intro">Enter two landing/marketing copy variants and get a predicted winner, grounded in real copywriting and experimentation principles, not a coin flip.</p>
+        <div class="pm-lab-tool" id="ab-test-root" data-pm-tool="ab-test">
+          <div class="ab-input-grid">
+            <div class="ab-input-field">
+              <label class="gtm-label" for="abVariantA">Variant A</label>
+              <textarea id="abVariantA" class="ab-textarea" rows="3">Save 20% when you upgrade to our new plan</textarea>
+            </div>
+            <div class="ab-input-field">
+              <label class="gtm-label" for="abVariantB">Variant B</label>
+              <textarea id="abVariantB" class="ab-textarea" rows="3">Try it free for 14 days, no credit card required</textarea>
+            </div>
+          </div>
+
+          <div class="ab-context-row">
+            <div class="ab-input-field ab-reach-field">
+              <label class="gtm-label" for="abReach">Estimated monthly reach (visitors who'd see this)</label>
+              <input type="number" id="abReach" class="rice-input rice-input-num ab-reach-input" min="0" step="100" value="4000">
+            </div>
+            <button type="button" class="rice-add-btn" id="abRunBtn">Run A/B Test</button>
+          </div>
+
+          <p class="ab-empty-state" id="abEmptyState">Enter two variants and click <strong>Run A/B Test</strong> to see a predicted winner and reasoning.</p>
+
+          <div class="ab-result" id="abResult" hidden>
+            <div class="ab-validity-banner" id="abValidityBanner"></div>
+
+            <div class="ab-verdict-row">
+              <div class="ab-variant-card" id="abCardA">
+                <div class="ab-variant-label">Variant A</div>
+                <div class="ab-variant-text" id="abTextA"></div>
+                <div class="ab-variant-score" id="abScoreA"></div>
+              </div>
+              <div class="ab-variant-vs">vs</div>
+              <div class="ab-variant-card" id="abCardB">
+                <div class="ab-variant-label">Variant B</div>
+                <div class="ab-variant-text" id="abTextB"></div>
+                <div class="ab-variant-score" id="abScoreB"></div>
+              </div>
+            </div>
+
+            <div class="ab-reasoning">
+              <div class="ab-reasoning-title">Why</div>
+              <ul class="ab-reasoning-list" id="abReasoningList"></ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="pm-lab-sources">
+          <div class="pm-lab-sources-title">Sources</div>
+          <ul class="pm-lab-sources-list">
+            <li><a href="https://www.youtube.com/watch?v=hEzpiDuYFoE" target="_blank" rel="noopener">"The ultimate guide to A/B testing" — Ronny Kohavi (Airbnb, Microsoft, Amazon)</a>, podcast, Jul 2023 (source of the minimum-reach validity check)</li>
+            <li><a href="https://www.youtube.com/watch?v=8xLquwfx6p0" target="_blank" rel="noopener">"5 questions to ask when your product stops growing" — Jason Cohen</a>, podcast, Jan 2026 (contrarian take: A/B testing is unreliable for small samples and shouldn't be used for strategy/vision calls)</li>
+            <li><a href="https://www.lennysnewsletter.com/p/what-is-a-good-activation-rate" target="_blank" rel="noopener">"What is a good activation rate"</a>, newsletter, Oct 2022 (real copy-optimization categories: clarity, friction, value-prop specificity)</li>
+          </ul>
+          <p class="pm-lab-sources-note">The scoring heuristic itself (word counts, keyword weights) is my own implementation of these principles, not a quote or algorithm from any of the sources above.</p>
+        </div>
       </div>
     </div>
   </div>
@@ -615,6 +793,7 @@
 <script src="assets/js/gtm-engine.js"></script>
 <script src="assets/js/prioritization.js"></script>
 <script src="assets/js/prd-analyzer.js"></script>
+<script src="assets/js/ab-test.js"></script>
 <script>
 (function(){
   function initCarousel(){
