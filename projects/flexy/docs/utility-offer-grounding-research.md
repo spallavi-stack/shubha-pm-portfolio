@@ -6,7 +6,9 @@ Every claim below is tagged **[Fact]** (cited, ideally primary-sourced), **[Infe
 
 ### A1. Illinois's Clean and Reliable Grid Affordability Act (CRGA) legally mandates EV-charger VPPs
 
-Governor Pritzker signed the CRGA on January 8, 2026. It directs Illinois utilities to deploy 3GW of grid-scale energy storage by 2030 and to build virtual power plant (VPP) programs that pay customers for the demand flexibility of batteries, smart thermostats, **and electric vehicle chargers**. Bidirectional EVs are classified as distributed energy resources for the first time, eligible for net billing credits. **[Fact — Utility Dive, Illinois House Democrats' own release, and the governor's newsroom all corroborate the signing and the EV-charger provision.]**
+Governor Pritzker signed the CRGA (SB0025) on January 8, 2026. It directs Illinois utilities to deploy 3GW of grid-scale energy storage by 2030 and to build virtual power plant (VPP) programs that pay customers for device flexibility. The enrolled bill's own text (16-107.9, "eligible device" definition) names the resource categories directly: *"Eligible devices includes, but is not limited to, behind-the-meter energy storage systems, smart thermostats, electric vehicle batteries, including fleets, and distributed renewable energy paired with energy storage systems."* **[Fact — direct primary-source read of the enrolled bill text, ilga.gov, not just the signing/summary coverage.]**
+>
+> **Correction, made during the research-auditor pass:** an earlier version of this claim stated "bidirectional EVs are classified as distributed energy resources for the first time, eligible for net billing credits when they export electricity back to the grid," sourced only to a secondary article (Vehicle-to-Grid USA), not the bill text itself. Searched the full enrolled text directly for "bidirectional," "vehicle-to-grid," "V2G," and "net billing" — zero matches. That specific framing doesn't appear in the law as written and has been removed. The underlying point it was trying to make — EV batteries are a named eligible VPP resource — holds and is now cited to the primary text above, not the secondary article.
 
 ### A2. ComEd's currently-approved VPP is battery-only — the EV-charger VPP the law requires doesn't exist yet
 
@@ -38,7 +40,7 @@ Engineering literature confirms EV chargers can physically respond fast enough f
 
 ### A7. ComEd's own committed capital shows real institutional appetite for this category
 
-ComEd's Beneficial Electrification Plan 2 (2026–2028): $167.7M total investment, $136.6M specifically for EV charging infrastructure rebates, at least 56% reserved for low-income customers and communities. The ICC approved roughly $254M in combined transportation-electrification investment across ComEd and Ameren Illinois in March 2025. **[Fact — ICC filings, Sierra Club coverage.]**
+ComEd's Beneficial Electrification Plan 2 (2026–2028): $167.7M total investment, $136.6M specifically for EV charging infrastructure rebates, at least 56% ($77.2M) reserved for low-income customers and communities. The ICC approved roughly $254M in combined transportation-electrification investment across ComEd and Ameren Illinois in March 2025. **[Fact — direct primary-source read of the ICC docket PDF (P2024-0484) during the research-auditor pass, confirming figures verbatim; the $254M combined-investment figure remains sourced to Sierra Club coverage, not independently re-verified.]**
 
 ---
 
@@ -128,6 +130,7 @@ At the $5–20/participant/year SaaS benchmark, Flexy's fee would represent roug
 - [Illinois regulators approve ComEd VPP under new clean energy law — Utility Dive](https://www.utilitydive.com/news/illinois-approves-commonwealth-edison-vpp-under-new-clean-energy-law/824723/)
 - [Illinois sets 3-GW energy storage target, requires utilities to develop virtual power plants — Utility Dive](https://www.utilitydive.com/news/illinois-sets-3-gw-energy-storage-target-requires-utilities-to-develop-vir/809189/)
 - [Gov. Pritzker signs the Clean and Reliable Grid Affordability Act — governor's newsroom](https://gov-pritzker-newsroom.prezly.com/gov-pritzker-signs-historic-clean-and-reliable-grid-affordability-act)
+- [SB0025 Enrolled — Illinois General Assembly, full statutory text](https://ilga.gov/documents/legislation/104/SB/PDF/10400SB0025enr.pdf)
 - ComEd Electric Vehicle Energy Management System Pilot — Executive Summary (Dec 19, 2025), fetched directly from innovate.comed.com and read via local PDF extraction
 - [ComEd Beneficial Electrification Plan 2 (2026–2028) — ICC docket P2024-0484](https://www.icc.illinois.gov/docket/P2024-0484/documents/366102/files/641295.pdf)
 - [Illinois Commerce Commission approves $254 million investment in clean transportation — Sierra Club](https://www.sierraclub.org/press-releases/2025/04/illinois-commerce-commission-approves-254-million-investment-clean)
@@ -148,4 +151,4 @@ At the $5–20/participant/year SaaS benchmark, Flexy's fee would represent roug
 
 ## Status
 
-Draft v2. Track A and Track B research complete per `utility-offer-scope.md`'s research questions. Track C (pricing benchmarks + savings-to-ComEd model) added to answer a direct pricing question. Not yet run through `research-auditor`. Ready for review before updating `utility-partnership-offer.md`'s Business Model section.
+Draft v3, audited. Track A and Track B research complete per `utility-offer-scope.md`'s research questions. Track C (pricing benchmarks + savings-to-ComEd model) added to answer a direct pricing question. `research-auditor` run: fixed a missing section heading, and directly re-verified A1 and A7 against primary sources (the enrolled CRGA bill text and the ICC BE Plan 2 docket) rather than the search-summary citations they originally rested on. A1's specific "bidirectional EV / net billing credit" claim didn't hold up against the actual bill text and was corrected; A7's dollar figures were confirmed exactly. Remaining lower-stakes claims sourced from search summaries rather than direct fetches (B2, B5, B6) are flagged in the audit but not yet re-verified.
