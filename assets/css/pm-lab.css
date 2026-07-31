@@ -119,7 +119,7 @@
 .gtm-dial-fill{fill:none;stroke:var(--amber);stroke-width:14;stroke-linecap:round;transition:stroke-dashoffset var(--dur) var(--ease-out);}
 .gtm-dial-needle{stroke:#fff;stroke-width:3;stroke-linecap:round;transform-origin:100px 110px;transition:transform var(--dur) var(--ease-out);}
 .gtm-dial-hub{fill:#fff;}
-.gtm-dial-labels{display:flex;justify-content:space-between;margin-top:-6px;padding:0 6px;font-size:11.5px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;color:#8B90B3;}
+.gtm-dial-labels{display:flex;justify-content:space-between;margin-top:14px;padding:0 6px;font-size:11.5px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;color:#8B90B3;}
 
 /* Summary card */
 .gtm-summary{
