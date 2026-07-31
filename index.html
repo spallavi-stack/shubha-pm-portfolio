@@ -76,10 +76,10 @@
   .stakes-dots .car-dot{background:rgba(255,255,255,0.22);}
   .stakes-dots .car-dot.active{background:var(--amber);}
 
-  /* Dark section: hero, stakes, case studies, and process all share one
-     continuous navy backdrop now (only Process's own bg differs slightly
-     to add rhythm), so product-brand card colors read as accents within
-     one consistent dark stage instead of floating on unrelated cream. */
+  /* Dark section: hero, stakes, and the case-studies/process grid all
+     share one continuous navy backdrop, so product-brand card colors read
+     as accents within one consistent dark stage instead of floating on
+     unrelated cream. */
   .dark-section{background:var(--navy);color:#fff;}
   .dark-section .section-kicker{color:var(--amber);}
   .dark-section .section-kicker::before{background:var(--amber);}
@@ -91,7 +91,8 @@
   .case-bridge .wrap{position:relative;z-index:1;}
 
   /* Case study carousel */
-  .carousel{position:relative;margin-top:40px;}
+  .case-process-cases{min-width:0;}
+  .carousel{position:relative;margin-top:40px;min-width:0;}
   .case-grid{display:flex;gap:22px;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;-ms-overflow-style:none;padding-bottom:6px;}
   .case-grid::-webkit-scrollbar{display:none;}
   .car-btn{position:absolute;top:44%;transform:translateY(-50%);width:38px;height:38px;border-radius:50%;background:#fff;border:1px solid var(--border);box-shadow:0 6px 18px rgba(14,11,46,0.1);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;line-height:1;color:var(--navy);z-index:5;padding:0;}
@@ -110,34 +111,36 @@
      brand color. .case-card-v2 is just the carousel slot - flex:0 0 100%
      so exactly one is visible at a time (scroll-snap) - and .case-v2-inner
      is the actual visual card, capped narrower than the slot so it doesn't
-     stretch edge to edge with a lot of empty middle space. */
+     stretch edge to edge with a lot of empty middle space. Sized to sit in
+     the ~55%-width left column of the case-studies/process grid, so it's
+     compressed from the old full-width layout. */
   .case-card-v2{
     text-decoration:none;color:#fff;display:flex;justify-content:center;
     flex:0 0 100%;width:100%;scroll-snap-align:start;
   }
   .case-v2-inner{
     border-radius:20px;overflow:hidden;
-    display:flex;align-items:flex-end;justify-content:space-between;gap:18px;
-    width:100%;max-width:840px;min-height:420px;
-    padding:44px;position:relative;
+    display:flex;align-items:flex-end;justify-content:space-between;gap:14px;
+    width:100%;max-width:600px;min-height:380px;
+    padding:32px;position:relative;
   }
   .case-v2-inner.banner-flexy{background:linear-gradient(135deg,#1E4B3B,#3E6E58 55%,#F0AE8C);}
   .case-v2-inner.banner-sunnysideup{background:linear-gradient(135deg,#B8720A,#D4890B 55%,#F5B942);}
-  .case-v2-text{position:relative;z-index:1;max-width:380px;display:flex;flex-direction:column;}
-  .case-v2-tag{font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:rgba(255,255,255,0.75);margin-bottom:14px;}
-  .case-v2-name{font-family:var(--font-display);font-weight:600;font-size:38px;letter-spacing:-0.01em;margin:0 0 20px;visibility:hidden;}
+  .case-v2-text{position:relative;z-index:1;max-width:280px;display:flex;flex-direction:column;}
+  .case-v2-tag{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:rgba(255,255,255,0.75);margin-bottom:12px;}
+  .case-v2-name{font-family:var(--font-display);font-weight:600;font-size:28px;letter-spacing:-0.01em;margin:0 0 16px;visibility:hidden;}
   .case-v2-name .case-name-line{visibility:visible;}
-  .case-v2-bullets{list-style:none;margin:0 0 24px;padding:0;display:flex;flex-direction:column;gap:14px;}
-  .case-v2-bullets li{font-size:13.5px;line-height:1.55;color:rgba(255,255,255,0.88);padding-left:16px;position:relative;}
-  .case-v2-bullets li::before{content:'';position:absolute;left:0;top:7px;width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.55);}
+  .case-v2-bullets{list-style:none;margin:0 0 20px;padding:0;display:flex;flex-direction:column;gap:12px;}
+  .case-v2-bullets li{font-size:12.5px;line-height:1.5;color:rgba(255,255,255,0.88);padding-left:14px;position:relative;}
+  .case-v2-bullets li::before{content:'';position:absolute;left:0;top:6px;width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,0.55);}
   .bullet-label{display:block;font-weight:700;color:#fff;margin-bottom:2px;}
-  .case-v2-inner .cta{font-size:13px;font-weight:700;color:#fff;}
-  .case-v2-shot-wrap{position:relative;z-index:1;flex-shrink:0;align-self:flex-end;margin-bottom:-44px;margin-right:10px;}
-  .case-v2-shot{display:block;width:220px;border-radius:14px 14px 0 0;box-shadow:0 20px 44px rgba(0,0,0,0.35);}
+  .case-v2-inner .cta{font-size:12.5px;font-weight:700;color:#fff;}
+  .case-v2-shot-wrap{position:relative;z-index:1;flex-shrink:0;align-self:flex-end;margin-bottom:-32px;margin-right:6px;}
+  .case-v2-shot{display:block;width:160px;border-radius:12px 12px 0 0;box-shadow:0 16px 36px rgba(0,0,0,0.35);}
   @media(max-width:760px){
     .case-v2-inner{flex-direction:column;align-items:flex-start;max-width:none;}
     .case-v2-text{max-width:none;}
-    .case-v2-shot-wrap{align-self:center;margin:20px 0 -44px;}
+    .case-v2-shot-wrap{align-self:center;margin:20px 0 -32px;}
   }
 
   .case-v2-soon{
@@ -145,20 +148,19 @@
     display:flex;align-items:flex-start;justify-content:center;flex-direction:column;
   }
   .case-v2-soon .case-v2-tag{color:rgba(255,255,255,0.5);}
-  .case-v2-soon .case-v2-name{visibility:visible;font-size:22px;color:#fff;margin-bottom:24px;}
+  .case-v2-soon .case-v2-name{visibility:visible;font-size:20px;color:#fff;margin-bottom:20px;}
   .case-v2-soon .cta{color:rgba(255,255,255,0.5);}
 
-  /* Process */
-  .process-dark{background:var(--navy-soft);position:relative;overflow:hidden;}
-  .process-dark .wrap{position:relative;z-index:1;}
-  .process-fade{position:absolute;top:0;left:0;right:0;height:160px;z-index:0;pointer-events:none;background:linear-gradient(to bottom, var(--navy), transparent);}
-  .approach-list{counter-reset:step;margin-top:8px;}
-  .approach-item{display:flex;gap:18px;padding:20px 0;border-bottom:1px solid rgba(255,255,255,0.14);}
-  .approach-item:last-child{border-bottom:none;}
+  /* Process: right-hand column of the case-studies/process grid - header
+     plus numbered headlines only, no body copy, so it reads at a glance
+     alongside the narrower case-study carousel. */
+  .case-process-steps{min-width:0;}
+  .approach-list-compact{counter-reset:step;margin-top:8px;}
+  .approach-step{display:flex;align-items:center;gap:16px;padding:18px 0;border-bottom:1px solid rgba(255,255,255,0.14);}
+  .approach-step:last-child{border-bottom:none;}
+  .approach-step h4{margin:0;font-size:16px;font-family:var(--font-body);font-weight:700;color:#fff;}
   .approach-num{counter-increment:step;font-family:var(--font-display);font-size:14px;font-weight:600;color:#2B2118;background:var(--amber);width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
   .approach-num::before{content:counter(step);}
-  .approach-item h4{margin:0 0 5px;font-size:15px;font-family:var(--font-body);font-weight:700;color:#fff;}
-  .approach-item p{margin:0;font-size:13.5px;color:#B9C0DD;}
 
   footer{background:var(--navy);color:#C6CBE6;padding:44px 0;text-align:center;font-size:13px;}
   footer a{color:var(--amber);}
@@ -291,6 +293,8 @@
 <section class="dark-section case-bridge" id="case-studies">
   <div class="about-fade" aria-hidden="true"></div>
   <div class="wrap">
+    <div class="case-process-grid">
+    <div class="case-process-cases">
     <div class="section-kicker">Case studies</div>
     <h2 class="section-title">Real problems, working prototypes.</h2>
     <p class="lede">Case studies so far, with more industries in the pipeline.</p>
@@ -377,21 +381,20 @@
     </div>
     </div>
     <div class="car-dots" id="carDots"></div>
-  </div>
-</section>
+    </div>
 
-<section class="dark-section process-dark">
-  <div class="process-fade" aria-hidden="true"></div>
-  <div class="wrap">
+    <div class="case-process-steps">
     <div class="section-kicker">Process</div>
     <h2 class="section-title">A refined system for tackling each new project</h2>
-    <p class="lede">AI accelerates execution, but human judgment sets the direction. I use AI to move fast, while focusing my process on deep user empathy, rigorous trade-offs, and decisive scoping.</p>
-    <div class="approach-list" data-reveal-stagger>
-      <div class="approach-item"><div class="approach-num"></div><div><h4>Research the real problem first</h4><p>Pick an industry, research what's broken for the target user today, using real market/regulatory data, before framing a product solution.</p></div></div>
-      <div class="approach-item"><div class="approach-num"></div><div><h4>Build personas &amp; run interviews</h4><p>Ground personas in that real research; run synthetic interviews with them to pressure-test assumptions before roadmapping.</p></div></div>
-      <div class="approach-item"><div class="approach-num"></div><div><h4>Prioritize with a defensible framework</h4><p>ICE, RICE, Value vs. Effort - chosen deliberately per project, every score tied to a specific persona, JTBD, interview finding, or pressing regulatory update.</p></div></div>
-      <div class="approach-item"><div class="approach-num"></div><div><h4>Prototype it</h4><p>A clickable, coded prototype of the MVP flow (no wireframes unless necessary), so the product is something stakeholders can actually touch and feel, before making decisions.</p></div></div>
-      <div class="approach-item"><div class="approach-num"></div><div><h4>Prove it's buildable and trackable</h4><p>Layering in feasibility notes, adoption/PMF tracking, and success metrics on top of the case studies that warrant it.</p></div></div>
+    <div class="approach-list-compact" data-reveal-stagger>
+      <div class="approach-step"><div class="approach-num"></div><h4>Research the real problem first</h4></div>
+      <div class="approach-step"><div class="approach-num"></div><h4>Build personas &amp; run interviews</h4></div>
+      <div class="approach-step"><div class="approach-num"></div><h4>Prioritize with a defensible framework</h4></div>
+      <div class="approach-step"><div class="approach-num"></div><h4>Prototype it</h4></div>
+      <div class="approach-step"><div class="approach-num"></div><h4>Prove it's buildable and trackable</h4></div>
+    </div>
+    </div>
+
     </div>
   </div>
 </section>
