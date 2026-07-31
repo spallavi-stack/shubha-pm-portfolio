@@ -8,14 +8,16 @@
 <link rel="stylesheet" href="../../assets/css/design-system.css">
 <style>
   :root{
-    /* Flexy's own system: graphite + violet, deliberately far from ComEd's blue
-       and from the in-product cheap/moderate/expensive status colors, so the
-       hand-off from utility to Flexy reads as a clear brand change. */
-    --teal:#6D28D9;
-    --teal-dark:#54219E;
+    /* Flexy's own system: graphite + petrol teal, deliberately far from ComEd's
+       blue, from Tibber's own near-black-plus-purple identity (Flexy's closest
+       named competitor), and from the in-product cheap/moderate/expensive status
+       colors, so the hand-off from utility to Flexy reads as a clear brand change. */
+    --teal:#125E6B;
+    --teal-dark:#0C4750;
+    --teal-chart:#0891A0; /* data-mark variant only - see docs/design-system.md */
     --navy:#1E1A2E;
     --gold:#B45309;
-    --peach:#C9BEE0;
+    --peach:#BFDEE3;
     --comed-blue:#0059A4;
     --ink:#1C1A22;
     --ink-soft:#565061;
@@ -39,7 +41,7 @@
   /* Hero */
   header.hero{
     position:relative;overflow:hidden;
-    background:linear-gradient(165deg, var(--navy) 0%, #2E2350 55%, var(--teal) 145%);
+    background:linear-gradient(165deg, var(--navy) 0%, #17242B 60%, var(--teal) 150%);
     color:#fff;padding:88px 0 64px;
   }
   h1.title{
@@ -204,7 +206,7 @@
         <defs>
           <linearGradient id="flexyLogoGradNav" x1="0" y1="0" x2="1" y2="1">
             <stop offset="0" stop-color="#1E1A2E"/>
-            <stop offset="1" stop-color="#6D28D9"/>
+            <stop offset="1" stop-color="#125E6B"/>
           </linearGradient>
           <clipPath id="flexyLogoClipNav"><rect x="0" y="0" width="64" height="64" rx="12"/></clipPath>
         </defs>
