@@ -134,6 +134,16 @@
   }
   .proto-actions{display:flex;gap:12px;justify-content:center;margin-top:18px;flex-wrap:wrap;}
 
+  .proto-frame-wrap-wide{
+    background:#0E1116;border-radius:14px;padding:16px;margin-top:24px;
+  }
+  iframe.proto-wide{
+    width:100%;height:600px;border:0;border-radius:10px;background:#fff;display:block;
+    box-shadow:0 20px 60px rgba(0,0,0,0.4);
+  }
+  .proto-subhead{font-size:13.5px;color:var(--ink-soft);margin:22px 0 0;}
+  .proto-subhead:first-child{margin-top:0;}
+
   .doc-category{margin-top:28px;}
   .doc-category:first-child{margin-top:0;}
   .doc-category h3{font-size:14.5px;margin:0 0 12px;color:var(--ink);}
@@ -294,7 +304,7 @@
     <div class="tldr-grid aud-utility" data-reveal-stagger>
       <a class="tldr-card" href="#problem"><div class="num">01</div><h3>Problem &amp; positioning</h3><p>Why a white-label layer, sized against the US utility population, and where Flexy sits against Optiwatt, WeaveGrid and Jedlix.</p></a>
       <a class="tldr-card" href="#roadmap"><div class="num">02</div><h3>Roadmap</h3><p>ICE-prioritized Now/Next/Later - the build-out your customers would see first.</p></a>
-      <a class="tldr-card" href="#prototype"><div class="num">03</div><h3>Prototype</h3><p>The full interactive click-dummy your customers would use, from onboarding through the dashboard.</p></a>
+      <a class="tldr-card" href="#prototype"><div class="num">03</div><h3>Prototype</h3><p>Two click-dummies: the consumer app your customers would use, and Flexy's own operator dashboard for your team.</p></a>
     </div>
   </div>
 </section>
@@ -520,13 +530,35 @@
   <div class="wrap">
     <div class="section-kicker">Prototype</div>
     <p class="lede aud-homeowner">A full coded phone-frame prototype covering the entire MVP flow: discovering Flexy through a ComEd email, installing it, connecting a ComEd account, an intro carousel, connecting an EV (brand selection → manufacturer login → permissions, matching how Smartcar-style integrations actually work), setting charging preferences, and the live Price &amp; Cost and Smart Charging dashboards.</p>
-    <p class="lede aud-utility">This is what you'd be handing your customers: a full coded phone-frame prototype of the entire MVP flow, from discovering Flexy through a ComEd-branded email, connecting their ComEd account, connecting an EV (brand selection → manufacturer login → permissions, matching how Smartcar-style integrations actually work), setting charging preferences, and the live Price &amp; Cost and Smart Charging dashboards.</p>
+    <p class="lede aud-utility">Two coded click-dummies: what your customers would use, and what your own team would use to run the program.</p>
+
+    <div class="aud-homeowner">
     <div class="proto-frame-wrap">
       <iframe class="proto" src="prototype.html" title="Flexy interactive prototype"></iframe>
     </div>
     <div class="proto-actions">
       <a class="btn" data-magnetic href="prototype.html" target="_blank">Open prototype full-screen</a>
     </div>
+    </div>
+
+    <div class="aud-utility">
+    <p class="proto-subhead">Flexy for Utilities - your team's operator dashboard, tracking enrollment, aggregated flexible capacity, dispatch reliability, consumer savings, and cost-avoided reporting.</p>
+    <div class="proto-frame-wrap-wide">
+      <iframe class="proto-wide" src="utility-dashboard.html" title="Flexy for Utilities operator dashboard prototype"></iframe>
+    </div>
+    <div class="proto-actions">
+      <a class="btn" data-magnetic href="utility-dashboard.html" target="_blank">Open operator dashboard full-screen</a>
+    </div>
+
+    <p class="proto-subhead">The consumer app - what your customers would actually use, from discovering Flexy through a ComEd-branded email to the live Price &amp; Cost and Smart Charging dashboards.</p>
+    <div class="proto-frame-wrap">
+      <iframe class="proto" src="prototype.html" title="Flexy interactive prototype"></iframe>
+    </div>
+    <div class="proto-actions">
+      <a class="btn" data-magnetic href="prototype.html" target="_blank">Open consumer app full-screen</a>
+    </div>
+    </div>
+
   </div>
 </section>
 
@@ -569,10 +601,10 @@
         <span class="src">Source: <a href="https://monday.com/blog/vibe-coding/vibe-coding-product-managers/" target="_blank" rel="noopener">monday.com, "Vibe coding for product managers"</a></span>
       </div>
       <div class="limitation-card aud-utility">
-        <h4>No utility-side tooling was prototyped</h4>
+        <h4>The operator dashboard's data is illustrative, not live</h4>
         <ul>
-          <li>Everything built is the customer-facing app. There's no admin console, demand-response reporting dashboard, or enrollment/billing-system integration view - the operational surface a utility would actually need to run and measure a Flexy rollout.</li>
-          <li>That gap is real and undemonstrated here, not a claim that it's simple to build once the consumer app exists.</li>
+          <li>Flexy for Utilities is coded and interactive, but every KPI on it - enrollment, aggregated flexible capacity, dispatch reliability, consumer savings - runs on mocked sample data. No real enrollment records, live per-vehicle state, or grid-event feed powers it yet.</li>
+          <li>The Compliance &amp; Reporting screen is an explicit placeholder: its actual field list depends on a real conversation with a utility partner about what their regulatory reporting needs, not something guessable from outside.</li>
         </ul>
       </div>
     </div>
