@@ -158,7 +158,7 @@
     }
 
     container.classList.add('is-rotating');
-    var section = container.closest('section.stakes');
+    var section = container.closest('.stakes');
     if(section) section.classList.add('is-rotating');
     gsap.set(stakes, { autoAlpha:0 });
 

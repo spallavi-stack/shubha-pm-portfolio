@@ -20,10 +20,18 @@
   .hero-bg svg{width:100%;height:100%;}
   .hero-fade{position:absolute;left:0;right:0;bottom:0;height:220px;z-index:1;pointer-events:none;background:linear-gradient(to bottom, transparent, var(--navy));}
   .hero .wrap{position:relative;z-index:2;}
+
+  /* Hero content (left) + stakes card (right), side by side. Same gradient
+     backdrop throughout; the stakes card floats on top with its own
+     contained navy background, border and shadow, rather than the two
+     being stacked as separate full-width sections. */
+  .hero-grid{display:grid;grid-template-columns:1fr minmax(300px,380px);gap:48px;align-items:center;}
+  @media(max-width:900px){.hero-grid{grid-template-columns:1fr;}}
+
   h1.title{
     font-family:var(--font-display);font-weight:600;font-style:italic;
     font-variation-settings:'SOFT' 40,'opsz' 72;
-    font-size:clamp(38px,5.6vw,64px);line-height:1.08;margin:0 0 22px;letter-spacing:-0.01em;max-width:820px;
+    font-size:clamp(38px,5.6vw,64px);line-height:1.08;margin:0 0 22px;letter-spacing:-0.01em;
     visibility:hidden;
   }
   .split-line{overflow:hidden;padding-bottom:0.08em;}
@@ -33,15 +41,18 @@
   /* The stakes: blunt, oversized numbers, but in the site's own navy/amber system.
      Rotates one fact at a time; base CSS (no JS / reduced motion) shows them
      stacked and fully visible, JS only switches to crossfade mode when it runs. */
-  section.stakes{position:relative;overflow:hidden;background:var(--navy);color:#fff;text-align:center;padding-bottom:150px;}
-  section.stakes .section-kicker{color:var(--amber);justify-content:center;}
-  section.stakes .section-kicker::before{background:var(--amber);}
-  section.stakes .wrap{position:relative;z-index:1;}
+  .stakes-card{
+    position:relative;overflow:hidden;background:var(--navy);color:#fff;text-align:center;
+    border-radius:22px;border:1px solid rgba(255,255,255,0.14);box-shadow:0 30px 70px rgba(6,4,20,0.45);
+  }
+  .stakes-card .section-kicker{color:var(--amber);justify-content:center;}
+  .stakes-card .section-kicker::before{background:var(--amber);}
+  .stakes-card-inner{position:relative;z-index:1;padding:36px 30px;}
 
   /* Per-fact illustrated backdrop, content-matched, hidden until JS enables rotation */
   .stakes-bg{position:absolute;inset:0;z-index:0;display:none;}
-  section.stakes.is-rotating .stakes-bg{display:block;}
-  .stakes-bottom-fade{position:absolute;left:0;right:0;bottom:0;height:110px;z-index:0;pointer-events:none;background:linear-gradient(to bottom, transparent, var(--navy) 90%);}
+  .stakes-card.is-rotating .stakes-bg{display:block;}
+  .stakes-bottom-fade{position:absolute;left:0;right:0;bottom:0;height:90px;z-index:0;pointer-events:none;background:linear-gradient(to bottom, transparent, var(--navy) 90%);}
   .stakes-bg .scene{position:absolute;inset:0;width:100%;height:100%;opacity:0;transition:opacity 0.8s ease;}
   .stakes-bg .scene.is-active{opacity:1;}
   .stakes-bg .shimmer-line{animation:shimmerDrift 6s ease-in-out infinite;}
@@ -60,19 +71,19 @@
   .stakes-dots{justify-content:center;}
   .stakes-slot .stake{margin-bottom:40px;}
   .stakes-slot .stake:last-child{margin-bottom:0;}
-  .stakes-slot.is-rotating{min-height:190px;}
-  @media(max-width:640px){.stakes-slot.is-rotating{min-height:280px;}}
+  .stakes-slot.is-rotating{min-height:230px;}
+  @media(max-width:640px){.stakes-slot.is-rotating{min-height:260px;}}
   .stakes-slot.is-rotating .stake{position:absolute;inset:0;opacity:0;margin-bottom:0;}
   .stake-num{
-    font-family:var(--font-body);font-weight:800;font-size:clamp(48px,7vw,84px);line-height:1;
-    letter-spacing:-0.02em;color:var(--amber);margin-bottom:16px;
+    font-family:var(--font-body);font-weight:800;font-size:clamp(40px,9vw,56px);line-height:1;
+    letter-spacing:-0.02em;color:var(--amber);margin-bottom:14px;
   }
-  .stake-num-text{font-size:clamp(32px,4.6vw,52px);}
+  .stake-num-text{font-size:clamp(26px,6vw,36px);}
   .stake-arrow{color:#B9C0DD;margin:0 4px;font-weight:600;}
-  .stake-label{font-size:15px;color:#B9C0DD;max-width:400px;line-height:1.5;margin-bottom:10px;}
-  .stake-src a{font-size:11.5px;text-transform:uppercase;letter-spacing:0.06em;color:#8B90B3;text-decoration:none;border-bottom:1px solid rgba(139,144,179,0.4);}
+  .stake-label{font-size:14px;color:#B9C0DD;max-width:280px;line-height:1.5;margin:0 auto 10px;}
+  .stake-src a{font-size:11px;text-transform:uppercase;letter-spacing:0.06em;color:#8B90B3;text-decoration:none;border-bottom:1px solid rgba(139,144,179,0.4);}
   .stake-src a:hover{color:var(--amber);border-color:var(--amber);}
-  .stakes-dots{display:flex;gap:7px;margin-top:32px;}
+  .stakes-dots{display:flex;gap:7px;margin-top:28px;}
   .stakes-dots .car-dot{background:rgba(255,255,255,0.22);}
   .stakes-dots .car-dot.active{background:var(--amber);}
 
@@ -179,112 +190,117 @@
   </div>
   <div class="hero-fade" aria-hidden="true"></div>
   <div class="wrap">
-    <h1 class="title" data-split-reveal>The energy transition needs better products.</h1>
-    <p class="subtitle">Hi! I'm Shubha, a Product Manager with a bone to pick with the climate crisis. I am currently working on 0-to-1 product case studies that tackle overlooked gaps in climate change mitigation and adaptation. Every case study is end-to-end: real research, solid documentation, and a working prototype. If you're working on a climate solution and need product support, I'd love to connect.</p>
-    <div class="hero-ctas">
-      <a class="btn" data-magnetic href="#case-studies">View case studies</a>
-      <a class="btn btn-ghost" data-magnetic href="contact.html" style="background:rgba(255,255,255,0.08);color:#fff;border-color:rgba(255,255,255,0.25);">Get in touch →</a>
+    <div class="hero-grid">
+      <div class="hero-content">
+      <h1 class="title" data-split-reveal>The energy transition needs better products.</h1>
+      <p class="subtitle">Hi! I'm Shubha, a Product Manager with a bone to pick with the climate crisis. I am currently working on 0-to-1 product case studies that tackle overlooked gaps in climate change mitigation and adaptation. Every case study is end-to-end: real research, solid documentation, and a working prototype. If you're working on a climate solution and need product support, I'd love to connect.</p>
+      <div class="hero-ctas">
+        <a class="btn" data-magnetic href="#case-studies">View case studies</a>
+        <a class="btn btn-ghost" data-magnetic href="contact.html" style="background:rgba(255,255,255,0.08);color:#fff;border-color:rgba(255,255,255,0.25);">Get in touch →</a>
+      </div>
+      </div>
+
+      <div class="stakes-card">
+        <div class="stakes-bg" aria-hidden="true">
+          <svg class="scene" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMax slice">
+            <defs><radialGradient id="scn0" cx="30%" cy="90%" r="70%"><stop offset="0" stop-color="#6B5A3E" stop-opacity="0.55"/><stop offset="1" stop-color="#6B5A3E" stop-opacity="0"/></radialGradient></defs>
+            <rect width="1200" height="700" fill="url(#scn0)"/>
+            <ellipse cx="250" cy="620" rx="420" ry="90" fill="#4A4032" opacity="0.4"/>
+            <ellipse cx="750" cy="660" rx="360" ry="70" fill="#4A4032" opacity="0.3"/>
+            <path d="M180 640 Q 205 560 190 500 Q 178 460 200 420" stroke="#8A8168" stroke-width="9" fill="none" opacity="0.35" stroke-linecap="round"/>
+            <path d="M760 650 Q 785 580 770 530" stroke="#8A8168" stroke-width="7" fill="none" opacity="0.28" stroke-linecap="round"/>
+          </svg>
+          <svg class="scene" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMax slice">
+            <circle cx="950" cy="560" r="260" fill="#FF7A3D" opacity="0.22"/>
+            <circle cx="950" cy="560" r="150" fill="#FFAE42" opacity="0.28"/>
+            <path d="M0 660 Q 300 600 600 650 T 1200 630 V 700 H 0 Z" fill="#3D1A12" opacity="0.4"/>
+          </svg>
+          <svg class="scene" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMax slice">
+            <circle cx="620" cy="320" r="110" fill="#FF5A36" opacity="0.3"/>
+            <path class="shimmer-line" d="M-100 420 Q -40 400 20 420 T 140 420 T 260 420 T 380 420 T 500 420 T 620 420 T 740 420 T 860 420 T 980 420 T 1100 420 T 1220 420 T 1300 420" stroke="#FF8A5C" stroke-width="3" fill="none" opacity="0.32"/>
+            <path class="shimmer-line shimmer-line-slow" d="M-100 490 Q -40 470 20 490 T 140 490 T 260 490 T 380 490 T 500 490 T 620 490 T 740 490 T 860 490 T 980 490 T 1100 490 T 1220 490 T 1300 490" stroke="#FF8A5C" stroke-width="3" fill="none" opacity="0.22"/>
+          </svg>
+          <svg class="scene" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMax slice">
+            <ellipse cx="600" cy="680" rx="700" ry="60" fill="#5C4A32" opacity="0.35"/>
+            <path d="M300 640 L330 595 L312 555 M330 595 L362 606" stroke="#7A6648" stroke-width="4" fill="none" opacity="0.4" stroke-linecap="round"/>
+            <path d="M860 650 L828 598 L846 556 M828 598 L802 612" stroke="#7A6648" stroke-width="4" fill="none" opacity="0.4" stroke-linecap="round"/>
+            <path d="M0 662 Q 200 650 400 666 T 800 660 T 1200 666" stroke="#8A7856" stroke-width="2" fill="none" opacity="0.3"/>
+            <path d="M150 400 Q168 380 186 400 Q204 380 222 400" stroke="#C9BFA0" stroke-width="4" fill="none" opacity="0.55" stroke-linecap="round"/>
+            <path d="M240 350 Q254 334 268 350 Q282 334 296 350" stroke="#C9BFA0" stroke-width="3.5" fill="none" opacity="0.48" stroke-linecap="round"/>
+            <path d="M990 380 Q1006 362 1022 380 Q1038 362 1054 380" stroke="#C9BFA0" stroke-width="4" fill="none" opacity="0.55" stroke-linecap="round"/>
+            <path d="M920 440 Q933 425 946 440 Q959 425 972 440" stroke="#C9BFA0" stroke-width="3" fill="none" opacity="0.45" stroke-linecap="round"/>
+          </svg>
+          <svg class="scene" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMax slice">
+            <path d="M0 560 Q 150 528 300 560 T 600 560 T 900 560 T 1200 560 V 700 H 0 Z" fill="#0D5C6B" opacity="0.4"/>
+            <path d="M0 615 Q 150 585 300 615 T 600 615 T 900 615 T 1200 615 V 700 H 0 Z" fill="#0A4A56" opacity="0.45"/>
+            <ellipse class="drift-cloud" cx="260" cy="340" rx="120" ry="34" fill="#1B2440" opacity="0.4"/>
+            <ellipse class="drift-cloud drift-cloud-slow" cx="480" cy="300" rx="150" ry="40" fill="#1B2440" opacity="0.32"/>
+            <path class="bolt" d="M790 320 L748 440 L796 440 L738 545" stroke="#CFE8EA" stroke-width="4" fill="none" opacity="0" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <svg class="scene" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMax slice">
+            <polygon points="150,650 260,510 380,650" fill="#BFE3EA" opacity="0.25"/>
+            <polygon points="700,650 830,470 980,650" fill="#BFE3EA" opacity="0.3"/>
+            <path d="M830 470 L852 512 L808 522 Z" fill="#0A2A33" opacity="0.32"/>
+            <path d="M0 662 Q 300 640 600 662 T 1200 656" stroke="#E4F4F6" stroke-width="2" fill="none" opacity="0.3"/>
+          </svg>
+          <svg class="scene" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMax slice">
+            <circle cx="600" cy="820" r="220" fill="#FFC24B" opacity="0.22"/>
+            <circle cx="600" cy="820" r="120" fill="#FFE9A8" opacity="0.24"/>
+            <g opacity="0.4">
+              <rect x="80" y="640" width="90" height="50" fill="#1E4B6B" transform="skewX(-20)"/>
+              <rect x="195" y="640" width="90" height="50" fill="#1E4B6B" transform="skewX(-20)"/>
+              <rect x="960" y="640" width="90" height="50" fill="#1E4B6B" transform="skewX(-20)"/>
+              <rect x="1075" y="640" width="90" height="50" fill="#1E4B6B" transform="skewX(-20)"/>
+            </g>
+          </svg>
+        </div>
+        <div class="stakes-bottom-fade" aria-hidden="true"></div>
+        <div class="stakes-card-inner">
+          <div class="section-kicker">The stakes</div>
+          <div class="stakes-slot" data-stakes-rotator>
+            <div class="stake">
+              <div class="stake-num"><span data-count="38.1" data-decimals="1" data-suffix="B">0</span></div>
+              <div class="stake-label">Tonnes of CO2 from fossil fuels and industry in 2025, a new record high.</div>
+              <div class="stake-src"><a href="https://globalcarbonbudget.org/fossil-fuel-co2-emissions-hit-record-high-in-2025/" target="_blank" rel="noopener">Global Carbon Budget, 2025</a></div>
+            </div>
+            <div class="stake">
+              <div class="stake-num stake-num-text">2015&ndash;2024</div>
+              <div class="stake-label">The warmest ten-year period ever recorded.</div>
+              <div class="stake-src"><a href="https://wmo.int/news/media-centre/wmo-confirms-2024-warmest-year-record-about-155degc-above-pre-industrial-level" target="_blank" rel="noopener">World Meteorological Organization</a></div>
+            </div>
+            <div class="stake">
+              <div class="stake-num"><span data-count="30" data-suffix="%">0</span></div>
+              <div class="stake-label">Of the world's population already faces potentially deadly heat for 20+ days a year.</div>
+              <div class="stake-src"><a href="https://www.nature.com/articles/nclimate3322" target="_blank" rel="noopener">Mora et al., Nature Climate Change</a></div>
+            </div>
+            <div class="stake">
+              <div class="stake-num"><span data-count="73" data-suffix="%">0</span></div>
+              <div class="stake-label">Decline in the average size of monitored wildlife populations since 1970.</div>
+              <div class="stake-src"><a href="https://www.worldwildlife.org/publications/2024-living-planet-report/" target="_blank" rel="noopener">WWF / ZSL Living Planet Report, 2024</a></div>
+            </div>
+            <div class="stake">
+              <div class="stake-num stake-num-text">2.1<span class="stake-arrow">&rarr;</span>4.5mm</div>
+              <div class="stake-label">The rate of global sea level rise, per year, more than doubled between 1993 and 2024.</div>
+              <div class="stake-src"><a href="https://www.earthdata.nasa.gov/learn/data-in-action/rate-global-sea-level-rise-doubled-during-past-three-decades" target="_blank" rel="noopener">NASA Sea Level Change Portal</a></div>
+            </div>
+            <div class="stake">
+              <div class="stake-num"><span data-count="12.1" data-decimals="1" data-suffix="%">0</span></div>
+              <div class="stake-label">Per-decade decline in Arctic sea ice minimum extent since the 1979 satellite record began.</div>
+              <div class="stake-src"><a href="https://nsidc.org/sea-ice-today/analyses/2025-arctic-sea-ice-minimum-squeezes-ten-lowest-minimums" target="_blank" rel="noopener">NASA / NSIDC</a></div>
+            </div>
+            <div class="stake">
+              <div class="stake-num"><span data-count="34" data-suffix="%">0</span></div>
+              <div class="stake-label">Of global electricity now comes from renewables, which overtook coal for the first time in over a century in 2025.</div>
+              <div class="stake-src"><a href="https://www.iea.org/reports/global-energy-review-2026/electricity-supply" target="_blank" rel="noopener">IEA, Global Energy Review 2026</a></div>
+            </div>
+          </div>
+          <div class="stakes-dots" id="stakesDots"></div>
+        </div>
+      </div>
     </div>
   </div>
 </header>
 
-<section class="stakes">
-  <div class="stakes-bg" aria-hidden="true">
-    <svg class="scene" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMax slice">
-      <defs><radialGradient id="scn0" cx="30%" cy="90%" r="70%"><stop offset="0" stop-color="#6B5A3E" stop-opacity="0.55"/><stop offset="1" stop-color="#6B5A3E" stop-opacity="0"/></radialGradient></defs>
-      <rect width="1200" height="700" fill="url(#scn0)"/>
-      <ellipse cx="250" cy="620" rx="420" ry="90" fill="#4A4032" opacity="0.4"/>
-      <ellipse cx="750" cy="660" rx="360" ry="70" fill="#4A4032" opacity="0.3"/>
-      <path d="M180 640 Q 205 560 190 500 Q 178 460 200 420" stroke="#8A8168" stroke-width="9" fill="none" opacity="0.35" stroke-linecap="round"/>
-      <path d="M760 650 Q 785 580 770 530" stroke="#8A8168" stroke-width="7" fill="none" opacity="0.28" stroke-linecap="round"/>
-    </svg>
-    <svg class="scene" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMax slice">
-      <circle cx="950" cy="560" r="260" fill="#FF7A3D" opacity="0.22"/>
-      <circle cx="950" cy="560" r="150" fill="#FFAE42" opacity="0.28"/>
-      <path d="M0 660 Q 300 600 600 650 T 1200 630 V 700 H 0 Z" fill="#3D1A12" opacity="0.4"/>
-    </svg>
-    <svg class="scene" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMax slice">
-      <circle cx="620" cy="320" r="110" fill="#FF5A36" opacity="0.3"/>
-      <path class="shimmer-line" d="M-100 420 Q -40 400 20 420 T 140 420 T 260 420 T 380 420 T 500 420 T 620 420 T 740 420 T 860 420 T 980 420 T 1100 420 T 1220 420 T 1300 420" stroke="#FF8A5C" stroke-width="3" fill="none" opacity="0.32"/>
-      <path class="shimmer-line shimmer-line-slow" d="M-100 490 Q -40 470 20 490 T 140 490 T 260 490 T 380 490 T 500 490 T 620 490 T 740 490 T 860 490 T 980 490 T 1100 490 T 1220 490 T 1300 490" stroke="#FF8A5C" stroke-width="3" fill="none" opacity="0.22"/>
-    </svg>
-    <svg class="scene" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMax slice">
-      <ellipse cx="600" cy="680" rx="700" ry="60" fill="#5C4A32" opacity="0.35"/>
-      <path d="M300 640 L330 595 L312 555 M330 595 L362 606" stroke="#7A6648" stroke-width="4" fill="none" opacity="0.4" stroke-linecap="round"/>
-      <path d="M860 650 L828 598 L846 556 M828 598 L802 612" stroke="#7A6648" stroke-width="4" fill="none" opacity="0.4" stroke-linecap="round"/>
-      <path d="M0 662 Q 200 650 400 666 T 800 660 T 1200 666" stroke="#8A7856" stroke-width="2" fill="none" opacity="0.3"/>
-      <path d="M150 400 Q168 380 186 400 Q204 380 222 400" stroke="#C9BFA0" stroke-width="4" fill="none" opacity="0.55" stroke-linecap="round"/>
-      <path d="M240 350 Q254 334 268 350 Q282 334 296 350" stroke="#C9BFA0" stroke-width="3.5" fill="none" opacity="0.48" stroke-linecap="round"/>
-      <path d="M990 380 Q1006 362 1022 380 Q1038 362 1054 380" stroke="#C9BFA0" stroke-width="4" fill="none" opacity="0.55" stroke-linecap="round"/>
-      <path d="M920 440 Q933 425 946 440 Q959 425 972 440" stroke="#C9BFA0" stroke-width="3" fill="none" opacity="0.45" stroke-linecap="round"/>
-    </svg>
-    <svg class="scene" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMax slice">
-      <path d="M0 560 Q 150 528 300 560 T 600 560 T 900 560 T 1200 560 V 700 H 0 Z" fill="#0D5C6B" opacity="0.4"/>
-      <path d="M0 615 Q 150 585 300 615 T 600 615 T 900 615 T 1200 615 V 700 H 0 Z" fill="#0A4A56" opacity="0.45"/>
-      <ellipse class="drift-cloud" cx="260" cy="340" rx="120" ry="34" fill="#1B2440" opacity="0.4"/>
-      <ellipse class="drift-cloud drift-cloud-slow" cx="480" cy="300" rx="150" ry="40" fill="#1B2440" opacity="0.32"/>
-      <path class="bolt" d="M790 320 L748 440 L796 440 L738 545" stroke="#CFE8EA" stroke-width="4" fill="none" opacity="0" stroke-linecap="round" stroke-linejoin="round"/>
-    </svg>
-    <svg class="scene" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMax slice">
-      <polygon points="150,650 260,510 380,650" fill="#BFE3EA" opacity="0.25"/>
-      <polygon points="700,650 830,470 980,650" fill="#BFE3EA" opacity="0.3"/>
-      <path d="M830 470 L852 512 L808 522 Z" fill="#0A2A33" opacity="0.32"/>
-      <path d="M0 662 Q 300 640 600 662 T 1200 656" stroke="#E4F4F6" stroke-width="2" fill="none" opacity="0.3"/>
-    </svg>
-    <svg class="scene" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMax slice">
-      <circle cx="600" cy="820" r="220" fill="#FFC24B" opacity="0.22"/>
-      <circle cx="600" cy="820" r="120" fill="#FFE9A8" opacity="0.24"/>
-      <g opacity="0.4">
-        <rect x="80" y="640" width="90" height="50" fill="#1E4B6B" transform="skewX(-20)"/>
-        <rect x="195" y="640" width="90" height="50" fill="#1E4B6B" transform="skewX(-20)"/>
-        <rect x="960" y="640" width="90" height="50" fill="#1E4B6B" transform="skewX(-20)"/>
-        <rect x="1075" y="640" width="90" height="50" fill="#1E4B6B" transform="skewX(-20)"/>
-      </g>
-    </svg>
-  </div>
-  <div class="stakes-bottom-fade" aria-hidden="true"></div>
-  <div class="wrap">
-    <div class="section-kicker">The stakes</div>
-    <div class="stakes-slot" data-stakes-rotator>
-      <div class="stake">
-        <div class="stake-num"><span data-count="38.1" data-decimals="1" data-suffix="B">0</span></div>
-        <div class="stake-label">Tonnes of CO2 from fossil fuels and industry in 2025, a new record high.</div>
-        <div class="stake-src"><a href="https://globalcarbonbudget.org/fossil-fuel-co2-emissions-hit-record-high-in-2025/" target="_blank" rel="noopener">Global Carbon Budget, 2025</a></div>
-      </div>
-      <div class="stake">
-        <div class="stake-num stake-num-text">2015&ndash;2024</div>
-        <div class="stake-label">The warmest ten-year period ever recorded.</div>
-        <div class="stake-src"><a href="https://wmo.int/news/media-centre/wmo-confirms-2024-warmest-year-record-about-155degc-above-pre-industrial-level" target="_blank" rel="noopener">World Meteorological Organization</a></div>
-      </div>
-      <div class="stake">
-        <div class="stake-num"><span data-count="30" data-suffix="%">0</span></div>
-        <div class="stake-label">Of the world's population already faces potentially deadly heat for 20+ days a year.</div>
-        <div class="stake-src"><a href="https://www.nature.com/articles/nclimate3322" target="_blank" rel="noopener">Mora et al., Nature Climate Change</a></div>
-      </div>
-      <div class="stake">
-        <div class="stake-num"><span data-count="73" data-suffix="%">0</span></div>
-        <div class="stake-label">Decline in the average size of monitored wildlife populations since 1970.</div>
-        <div class="stake-src"><a href="https://www.worldwildlife.org/publications/2024-living-planet-report/" target="_blank" rel="noopener">WWF / ZSL Living Planet Report, 2024</a></div>
-      </div>
-      <div class="stake">
-        <div class="stake-num stake-num-text">2.1<span class="stake-arrow">&rarr;</span>4.5mm</div>
-        <div class="stake-label">The rate of global sea level rise, per year, more than doubled between 1993 and 2024.</div>
-        <div class="stake-src"><a href="https://www.earthdata.nasa.gov/learn/data-in-action/rate-global-sea-level-rise-doubled-during-past-three-decades" target="_blank" rel="noopener">NASA Sea Level Change Portal</a></div>
-      </div>
-      <div class="stake">
-        <div class="stake-num"><span data-count="12.1" data-decimals="1" data-suffix="%">0</span></div>
-        <div class="stake-label">Per-decade decline in Arctic sea ice minimum extent since the 1979 satellite record began.</div>
-        <div class="stake-src"><a href="https://nsidc.org/sea-ice-today/analyses/2025-arctic-sea-ice-minimum-squeezes-ten-lowest-minimums" target="_blank" rel="noopener">NASA / NSIDC</a></div>
-      </div>
-      <div class="stake">
-        <div class="stake-num"><span data-count="34" data-suffix="%">0</span></div>
-        <div class="stake-label">Of global electricity now comes from renewables, which overtook coal for the first time in over a century in 2025.</div>
-        <div class="stake-src"><a href="https://www.iea.org/reports/global-energy-review-2026/electricity-supply" target="_blank" rel="noopener">IEA, Global Energy Review 2026</a></div>
-      </div>
-    </div>
-    <div class="stakes-dots" id="stakesDots"></div>
-  </div>
-</section>
 
 <section class="dark-section case-bridge" id="case-studies">
   <div class="about-fade" aria-hidden="true"></div>
