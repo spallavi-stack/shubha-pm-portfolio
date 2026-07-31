@@ -107,7 +107,7 @@ At the $5–20/participant/year SaaS benchmark, Flexy's fee would represent roug
 
 ---
 
-
+## Synthesis — what this means for the offer
 
 1. **The sharpest "why ComEd, why now" available is A1 + A2**: state law already requires an EV-charger VPP; ComEd's one live VPP doesn't have one. This should sit alongside, or replace, the TOU-rollout framing currently anchoring `product-brief.md`'s "why Illinois, why now" for the utility-facing doc specifically.
 2. **A3 is the strongest evidence in this entire pass.** A primary-sourced, dated, ComEd-commissioned document where ComEd's own current EV-managed-charging vendor recommends exactly the category of program Flexy is built to be. Cite it directly and precisely in the offer doc — this is real, unprompted validation, not invented rationale.

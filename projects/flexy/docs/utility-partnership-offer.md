@@ -75,7 +75,7 @@ Distinct from the consumer PMF signals already defined in `product-brief.md` (pi
 - Which CRGA-aligned mechanism (VPP tariff, BE Plan program, a PJM-facing structure, or something ComEd designs) this offer should actually target is ComEd's call, not something this document can settle unilaterally.
 
 ## Status
-Draft v2. Positioning, why-ComEd-cares argument, the WeaveGrid-relationship framing, offer structure, and partnership success metrics are drafted from `utility-offer-grounding-research.md`. Business Model section updated with a sourced per-customer fee range ($5–$20/year) and a savings-to-ComEd model at three enrollment scenarios, replacing the earlier unset placeholder. Platform license fee remains explicitly unbenchmarked. Not yet run through `research-auditor`. KPI framework above is a first pass, to be validated and expanded in Phase 4 before the dashboard build.
+Draft v2. Positioning, why-ComEd-cares argument, the WeaveGrid-relationship framing, offer structure, and partnership success metrics are drafted from `utility-offer-grounding-research.md`. Business Model section updated with a sourced per-customer fee range ($5–$20/year) and a savings-to-ComEd model at three enrollment scenarios, replacing the earlier unset placeholder. Platform license fee remains explicitly unbenchmarked. The full KPI set (expanding the four Partnership success metrics above) and screen-level IA now live in `utility-dashboard-kpi-framework.md`; the coded dashboard (`utility-dashboard.html`) is built. `research-auditor` run — see its findings for `utility-offer-grounding-research.md` and this document.
 
 ## Sources
 [^1]: `utility-offer-grounding-research.md` §A4. PJM capacity market economics

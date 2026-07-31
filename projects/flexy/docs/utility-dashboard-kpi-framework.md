@@ -50,7 +50,7 @@ Expands `utility-partnership-offer.md`'s "Partnership success metrics" (four ite
 
 **Compliance & Reporting (drill-down)**: exportable view, fields TBD pending direct input from ComEd (see D, row 2).
 
-Chart treatment follows `design-system.md` §8's dashboard-palette recommendation: `--teal` (primary series), `--tou-cheap` blue (secondary), `--gold` (tertiary), `--expensive` red (alert/anomaly only), `--gray`/`--ink-soft` (baseline/forecast reference lines).
+Chart treatment follows `design-system.md` §8's shipped dashboard palette: `--teal-chart` (primary series), `--gold` (secondary series — not `--tou-cheap` blue, which the dataviz skill's palette validator found too close to teal for adjacent-series use), `--critical` red (alert/anomaly only), `--gray`/`--ink-soft` (baseline/forecast reference lines).
 
 ## 3. What's explicitly out of scope for this dashboard build
 
@@ -60,4 +60,4 @@ Chart treatment follows `design-system.md` §8's dashboard-palette recommendatio
 
 ## Status
 
-Draft v1. Expands the four-item first pass in `utility-partnership-offer.md`'s Partnership success metrics into a full KPI set (12 metrics across 4 groups) plus screen-level IA. Each KPI's data source and real/assumed status stated directly, following `technical-feasibility.md`'s convention. Ready for review before the dashboard's coded build starts.
+Draft v1.1. Expands the four-item first pass in `utility-partnership-offer.md`'s Partnership success metrics into a full KPI set (12 metrics across 4 groups) plus screen-level IA. Each KPI's data source and real/assumed status stated directly, following `technical-feasibility.md`'s convention. The dashboard's coded build (`utility-dashboard.html`) is complete; this document's chart-palette reference (§2) was updated to match the palette actually shipped, after `design-system.md`'s post-launch recolor.
