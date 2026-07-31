@@ -555,45 +555,45 @@
 <section id="limitations" data-reveal>
   <div class="wrap">
     <div class="section-kicker">Limitations</div>
-    <p class="lede">Industry commentary on AI-assisted prototypes in 2025-2026 converges on one point: a polished demo and a shippable product are different things, and it's easy to mistake one for the other. A few of the gaps commonly named by product practitioners, applied honestly to Flexy:</p>
+    <p class="lede">A polished demo and a shippable product are different things. A few gaps commonly named by AI-prototyping practitioners, applied honestly to Flexy:</p>
     <div class="limitation-grid" data-reveal-stagger>
-      <div class="limitation-card">
+      <div class="limitation-card aud-homeowner">
         <h4>A working demo isn't 10% of the way to done</h4>
         <ul>
           <li>Stakeholders often see a polished AI-built demo and assume it's nearly finished, when the actual engineering (backend, auth, data persistence, real integrations) hasn't started.</li>
-          <li>Flexy's Price &amp; Cost screen now pulls real, live prices straight from ComEd's public Hourly Pricing API - but that's the one piece that's real. There's still no real backend, no ComEd account login, and no live Smartcar/EV API, so EV charging control and account data remain simulated.</li>
+          <li>The Price &amp; Cost screen's pricing is real - it pulls live prices from ComEd's public Hourly Pricing API. Everything else isn't: no backend, no ComEd account login, no live Smartcar/EV API, and the consumption line is an illustrative shape, not metered usage.</li>
         </ul>
         <span class="src">Source: <a href="https://usekyros.ai/blog/from-prototype-to-production-ai-apps-never-ship" target="_blank" rel="noopener">Kyros, "From Prototype to Production"</a></span>
       </div>
-      <div class="limitation-card">
+      <div class="limitation-card aud-homeowner">
         <h4>Automated design still needs real users</h4>
         <ul>
-          <li>AI-generated screens can miss subtle hierarchy, spacing, and comprehension issues that only surface with real usability testing.</li>
-          <li>Flexy's personas and interviews are synthetic and internally consistent, but were never tested against an actual human clicking through the flow.</li>
+          <li>AI-generated screens can miss hierarchy, spacing, and comprehension issues that only real usability testing surfaces.</li>
+          <li>Flexy's personas and interviews are synthetic and internally consistent, but untested against an actual person clicking through the flow.</li>
         </ul>
         <span class="src">Source: <a href="https://www.parallelhq.com/blog/ai-powered-prototyping-tools" target="_blank" rel="noopener">Parallel, "AI-Powered Prototyping for UI/UX Design"</a></span>
       </div>
-      <div class="limitation-card">
+      <div class="limitation-card aud-homeowner">
         <h4>Happy-path only, no edge cases</h4>
         <ul>
-          <li>AI-built prototypes handle the intended flow well but typically skip error states, failed API calls, and concurrent-use conditions.</li>
-          <li>Flexy's click-dummy shows the ideal path only - no built-out states for a failed ComEd login, a stale price feed, or a car that drops connection mid-session.</li>
+          <li>AI-built prototypes handle the intended flow well but typically skip error states.</li>
+          <li>Flexy's click-dummy shows the ideal path only - no failed ComEd login, stale price feed, or EV dropping connection mid-session.</li>
         </ul>
         <span class="src">Source: <a href="https://codeconductor.ai/blog/vibe-coding-for-product-managers/" target="_blank" rel="noopener">CodeConductor, "Vibe Coding for PMs"</a></span>
       </div>
       <div class="limitation-card">
         <h4>Prototype code isn't production code</h4>
         <ul>
-          <li>AI-generated prototypes are typically isolated from any real codebase and would need to be re-implemented by an engineering team to actually ship.</li>
-          <li>Flexy's click-dummy is static HTML/CSS/JS with no data layer, no security review, and no compliance pass - relevant since a real version would handle utility account data and OAuth tokens to EV manufacturer APIs.</li>
+          <li>AI-generated prototypes sit outside any real codebase and need re-implementation by an engineering team to actually ship.</li>
+          <li>Both of Flexy's click-dummies are static HTML/CSS/JS - no data layer, security review, or compliance pass, relevant since a real version would handle utility account data and OAuth tokens to EV manufacturer APIs.</li>
         </ul>
         <span class="src">Source: <a href="https://monday.com/blog/vibe-coding/vibe-coding-product-managers/" target="_blank" rel="noopener">monday.com, "Vibe coding for product managers"</a></span>
       </div>
       <div class="limitation-card aud-utility">
         <h4>The operator dashboard's data is illustrative, not live</h4>
         <ul>
-          <li>Flexy for Utilities is coded and interactive, but every KPI on it - enrollment, aggregated flexible capacity, dispatch reliability, consumer savings - runs on mocked sample data. No real enrollment records, live per-vehicle state, or grid-event feed powers it yet.</li>
-          <li>The Compliance &amp; Reporting screen is an explicit placeholder: its actual field list depends on a real conversation with a utility partner about what their regulatory reporting needs, not something guessable from outside.</li>
+          <li>Every KPI - enrollment, flexible capacity, dispatch reliability, consumer savings - runs on mocked sample data, not real enrollment records or a live grid-event feed.</li>
+          <li>Compliance &amp; Reporting is an explicit placeholder: its field list depends on a real conversation with a utility partner, not something guessable from outside.</li>
         </ul>
       </div>
     </div>
