@@ -153,8 +153,8 @@ h2.section-title{font-size:clamp(26px,3.4vw,38px);letter-spacing:-0.01em;margin:
 .stat-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:28px;margin-top:36px;}
 @media(max-width:520px){.stat-row{grid-template-columns:1fr;justify-items:center;}}
 
-/* ---------- Two-column section grid (~55/45 split, stacks on mobile) ---------- */
-.case-process-grid{display:grid;grid-template-columns:11fr 9fr;gap:48px;align-items:start;}
+/* ---------- Two-column section grid (~80/20 split, stacks on mobile) ---------- */
+.case-process-grid{display:grid;grid-template-columns:4fr 1fr;gap:36px;align-items:start;}
 @media(max-width:900px){.case-process-grid{grid-template-columns:1fr;gap:56px;}}
 .stat{display:flex;flex-direction:column;align-items:center;text-align:center;gap:14px;}
 .stat-ring{position:relative;width:112px;height:112px;}

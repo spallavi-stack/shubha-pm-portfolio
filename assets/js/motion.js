@@ -290,9 +290,15 @@
       if(name && window.SplitText){
         split = new SplitText(name, { type:'lines', linesClass:'case-name-line' });
         gsap.set(name, { visibility:'visible' });
-        gsap.set(split.lines, { yPercent:0, rotateX:0, opacity:1 });
+        gsap.set(split.lines, { yPercent:100, rotateX:70, opacity:0 });
       } else if(name){
         name.style.visibility = 'visible';
+      }
+      if(shot){
+        gsap.set(shot, { yPercent:14, opacity:0 });
+      }
+      if(bullets.length){
+        gsap.set(bullets, { autoAlpha:0, y:10 });
       }
 
       function play(){
