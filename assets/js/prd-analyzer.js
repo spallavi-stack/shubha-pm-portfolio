@@ -1,10 +1,13 @@
 /* AI Spec & PRD Auditor — turns a raw feature idea into an edge-case
-   audit, a metric tree, and Gherkin acceptance criteria. The 3 preset
+   audit, a metric tree, and Gherkin acceptance criteria. The preset
    features below are curated by hand (this is a demo playground, not
    a live model call); any other typed-in feature falls back to a
-   generalized, clearly-labeled template so the tool never breaks. */
+   generalized, clearly-labeled template so the tool never breaks.
+   Presets swap per the 0→1 / 1→n stage toggle (window.pmLabStage,
+   set by pm-lab.js) so the examples actually fit company stage. */
 (function(){
-  var PRESETS = {
+  var STAGE_PRESETS = {
+    '1ton': {
     'Add 2FA via SMS to login flow': {
       edgeCases: [
         {title: 'SMS delivery failure / carrier rate limits', desc: 'Carriers throttle or drop messages, especially internationally, leaving a user unable to complete login with no visible cause.'},
@@ -71,6 +74,75 @@
         {title: 'Export reflects a consistent snapshot', given: 'report data is still aggregating when an export is requested', when: 'the export is generated', then: 'it is built from a single consistent snapshot, not partially-updated data, and the snapshot time is noted in the file'}
       ]
     }
+    },
+    '0to1': {
+      'Add magic-link (passwordless) signup': {
+        edgeCases: [
+          {title: 'Link expiry mid-click', desc: 'A user clicks an old/expired magic link from a stale email tab and hits a dead end that reads as a broken product, not an expected "request a new link" state.'},
+          {title: 'Email delivery failure or spam folder', desc: 'The login-critical email lands in spam or is delayed, with no fallback path to get in.'},
+          {title: 'Multiple pending links', desc: 'A user impatiently requests several magic links in a row; clicking an old one needs to fail predictably, not silently do nothing.'},
+          {title: 'Shared or public inbox access', desc: 'A magic link sent to a shared team inbox can let anyone with inbox access log in as that user, with no second factor.'}
+        ],
+        metricTree: {
+          northStar: '% of signups that reach first login without contacting support',
+          l1: [
+            {label: 'Magic-link click-through rate', l2: ['Time from email sent to click', '% of emails opened']},
+            {label: 'Link failure rate', l2: ['% expired on click', '% landing in spam']},
+            {label: 'Support tickets citing login issues', l2: ['% citing "didn’t get email"', '% citing "link didn’t work"']}
+          ]
+        },
+        gherkin: [
+          {title: 'Valid link within window', given: 'a user requests a magic link', when: 'they click it within the validity window', then: 'they are logged in directly, with no password prompt'},
+          {title: 'Expired link', given: 'a user clicks a magic link after it has expired', when: 'the system detects the expiry', then: 'it explains the link expired and offers to send a new one immediately'},
+          {title: 'Old link after a new one is requested', given: 'a user has requested a second magic link', when: 'they click the first, older link', then: 'it is rejected as superseded, not silently ignored'},
+          {title: 'Email non-delivery', given: "a magic-link email hasn't arrived after 60 seconds", when: 'the user requests a resend', then: 'the system offers an alternate way to confirm identity rather than just resending blindly'}
+        ]
+      },
+      'Build a 3-step onboarding checklist': {
+        edgeCases: [
+          {title: 'Steps completed out of order', desc: 'The checklist assumes step 1→2→3, but a user jumps to step 3 first via a direct link or the browser back button.'},
+          {title: 'Checklist state lost on refresh', desc: "Progress isn't persisted server-side, so reloading the page resets what looked \"done.\""},
+          {title: 'Step becomes irrelevant mid-flow', desc: "A step ties to a feature the user's plan doesn't include, leaving a checklist item that can never be checked off."},
+          {title: 'Team accounts with multiple users', desc: "The checklist assumes one user, but on a team account it's unclear if one teammate's completed step should count for everyone."}
+        ],
+        metricTree: {
+          northStar: '% of new signups that complete all onboarding steps within week 1',
+          l1: [
+            {label: 'Step 1 completion rate', l2: ['Time to complete step 1', 'Drop-off rate before starting']},
+            {label: 'Step 2 completion rate', l2: ['% who skip', '% who complete same session']},
+            {label: 'Step 3 completion rate', l2: ['% who complete same session', 'Days to complete after step 2']}
+          ]
+        },
+        gherkin: [
+          {title: 'Sequential completion', given: 'a new user starts the checklist', when: 'they complete step 1', then: 'step 2 unlocks and their progress is saved immediately'},
+          {title: 'Refresh preserves progress', given: 'a user has completed step 1', when: 'they refresh or return later', then: 'the checklist still shows step 1 as complete'},
+          {title: 'Irrelevant step for plan', given: "a user is on a plan that excludes a checklist step's feature", when: 'they view the checklist', then: 'that step is hidden rather than shown as permanently incomplete'},
+          {title: 'Team account shared progress', given: 'one teammate completes a checklist step on a team account', when: 'another teammate views the checklist', then: 'they see the same step marked complete, not a separate copy'}
+        ]
+      },
+      'Add a one-click referral invite': {
+        edgeCases: [
+          {title: 'Referral fraud / self-referral', desc: 'A user refers their own second email address to claim a reward twice.'},
+          {title: 'Invited user already has an account', desc: 'The referral link points to a signup flow, but the invitee is already a user under a different account.'},
+          {title: 'Reward timing mismatch', desc: 'The referrer expects credit immediately on send, but the reward should only trigger once the invitee actually activates, not just signs up.'},
+          {title: 'Revoked or abandoned referral', desc: 'The referrer deletes their account, or the invite goes unused for months; the pending referral state needs a defined expiry, not to sit open forever.'}
+        ],
+        metricTree: {
+          northStar: 'Net new activated users acquired via referral per month',
+          l1: [
+            {label: 'Referral send rate', l2: ['% of active users who send at least one referral', 'Avg. referrals sent per sender']},
+            {label: 'Referral conversion rate', l2: ['% of invitees who sign up', '% of signups who activate']},
+            {label: 'Reward redemption rate', l2: ['% of eligible rewards claimed', 'Time from eligibility to claim']}
+          ]
+        },
+        gherkin: [
+          {title: 'Successful referral and reward', given: 'a user sends a referral link', when: 'the invitee signs up and reaches the activation milestone', then: "the referrer's reward is granted automatically"},
+          {title: 'Self-referral blocked', given: 'a referral link is used to sign up', when: "the new account's email or payment method matches the referrer's existing account", then: 'the referral is flagged and no reward is granted'},
+          {title: 'Invitee already has an account', given: 'an invitee clicks a referral link', when: 'they already have an existing account', then: "they're logged into their existing account and the referral is marked invalid, not duplicated"},
+          {title: 'Reward before activation', given: 'an invitee has signed up but not yet activated', when: 'the referrer checks their referral status', then: 'it shows "pending," not "rewarded," until activation actually happens'}
+        ]
+      }
+    }
   };
 
   function escapeHtml(str){
@@ -105,9 +177,10 @@
     };
   }
 
-  function getAnalysis(featureText){
+  function getAnalysis(featureText, stage){
     var key = featureText.trim();
-    if(PRESETS[key]) return PRESETS[key];
+    var presets = STAGE_PRESETS[stage] || STAGE_PRESETS['0to1'];
+    if(presets[key]) return presets[key];
     return buildGenericAnalysis(featureText);
   }
 
@@ -166,11 +239,25 @@
     var panels = result ? Array.prototype.slice.call(result.querySelectorAll('.prd-result-panel')) : [];
     if(!root || !input || !analyzeBtn || !presetsWrap || !result) return;
 
+    var currentStage = window.pmLabStage;
+
     function syncPresetHighlight(){
       var value = input.value.trim();
       Array.prototype.forEach.call(presetsWrap.querySelectorAll('.prd-preset-btn'), function(btn){
         btn.classList.toggle('is-active', btn.getAttribute('data-preset') === value);
       });
+    }
+
+    function renderPresetButtons(stage){
+      var presets = STAGE_PRESETS[stage] || STAGE_PRESETS['0to1'];
+      var names = Object.keys(presets);
+      presetsWrap.innerHTML = names.map(function(name){
+        return '<button type="button" class="gtm-segment prd-preset-btn" data-preset="' + name.replace(/"/g, '&quot;') + '">' + name + '</button>';
+      }).join('');
+      input.value = names[0] || '';
+      syncPresetHighlight();
+      if(emptyState) emptyState.hidden = false;
+      result.hidden = true;
     }
 
     function activateTab(panelId){
@@ -188,7 +275,7 @@
       var featureText = input.value.trim();
       if(!featureText) return;
 
-      var analysis = getAnalysis(featureText);
+      var analysis = getAnalysis(featureText, currentStage);
       if(resultFeature) resultFeature.textContent = '“' + featureText + '”' + (analysis.generic ? ' (generalized template)' : '');
       renderEdgeCases(edgeList, analysis.edgeCases);
       renderMetricTree(metricTree, analysis.metricTree);
@@ -222,7 +309,12 @@
       });
     });
 
-    syncPresetHighlight();
+    window.addEventListener('pmlab:stage', function(e){
+      currentStage = e.detail.stage;
+      renderPresetButtons(currentStage);
+    });
+
+    renderPresetButtons(currentStage);
   }
 
   if(document.readyState === 'loading'){

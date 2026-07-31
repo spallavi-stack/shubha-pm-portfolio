@@ -398,7 +398,13 @@
   <div class="wrap">
     <div class="section-kicker">Playground</div>
     <h2 class="section-title">An interactive PM operating system.</h2>
-    <p class="lede">3 micro-tools you can use right now to make better product decisions, with logic and benchmarks pulled directly from Lenny's Newsletter archive.</p>
+    <p class="lede">4 micro-tools you can use right now to make better product decisions, with logic and benchmarks pulled directly from Lenny's Newsletter archive.</p>
+
+    <div class="pm-lab-stage-toggle" role="radiogroup" aria-label="Company stage">
+      <button type="button" class="pm-lab-stage-btn is-active" data-stage="0to1" role="radio" aria-checked="true">0&rarr;1</button>
+      <button type="button" class="pm-lab-stage-btn" data-stage="1ton" role="radio" aria-checked="false">1&rarr;n</button>
+    </div>
+    <p class="pm-lab-stage-caption" id="pmLabStageCaption">Defaults and sample data below are set for an early-stage team finding its first users.</p>
 
     <div class="pm-lab-tabs" role="tablist" aria-label="Playground tools">
       <button class="pm-lab-tab" type="button" role="tab" id="pm-lab-tab-gtm" aria-controls="pm-lab-panel-gtm" aria-selected="false">
@@ -465,6 +471,7 @@
                 <p class="gtm-summary-desc" id="gtmSummaryDesc"></p>
                 <div class="gtm-metrics-label">Metrics to watch</div>
                 <div class="gtm-metrics" id="gtmMetrics"></div>
+                <p class="gtm-stage-note" id="gtmStageNote"></p>
               </div>
             </div>
           </div>
@@ -498,144 +505,10 @@
                 </tr>
               </thead>
               <tbody id="riceTableBody">
-                <tr class="rice-row" data-rice-row>
-                  <td><input type="text" class="rice-input rice-input-name" data-field="name" value="Self-Service Team Invite Flow"></td>
-                  <td><input type="number" class="rice-input rice-input-num" data-field="reach" value="1200" min="0" step="10"></td>
-                  <td><input type="number" class="rice-input rice-input-num" data-field="impact" value="2" min="0.25" max="3" step="0.25"></td>
-                  <td><input type="number" class="rice-input rice-input-num" data-field="confidence" value="80" min="0" max="100" step="5"></td>
-                  <td><input type="number" class="rice-input rice-input-num" data-field="effort" value="1.5" min="0.1" step="0.1"></td>
-                  <td class="rice-td-check"><input type="checkbox" class="rice-check" data-field="techDebt"></td>
-                  <td class="rice-td-check"><input type="checkbox" class="rice-check" data-field="retentionGap"></td>
-                  <td class="rice-td-score"><span class="rice-score-value" data-rice-score>0</span><span class="rice-rank-badge" data-rice-rank></span><button type="button" class="rice-drice-toggle" data-drice-toggle>Stress-test (DRICE) &#9656;</button></td>
-                  <td class="rice-td-remove"><button type="button" class="rice-remove-btn" aria-label="Remove this feature row">&times;</button></td>
-                </tr>
-                <tr class="rice-drice-row" data-rice-drice hidden>
-                  <td colspan="9">
-                    <div class="rice-drice-panel">
-                      <div class="rice-drice-field rice-drice-field-wide">
-                        <label>Hypothesis</label>
-                        <input type="text" class="rice-drice-input" data-drice-field="hypothesis" placeholder="If we build X, we believe Y will happen because Z" value="If self-serve invites remove the need for IT to add teammates manually, we believe more teams activate within their first week.">
-                      </div>
-                      <div class="rice-drice-field">
-                        <label>$ Impact estimate (annual)</label>
-                        <input type="number" class="rice-drice-input" data-drice-field="dollarImpact" min="0" step="1000" value="180000">
-                      </div>
-                      <div class="rice-drice-field">
-                        <label>Engineering estimate (days)</label>
-                        <input type="number" class="rice-drice-input" data-drice-field="engDays" min="0.5" step="0.5" value="7">
-                      </div>
-                      <div class="rice-drice-result">
-                        <span class="rice-drice-result-label">ROI</span>
-                        <span class="rice-drice-result-value" data-drice-roi>&mdash;</span>
-                      </div>
-                    </div>
-                  </td>
-                </tr>
-                <tr class="rice-row" data-rice-row>
-                  <td><input type="text" class="rice-input rice-input-name" data-field="name" value="Custom Enterprise SSO"></td>
-                  <td><input type="number" class="rice-input rice-input-num" data-field="reach" value="150" min="0" step="10"></td>
-                  <td><input type="number" class="rice-input rice-input-num" data-field="impact" value="3" min="0.25" max="3" step="0.25"></td>
-                  <td><input type="number" class="rice-input rice-input-num" data-field="confidence" value="90" min="0" max="100" step="5"></td>
-                  <td><input type="number" class="rice-input rice-input-num" data-field="effort" value="3" min="0.1" step="0.1"></td>
-                  <td class="rice-td-check"><input type="checkbox" class="rice-check" data-field="techDebt" checked></td>
-                  <td class="rice-td-check"><input type="checkbox" class="rice-check" data-field="retentionGap"></td>
-                  <td class="rice-td-score"><span class="rice-score-value" data-rice-score>0</span><span class="rice-rank-badge" data-rice-rank></span><button type="button" class="rice-drice-toggle" data-drice-toggle>Stress-test (DRICE) &#9656;</button></td>
-                  <td class="rice-td-remove"><button type="button" class="rice-remove-btn" aria-label="Remove this feature row">&times;</button></td>
-                </tr>
-                <tr class="rice-drice-row" data-rice-drice hidden>
-                  <td colspan="9">
-                    <div class="rice-drice-panel">
-                      <div class="rice-drice-field rice-drice-field-wide">
-                        <label>Hypothesis</label>
-                        <input type="text" class="rice-drice-input" data-drice-field="hypothesis" placeholder="If we build X, we believe Y will happen because Z" value="If we replace per-seat SSO setup calls with a self-serve SAML config, we believe the security-review blocker disappears for mid-market deals.">
-                      </div>
-                      <div class="rice-drice-field">
-                        <label>$ Impact estimate (annual)</label>
-                        <input type="number" class="rice-drice-input" data-drice-field="dollarImpact" min="0" step="1000" value="90000">
-                      </div>
-                      <div class="rice-drice-field">
-                        <label>Engineering estimate (days)</label>
-                        <input type="number" class="rice-drice-input" data-drice-field="engDays" min="0.5" step="0.5" value="15">
-                      </div>
-                      <div class="rice-drice-result">
-                        <span class="rice-drice-result-label">ROI</span>
-                        <span class="rice-drice-result-value" data-drice-roi>&mdash;</span>
-                      </div>
-                    </div>
-                  </td>
-                </tr>
-                <tr class="rice-row" data-rice-row>
-                  <td><input type="text" class="rice-input rice-input-name" data-field="name" value="AI Automated Summary Widget"></td>
-                  <td><input type="number" class="rice-input rice-input-num" data-field="reach" value="2000" min="0" step="10"></td>
-                  <td><input type="number" class="rice-input rice-input-num" data-field="impact" value="1" min="0.25" max="3" step="0.25"></td>
-                  <td><input type="number" class="rice-input rice-input-num" data-field="confidence" value="50" min="0" max="100" step="5"></td>
-                  <td><input type="number" class="rice-input rice-input-num" data-field="effort" value="1" min="0.1" step="0.1"></td>
-                  <td class="rice-td-check"><input type="checkbox" class="rice-check" data-field="techDebt"></td>
-                  <td class="rice-td-check"><input type="checkbox" class="rice-check" data-field="retentionGap" checked></td>
-                  <td class="rice-td-score"><span class="rice-score-value" data-rice-score>0</span><span class="rice-rank-badge" data-rice-rank></span><button type="button" class="rice-drice-toggle" data-drice-toggle>Stress-test (DRICE) &#9656;</button></td>
-                  <td class="rice-td-remove"><button type="button" class="rice-remove-btn" aria-label="Remove this feature row">&times;</button></td>
-                </tr>
-                <tr class="rice-drice-row" data-rice-drice hidden>
-                  <td colspan="9">
-                    <div class="rice-drice-panel">
-                      <div class="rice-drice-field rice-drice-field-wide">
-                        <label>Hypothesis</label>
-                        <input type="text" class="rice-drice-input" data-drice-field="hypothesis" placeholder="If we build X, we believe Y will happen because Z" value="If summaries save reviewers time, we believe weekly active usage rises, but without a reason to return, usage may fade after the novelty wears off.">
-                      </div>
-                      <div class="rice-drice-field">
-                        <label>$ Impact estimate (annual)</label>
-                        <input type="number" class="rice-drice-input" data-drice-field="dollarImpact" min="0" step="1000" value="60000">
-                      </div>
-                      <div class="rice-drice-field">
-                        <label>Engineering estimate (days)</label>
-                        <input type="number" class="rice-drice-input" data-drice-field="engDays" min="0.5" step="0.5" value="4">
-                      </div>
-                      <div class="rice-drice-result">
-                        <span class="rice-drice-result-label">ROI</span>
-                        <span class="rice-drice-result-value" data-drice-roi>&mdash;</span>
-                      </div>
-                    </div>
-                  </td>
-                </tr>
               </tbody>
             </table>
           </div>
 
-          <template id="riceRowTemplate">
-            <tr class="rice-row" data-rice-row>
-              <td><input type="text" class="rice-input rice-input-name" data-field="name" value="New feature" placeholder="Feature name"></td>
-              <td><input type="number" class="rice-input rice-input-num" data-field="reach" value="500" min="0" step="10"></td>
-              <td><input type="number" class="rice-input rice-input-num" data-field="impact" value="1" min="0.25" max="3" step="0.25"></td>
-              <td><input type="number" class="rice-input rice-input-num" data-field="confidence" value="50" min="0" max="100" step="5"></td>
-              <td><input type="number" class="rice-input rice-input-num" data-field="effort" value="1" min="0.1" step="0.1"></td>
-              <td class="rice-td-check"><input type="checkbox" class="rice-check" data-field="techDebt"></td>
-              <td class="rice-td-check"><input type="checkbox" class="rice-check" data-field="retentionGap"></td>
-              <td class="rice-td-score"><span class="rice-score-value" data-rice-score>0</span><span class="rice-rank-badge" data-rice-rank></span><button type="button" class="rice-drice-toggle" data-drice-toggle>Stress-test (DRICE) &#9656;</button></td>
-              <td class="rice-td-remove"><button type="button" class="rice-remove-btn" aria-label="Remove this feature row">&times;</button></td>
-            </tr>
-            <tr class="rice-drice-row" data-rice-drice hidden>
-              <td colspan="9">
-                <div class="rice-drice-panel">
-                  <div class="rice-drice-field rice-drice-field-wide">
-                    <label>Hypothesis</label>
-                    <input type="text" class="rice-drice-input" data-drice-field="hypothesis" placeholder="If we build X, we believe Y will happen because Z" value="">
-                  </div>
-                  <div class="rice-drice-field">
-                    <label>$ Impact estimate (annual)</label>
-                    <input type="number" class="rice-drice-input" data-drice-field="dollarImpact" min="0" step="1000" value="0">
-                  </div>
-                  <div class="rice-drice-field">
-                    <label>Engineering estimate (days)</label>
-                    <input type="number" class="rice-drice-input" data-drice-field="engDays" min="0.5" step="0.5" value="5">
-                  </div>
-                  <div class="rice-drice-result">
-                    <span class="rice-drice-result-label">ROI</span>
-                    <span class="rice-drice-result-value" data-drice-roi>&mdash;</span>
-                  </div>
-                </div>
-              </td>
-            </tr>
-          </template>
 
           <div class="rice-actions">
             <button type="button" class="rice-add-btn" id="riceAddRow">+ Add feature</button>
@@ -663,14 +536,10 @@
           <div class="prd-input-row">
             <label class="gtm-label" for="prdInput">Feature idea</label>
             <div class="prd-input-controls">
-              <input type="text" id="prdInput" class="prd-input" value="Add 2FA via SMS to login flow" placeholder="Describe a feature idea…">
+              <input type="text" id="prdInput" class="prd-input" value="" placeholder="Describe a feature idea…">
               <button type="button" class="rice-add-btn prd-analyze-btn" id="prdAnalyzeBtn">Analyze Spec Complexity</button>
             </div>
-            <div class="prd-presets" id="prdPresets">
-              <button type="button" class="gtm-segment prd-preset-btn is-active" data-preset="Add 2FA via SMS to login flow">Add 2FA via SMS to login flow</button>
-              <button type="button" class="gtm-segment prd-preset-btn" data-preset="Implement Team Member Permissions Grid">Implement Team Member Permissions Grid</button>
-              <button type="button" class="gtm-segment prd-preset-btn" data-preset="Build CSV Export for Analytics Reports">Build CSV Export for Analytics Reports</button>
-            </div>
+            <div class="prd-presets" id="prdPresets"></div>
           </div>
 
           <p class="prd-empty-state" id="prdEmptyState">Pick a preset above (or write your own feature idea) and click <strong>Analyze Spec Complexity</strong> to see it turned into a full spec.</p>

@@ -9,15 +9,110 @@
    Each row can also be stress-tested DRICE-style (Darius Contractor
    & Alexey Komissarouk, "Introducing DRICE"): a Hypothesis, a
    dollarized annual impact estimate, and an engineering-days
-   estimate, computed out to a real ROI-per-engineering-week. */
+   estimate, computed out to a real ROI-per-engineering-week.
+
+   Sample rows swap per the 0→1 / 1→n stage toggle (window.pmLabStage,
+   set by pm-lab.js) — same tool, different example features so the
+   sample data actually fits the selected company stage. */
 (function(){
   var PENALTY_PER_FLAG = 0.2;
   var WORK_DAYS_PER_WEEK = 5;
+
+  var BLANK_ROW = {
+    name: 'New feature', reach: 500, impact: 1, confidence: 50, effort: 1,
+    techDebt: false, retentionGap: false,
+    hypothesis: '', dollarImpact: 0, engDays: 5
+  };
+
+  var STAGE_ROWS = {
+    '0to1': [
+      {
+        name: 'Simplify onboarding to 3 steps', reach: 300, impact: 2, confidence: 70, effort: 0.5,
+        techDebt: false, retentionGap: false,
+        hypothesis: 'If onboarding drops from 8 steps to 3, we believe activation roughly doubles, because most signups currently drop off before reaching first value.',
+        dollarImpact: 0, engDays: 3
+      },
+      {
+        name: 'Manual concierge onboarding for first 20 users', reach: 20, impact: 3, confidence: 90, effort: 0.25,
+        techDebt: false, retentionGap: false,
+        hypothesis: "If we personally onboard our first 20 users by call, we believe we'll learn the real activation blocker faster than any amount of analytics.",
+        dollarImpact: 0, engDays: 1
+      },
+      {
+        name: 'Launch a paid annual plan', reach: 300, impact: 2, confidence: 50, effort: 1.5,
+        techDebt: false, retentionGap: true,
+        hypothesis: 'If we charge for an annual plan now, we believe a portion of active users will pay, but we have no evidence yet that they stick around long enough to renew.',
+        dollarImpact: 0, engDays: 5
+      }
+    ],
+    '1ton': [
+      {
+        name: 'Self-Service Team Invite Flow', reach: 1200, impact: 2, confidence: 80, effort: 1.5,
+        techDebt: false, retentionGap: false,
+        hypothesis: 'If self-serve invites remove the need for IT to add teammates manually, we believe more teams activate within their first week.',
+        dollarImpact: 180000, engDays: 7
+      },
+      {
+        name: 'Custom Enterprise SSO', reach: 150, impact: 3, confidence: 90, effort: 3,
+        techDebt: true, retentionGap: false,
+        hypothesis: 'If we replace per-seat SSO setup calls with a self-serve SAML config, we believe the security-review blocker disappears for mid-market deals.',
+        dollarImpact: 90000, engDays: 15
+      },
+      {
+        name: 'AI Automated Summary Widget', reach: 2000, impact: 1, confidence: 50, effort: 1,
+        techDebt: false, retentionGap: true,
+        hypothesis: 'If summaries save reviewers time, we believe weekly active usage rises, but without a reason to return, usage may fade after the novelty wears off.',
+        dollarImpact: 60000, engDays: 4
+      }
+    ]
+  };
 
   function clamp(v, min, max){ return Math.max(min, Math.min(max, v)); }
 
   function formatCurrency(n){
     return '$' + Math.round(n).toLocaleString('en-US');
+  }
+
+  function escapeAttr(str){
+    return String(str).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+  }
+
+  function buildRowHTML(data){
+    return (
+      '<tr class="rice-row" data-rice-row>' +
+        '<td><input type="text" class="rice-input rice-input-name" data-field="name" value="' + escapeAttr(data.name) + '" placeholder="Feature name"></td>' +
+        '<td><input type="number" class="rice-input rice-input-num" data-field="reach" value="' + data.reach + '" min="0" step="10"></td>' +
+        '<td><input type="number" class="rice-input rice-input-num" data-field="impact" value="' + data.impact + '" min="0.25" max="3" step="0.25"></td>' +
+        '<td><input type="number" class="rice-input rice-input-num" data-field="confidence" value="' + data.confidence + '" min="0" max="100" step="5"></td>' +
+        '<td><input type="number" class="rice-input rice-input-num" data-field="effort" value="' + data.effort + '" min="0.1" step="0.1"></td>' +
+        '<td class="rice-td-check"><input type="checkbox" class="rice-check" data-field="techDebt"' + (data.techDebt ? ' checked' : '') + '></td>' +
+        '<td class="rice-td-check"><input type="checkbox" class="rice-check" data-field="retentionGap"' + (data.retentionGap ? ' checked' : '') + '></td>' +
+        '<td class="rice-td-score"><span class="rice-score-value" data-rice-score>0</span><span class="rice-rank-badge" data-rice-rank></span><button type="button" class="rice-drice-toggle" data-drice-toggle>Stress-test (DRICE) &#9656;</button></td>' +
+        '<td class="rice-td-remove"><button type="button" class="rice-remove-btn" aria-label="Remove this feature row">&times;</button></td>' +
+      '</tr>' +
+      '<tr class="rice-drice-row" data-rice-drice hidden>' +
+        '<td colspan="9">' +
+          '<div class="rice-drice-panel">' +
+            '<div class="rice-drice-field rice-drice-field-wide">' +
+              '<label>Hypothesis</label>' +
+              '<input type="text" class="rice-drice-input" data-drice-field="hypothesis" placeholder="If we build X, we believe Y will happen because Z" value="' + escapeAttr(data.hypothesis) + '">' +
+            '</div>' +
+            '<div class="rice-drice-field">' +
+              '<label>$ Impact estimate (annual)</label>' +
+              '<input type="number" class="rice-drice-input" data-drice-field="dollarImpact" min="0" step="1000" value="' + data.dollarImpact + '">' +
+            '</div>' +
+            '<div class="rice-drice-field">' +
+              '<label>Engineering estimate (days)</label>' +
+              '<input type="number" class="rice-drice-input" data-drice-field="engDays" min="0.5" step="0.5" value="' + data.engDays + '">' +
+            '</div>' +
+            '<div class="rice-drice-result">' +
+              '<span class="rice-drice-result-label">ROI</span>' +
+              '<span class="rice-drice-result-value" data-drice-roi>&mdash;</span>' +
+            '</div>' +
+          '</div>' +
+        '</td>' +
+      '</tr>'
+    );
   }
 
   function readRow(row){
@@ -72,10 +167,9 @@
     var root = document.getElementById('prioritization-root');
     var tbody = document.getElementById('riceTableBody');
     var addBtn = document.getElementById('riceAddRow');
-    var template = document.getElementById('riceRowTemplate');
     var riskPanel = document.getElementById('riceRiskPanel');
     var riskList = document.getElementById('riceRiskList');
-    if(!root || !tbody || !template || !riskPanel || !riskList) return;
+    if(!root || !tbody || !riskPanel || !riskList) return;
 
     function computeAll(){
       var rows = Array.prototype.slice.call(tbody.querySelectorAll('[data-rice-row]'));
@@ -141,20 +235,31 @@
       if(driceRow) wireDriceRow(driceRow);
     }
 
-    var mainRows = Array.prototype.slice.call(tbody.querySelectorAll('[data-rice-row]'));
-    mainRows.forEach(function(row){
-      var driceRow = row.nextElementSibling && row.nextElementSibling.hasAttribute('data-rice-drice')
-        ? row.nextElementSibling
-        : null;
-      wireRow(row, driceRow);
-    });
+    function wireAllRows(){
+      var mainRows = Array.prototype.slice.call(tbody.querySelectorAll('[data-rice-row]'));
+      mainRows.forEach(function(row){
+        var driceRow = row.nextElementSibling && row.nextElementSibling.hasAttribute('data-rice-drice')
+          ? row.nextElementSibling
+          : null;
+        wireRow(row, driceRow);
+      });
+    }
+
+    function renderStage(stage){
+      var rows = STAGE_ROWS[stage] || STAGE_ROWS['0to1'];
+      tbody.innerHTML = rows.map(buildRowHTML).join('');
+      wireAllRows();
+      computeAll();
+    }
 
     if(addBtn){
       addBtn.addEventListener('click', function(){
-        var fragment = template.content.cloneNode(true);
-        var row = fragment.querySelector('[data-rice-row]');
-        var driceRow = fragment.querySelector('[data-rice-drice]');
-        tbody.appendChild(fragment);
+        var container = document.createElement('tbody');
+        container.innerHTML = buildRowHTML(BLANK_ROW);
+        var row = container.querySelector('[data-rice-row]');
+        var driceRow = container.querySelector('[data-rice-drice]');
+        tbody.appendChild(row);
+        tbody.appendChild(driceRow);
         wireRow(row, driceRow);
         computeAll();
         var nameInput = row.querySelector('[data-field="name"]');
@@ -162,7 +267,11 @@
       });
     }
 
-    computeAll();
+    window.addEventListener('pmlab:stage', function(e){
+      renderStage(e.detail.stage);
+    });
+
+    renderStage(window.pmLabStage);
   }
 
   if(document.readyState === 'loading'){
