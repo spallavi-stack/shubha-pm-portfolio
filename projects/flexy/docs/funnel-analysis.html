@@ -87,6 +87,43 @@
 </tr>
 </tbody>
 </table>
+<h2>Success thresholds for the pilot</h2>
+<p>The table above estimates what conversion is likely. It doesn't say what conversion would count as the pilot succeeding, a different question this document didn't previously answer.</p>
+<table>
+<thead>
+<tr>
+<th>Stage</th>
+<th>Minimum viable threshold</th>
+<th>Basis</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Invited → App download</td>
+<td>≥15%</td>
+<td>Assumption. Set at the low end of the estimated 15-30% range above. Below it, the invite channel itself isn't landing, independent of anything the product does downstream.</td>
+</tr>
+<tr>
+<td>App download → EV connected</td>
+<td>No material drop-off relative to the download rate</td>
+<td>Assumption. This stage has no numeric estimate above (see "Why"), so the bar is relative rather than an invented percentage: a noticeably worse conversion than app download's own rate is the UX-clarity friction the estimate already names, not a separate baseline to hit.</td>
+</tr>
+<tr>
+<td>EV connected → Smart charging activated</td>
+<td>A majority of connected users activate within the pilot window</td>
+<td>Assumption, deliberately conservative. This is Flexy's highest-commitment, highest-risk step and one of <code>product-brief.md</code>'s three PMF signals. A minority-activation outcome would mean the trust-breaking point three of four personas named in <code>synthetic-interviews.md</code> is a real, unmitigated blocker, not a design assumption still to be tested.</td>
+</tr>
+</tbody>
+</table>
+<p>All three are Assumptions: nothing about Flexy has run yet to test them. They mark the point below which the pilot itself needs rethinking, and should be confirmed with ComEd directly before a real pilot starts rather than treated as fixed internal targets.</p>
+<h2>Guardrail metrics</h2>
+<p>Conversion measures whether someone moves through the funnel. It doesn't measure whether the product is quietly failing people who already converted, which matters more here than in a typical SaaS funnel: Flexy asks someone to hand over control of a physical asset they need working on a schedule. Three guardrail metrics for the pilot, alongside conversion, not instead of it:</p>
+<ul>
+<li><strong>Disconnect / revoke rate.</strong> Share of users who disable vehicle access or delete the app within 14 days of activating smart charging. A pilot's conversion numbers mean nothing if the households counted as "activated" are quietly opting back out within two weeks.</li>
+<li><strong>Manual override frequency.</strong> How often a user manually overrides a scheduled charging session. Occasional overrides are expected (life happens); a persistently high override rate for a given user is a leading indicator of eroding trust in the schedule, likely visible before that user disconnects outright.</li>
+<li><strong>Missed-readiness rate.</strong> How often a vehicle wasn't charged to the user's stated target by their stated deadline. This is the literal failure mode of the trust-breaking point <code>synthetic-interviews.md</code> already names (three of four personas cited "car won't be ready" as their dealbreaker), and it's the direct opposite of Marcus's own bar for staying enrolled ("if it just works for a few weeks and my bill actually goes down, that's enough for me" - Q5).</li>
+</ul>
+<p>All three are Assumption-tagged: they describe what should be tracked, not a measured rate, since no pilot has run. They belong in the same instrumentation build as the events below, not as a later addition once trust problems have already surfaced.</p>
 <h2>Experiment design</h2>
 <p>Flexy's realistic first deployment is a single-utility pilot, comparable in scale to ComEd's own EV EMS pilot (twelve participants) or, optimistically, a low-hundreds cohort. That's several orders of magnitude below what canonical A/B testing needs. Ronny Kohavi's rule of thumb: detecting a realistic 5-10% lift, the range worth targeting rather than 1%, needs roughly tens of thousands up to 200,000 users for a typical conversion metric. A pilot cohort doesn't get there at any funnel stage, so this isn't a design that reaches for a standard split test by default.</p>
 <h3>What to actually run, by stage</h3>
@@ -104,8 +141,61 @@
 <h3>General method, applied across stages</h3>
 <p>Reused from the audit approach Isaac Silverman (former Head of Uber Rider Growth) describes: research the audience, walk the flow yourself as each persona would, watch a non-technical user attempt it, and look at stage-by-stage data by segment once real data exists, before jumping to hypotheses. Prioritize whatever surfaces by expected impact over cost, and start with the lightest-weight test that could plausibly confirm or kill a hypothesis, saving bigger structural changes for ideas that survive that first cheap look.</p>
 <p>For any stage where a formal test does make sense despite low volume, run the power analysis first and say plainly what runtime and confidence level the actual traffic supports rather than assuming a short test will produce a real answer. A deliberately reduced confidence threshold, accepting 80% instead of the standard 95%, is a legitimate, openly-stated trade-off at pilot scale.</p>
+<h3>Segmentation (deferred)</h3>
+<p>A pilot at ComEd's own scale (twelve participants, low hundreds optimistically) can't support splitting the funnel by vehicle OEM, tariff type, or OS without each slice dropping to a handful of data points, too small to reason about at all. Once real volume exists across multiple utilities or a much larger single pilot, segmenting by these dimensions is a reasonable next step. Building it out now would invent structure this document has no data to justify.</p>
+<h2>Event taxonomy &amp; telemetry requirements</h2>
+<p>The experiment design above assumes stage-by-stage instrumentation exists. It doesn't specify what to actually build. A minimum event set, one both the funnel and the guardrail metrics above depend on:</p>
+<table>
+<thead>
+<tr>
+<th>Event</th>
+<th>Captures</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>invite_sent</code> / <code>invite_opened</code></td>
+<td>Stage 1 volume and the invite-variant test's own denominator, tagged by variant/channel.</td>
+</tr>
+<tr>
+<td><code>app_download_completed</code></td>
+<td>Stage 1 → 2 boundary.</td>
+</tr>
+<tr>
+<td><code>vehicle_connection_started</code> / <code>vehicle_connection_completed</code></td>
+<td>Splits the Smartcar auth flow itself from the surrounding app experience, the only way to tell whether a stage 2 drop-off happens inside the connection flow or before a user even attempts it.</td>
+</tr>
+<tr>
+<td><code>smart_charging_activated</code></td>
+<td>Stage 3 completion, and the headline PMF signal from <code>product-brief.md</code>.</td>
+</tr>
+<tr>
+<td><code>smart_charging_overridden</code></td>
+<td>Feeds the manual override guardrail metric above; needs a reason code where the UI can capture one (e.g. "need car sooner"), not just a count.</td>
+</tr>
+<tr>
+<td><code>vehicle_access_revoked</code> / <code>app_uninstalled</code></td>
+<td>Feeds the disconnect/revoke guardrail metric above.</td>
+</tr>
+<tr>
+<td><code>charge_target_missed</code></td>
+<td>Feeds the missed-readiness guardrail metric above; needs the stated deadline and actual charge level at that deadline, not just a binary flag.</td>
+</tr>
+</tbody>
+</table>
+<p>This is a starting event list for whichever pilot actually gets built, not a finished spec. A real engineering pass would still need to define exact payload fields per event, which this document doesn't attempt.</p>
+<p>Which platform actually implements this event list (a product-analytics tool, a qualitative-feedback tool for the follow-up conversations in the experiment design above) is a deferred decision, not designed here. It depends on cost, ComEd's own data-residency and security requirements, and whatever stack Flexy would actually run on, none of which this case study has a real answer for. <code>funnel-experiment-scope.md</code> rules out vendor recommendations for the same reason: naming a specific tool without those real constraints would be an invented answer, not a grounded one.</p>
+<h2>Go / no-go framework</h2>
+<p>Ties the thresholds and guardrails above to an actual decision, rather than leaving "what happens if a number comes in low" unanswered:</p>
+<ul>
+<li><strong>All three stage thresholds met, guardrails clean.</strong> Clear case for pilot extension, <code>product-brief.md</code>'s strongest PMF signal.</li>
+<li><strong>Stage 1 or 2 misses its threshold, stage 3 and guardrails are fine.</strong> Likely a channel or onboarding-UX problem, not a trust problem. Iterate on the invite/onboarding experiment designs above before concluding anything about the product itself.</li>
+<li><strong>Stage 3 misses its threshold, or a guardrail metric is elevated (rising overrides, disconnects, or missed-readiness events).</strong> A trust problem, not a funnel-copy problem. No experiment variant substitutes for fixing readiness reliability itself; this is the scenario <code>synthetic-interviews.md</code>'s trust-breaking point predicted, and it should pause any push to widen the pilot rather than be treated as a stage to optimize copy against.</li>
+<li><strong>Everything converts, but disconnect/override/missed-readiness rates climb over the pilot's life.</strong> The funnel looks healthy while the product is quietly failing retained users. Treat this as equally serious as a stage-conversion miss, since it's invisible to the funnel view alone.</li>
+</ul>
+<p>This framework assumes real pilot data exists to evaluate it against. Until then, it states this document's decision rules, not a report on an actual pilot.</p>
 <h2>Status</h2>
-<p>Draft v1. Grounded in Lenny Rachitsky's newsletter and podcast archive (a 500+ product activation-rate benchmark survey, Ronny Kohavi's and Brian Tolkin's experimentation guidance, Isaac Silverman's funnel-audit method) plus direct sourcing from Uplight's and Smartcar's own published materials and Flexy's existing synthetic-interview evidence. Full citations in <code>funnel-experiment-grounding-research.md</code>. The Stage 1 conversion range is this document's lowest-confidence number and the first one worth replacing with real data once any ComEd pilot distribution happens.</p>
+<p>Draft v2. Grounded in Lenny Rachitsky's newsletter and podcast archive (a 500+ product activation-rate benchmark survey, Ronny Kohavi's and Brian Tolkin's experimentation guidance, Isaac Silverman's funnel-audit method) plus direct sourcing from Uplight's and Smartcar's own published materials and Flexy's existing synthetic-interview evidence. Full citations in <code>funnel-experiment-grounding-research.md</code>. The Stage 1 conversion range is this document's lowest-confidence number and the first one worth replacing with real data once any ComEd pilot distribution happens. v2 adds success thresholds, guardrail metrics, an event taxonomy, and a go/no-go framework, all still Assumption-tagged pending real pilot data; sub-segment funnels were considered and deliberately deferred (see "Segmentation (deferred)" above) rather than built out at pilot scale.</p>
 <div class="doc-footer">Part of the Flexy case study documentation set. For the short version, see the <a href="../index.html">case study page</a>.</div>
 </article>
 <footer>
