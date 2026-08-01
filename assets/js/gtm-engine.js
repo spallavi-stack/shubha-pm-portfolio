@@ -27,7 +27,7 @@
     '1ton': {acv: 40000, cycle: '3-6', persona: 'team-lead'}
   };
   var STAGE_NOTES = {
-    '0to1': 'At this stage, treat this as a hypothesis about your eventual motion, not a commitment — you likely don’t have enough closed deals yet to know your real numbers.',
+    '0to1': 'At this stage, treat this as a hypothesis about your eventual motion.',
     '1ton': 'With real deal data now, revisit these inputs quarterly as ACV and cycle length actually shift.'
   };
 
