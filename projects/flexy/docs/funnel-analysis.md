@@ -84,6 +84,8 @@ The experiment design above assumes stage-by-stage instrumentation exists. It do
 
 This is a starting event list for whichever pilot actually gets built, not a finished spec. A real engineering pass would still need to define exact payload fields per event, which this document doesn't attempt.
 
+Which platform actually implements this event list (a product-analytics tool, a qualitative-feedback tool for the follow-up conversations in the experiment design above) is a deferred decision, not designed here. It depends on cost, ComEd's own data-residency and security requirements, and whatever stack Flexy would actually run on, none of which this case study has a real answer for. `funnel-experiment-scope.md` rules out vendor recommendations for the same reason: naming a specific tool without those real constraints would be an invented answer, not a grounded one.
+
 ## Go / no-go framework
 
 Ties the thresholds and guardrails above to an actual decision, rather than leaving "what happens if a number comes in low" unanswered:
