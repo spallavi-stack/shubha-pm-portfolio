@@ -83,6 +83,10 @@
 .gtm-field:last-child{margin-bottom:0;}
 .gtm-label{font-size:12.5px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;color:#B9C0DD;margin-bottom:12px;display:block;}
 
+.gtm-example{font-size:13px;color:#8B90B3;line-height:1.5;margin:16px 0 0;}
+.gtm-example:empty{display:none;}
+.gtm-example strong{color:#B9C0DD;font-weight:600;}
+
 /* Range slider */
 .gtm-range{
   -webkit-appearance:none;appearance:none;width:100%;height:4px;border-radius:999px;

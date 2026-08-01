@@ -10,6 +10,16 @@
   var PERSONA_SCORE = {'end-user': 0, 'team-lead': 15, 'exec-vp': 30};
   var PERSONA_LABEL = {'end-user': 'an individual contributor (self-serve)', 'team-lead': 'a team lead', 'exec-vp': 'an executive/VP buyer'};
 
+  // Illustrative anchors only — these companies' actual GTM motions have
+  // evolved and blend multiple approaches. Matched to strategy category,
+  // not to the exact ACV/cycle/persona inputs.
+  var STRATEGY_EXAMPLE = {
+    'Pure PLG (Product-Led Growth)': 'Calendly and Loom grew this way early on: cheap enough per seat that self-serve signup had to carry the whole motion.',
+    'PLG + Sales-Assist Hybrid': 'Notion and Figma started here: free to self-serve, with a sales-assist layer added once accounts got big enough to justify a rep.',
+    'Product-Led Sales / Enterprise Hybrid': 'Slack and Zoom run this today: usage inside a free or team plan sources and qualifies the pipeline, but a rep closes the enterprise upgrade.',
+    'Enterprise Sales-Led': 'Salesforce and Workday: six/seven-figure deals, a VP+ buyer, and a sales cycle measured in quarters, not days.'
+  };
+
   var DIAL_PATH_LENGTH = Math.PI * 80; // semicircle, r=80
 
   var STAGE_DEFAULTS = {
@@ -95,6 +105,7 @@
     var summaryDesc = document.getElementById('gtmSummaryDesc');
     var metricsWrap = document.getElementById('gtmMetrics');
     var stageNoteEl = document.getElementById('gtmStageNote');
+    var exampleEl = document.getElementById('gtmExample');
     if(!acvInput || !cycleGroup || !personaGroup || !dialFill || !dialNeedle) return;
 
     var state = {
@@ -123,6 +134,10 @@
 
       if(summaryTitle) summaryTitle.textContent = result.label;
       if(summaryDesc) summaryDesc.textContent = result.desc;
+      if(exampleEl){
+        var example = STRATEGY_EXAMPLE[result.label] || '';
+        exampleEl.innerHTML = example ? '<strong>Looks like:</strong> ' + example : '';
+      }
       if(metricsWrap){
         metricsWrap.innerHTML = '';
         result.metrics.forEach(function(metric){
