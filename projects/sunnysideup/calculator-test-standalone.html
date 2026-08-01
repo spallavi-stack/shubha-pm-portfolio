@@ -498,9 +498,20 @@ function pluginOrientationMultiplier(orientation) {
   return ROOFTOP_ANNUAL_GENERATION_KWH[orientation] / ROOFTOP_ANNUAL_GENERATION_KWH.southFacing;
 }
 
-// Prototype-only simplification, not independently researched: self-
-// consumption rate modeled from occupancy as a rough two-tier proxy.
-const SELF_CONSUMPTION_RATE = { usuallyHome: 0.55, usuallyOut: 0.30 };
+// CORRECTED 1 Aug 2026: replaced the old occupancy-binary self-consumption
+// rate (usuallyHome 0.55 / usuallyOut 0.30) with DESNZ Home Energy Model's
+// own self-consumption formula (HEM-TP-18, gov.uk, fetched directly 1 Aug
+// 2026) — see calculator.js for the full sourcing note and why this fixes a
+// real gap (EV/heat pump additions now flow through demand ratio instead of
+// being invisible to a fixed occupancy lookup).
+const SELF_CONSUMPTION_DEMAND_RATIO_COEFFICIENT = 0.6748;
+const SELF_CONSUMPTION_DEMAND_RATIO_EXPONENT = -0.703;
+function selfConsumptionFactorFromDemandRatio(generationKwh, consumptionKwh) {
+  if (generationKwh <= 0 || consumptionKwh <= 0) return 0;
+  const demandRatio = generationKwh / consumptionKwh;
+  const rawFactor = SELF_CONSUMPTION_DEMAND_RATIO_COEFFICIENT * Math.pow(demandRatio, SELF_CONSUMPTION_DEMAND_RATIO_EXPONENT);
+  return Math.min(rawFactor, 1, 1 / demandRatio);
+}
 
 // Payback thresholds for green/amber/red. Not a cited figure — a design
 // judgment loosely anchored to grounding-research.md's own reported payback
@@ -592,7 +603,7 @@ function calculateRooftopViability({ orientation, occupancy, annualConsumptionKw
   const generation = Math.round(preRoofAreaGeneration * roofAreaMultiplier);
   const systemCostGbp = roofAreaSizing ? roofAreaSizing.systemCostGbp : ROOFTOP_SYSTEM_COST_GBP;
 
-  const selfConsumptionRate = SELF_CONSUMPTION_RATE[occupancy];
+  const selfConsumptionRate = selfConsumptionFactorFromDemandRatio(generation, annualConsumptionKwh);
   const selfConsumedKwh = Math.min(generation * selfConsumptionRate, annualConsumptionKwh);
   const exportedKwh = generation - selfConsumedKwh;
 
@@ -636,7 +647,7 @@ function calculateRooftopViability({ orientation, occupancy, annualConsumptionKw
         : regionalGeneration
           ? { value: generation, tier: regionalGeneration.tier, note: `England-baseline figure (${baseGeneration}kWh/yr) adjusted by a ${regionalGeneration.value}x regional multiplier${roofAreaSizing ? ` and a roof-area-derived ${systemSizeKwp}kWp system size (vs the ${REFERENCE_SYSTEM_SIZE_KWP}kWp reference)` : ''}. ${regionalGeneration.note}` }
           : { value: generation, tier: orientation === 'southFacing' ? 'Assumption' : 'Prototype estimate, not independently researched', note: `Researched range is 3,400-4,200kWh/yr for a south-facing ${REFERENCE_SYSTEM_SIZE_KWP}kWp system, England-calibrated. No postcode given, so no regional adjustment applied.${roofAreaSizing ? ` Scaled to your roof-area-derived ${systemSizeKwp}kWp system size.` : ''}` },
-      selfConsumptionRate: { value: selfConsumptionRate, tier: 'Prototype simplification', note: 'Modeled from occupancy as a rough proxy, not an independently researched figure' },
+      selfConsumptionRate: { value: Math.round(selfConsumptionRate * 1000) / 1000, tier: 'Inference — DESNZ Home Energy Model formula, applied annually rather than per-timestep', note: `Computed from the ratio of your annual generation (${generation}kWh) to your annual consumption (${annualConsumptionKwh}kWh) via DESNZ's own Home Energy Model self-consumption formula (HEM-TP-18), not from occupancy pattern directly.` },
     },
   };
 
@@ -674,6 +685,14 @@ function calculateRooftopViability({ orientation, occupancy, annualConsumptionKw
     title: 'In a conservation area? Extra rules may apply',
     note: 'Panels visible from a highway in a conservation area may need full planning permission even within the Permitted Development ceiling; rear- or side-facing panels not visible from a highway are more often still exempt. Not checked by this tool.',
   });
+  if (occupancy === 'usuallyOut') {
+    flags.push({
+      id: 'occupancyMayLowerRealSelfConsumption',
+      tier: 'Inference',
+      title: "Usually out during the day? Your real self-consumption may be lower than this",
+      note: "This result's self-consumption figure comes from your annual generation-to-consumption ratio (DESNZ's Home Energy Model formula), not from your occupancy pattern directly. If you're usually out on weekdays, your actual consumption is more likely concentrated outside peak solar hours, which would make your real self-consumption lower than this estimate.",
+    });
+  }
   result.flags = flags;
 
   return result;

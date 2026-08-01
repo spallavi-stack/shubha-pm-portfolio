@@ -12,15 +12,24 @@ function printResult(label, result) {
   console.log(JSON.stringify(result, null, 2));
 }
 
-// Rooftop, south-facing, occupier usually home, consumption high enough not
-// to cap self-consumption. Expect: payback in the researched 6-14yr range.
+// Rooftop, south-facing, consumption high enough not to cap self-consumption.
+// Self-consumption now comes from DESNZ HEM's demand-ratio formula
+// (generation/consumption), not occupancy — see selfConsumptionFactorFromDemandRatio's
+// sourcing note in calculator.js. Expect: payback in the researched 6-14yr range.
 printResult(
   'Rooftop — south-facing, usually home, 4,000kWh/yr household use',
   calculateRooftopViability({ orientation: 'southFacing', occupancy: 'usuallyHome', annualConsumptionKwh: 4000 })
 );
 
-// Rooftop, south-facing, occupier usually out (lower self-consumption, more
-// exported at the lower SEG rate). Expect: longer payback than the above.
+// Same generation/consumption, occupancy 'usuallyOut' instead of 'usuallyHome'.
+// occupancy no longer changes any number in the result (self-consumption is
+// demand-ratio-driven now, corrected 1 Aug 2026 — the old occupancy binary
+// couldn't reflect e.g. an EV/heat pump timed into daylight hours changing
+// real self-consumption at a fixed occupancy pattern). Expect: numerically
+// IDENTICAL to the 'usuallyHome' case above, but with an extra
+// "occupancyMayLowerRealSelfConsumption" flag this one doesn't get, since an
+// annual-average formula can't see whether a usually-out household's
+// consumption clusters outside solar hours.
 printResult(
   'Rooftop — south-facing, usually out, 4,000kWh/yr household use',
   calculateRooftopViability({ orientation: 'southFacing', occupancy: 'usuallyOut', annualConsumptionKwh: 4000 })
@@ -33,7 +42,7 @@ printResult(
 );
 
 // Rooftop, low household consumption caps self-consumption below the
-// occupancy-implied rate — checks the Math.min() ceiling actually engages.
+// demand-ratio-computed rate — checks the Math.min() ceiling actually engages.
 printResult(
   'Rooftop — south-facing, usually home, but only 1,000kWh/yr household use (low-consumption household)',
   calculateRooftopViability({ orientation: 'southFacing', occupancy: 'usuallyHome', annualConsumptionKwh: 1000 })
@@ -330,7 +339,7 @@ printResult(
   console.log('\nSanity checks:');
   console.log('- Rooftop south-facing/usually-home payback (default SEG rate) should now be longer than before the tariff-table update, since the no-switch-needed baseline dropped from 15p to 3.01p.');
   console.log('- Rooftop north-facing should score red (worst case).');
-  console.log('- Low-consumption household result should show selfConsumedKwh capped near annualConsumptionKwh, not the full occupancy-implied share.');
+  console.log('- Low-consumption household result should show selfConsumedKwh capped near annualConsumptionKwh, not the full demand-ratio-computed share.');
   console.log('- Plug-in payback should land near 3-4yr, consistent with (though not independently verifying) the one weak source that claims that figure.');
   console.log('- The user-provided-rates case should show a SHORTER payback than the same scenario with defaults (higher electricity price benefits self-consumption more than the lower SEG rate costs on export, for this self-consumption-heavy household), and assumptions should mark both rates "User-provided" not "Fact (default)"/"Assumption (default)".');
   console.log('- The named-tariff case should show a materially shorter payback than the default-rate case (12p vs 3.01p on the exported portion), and the assumptions note should name "Octopus Energy — Outgoing Octopus" rather than saying "Your own stated rate".');

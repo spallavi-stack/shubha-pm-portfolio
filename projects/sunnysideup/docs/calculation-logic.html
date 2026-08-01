@@ -495,6 +495,7 @@ both are filled in. Either resolution path also carries the picked row's eligibi
 </table>
 <h3>4e. Core formula</h3>
 <pre class="mermaid">flowchart TD
+  F0["demandRatio =<br/>generation /<br/>consumption"]
   F1["selfConsumed =<br/>min(generation x<br/>rate, consumption)"]
   F2["exported =<br/>generation −<br/>selfConsumed"]
   F3["savings =<br/>(selfConsumed x price<br/>+ exported x SEG) / 100"]
@@ -505,6 +506,7 @@ both are filled in. Either resolution path also carries the picked row's eligibi
   Amber(["amber"])
   Red(["red"])
 
+  F0 --> F1
   F1 --> F2
   F2 --> F3
   F3 --> F4
@@ -514,7 +516,8 @@ both are filled in. Either resolution path also carries the picked row's eligibi
   F6 -->|Yes| Amber
   F6 -->|No| Red
 </pre>
-<p><strong>Key constants</strong> (<code>calculator.js</code> L335-345):</p>
+<p><code>rate</code> above (the self-consumption factor feeding F1) is no longer an occupancy lookup — see the correction note below.</p>
+<p><strong>Key constants</strong> (<code>calculator.js</code>, self-consumption formula + payback thresholds):</p>
 <table>
 <thead>
 <tr>
@@ -526,10 +529,10 @@ both are filled in. Either resolution path also carries the picked row's eligibi
 </thead>
 <tbody>
 <tr>
-<td><code>SELF_CONSUMPTION_RATE</code></td>
-<td>usually-home 0.55 / usually-out 0.30</td>
-<td>Prototype simplification, not independently researched</td>
-<td>Modeled from occupancy as a rough two-tier proxy. <code>grounding-research.md</code> names self-consumption rate as a real sensitivity factor but doesn't supply a researched percentage</td>
+<td><code>SELF_CONSUMPTION_DEMAND_RATIO_COEFFICIENT</code> / <code>_EXPONENT</code></td>
+<td>0.6748 / -0.703</td>
+<td>Fact (formula), Inference (annual application)</td>
+<td>DESNZ Home Energy Model's own self-consumption formula (<code>HEM-TP-18</code>, gov.uk, fetched and extracted directly 1 Aug 2026): <code>factor = min(0.6748 x demandRatio^-0.703, 1)</code>, where <code>demandRatio = generation / consumption</code>. Derived from field data across a small UK dwelling sample, cross-checked against other datasets in HEM's own literature review. HEM applies this per timestep (sub-hourly); this calculator applies it once to the annual demand ratio, a coarser approximation that can't distinguish daytime-concentrated consumption from evening-concentrated consumption at the same annual total</td>
 </tr>
 <tr>
 <td><code>ROOFTOP_PAYBACK_THRESHOLDS</code></td>
@@ -539,6 +542,7 @@ both are filled in. Either resolution path also carries the picked row's eligibi
 </tr>
 </tbody>
 </table>
+<blockquote>Corrected 1 Aug 2026: this table previously included <code>SELF_CONSUMPTION_RATE</code>, a hardcoded two-tier occupancy lookup (usually-home 0.55 / usually-out 0.30), tagged "Prototype simplification, not independently researched." That mapping had a real gap: it couldn't reflect that a household with an EV or heat pump timed to run during daylight hours self-consumes more than one without, at the same occupancy pattern, since <code>annualConsumptionKwh</code> (which already includes heat pump/EV additions, §4a) never fed into the self-consumption number at all. The demand-ratio formula above fixes this mechanically: a higher annual consumption lowers the demand ratio, which the formula translates into a higher self-consumption factor, without inventing a new unresearched per-appliance modifier. <code>occupancy</code> is no longer used to compute the number itself; see §5's new <code>occupancyMayLowerRealSelfConsumption</code> flag for how it's still used, as a caveat rather than a formula input.</blockquote>
 <hr />
 <h2>5. What comes back alongside the number</h2>
 <p>Every result carries an <code>assumptions</code> object naming each input's resolved value, confidence
@@ -600,6 +604,12 @@ Permitted Development, deliberately not adding new inputs just to gate these):</
 <td>Inference</td>
 <td>This result uses the low default SEG rate; a high-export household's result moves more than most when a real (much higher) tariff is picked</td>
 </tr>
+<tr>
+<td><code>occupancyMayLowerRealSelfConsumption</code></td>
+<td><code>occupancy</code> is <code>usuallyOut</code></td>
+<td>Inference</td>
+<td>Added 1 Aug 2026, alongside the self-consumption formula fix above. The formula is annual-average and can't see when within the day consumption happens, only its total relative to generation. A usually-out household's consumption is more likely concentrated outside midday solar hours than the annual total alone suggests, which would make real self-consumption lower than the formula's estimate. Not shown for <code>usuallyHome</code>, since there's no comparably clear directional bias to flag for that case</td>
+</tr>
 </tbody>
 </table>
 <p>Rooftop results additionally carry, when applicable: <code>postcodeLookup</code>, <code>openMeteoLookup</code>,
@@ -616,8 +626,16 @@ the two.</p>
 <p>Pulled from <code>calculator.js</code>'s own comments, not new critique. Worth having in one place for
 the next review pass to weigh in on:</p>
 <ul>
-<li><strong>Self-consumption rate</strong> is a rough two-tier occupancy proxy (0.55 / 0.30), not an
-  independently researched behavioral figure.</li>
+<li><strong>Self-consumption rate</strong> (corrected 1 Aug 2026) now comes from DESNZ's own Home
+  Energy Model formula rather than a hardcoded occupancy proxy, but is still applied annually
+  rather than the per-timestep basis the formula was designed for — it can't distinguish
+  daytime-concentrated consumption from evening-concentrated consumption at the same annual
+  total. Flagged to the user via <code>occupancyMayLowerRealSelfConsumption</code> for
+  <code>usuallyOut</code> households specifically.</li>
+<li><strong>Plug-in's self-consumption is still assumed 100%</strong> (see §3): the fix above only
+  applies to rooftop. Plug-in kits have no export mechanism modeled at all yet, so an unoccupied
+  home with a midday generation spike is still credited with the full amount as if
+  self-consumed — a real gap, not yet addressed.</li>
 <li><strong>Plug-in generation and kit cost</strong> are the weakest-sourced figures in the calculator. No
   government, MCS, or established consumer-body source for either.</li>
 <li><strong>Plug-in orientation multiplier</strong> stacks one Assumption on another: it borrows rooftop's

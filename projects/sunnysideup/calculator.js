@@ -339,14 +339,55 @@ function pluginOrientationMultiplier(orientation) {
   return ROOFTOP_ANNUAL_GENERATION_KWH[orientation] / ROOFTOP_ANNUAL_GENERATION_KWH.southFacing;
 }
 
-// Prototype-only simplification, not independently researched: self-consumption
-// rate modeled from occupancy as a rough two-tier proxy. grounding-research.md's
-// Payback period section names self-consumption rate as a real sensitivity
-// factor but does not supply a specific researched percentage.
-const SELF_CONSUMPTION_RATE = {
-  usuallyHome: 0.55,
-  usuallyOut: 0.30,
-};
+// CORRECTED 1 Aug 2026: this file previously modeled self-consumption as a
+// hardcoded two-tier occupancy proxy (usuallyHome 0.55 / usuallyOut 0.30),
+// with no basis beyond "home vs out" and no way to reflect that a household
+// with, say, an EV or heat pump timed to run during daylight hours would
+// self-consume a materially higher share than one without, at the same
+// occupancy pattern. Replaced with a formula from DESNZ's own Home Energy
+// Model technical documentation (HEM-TP-18 "PV generation and
+// self-consumption", gov.uk, fetched and pdftotext-extracted directly 1 Aug
+// 2026): [Fact, primary UK government source] HEM computes an instantaneous
+// self-consumption factor as a function of the "demand ratio" (PV energy
+// supply ÷ electricity demand) in each timestep: factor = min(0.6748 x
+// demandRatio^-0.703, 1), derived from field data across a small sample of
+// UK dwellings (hourly data from 4, monthly data from 15, used to check the
+// formula against typical generation/demand profiles), cross-checked by HEM's
+// own literature review against similar relationships in other datasets.
+// [Inference, this calculator's own adaptation] HEM applies this formula per
+// timestep (sub-hourly); this calculator only has annual totals, so it's
+// applied once to the annual demand ratio as a coarser approximation — this
+// loses the within-day timing HEM's own per-timestep design captures (e.g.
+// a household whose high annual consumption is mostly evening-only vs one
+// whose EV/heat pump load is scheduled into daylight hours would get the
+// same result here, despite very different real self-consumption), which is
+// exactly why the flag below still surfaces occupancy pattern as a caveat
+// rather than treating this number as final. The real advantage over the
+// old occupancy binary: annual consumption already reflects heat pump/EV
+// additions (estimateAnnualConsumptionKwh above), so a household with either
+// now gets a demand-ratio-driven, not occupancy-driven, self-consumption
+// estimate — mechanically capturing what the occupancy proxy could not,
+// without inventing a new unresearched per-appliance modifier.
+const SELF_CONSUMPTION_DEMAND_RATIO_COEFFICIENT = 0.6748;
+const SELF_CONSUMPTION_DEMAND_RATIO_EXPONENT = -0.703;
+
+/**
+ * DESNZ HEM-TP-18's self-consumption factor formula, applied to an annual
+ * demand ratio as a single-figure approximation of what HEM computes per
+ * timestep. See the constants above for the full sourcing note.
+ * @param {number} generationKwh
+ * @param {number} consumptionKwh
+ */
+function selfConsumptionFactorFromDemandRatio(generationKwh, consumptionKwh) {
+  if (generationKwh <= 0 || consumptionKwh <= 0) {
+    return 0;
+  }
+  const demandRatio = generationKwh / consumptionKwh;
+  const rawFactor = SELF_CONSUMPTION_DEMAND_RATIO_COEFFICIENT * Math.pow(demandRatio, SELF_CONSUMPTION_DEMAND_RATIO_EXPONENT);
+  // HEM's own stated limit: the factor should never exceed 1/demandRatio,
+  // otherwise self-consumption could be predicted higher than total demand.
+  return Math.min(rawFactor, 1, 1 / demandRatio);
+}
 
 // Payback thresholds for green/amber/red. Not a cited figure — a design
 // judgment loosely anchored to grounding-research.md's own reported payback
@@ -532,7 +573,7 @@ function estimateAnnualConsumptionKwh({ householdSize, hasHeatPump, hasEv, evCou
 /**
  * @param {Object} input
  * @param {'southFacing'|'eastWestFacing'|'northFacing'} input.orientation
- * @param {'usuallyHome'|'usuallyOut'} input.occupancy
+ * @param {'usuallyHome'|'usuallyOut'} input.occupancy - no longer drives the self-consumption number itself (see selfConsumptionFactorFromDemandRatio's sourcing note); used only to decide whether the lowConfidenceOccupancyMismatch flag below is worth surfacing
  * @param {number} input.annualConsumptionKwh - household's own annual electricity use
  * @param {number} [input.electricityPricePencePerKwh] - the user's own known rate; takes precedence over electricityPriceOverride and the static default
  * @param {Object} [input.electricityPriceOverride] - a specific { value, tier, note } to use for the electricity price outright (e.g. a live-fetched current regional rate), used only if electricityPricePencePerKwh is omitted; falls back to the static Ofgem default if this is also omitted
@@ -571,7 +612,7 @@ function calculateRooftopViability({
   const generation = Math.round(preRoofAreaGeneration * roofAreaMultiplier);
   const systemCostGbp = roofAreaSizing ? roofAreaSizing.systemCostGbp : ROOFTOP_SYSTEM_COST_GBP;
 
-  const selfConsumptionRate = SELF_CONSUMPTION_RATE[occupancy];
+  const selfConsumptionRate = selfConsumptionFactorFromDemandRatio(generation, annualConsumptionKwh);
   const selfConsumedKwh = Math.min(generation * selfConsumptionRate, annualConsumptionKwh);
   const exportedKwh = generation - selfConsumedKwh;
 
@@ -634,7 +675,11 @@ function calculateRooftopViability({
               tier: orientation === 'southFacing' ? 'Assumption' : 'Prototype estimate, not independently researched',
               note: `Researched range is 3,400-4,200kWh/yr for a south-facing ${REFERENCE_SYSTEM_SIZE_KWP}kWp system, England-calibrated. No postcode given, so no regional adjustment applied.${roofAreaSizing ? ` Scaled to your roof-area-derived ${systemSizeKwp}kWp system size.` : ''}`,
             },
-      selfConsumptionRate: { value: selfConsumptionRate, tier: 'Prototype simplification', note: 'Modeled from occupancy as a rough proxy, not an independently researched figure' },
+      selfConsumptionRate: {
+        value: Math.round(selfConsumptionRate * 1000) / 1000,
+        tier: 'Inference — DESNZ Home Energy Model formula, applied annually rather than per-timestep',
+        note: `Computed from the ratio of your annual generation (${generation}kWh) to your annual consumption (${annualConsumptionKwh}kWh) via DESNZ's own Home Energy Model self-consumption formula (HEM-TP-18), not from occupancy pattern directly. Applying a formula designed for sub-hourly timesteps to annual totals is a coarser approximation — it can't distinguish a household whose consumption is concentrated in daylight hours (higher real self-consumption) from one whose same annual total is mostly evening (lower real self-consumption).`,
+      },
     },
   };
 
@@ -702,6 +747,25 @@ function calculateRooftopViability({
       tier: 'Inference',
       title: 'High-export household: this result is unusually sensitive to your SEG rate',
       note: `You're projected to export ${Math.round(exportShareOfGeneration * 100)}% of what you generate, more than most households. This result uses the no-switch-needed baseline SEG rate (${SEG_RATE_PENCE_PER_KWH_DEFAULT}p/kWh) since no specific tariff was picked, but real SEG rates researched here range up to ${topSegRate}p/kWh. For a high-export household like this one, picking your actual tariff will move this result more than it would for most, not just the import price. Use the SEG tariff picker for an accurate result.`,
+    });
+  }
+
+  // The self-consumption formula above is annual-average, so it can't see
+  // *when* within the day a household's consumption happens — only its
+  // total relative to generation. Occupancy pattern is a reasonable signal
+  // for whether that blind spot cuts in a particular direction: a household
+  // that's usually out on weekdays is more likely to have its consumption
+  // concentrated outside midday solar hours than the annual total alone
+  // would suggest, which would make real self-consumption lower than this
+  // result's formula-driven estimate, not higher. Not shown for
+  // 'usuallyHome' households, since there's no comparably clear directional
+  // case that the annual approximation is biased for them specifically.
+  if (occupancy === 'usuallyOut') {
+    flags.push({
+      id: 'occupancyMayLowerRealSelfConsumption',
+      tier: 'Inference',
+      title: "Usually out during the day? Your real self-consumption may be lower than this",
+      note: "This result's self-consumption figure comes from your annual generation-to-consumption ratio (DESNZ's Home Energy Model formula), not from your occupancy pattern directly — it assumes your consumption is reasonably well spread across the day. If you're usually out on weekdays, your actual consumption is more likely concentrated in the morning/evening, outside peak solar hours, which would make your real self-consumption (and savings) lower than this estimate. A battery or a smart diverter for a timed load (immersion heater, EV charger) can close some of that gap.",
     });
   }
 
@@ -1232,6 +1296,7 @@ const SunnySideUpCalculator = {
   findSegTariffsBySupplier,
   estimateAnnualConsumptionKwh,
   estimateSystemSizeFromRoofArea,
+  selfConsumptionFactorFromDemandRatio,
   constants: {
     ELECTRICITY_PRICE_PENCE_PER_KWH_DEFAULT,
     SEG_RATE_PENCE_PER_KWH_DEFAULT,
@@ -1252,7 +1317,8 @@ const SunnySideUpCalculator = {
     EV_ANNUAL_HOME_CHARGING_KWH_ESTIMATE,
     PLUGIN_KIT_COST_GBP,
     PLUGIN_ANNUAL_GENERATION_KWH,
-    SELF_CONSUMPTION_RATE,
+    SELF_CONSUMPTION_DEMAND_RATIO_COEFFICIENT,
+    SELF_CONSUMPTION_DEMAND_RATIO_EXPONENT,
     ROOFTOP_PAYBACK_THRESHOLDS,
     PLUGIN_PAYBACK_THRESHOLDS,
     PLUGIN_LEGAL_STATUS,

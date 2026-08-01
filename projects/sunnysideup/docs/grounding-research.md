@@ -268,6 +268,29 @@ This research is now live in `calculator.js`'s `estimateAnnualConsumptionKwh()`:
 
 **[Assumption — no official dataset found]** No primary UK government, MCS, or established-body payback study was located. Secondary sources converge loosely on 8–13 years for panels alone, generally agreeing that adding a battery purely for arbitrage/self-consumption *lengthens* rather than shortens payback — one source states a battery's own payback often exceeds its working lifespan. Present as a wide range (roughly 6–14 years across sources) with explicit sensitivity to self-consumption rate, occupancy, export tariff, and region — not a single confident number.
 
+### Self-consumption rate (added 1 Aug 2026)
+
+This section previously named self-consumption rate as a real payback sensitivity factor (above) without supplying a specific researched percentage — the calculator filled that gap with a hardcoded, unsourced two-tier occupancy guess (0.55 home / 0.30 out). Checked directly rather than left as a standing gap, prompted by a review of the calculator's self-consumption modeling.
+
+**[Fact — direct primary-source fetch and `pdftotext` extraction, 1 Aug 2026]** DESNZ's Home Energy Model technical documentation (`HEM-TP-18: PV generation and self-consumption`, gov.uk, fetched and extracted directly) states a self-consumption factor formula:
+
+```
+demand ratio = PV energy supply / electricity demand (per timestep)
+self-consumption factor = min(0.6748 × demand ratio^-0.703, 1)
+```
+
+The document's own further limit: the factor should not exceed 1/demand ratio, so HEM would not predict more demand met by local generation than total demand exists.
+
+**[Fact, same source]** The formula's coefficients were derived from a small field-data sample of UK dwellings (hourly data from 4 dwellings used to fit the formula, monthly data from 15 more used to check it against typical generation/demand profiles), all of which had gas boilers (footnote in the source document: "e.g. where the primary water heating system is a gas boiler or a heat pump" suggests HEM applies the same formula to heat-pump homes too, though the fitting data itself was gas-boiler-only). HEM's own literature review found similar relationships in other datasets, a real cross-check, not a single-source formula.
+
+**[Inference]** This formula operates on a demand ratio (generation ÷ consumption) with no occupancy term at all — occupancy pattern's effect is presumably folded into the field data's own demand profiles, not modeled as a separate variable. This means annual consumption (which the calculator already estimates from household size, heat pump, and EV ownership — see §Household electricity consumption) drives self-consumption directly: a household with a heat pump or EV has a lower demand ratio than one without, at the same generation, and the formula predicts a correspondingly higher self-consumption factor. This is a materially better mechanism than the old occupancy binary, which had no way to reflect heat pump/EV ownership on self-consumption at all, only on total consumption.
+
+**[Assumption — this calculator's own adaptation, not sourced]** HEM's formula is designed for sub-hourly timesteps; this calculator only has annual totals, and applies the formula once to the annual demand ratio as a single-figure approximation. This loses the within-day timing HEM's per-timestep design was built to capture — two households with the same annual generation and consumption but different intra-day consumption timing (e.g. EV charged at 2pm vs. midnight) would get the same predicted self-consumption here, despite likely having different real self-consumption. Not a documented HEM use case; this calculator's own simplification, flagged as such in `calculator.js`'s output (`occupancyMayLowerRealSelfConsumption` flag for occupancy `usuallyOut`, since a household that's out on weekdays is more likely to have consumption concentrated outside solar hours than the annual total alone would suggest).
+
+#### Implementation note (1 Aug 2026)
+
+Replaced `calculator.js`'s `SELF_CONSUMPTION_RATE` occupancy lookup (usuallyHome 0.55 / usuallyOut 0.30, tagged "Prototype simplification, not independently researched") with `selfConsumptionFactorFromDemandRatio()`, implementing the formula above. `occupancy` is retained as a UI input but no longer feeds the self-consumption number directly; it now only decides whether the `occupancyMayLowerRealSelfConsumption` result flag fires.
+
 ### Plug-in/balcony solar cost and generation
 
 **[Assumption — the weakest data in this document, as anticipated in scope]** An 800W plug-in kit is reported to cost roughly £400–£900, generating an estimated 640–900kWh/year, translating to roughly £75–£200/year in savings with a claimed 3–4 year payback in one source. None of these figures trace to a government, MCS, or established consumer body — they come from newly-created, narrowly-focused sites that appear to exist specifically to cover this just-legalized category. Present as clearly-labeled placeholder estimates, not sourced facts.

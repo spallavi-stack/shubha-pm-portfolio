@@ -313,6 +313,7 @@ both are filled in. Either resolution path also carries the picked row's eligibi
 
 ```mermaid
 flowchart TD
+  F0["demandRatio =<br/>generation /<br/>consumption"]
   F1["selfConsumed =<br/>min(generation x<br/>rate, consumption)"]
   F2["exported =<br/>generation −<br/>selfConsumed"]
   F3["savings =<br/>(selfConsumed x price<br/>+ exported x SEG) / 100"]
@@ -323,6 +324,7 @@ flowchart TD
   Amber(["amber"])
   Red(["red"])
 
+  F0 --> F1
   F1 --> F2
   F2 --> F3
   F3 --> F4
@@ -333,12 +335,28 @@ flowchart TD
   F6 -->|No| Red
 ```
 
-**Key constants** (`calculator.js` L335-345):
+`rate` above (the self-consumption factor feeding F1) is no longer an occupancy lookup — see the
+correction note and constants table below.
+
+**Key constants** (`calculator.js`, self-consumption formula + payback thresholds):
 
 | Constant | Value | Tier | Note |
 |---|---|---|---|
-| `SELF_CONSUMPTION_RATE` | usually-home 0.55 / usually-out 0.30 | Prototype simplification, not independently researched | Modeled from occupancy as a rough two-tier proxy. `grounding-research.md` names self-consumption rate as a real sensitivity factor but doesn't supply a researched percentage |
+| `SELF_CONSUMPTION_DEMAND_RATIO_COEFFICIENT` / `_EXPONENT` | 0.6748 / -0.703 | Fact (formula), Inference (annual application) | DESNZ Home Energy Model's own self-consumption formula (`HEM-TP-18`, gov.uk, fetched and extracted directly 1 Aug 2026): `factor = min(0.6748 x demandRatio^-0.703, 1)`, where `demandRatio = generation / consumption`. Derived from field data across a small UK dwelling sample, cross-checked against other datasets in HEM's own literature review. HEM applies this per timestep (sub-hourly); this calculator applies it once to the annual demand ratio, a coarser approximation that can't distinguish daytime-concentrated consumption from evening-concentrated consumption at the same annual total |
 | `ROOFTOP_PAYBACK_THRESHOLDS` | green ≤8yr, amber ≤13yr | Design judgment, not cited | Loosely anchored to `grounding-research.md`'s reported "roughly 6-14 years across sources" range, not a regulator or industry-body standard |
+
+Corrected 1 Aug 2026: this row previously read `SELF_CONSUMPTION_RATE`, a hardcoded two-tier
+occupancy lookup (usually-home 0.55 / usually-out 0.30), tagged "Prototype simplification, not
+independently researched." That mapping had a real gap the "self-consumption/occupancy" critique
+named directly: it couldn't reflect that a household with an EV or heat pump timed to run during
+daylight hours self-consumes more than one without, at the *same* occupancy pattern, since
+`annualConsumptionKwh` (which already includes heat pump/EV additions via
+`estimateAnnualConsumptionKwh`, §4a) never fed into the self-consumption number at all. The
+demand-ratio formula above fixes this mechanically: a higher annual consumption (from a heat pump
+or EV) lowers the demand ratio, which the formula translates into a higher self-consumption
+factor, without inventing a new unresearched per-appliance modifier. `occupancy` is no longer used
+to compute the number itself; see §5's new `occupancyMayLowerRealSelfConsumption` flag for how it's
+still used, as a caveat rather than an input to the formula.
 
 ---
 
@@ -367,6 +385,7 @@ Permitted Development, deliberately not adding new inputs just to gate these):
 | `conservationArea` | Always | Inference | Street-visible panels in a conservation area may need planning permission even if the physical criteria are otherwise met |
 | `regulatoryRegime` | Postcode resolves to Scotland or Wales | Fact | That country's own permitted-development/building-regulation regime hasn't been researched here |
 | `highExportSensitivity` | No user-picked SEG tariff, and exported share of generation exceeds 50% | Inference | This result uses the low default SEG rate; a high-export household's result moves more than most when a real (much higher) tariff is picked |
+| `occupancyMayLowerRealSelfConsumption` | `occupancy` is `usuallyOut` | Inference | Added 1 Aug 2026, alongside the self-consumption formula fix above. The formula is annual-average and can't see *when* within the day consumption happens — only its total relative to generation. A usually-out household's consumption is more likely concentrated outside midday solar hours than the annual total alone suggests, which would make real self-consumption lower than the formula's estimate. Not shown for `usuallyHome`, since there's no comparably clear directional bias to flag for that case |
 
 Rooftop results additionally carry, when applicable: `postcodeLookup`, `openMeteoLookup`,
 `electricityPriceLookup` (each `{ ok, error? }`, so a failed live lookup is visible rather than
@@ -386,8 +405,15 @@ the two.
 Pulled from `calculator.js`'s own comments, not new critique. Worth having in one place for
 the next review pass to weigh in on:
 
-- **Self-consumption rate** is a rough two-tier occupancy proxy (0.55 / 0.30), not an
-  independently researched behavioral figure.
+- **Self-consumption rate** (corrected 1 Aug 2026) now comes from DESNZ's own Home Energy Model
+  formula rather than a hardcoded occupancy proxy, but is still applied annually rather than the
+  per-timestep basis the formula was designed for — it can't distinguish daytime-concentrated
+  consumption from evening-concentrated consumption at the same annual total. Flagged to the user
+  via `occupancyMayLowerRealSelfConsumption` for `usuallyOut` households specifically.
+- **Plug-in's self-consumption is still assumed 100%** (see §3): the fix above only applies to
+  rooftop. Plug-in kits have no export mechanism modeled at all yet, so an unoccupied home with a
+  midday generation spike is still credited with the full amount as if self-consumed — a real gap,
+  not yet addressed.
 - **Plug-in generation and kit cost** are the weakest-sourced figures in the calculator. No
   government, MCS, or established consumer-body source for either.
 - **Plug-in orientation multiplier** stacks one Assumption on another: it borrows rooftop's
