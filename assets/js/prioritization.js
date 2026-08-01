@@ -94,19 +94,19 @@
         '<td colspan="9">' +
           '<div class="rice-drice-panel">' +
             '<div class="rice-drice-field rice-drice-field-wide">' +
-              '<label>Hypothesis</label>' +
+              '<label>Hypothesis<button type="button" class="rice-info" data-tooltip="Your best guess at cause and effect: if we build X, we believe Y will happen, because Z. Keeps the estimate honest about what&rsquo;s assumed vs. known." aria-label="What is Hypothesis?">i</button></label>' +
               '<input type="text" class="rice-drice-input" data-drice-field="hypothesis" placeholder="If we build X, we believe Y will happen because Z" value="' + escapeAttr(data.hypothesis) + '">' +
             '</div>' +
             '<div class="rice-drice-field">' +
-              '<label>$ Impact estimate (annual)</label>' +
+              '<label>$ Impact estimate (annual)<button type="button" class="rice-info" data-tooltip="Your best guess at how much this feature is worth in dollars per year, if the hypothesis above holds true." aria-label="What is dollar impact estimate?">i</button></label>' +
               '<input type="number" class="rice-drice-input" data-drice-field="dollarImpact" min="0" step="1000" value="' + data.dollarImpact + '">' +
             '</div>' +
             '<div class="rice-drice-field">' +
-              '<label>Engineering estimate (days)</label>' +
+              '<label>Engineering estimate (days)<button type="button" class="rice-info" data-tooltip="How many actual engineering days you think this will take to build." aria-label="What is engineering estimate?">i</button></label>' +
               '<input type="number" class="rice-drice-input" data-drice-field="engDays" min="0.5" step="0.5" value="' + data.engDays + '">' +
             '</div>' +
             '<div class="rice-drice-result">' +
-              '<span class="rice-drice-result-label">ROI</span>' +
+              '<span class="rice-drice-result-label">ROI<button type="button" class="rice-info" data-tooltip="The payoff per week of engineering time: $ Impact Estimate &divide; (Engineering Estimate &divide; 5 workdays). Higher means more value for the same effort." aria-label="What is ROI?">i</button></span>' +
               '<span class="rice-drice-result-value" data-drice-roi>&mdash;</span>' +
             '</div>' +
           '</div>' +
@@ -163,15 +163,16 @@
     }
   }
 
-  // Shared tooltip bubble for the column-header info icons. Appended to
-  // <body> and positioned with getBoundingClientRect() on demand, so it
-  // escapes the RICE table's horizontally-scrolling wrapper instead of
-  // being clipped by it. Hover/focus shows it (desktop); a tap toggles
-  // it open and outside-click/Escape closes it (touch).
+  // Shared tooltip bubble for the info icons (column headers + the DRICE
+  // stress-test panel fields, including rows added later via "+ Add
+  // feature" or a stage switch). Appended to <body> and positioned with
+  // getBoundingClientRect() on demand, so it escapes the RICE table's
+  // horizontally-scrolling wrapper instead of being clipped by it. Wired
+  // via delegation on `root` (not per-button) so it keeps working for
+  // icons that don't exist yet at init time. Hover/focus shows it
+  // (desktop); a tap toggles it open and outside-click/Escape closes it
+  // (touch).
   function initInfoTooltips(root){
-    var buttons = Array.prototype.slice.call(root.querySelectorAll('.rice-info'));
-    if(!buttons.length) return;
-
     var bubble = document.createElement('div');
     bubble.className = 'rice-tooltip-bubble';
     bubble.setAttribute('role', 'tooltip');
@@ -199,22 +200,34 @@
       openBtn = null;
     }
 
-    buttons.forEach(function(btn){
-      btn.addEventListener('mouseenter', function(){ show(btn); });
-      btn.addEventListener('mouseleave', function(){ if(btn !== openBtn) hide(); });
-      btn.addEventListener('focus', function(){ show(btn); });
-      btn.addEventListener('blur', function(){ if(btn !== openBtn) hide(); });
-      btn.addEventListener('click', function(e){
-        e.stopPropagation();
-        if(openBtn === btn){
-          hide();
-        } else {
-          if(openBtn) openBtn.classList.remove('is-open');
-          openBtn = btn;
-          btn.classList.add('is-open');
-          show(btn);
-        }
-      });
+    root.addEventListener('mouseover', function(e){
+      var btn = e.target.closest('.rice-info');
+      if(btn) show(btn);
+    });
+    root.addEventListener('mouseout', function(e){
+      var btn = e.target.closest('.rice-info');
+      if(btn && btn !== openBtn) hide();
+    });
+    root.addEventListener('focusin', function(e){
+      var btn = e.target.closest('.rice-info');
+      if(btn) show(btn);
+    });
+    root.addEventListener('focusout', function(e){
+      var btn = e.target.closest('.rice-info');
+      if(btn && btn !== openBtn) hide();
+    });
+    root.addEventListener('click', function(e){
+      var btn = e.target.closest('.rice-info');
+      if(!btn) return;
+      e.stopPropagation();
+      if(openBtn === btn){
+        hide();
+      } else {
+        if(openBtn) openBtn.classList.remove('is-open');
+        openBtn = btn;
+        btn.classList.add('is-open');
+        show(btn);
+      }
     });
 
     document.addEventListener('click', function(){ if(openBtn) hide(); });
