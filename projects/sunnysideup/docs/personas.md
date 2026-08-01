@@ -1,4 +1,4 @@
-# SunnySideUp — Personas (v1, draft)
+# SunnySideUp - Personas (v1, draft)
 
 Grounded in `grounding-research.md`: UK solar sales practices and pricing opacity (CMA 2022 investigation, Which? cold-calling survey), the plug-in solar regulatory timeline (BS 7671 Amendment 4, SI 2026/848), the Renters' Rights Act 2025 finding, and the climate-concern/felt-ability-to-act gap.
 
@@ -8,7 +8,7 @@ Three personas rather than the two `scope.md` set as the minimum. `scope.md` exp
 
 ---
 
-## 1. Graham Whitfield — The Sales-Call Avoider
+## 1. Graham Whitfield - The Sales-Call Avoider
 **Age/gender:** 58, male · **Location:** Solihull, West Midlands · **Occupation:** Project manager (semi-retired, works part-time) · **Household:** Homeowner, married, empty-nester · **Income:** ~£52k (household)
 
 > "I don't want a salesman doing my sums for me before I've even worked out if this makes sense."
@@ -24,7 +24,7 @@ Three personas rather than the two `scope.md` set as the minimum. `scope.md` exp
 
 ---
 
-## 2. Denise Okafor — The Quote Skeptic
+## 2. Denise Okafor - The Quote Skeptic
 **Age/gender:** 47, female · **Location:** Reading, Berkshire · **Occupation:** HR manager · **Household:** Homeowner, married, two young children · **Income:** ~£68k (combined)
 
 > "Two companies, two numbers four thousand pounds apart, and neither one explains why."
@@ -40,7 +40,7 @@ Three personas rather than the two `scope.md` set as the minimum. `scope.md` exp
 
 ---
 
-## 3. Aisha Rahman — The Plug-In Fence-Sitter
+## 3. Aisha Rahman - The Plug-In Fence-Sitter
 **Age/gender:** 29, female · **Location:** Manchester (private rented flat) · **Occupation:** Graphic designer, hybrid · **Household:** Private renter, lives with a partner · **Income:** ~£31k
 
 > "Everyone online says I can just plug it in. No two of them agree on whether that's actually still true."

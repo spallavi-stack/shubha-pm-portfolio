@@ -1,8 +1,8 @@
-# SunnySideUp — Roadmap (v1)
+# SunnySideUp - Roadmap (v1)
 
 ## Prioritization framework: ICE
 
-Using ICE (Impact, Confidence, Ease) rather than RICE. Reach isn't meaningfully estimable yet since SunnySideUp has no real user base or institutional partner in place, so ICE fits a pre-launch, research-grounded prioritization better. Each scored 1–10; ICE score is the average of the three. Every score is justified against a specific persona JTBD, `grounding-research.md` finding, or `synthetic-interviews.md` theme, not a gut feeling.
+Using ICE (Impact, Confidence, Ease) rather than RICE. Reach isn't meaningfully estimable yet since SunnySideUp has no real user base or institutional partner in place, so ICE fits a pre-launch, research-grounded prioritization better. Each scored 1–10; ICE score is the average of the three. Every score is justified against a specific persona JTBD, `grounding-research.md` finding, or `synthetic-interviews.md` theme.
 
 **Legend:** Impact = how much this moves the needle on the core problem. Confidence = how sure we are, based on persona/interview evidence or grounding-research sourcing strength, that this is the right feature. Ease = technical/data feasibility given known constraints.
 
@@ -26,7 +26,7 @@ The plug-in calculator's Confidence score (6) is the lowest in Now on purpose, n
 
 ### Transparency panel and honest red results: what the interviews actually showed
 
-Graham and Denise gave closely related reasons for wanting to see the assumptions behind a number, Graham didn't want a black-box score, Denise wanted to see what's driving a price difference, and that shared want is what this panel is built for. Aisha's own Q5 answer names the same underlying trust mechanism, independence plus honesty about limits, but applied to a different, already-separately-listed capability: the plug-in calculator's explicit "this part's genuinely unclear" flag on the legal question, not a general calculation-assumptions panel. Both features exist because of the same interview-validated trust mechanism, which is why this panel has the highest ICE score in this roadmap alongside the honest-red-result feature below: it's the actual product differentiator the interviews validated, not a nice-to-have polish item.
+Graham and Denise gave closely related reasons for wanting to see the assumptions behind a number, Graham didn't want a black-box score, Denise wanted to see what's driving a price difference, and that shared want is what this panel is built for. Aisha's own Q5 answer names the same underlying trust mechanism, independence plus honesty about limits, but applied to a different, already-separately-listed capability: the plug-in calculator's explicit "this part's genuinely unclear" flag on the legal question, not a general calculation-assumptions panel. Both features exist because of the same interview-validated trust mechanism, which is why this panel has the highest ICE score in this roadmap alongside the honest-red-result feature below: it's the actual product differentiator the interviews validated.
 
 The honest-red-result feature depends on the same logic. `synthetic-interviews.md` found all three personas would accept an unfavorable result and change their behavior accordingly (Denise pushing back on an installer, Aisha dropping the plug-in idea) specifically *because* of the non-referral positioning, not as an assumed trait independent of it. A generic "not recommended" message doesn't carry that weight; the result needs to state the specific reason (poor payback given the household's numbers, a legal status that isn't in force yet, and so on).
 
@@ -51,8 +51,8 @@ Quote-document parsing scores well on Impact, since it would remove real frictio
 
 | Item | Rationale |
 |---|---|
-| Real data integration (smart-meter or bank-linked automatic consumption pull, replacing self-report) | No UK equivalent mechanism has been researched yet. Self-report is the realistic near-term input source; matches Flexy's own precedent of keeping real data integration as a separate future guide rather than an MVP/Next roadmap item. |
-| Scotland/Wales-specific guidance | `grounding-research.md` flags Scotland and Wales as having their own "broadly similar but distinct regimes," explicitly not researched in depth — a genuine, named deferral rather than an oversight. |
+| Real data integration (smart-meter or bank-linked automatic consumption pull, replacing self-report) | No UK equivalent mechanism has been researched yet. Self-report is the realistic near-term input source; real data integration is documented as a separate future guide rather than an MVP/Next roadmap item. |
+| Scotland/Wales-specific guidance | `grounding-research.md` flags Scotland and Wales as having their own "broadly similar but distinct regimes," explicitly not researched in depth, a genuine, named deferral rather than an oversight. |
 | Institutional/DNO/local-authority portal integrations | A distribution and partnership motion, already named in `product-brief.md`'s Go-to-market. Not a product capability to sequence on an engineering roadmap. |
 | Further legal research on individual tenancy-agreement consent | A research task, not a product feature. Tracked in `product-brief.md`'s Open Questions, not this roadmap. |
 

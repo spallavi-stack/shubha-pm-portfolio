@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Personas - Flexy | Shubha's PM Portfolio</title>
+<title>Personas, Flexy | Shubha's PM Portfolio</title>
 <style>
   :root{
     --teal:#C2790E; --teal-dark:#96600A; --navy:#1C1712;
@@ -33,6 +33,8 @@
   article th{font-size:11px;text-transform:uppercase;letter-spacing:0.04em;color:var(--ink-soft);}
   article code{background:var(--paper-soft);padding:1px 5px;border-radius:4px;font-size:13px;}
   article svg{max-width:100%;height:auto;display:block;margin:20px 0;border:1px solid var(--border);border-radius:12px;padding:10px;background:#fff;}
+  article pre.mermaid{background:none;border:none;padding:0;margin:20px 0;overflow-x:auto;text-align:center;}
+  article pre.mermaid svg{margin:0 auto;}
   .doc-footer{margin-top:40px;padding-top:20px;border-top:1px solid var(--border);font-size:13px;color:var(--ink-soft);}
   footer{background:var(--navy);color:#C9BBA0;padding:32px 0;text-align:center;font-size:13px;}
   footer a{color:#F6D9A0;}
@@ -76,7 +78,7 @@
 <strong>Pain point:</strong> She's often home doing laundry in the afternoon - exactly the window the proposed TOU rate charges the most for.
 <strong>Current behavior:</strong> Stuck on her current rate; found ComEd's rate-comparison PDF confusing and gave up trying to model it herself.
 <strong>Desired solution (her words):</strong> "Just show me, based on how I actually use electricity, whether I'd save money or lose money if I switched."
-<strong>Tech-savviness:</strong> Low-to-moderate - comfortable with basic apps, not a spreadsheet person.
+<strong>Tech-savviness:</strong> Low-to-moderate - comfortable with basic apps, no interest in building her own spreadsheet.
 <strong>JTBD:</strong> When ComEd's TOU rate becomes available, I want a clear before/after comparison based on my real usage, so I can decide without guessing.
 <strong>Flexy feature:</strong> Price graph (today/tomorrow/monthly/annual views) to compare her real usage against both rate structures.
 <strong>Grounding fact:</strong> ComEd's proposed TOU plan pairs a steep peak delivery charge with a significant overnight discount, per the 2026 filing before state regulators.</p>
@@ -122,5 +124,14 @@
 <footer>
   <div class="wrap">Flexy is a fictional case study built for portfolio purposes. Market research is real and cited; personas, interviews, and user data are synthetic.</div>
 </footer>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'neutral',
+    fontFamily: '-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif',
+    flowchart: { curve: 'basis' },
+  });
+</script>
 </body>
 </html>

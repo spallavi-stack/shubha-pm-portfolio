@@ -2,7 +2,7 @@
 
 ## Prioritization framework: ICE
 
-Using ICE (Impact, Confidence, Ease) rather than RICE. Reach isn't meaningfully estimable yet since Flexy has no real user base or ComEd partnership in place, so ICE fits a pre-launch, research-grounded prioritization better. Each scored 1-10; ICE score is the average of the three. Every score is justified against a specific persona, JTBD statement, or interview-synthesis theme, not a gut feeling.
+Using ICE (Impact, Confidence, Ease) rather than RICE. Reach isn't meaningfully estimable yet since Flexy has no real user base or ComEd partnership in place, so ICE fits a pre-launch, research-grounded prioritization better. Each scored 1-10; ICE score is the average of the three. Every score is justified against a specific persona, JTBD statement, or interview-synthesis theme.
 
 **Legend:** Impact = how much this moves the needle on the core problem. Confidence = how sure we are, based on persona/interview evidence or real-world precedent, that this is the right feature. Ease = technical/data feasibility given known constraints.
 
@@ -17,7 +17,7 @@ Using ICE (Impact, Confidence, Ease) rather than RICE. Reach isn't meaningfully 
 
 ### Price & Cost view: what changed and why
 
-We looked at a real Tibber + Home Assistant community dashboard for inspiration (dual-axis bars and line, four time-range tabs, a separate Aktuell/Statistik split). It's a genuinely useful data model, consumption and price on one timeline plus a derived cost figure, but it's a power-user pattern built by and for Home Assistant hobbyists. For personas like Bob or Priya, a dual-axis chart with multiple tabs would be a barrier, not a feature.
+We looked at a real Tibber + Home Assistant community dashboard for inspiration (dual-axis bars and line, four time-range tabs, a separate Aktuell/Statistik split). It's a genuinely useful data model, consumption and price on one timeline plus a derived cost figure, but it's a power-user pattern built by and for Home Assistant hobbyists. For personas like Bob or Priya, a dual-axis chart with multiple tabs would be a barrier.
 
 So instead of copying that layout, Flexy takes the underlying idea (show consumption and price together, and surface the actual cost) and presents it more simply:
 
@@ -44,7 +44,7 @@ Both modes require a ready-by time. That was a deliberate correction from an ear
    - **Charging speed limit (amperage cap):** lets a household cap the current draw, for example reducing from 48A to 32A or 16A when sharing circuit capacity with another EV or a large appliance. Directly relevant to Jenna and Sam's two-EV household, and something Tesla's own app already exposes, so it's a realistic ask from a tech-savvy user rather than an invented feature.
    - **Home-only automation:** restricts smart scheduling to when the car is actually at the home charger, since Flexy's ComEd price data doesn't apply to a public or workplace charger. This is a correctness feature as much as a preference, borrowed from Ohme's location-aware charging.
    - **Achievable-at-setup check:** when the user saves their settings, Flexy immediately checks whether the target is physically reachable in the time available given the charger's speed, and says so on the spot. This replaced an earlier idea of an ongoing "at-risk of missing target" notification, which doesn't actually apply here: because the deadline is a hard constraint, Flexy will charge through expensive hours if needed to hit it, so price conditions never put the target at risk. The only real risk is a physical one (plugged in too late, or an unreachable target given charging speed), which is a one-time check, not an ongoing monitor.
-2. **Max savings.** For someone who doesn't want to configure anything beyond the deadline. The user sets only a ready-by time; Flexy defaults to charging to 100 percent with a safe floor and picks the cheapest available hours to get there, using more expensive hours only if that's what it takes to hit the deadline. This fits Devon, whose JTBD was explicitly "I want the awareness without the labor" - fewer inputs is the point, not a missing feature.
+2. **Max savings.** For someone who doesn't want to configure anything beyond the deadline. The user sets only a ready-by time; Flexy defaults to charging to 100 percent with a safe floor and picks the cheapest available hours to get there, using more expensive hours only if that's what it takes to hit the deadline. This fits Devon, whose JTBD was explicitly "I want the awareness without the labor" - fewer inputs is the point.
 
 Both modes combine today's and tomorrow's ComEd price data once tomorrow's prices are available, so an overnight session isn't artificially cut off at midnight, the same pattern the Home Assistant project uses with Tibber's day-ahead prices.
 

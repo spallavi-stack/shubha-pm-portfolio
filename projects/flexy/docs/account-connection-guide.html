@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Account Connection Guide - Flexy | Shubha's PM Portfolio</title>
+<title>Account Connection Guide, Flexy | Shubha's PM Portfolio</title>
 <style>
   :root{
     --teal:#C2790E; --teal-dark:#96600A; --navy:#1C1712;
@@ -24,7 +24,7 @@
   article h3{font-size:16px;margin:24px 0 8px;color:var(--navy);}
   article p{font-size:15px;color:var(--ink);margin:0 0 14px;}
   article ul, article ol{padding-left:22px;margin:0 0 14px;}
-  article li{font-size:15px;margin-bottom:8px;}
+  article li{font-size:15px;margin-bottom:6px;}
   article strong{color:var(--navy);}
   article blockquote{margin:16px 0;padding:10px 18px;border-left:3px solid var(--teal);background:var(--paper-soft);color:var(--navy);font-style:italic;}
   article hr{border:none;border-top:1px solid var(--border);margin:32px 0;}
@@ -33,7 +33,8 @@
   article th{font-size:11px;text-transform:uppercase;letter-spacing:0.04em;color:var(--ink-soft);}
   article code{background:var(--paper-soft);padding:1px 5px;border-radius:4px;font-size:13px;}
   article svg{max-width:100%;height:auto;display:block;margin:20px 0;border:1px solid var(--border);border-radius:12px;padding:10px;background:#fff;}
-  article a{color:var(--teal-dark);}
+  article pre.mermaid{background:none;border:none;padding:0;margin:20px 0;overflow-x:auto;text-align:center;}
+  article pre.mermaid svg{margin:0 auto;}
   .doc-footer{margin-top:40px;padding-top:20px;border-top:1px solid var(--border);font-size:13px;color:var(--ink-soft);}
   footer{background:var(--navy);color:#C9BBA0;padding:32px 0;text-align:center;font-size:13px;}
   footer a{color:#F6D9A0;}
@@ -44,7 +45,7 @@
   <div class="navwrap">
     <span class="brand">Flexy<span>.</span> Documentation</span>
     <div style="display:flex;gap:18px;">
-      <a href="../index.html">&larr; Case study</a>
+      <a href="../index.html">← Case study</a>
       <a href="../../../index.html">Portfolio</a>
     </div>
   </div>
@@ -52,13 +53,10 @@
 <article class="wrap">
 <h1>Flexy- Account Connection Guide</h1>
 <p>Written for a future engineering team: what it would take to replace the fake "Connect to ComEd" step in the prototype with a real one.</p>
-
 <h2>What this covers, and what it doesn't</h2>
 <p>The prototype's account-connection screens (entering a ComEd login, seeing "You're connected to ComEd") are entirely simulated. No real ComEd account is ever contacted. This is a different integration from the one described in the <a href="real-data-integration-guide.html">Price Integration Guide</a>, which covers the live pricing feed and is already partially real in the prototype today. Account connection would pull a specific customer's own usage and billing data, a per-user, opt-in integration with its own trust model, separate from the shared, public pricing feed.</p>
-
 <h2>The real integration: Green Button Connect My Data</h2>
-<p>ComEd already operates Green Button Connect My Data (CMD), one of the few utility programs of its kind live in the US today (alongside California's investor-owned utilities). It's an OAuth 2.0-based, opt-in data-sharing standard, not a generic username/password API, and the redirect-to-ComEd pattern already used correctly for the EV-connection step in the prototype is the right shape for this too.</p>
-
+<p>ComEd already operates Green Button Connect My Data (CMD), one of the few utility programs of its kind live in the US today (alongside California's investor-owned utilities). It's an OAuth 2.0-based, opt-in data-sharing standard, and the redirect-to-ComEd pattern already used correctly for the EV-connection step in the prototype is the right shape for this too.</p>
 <svg viewBox="0 0 640 900" xmlns="http://www.w3.org/2000/svg" role="img">
 <title>ComEd account connection flow (Green Button Connect My Data)</title>
 <desc>A vertical flowchart showing the OAuth 2.0 flow Flexy would use to connect a user's ComEd account via Green Button Connect My Data, distinguishing steps that happen inside Flexy from steps that happen on ComEd's own domain.</desc>
@@ -114,46 +112,36 @@
 <line x1="320" y1="722" x2="320" y2="748" stroke="#8A94A6" stroke-width="1.5" marker-end="url(#arrow)" stroke-dasharray="4,3"/>
 <text x="320" y="774" text-anchor="middle" font-family="-apple-system,Helvetica,Arial,sans-serif" font-size="12.5" fill="#5C5445">Access stays live until the user revokes it from their ComEd account &#8594; back to step 2 on reconnect</text>
 </svg>
-
 <p>Green Button's data model splits what comes back into two separate streams, a usage/billing stream and a PII stream, by design, so that the two are never bundled together in one payload; the receiving application (Flexy) has to correlate them itself. Data comes back at 15-minute or hourly interval granularity, for up to 12 months of history. This is meaningfully different from the pricing feed: ComEd's Real-Time Pricing API is one shared, system-wide series that every user sees the same values from, while Green Button data is per-account, per-meter, and requires this full OAuth flow for every single user, individually.</p>
-
 <h2>API specification</h2>
 <p>Green Button Connect My Data is an implementation of a published standard, NAESB REQ.21 (the Energy Services Provider Interface, ESPI), rather than a ComEd-specific API design. That's genuinely useful for a build-vs-integrate decision: the shape below is documented and stable across utilities that adopt the standard. ComEd's exact production values (its specific OAuth base URL, rate limits, and default scope options) aren't publicly documented ahead of registration, so treat the structure here as accurate to the standard and confirm the specifics once Flexy is registered as a Third Party.</p>
-
-<h3>1. Authorization endpoint (browser redirect, step 2 in the flow above)</h3>
+<p><strong>1. Authorization endpoint</strong> (browser redirect, step 2 in the flow above)</p>
 <pre><code>GET /oauth/authorize
     ?response_type=code
-    &client_id={flexy_client_id}
-    &redirect_uri={flexy_callback_url}
-    &scope={scope_selector}
-    &state={csrf_token}</code></pre>
-<p>Returns the ComEd-hosted login and consent screen. On approval, redirects back to <code>redirect_uri</code> with <code>?code={auth_code}&state={csrf_token}</code>.</p>
-
-<h3>2. Token endpoint (server-to-server, step 6)</h3>
+    &amp;client_id={flexy_client_id}
+    &amp;redirect_uri={flexy_callback_url}
+    &amp;scope={scope_selector}
+    &amp;state={csrf_token}
+</code></pre>
+<p>Returns the ComEd-hosted login and consent screen. On approval, redirects back to <code>redirect_uri</code> with <code>?code={auth_code}&amp;state={csrf_token}</code>.</p>
+<p><strong>2. Token endpoint</strong> (server-to-server, step 6)</p>
 <pre><code>POST /oauth/token
     grant_type=authorization_code
-    &code={auth_code}
-    &redirect_uri={flexy_callback_url}
-    &client_id={flexy_client_id}
-    &client_secret={flexy_client_secret}</code></pre>
+    &amp;code={auth_code}
+    &amp;redirect_uri={flexy_callback_url}
+    &amp;client_id={flexy_client_id}
+    &amp;client_secret={flexy_client_secret}
+</code></pre>
 <p>Returns <code>access_token</code>, <code>refresh_token</code>, and <code>expires_in</code>, standard OAuth 2.0. The refresh token is what makes step 7 an ongoing, unattended job rather than something the user has to repeat.</p>
-
-<h3>3. The scope selector string</h3>
-<p>Green Button's scope parameter is a semicolon-delimited string that encodes exactly what's being authorized in one value, for example: <code>FB=4_5_15;IntervalDuration=3600;BlockDuration=daily;HistoryLength=13</code>. Read left to right, this requests fifteen-minute-family interval data (<code>FB=4_5_15</code>), in hourly blocks (<code>IntervalDuration=3600</code> seconds), delivered daily (<code>BlockDuration=daily</code>), covering 13 months of history (<code>HistoryLength=13</code>). Flexy would request the narrowest scope that actually serves the product, not the broadest one available.</p>
-
-<h3>4. Resource endpoints</h3>
-<p>Data retrieval, once a token exists, follows the ESPI resource hierarchy: <code>Subscription</code> &#8594; <code>UsagePoint</code> &#8594; <code>MeterReading</code> &#8594; <code>IntervalBlock</code> &#8594; <code>IntervalReading</code>.</p>
+<p><strong>3. The scope selector string.</strong> Green Button's scope parameter is a semicolon-delimited string that encodes exactly what's being authorized in one value, for example: <code>FB=4_5_15;IntervalDuration=3600;BlockDuration=daily;HistoryLength=13</code>. Read left to right, this requests fifteen-minute-family interval data (<code>FB=4_5_15</code>), in hourly blocks (<code>IntervalDuration=3600</code> seconds), delivered daily (<code>BlockDuration=daily</code>), covering 13 months of history (<code>HistoryLength=13</code>). Flexy would request the narrowest scope that actually serves the product, not the broadest one available.</p>
+<p><strong>4. Resource endpoints</strong> (data retrieval, once a token exists), following the ESPI resource hierarchy: <code>Subscription</code> &#8594; <code>UsagePoint</code> &#8594; <code>MeterReading</code> &#8594; <code>IntervalBlock</code> &#8594; <code>IntervalReading</code>.</p>
 <pre><code>GET /espi/1_1/resource/Subscription/{subscriptionId}/UsagePoint
 GET /espi/1_1/resource/Subscription/{subscriptionId}/UsagePoint/{usagePointId}/MeterReading/{meterReadingId}/IntervalBlock
-Header: Authorization: Bearer {access_token}</code></pre>
+Header: Authorization: Bearer {access_token}
+</code></pre>
 <p>A <code>Batch</code> variant of the same path (<code>.../Batch/Subscription/{id}/UsagePoint/{id}</code>) exists to pull everything under one subscription in a single call, the efficient path for a nightly sync job rather than resource-by-resource polling.</p>
-
-<h3>5. Response format is Atom+XML, not JSON</h3>
-<p>Every resource comes back wrapped in an Atom <code>&lt;entry&gt;</code>, with the actual usage data as ESPI-schema XML (<code>espi:IntervalBlock</code>, <code>espi:IntervalReading</code>, each reading carrying a <code>duration</code> and a <code>value</code>) inside <code>&lt;content&gt;</code>. This matters for planning: it means an XML parser sits in the ingestion pipeline next to the JSON-based ComEd pricing client already built for the Price Integration Guide, not a shared client.</p>
-
-<h3>6. Errors</h3>
-<p>Errors follow standard OAuth 2.0 semantics: a <code>401</code> on an expired or revoked token (the signal to prompt reconnection), a <code>403</code> on a resource outside the granted scope, and utility-specific rate limiting on top, whose exact thresholds ComEd doesn't publish and would need to be confirmed as part of the sandbox process below.</p>
-
+<p><strong>5. Response format is Atom+XML, not JSON.</strong> Every resource comes back wrapped in an Atom <code>&lt;entry&gt;</code>, with the actual usage data as ESPI-schema XML (<code>espi:IntervalBlock</code>, <code>espi:IntervalReading</code>, each reading carrying a <code>duration</code> and a <code>value</code>) inside <code>&lt;content&gt;</code>. This matters for planning: it means an XML parser sits in the ingestion pipeline next to the JSON-based ComEd pricing client already built for the Price Integration Guide, not a shared client.</p>
+<p><strong>6. Errors follow standard OAuth 2.0 semantics</strong>: a <code>401</code> on an expired or revoked token (the signal to prompt reconnection), a <code>403</code> on a resource outside the granted scope, and utility-specific rate limiting on top, whose exact thresholds ComEd doesn't publish and would need to be confirmed as part of the sandbox process below.</p>
 <h2>What else the two tech teams would need to sort out</h2>
 <p>Beyond the OAuth plumbing itself, a handful of things sit outside the API spec but would block a real launch:</p>
 <ul>
@@ -165,23 +153,29 @@ Header: Authorization: Bearer {access_token}</code></pre>
 <li><strong>Rate-plan detection.</strong> Knowing whether a given account is on Real-Time Pricing, the incoming Time-of-Use rate, or a standard flat rate may not come cleanly out of the Green Button usage feed itself, and might need to be self-reported by the user or looked up through a separate ComEd system.</li>
 <li><strong>A sandbox environment.</strong> Utility integrations of this kind typically require testing against synthetic accounts in a sandbox before any production third-party access is granted, a step that would need to happen well before this could be demoed against a real account.</li>
 </ul>
-
 <h2>Status</h2>
 <p>This documents what a real ComEd account connection would require, replacing the fully simulated login/consent screens in the current prototype. No part of this is implemented; the prototype's "You're connected to ComEd" screen is decorative. See the <a href="real-data-integration-guide.html">Price Integration Guide</a> for the one integration that is genuinely real today, the public pricing feed.</p>
-
 <h2>Sources</h2>
 <ul>
-<li><a href="https://secure.comed.com/MyAccount/MyBillUsage/pages/GBCThirdPartyReg.aspx" target="_blank" rel="noopener">ComEd Green Button Connect - Third Party Provider Registration</a></li>
-<li><a href="https://www.energy.gov/data/green-button" target="_blank" rel="noopener">Green Button, US Department of Energy</a></li>
-<li><a href="https://www.greenbuttonalliance.org/green-button-connect-my-data-cmd" target="_blank" rel="noopener">Green Button Connect My Data (CMD), Green Button Alliance</a></li>
-<li><a href="https://support.utilityapi.com/hc/en-us/articles/360015183934-UtilityAPI-and-Green-Button-Data" target="_blank" rel="noopener">UtilityAPI and Green Button Data</a></li>
-<li><a href="https://www.coned.com/en/accounts-billing/share-energy-usage-data/become-a-third-party" target="_blank" rel="noopener">Register to Receive Customer Data via Green Button Connect My Data, Con Edison</a> (same CMD standard, cited for comparison since ComEd's own program page did not return fetchable text directly)</li>
+<li><a href="https://secure.comed.com/MyAccount/MyBillUsage/pages/GBCThirdPartyReg.aspx">ComEd Green Button Connect - Third Party Provider Registration</a></li>
+<li><a href="https://www.energy.gov/data/green-button">Green Button, US Department of Energy</a></li>
+<li><a href="https://www.greenbuttonalliance.org/green-button-connect-my-data-cmd">Green Button Connect My Data (CMD), Green Button Alliance</a></li>
+<li><a href="https://support.utilityapi.com/hc/en-us/articles/360015183934-UtilityAPI-and-Green-Button-Data">UtilityAPI and Green Button Data</a></li>
+<li><a href="https://www.coned.com/en/accounts-billing/share-energy-usage-data/become-a-third-party">Register to Receive Customer Data via Green Button Connect My Data, Con Edison</a> (same CMD standard, cited for comparison since ComEd's own program page did not return fetchable text directly)</li>
 </ul>
-
 <div class="doc-footer">Part of the Flexy case study documentation set. For the short version, see the <a href="../index.html">case study page</a>.</div>
 </article>
 <footer>
   <div class="wrap">Flexy is a fictional case study built for portfolio purposes. Market research is real and cited; personas, interviews, and user data are synthetic.</div>
 </footer>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'neutral',
+    fontFamily: '-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif',
+    flowchart: { curve: 'basis' },
+  });
+</script>
 </body>
 </html>
