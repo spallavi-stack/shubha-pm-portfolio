@@ -97,15 +97,14 @@
   .dark-section h2.section-title{color:#fff;}
   .dark-section .lede{color:#C6CBE6;}
 
-  details.lab-collapse summary{cursor:pointer;list-style:none;}
-  details.lab-collapse summary::-webkit-details-marker{display:none;}
-  details.lab-collapse summary .lab-collapse-toggle{
-    display:inline-flex;align-items:center;gap:6px;margin-top:18px;
-    font-size:13px;font-weight:700;color:var(--amber);
-  }
-  details.lab-collapse[open] summary .lab-collapse-toggle::before{content:"Hide the tools ▾";}
-  details.lab-collapse:not([open]) summary .lab-collapse-toggle::before{content:"Open the tools ▸";}
-  details.lab-collapse[open] .lab-collapse-body{margin-top:28px;}
+  details.section-collapse summary{cursor:pointer;list-style:none;display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:2px 0;}
+  details.section-collapse summary::-webkit-details-marker{display:none;}
+  details.section-collapse summary .summary-head{flex:1;}
+  details.section-collapse summary .section-kicker{margin-bottom:0;}
+  details.section-collapse summary .toggle-ic{font-size:13px;font-weight:700;white-space:nowrap;padding-top:4px;color:var(--amber);}
+  details.section-collapse[open] summary .toggle-ic::before{content:"Hide ▾";}
+  details.section-collapse:not([open]) summary .toggle-ic::before{content:"Show more ▸";}
+  details.section-collapse[open] > *:not(summary){margin-top:14px;}
 
   .case-bridge{position:relative;overflow:hidden;}
   .about-fade{position:absolute;top:0;left:0;right:0;height:200px;z-index:0;pointer-events:none;background:linear-gradient(to bottom, var(--navy), transparent);}
@@ -422,14 +421,16 @@
 
 <section class="dark-section pm-lab" id="pm-lab">
   <div class="wrap">
-    <details class="lab-collapse">
+    <details class="section-collapse">
     <summary>
-      <div class="section-kicker">Playground</div>
-      <h2 class="section-title">An interactive PM operating system.</h2>
-      <p class="lede">4 micro-tools you can use right now to make better product decisions, with logic and benchmarks pulled directly from Lenny's Newsletter archive.</p>
-      <span class="lab-collapse-toggle"></span>
+      <div class="summary-head">
+        <div class="section-kicker" style="margin-bottom:0;">Playground</div>
+      </div>
+      <span class="toggle-ic"></span>
     </summary>
-    <div class="lab-collapse-body">
+
+    <h2 class="section-title">An interactive PM operating system.</h2>
+    <p class="lede">4 micro-tools you can use right now to make better product decisions, with logic and benchmarks pulled directly from Lenny's Newsletter archive.</p>
 
     <div class="pm-lab-stage-toggle" role="radiogroup" aria-label="Company stage">
       <button type="button" class="pm-lab-stage-btn is-active" data-stage="0to1" role="radio" aria-checked="true">0&rarr;1</button>
@@ -675,7 +676,6 @@
       </div>
     </div>
 
-    </div>
     </details>
   </div>
 </section>
