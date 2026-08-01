@@ -1,9 +1,15 @@
 /* AI Spec & PRD Auditor — turns a raw feature idea into an edge-case
-   audit, a metric tree, and Gherkin acceptance criteria. The preset
-   features below are curated by hand (this is a demo playground, not
-   a live model call); any other typed-in feature falls back to a
-   generalized, clearly-labeled template so the tool never breaks.
-   Presets swap per the 0→1 / 1→n stage toggle (window.pmLabStage,
+   audit, a metric tree, and Gherkin acceptance criteria. This is a demo
+   playground, not a live model call — there's no LLM behind it. Instead:
+   1) the preset features below are curated by hand, exact-matched;
+   2) anything else is keyword-matched against a library of common
+      feature domains (payments, uploads, notifications, search, bulk
+      actions, real-time/collab, comments, integrations) so a typed-in
+      idea like "add file upload" gets upload-specific content, not a
+      generic filler;
+   3) if nothing matches, it falls back to a fully generic template.
+   Each path is labeled in the UI so it's clear which one produced the
+   result. Presets swap per the 0→1 / 1→n stage toggle (window.pmLabStage,
    set by pm-lab.js) so the examples actually fit company stage. */
 (function(){
   var STAGE_PRESETS = {
@@ -145,6 +151,210 @@
     }
   };
 
+  // Keyword-matched fallback library. Not exact-preset content, but not
+  // the fully generic template either — matched by counting keyword hits
+  // in the typed feature text against each category below.
+  var KEYWORD_CATEGORIES = [
+    {
+      name: 'Payments & Billing',
+      keywords: ['payment', 'pay', 'billing', 'checkout', 'invoice', 'subscription', 'credit card', 'price', 'pricing', 'refund', 'charge'],
+      edgeCases: [
+        {title: 'Failed or declined payment mid-flow', desc: "A card is declined after the user believes they've completed checkout, leaving an ambiguous state between \"trying to pay\" and \"paid.\""},
+        {title: 'Double charge on retry', desc: 'A user retries after a slow response, unaware the first charge already went through, risking a duplicate charge.'},
+        {title: 'Currency / locale mismatch', desc: 'Price is calculated in one currency but displayed or charged in another for international users.'},
+        {title: 'Refund/chargeback reconciliation', desc: 'A refund or chargeback needs to reverse downstream state (access, usage, invoices), not just the payment record.'}
+      ],
+      metricTree: {
+        northStar: '% of checkout attempts that complete successfully without a support ticket',
+        l1: [
+          {label: 'Checkout completion rate', l2: ['Card decline rate', 'Time to complete checkout']},
+          {label: 'Payment-related support tickets', l2: ['% citing double charge', '% citing failed payment']},
+          {label: 'Refund/chargeback rate', l2: ['Time to resolve refund', '% resulting in churn']}
+        ]
+      },
+      gherkin: [
+        {title: 'Declined card', given: 'a user submits a payment', when: 'the card is declined', then: 'they see a specific reason and can retry with a different method without losing their cart'},
+        {title: 'Prevented double charge', given: 'a user has already submitted a successful payment', when: 'they resubmit the same checkout (e.g. double-click, refresh)', then: 'the system detects the duplicate and blocks a second charge'},
+        {title: 'Refund reverses access', given: 'a payment is refunded', when: 'the refund is processed', then: 'any access or entitlement granted by that payment is revoked accordingly'}
+      ]
+    },
+    {
+      name: 'File Upload & Import',
+      keywords: ['upload', 'import', 'attach', 'file', 'photo', 'image', 'document'],
+      edgeCases: [
+        {title: 'Oversized or malformed file', desc: 'A file exceeds the size limit or is corrupted mid-upload, and the failure needs a clear reason, not a silent hang.'},
+        {title: 'Unsupported file type', desc: "A user uploads a file type the system doesn't handle, and needs to be told before wasting an upload attempt, not after."},
+        {title: 'Interrupted upload', desc: 'A network drop or tab close mid-upload leaves a partial file; the system needs to detect and discard it rather than treat it as complete.'},
+        {title: 'Malicious file content', desc: 'An uploaded file could contain malware or a script payload disguised as an accepted type, so validation can\'t rely on file extension alone.'}
+      ],
+      metricTree: {
+        northStar: '% of upload attempts that complete successfully on the first try',
+        l1: [
+          {label: 'Upload success rate', l2: ['Failure rate by file size', 'Failure rate by file type']},
+          {label: 'Time to complete upload', l2: ['Avg. upload duration', 'Retry rate']},
+          {label: 'Upload-related support tickets', l2: ['% citing unsupported file type', '% citing stuck/failed upload']}
+        ]
+      },
+      gherkin: [
+        {title: 'Oversized file rejected early', given: 'a user selects a file over the size limit', when: 'they attempt to upload it', then: 'the system rejects it before starting the upload and states the limit'},
+        {title: 'Interrupted upload is discarded', given: "a user's upload is interrupted by a network drop", when: 'the connection resumes', then: 'the partial file is discarded and the user is prompted to retry, not left with a corrupt file'},
+        {title: 'Unsupported type blocked', given: 'a user selects a file type the system does not support', when: 'they attempt to upload it', then: 'they are told which types are supported before the upload starts'}
+      ]
+    },
+    {
+      name: 'Notifications & Email',
+      keywords: ['notification', 'notify', 'email', 'alert', 'reminder', 'push', 'sms', 'digest'],
+      edgeCases: [
+        {title: 'Notification fatigue / no granular control', desc: 'Every event sends a notification with no way to mute or batch, so users disable notifications entirely rather than tune them.'},
+        {title: 'Delivery failure goes unnoticed', desc: "An email or push notification fails to send and nothing surfaces that failure, so the product silently stops informing the user."},
+        {title: 'Stale or duplicate notification', desc: 'An action is undone or changed after the notification is queued, so the user receives a notification about a state that no longer exists.'},
+        {title: 'Timezone-insensitive timing', desc: 'A digest or reminder is sent at a fixed UTC time, landing at 3am for users in other timezones.'}
+      ],
+      metricTree: {
+        northStar: '% of notifications that lead to the intended user action, not an unsubscribe',
+        l1: [
+          {label: 'Notification delivery rate', l2: ['Failure rate by channel', 'Delivery latency']},
+          {label: 'Notification engagement rate', l2: ['Open/click-through rate', 'Time from send to action']},
+          {label: 'Unsubscribe / mute rate', l2: ['% muting after first week', '% disabling all notifications']}
+        ]
+      },
+      gherkin: [
+        {title: 'Muting reduces volume, not everything', given: 'a user finds a notification type unhelpful', when: 'they mute that type', then: 'they stop receiving it while still receiving other types, not all notifications'},
+        {title: 'Stale notification suppressed', given: 'an action a notification refers to is undone before the notification sends', when: 'the send job runs', then: 'the notification is skipped rather than sent about a state that no longer exists'},
+        {title: 'Delivery failure is visible', given: 'a notification fails to send', when: 'the failure is detected', then: 'it is logged and retried according to a defined policy, not silently dropped'}
+      ]
+    },
+    {
+      name: 'Search',
+      keywords: ['search', 'filter', 'query', 'find'],
+      edgeCases: [
+        {title: 'Empty or zero-result queries', desc: "A query returns nothing, and the user is left without guidance on whether that's correct or a typo/filter issue."},
+        {title: 'Stale index', desc: 'The underlying data changes but the search index lags, so users see outdated or since-deleted results.'},
+        {title: 'Performance at scale', desc: 'Search response time degrades as the dataset or query complexity grows, with no defined latency budget.'},
+        {title: 'Special characters / query injection', desc: "Search input isn't sanitized, allowing special characters to break the query or inject into a backing query language."}
+      ],
+      metricTree: {
+        northStar: '% of searches that result in the user clicking a result',
+        l1: [
+          {label: 'Zero-result rate', l2: ['% of queries with no results', 'Refinement rate after zero results']},
+          {label: 'Search latency', l2: ['p50/p95 response time', 'Timeout rate']},
+          {label: 'Result click-through rate', l2: ['Avg. result position clicked', 'Re-search rate (proxy for bad relevance)']}
+        ]
+      },
+      gherkin: [
+        {title: 'Zero results shown clearly', given: 'a user searches for a term with no matches', when: 'the search runs', then: 'they see a clear zero-results state with a suggestion to adjust the query, not a blank screen'},
+        {title: 'Search input is sanitized', given: 'a user enters special characters in the search box', when: 'the query runs', then: 'the input is safely escaped and does not break or manipulate the underlying query'},
+        {title: 'Recently changed data reflected', given: 'an item matching a saved search is deleted', when: 'the user re-runs the search', then: "the deleted item no longer appears, even if the index hasn't fully caught up elsewhere"}
+      ]
+    },
+    {
+      name: 'Bulk Actions',
+      keywords: ['bulk', 'batch', 'mass', 'multiple', 'select all'],
+      edgeCases: [
+        {title: 'Partial failure mid-batch', desc: 'Some items in a bulk action succeed and others fail, and the user needs to know exactly which, not just an aggregate error.'},
+        {title: 'No undo for an irreversible bulk action', desc: 'A bulk delete or bulk status change is applied instantly with no confirmation step or undo window.'},
+        {title: 'Performance/timeout on large selections', desc: "Selecting \"all\" on a large dataset queues an operation too big to complete synchronously."},
+        {title: 'Permission mismatch within a selection', desc: "A bulk action is applied to a selection that includes items the user doesn't actually have permission to modify."}
+      ],
+      metricTree: {
+        northStar: '% of bulk actions that complete fully successfully on the first attempt',
+        l1: [
+          {label: 'Bulk action completion rate', l2: ['% partially failed', '% fully failed']},
+          {label: 'Undo usage rate', l2: ['% of bulk actions undone', 'Time to undo after action']},
+          {label: 'Bulk-action support tickets', l2: ['% citing unexpected changes', '% citing permission errors']}
+        ]
+      },
+      gherkin: [
+        {title: 'Partial failure reported clearly', given: 'a user runs a bulk action on 50 items', when: '10 fail and 40 succeed', then: 'they see exactly which 10 failed and why, not just a generic partial-success message'},
+        {title: 'Destructive bulk action requires confirmation', given: 'a user selects a bulk delete on multiple items', when: 'they submit it', then: 'they must confirm the count and action before it executes, with a short undo window after'},
+        {title: 'Permission-scoped bulk action', given: 'a user selects items for a bulk action, some of which they lack permission to modify', when: 'they submit it', then: 'the action applies only to items they have permission for, with the rest flagged'}
+      ]
+    },
+    {
+      name: 'Real-Time & Collaboration',
+      keywords: ['real-time', 'realtime', 'collaborate', 'collaboration', 'live', 'multiplayer', 'co-edit', 'presence'],
+      edgeCases: [
+        {title: 'Conflicting simultaneous edits', desc: 'Two users edit the same record at the same time, and the system needs a defined resolution (last-write-wins, merge, lock), not silent data loss.'},
+        {title: 'Stale client state', desc: "A user's view goes out of sync after a dropped connection, showing outdated data as if it were current."},
+        {title: 'Presence/awareness inaccuracy', desc: "The \"who's online/editing\" indicator lags or shows a user as present after they've actually left."},
+        {title: 'Reconnection storms', desc: 'Many clients reconnecting at once after an outage overwhelm the real-time infrastructure.'}
+      ],
+      metricTree: {
+        northStar: '% of concurrent edit sessions that resolve without a reported conflict or data loss',
+        l1: [
+          {label: 'Conflict rate', l2: ['% of sessions with simultaneous edits', '% of conflicts auto-resolved vs. manual']},
+          {label: 'Sync latency', l2: ['Time from edit to visible for other users', 'Reconnection time after drop']},
+          {label: 'Data-loss reports', l2: ['% citing lost edits', '% citing stale view']}
+        ]
+      },
+      gherkin: [
+        {title: 'Conflicting edits resolved predictably', given: 'two users edit the same field at the same time', when: 'both changes are submitted', then: 'the system applies a defined resolution rule and both users can see what happened, not a silent overwrite'},
+        {title: 'Reconnection refreshes state', given: "a user's connection drops and reconnects", when: 'they reconnect', then: 'their view is refreshed to the current state before they can make further edits'},
+        {title: 'Presence reflects actual activity', given: 'a user closes the tab without an explicit logout', when: 'their connection times out', then: 'they are shown as offline within a defined grace period, not indefinitely as present'}
+      ]
+    },
+    {
+      name: 'Comments & Social',
+      keywords: ['comment', 'reply', 'mention', 'like', 'react', 'post', 'feed'],
+      edgeCases: [
+        {title: 'Abusive or spam content', desc: 'Nothing moderates or rate-limits comment content, opening the door to spam, harassment, or abuse with no reporting path.'},
+        {title: 'Deleted parent content', desc: 'A comment is left dangling when the item, thread, or user it belongs to is deleted.'},
+        {title: 'Notification storms on active threads', desc: 'A popular thread with many replies triggers a notification per reply to every participant, overwhelming them.'},
+        {title: 'Edit/delete after others have reacted', desc: "A comment is edited or deleted after other users have already liked, replied to, or quoted it, and downstream context breaks."}
+      ],
+      metricTree: {
+        northStar: '% of comment threads with meaningful engagement and no reported abuse',
+        l1: [
+          {label: 'Comment/reply rate', l2: ['Comments per active thread', 'Reply rate to existing comments']},
+          {label: 'Moderation actions', l2: ['% flagged by users', '% auto-flagged by filters']},
+          {label: 'Notification opt-out rate', l2: ['% muting active threads', '% disabling comment notifications']}
+        ]
+      },
+      gherkin: [
+        {title: 'Reported content is actionable', given: 'a user reports a comment as abusive', when: 'the report is submitted', then: 'it is queued for moderation review and the reporting user gets confirmation, not silence'},
+        {title: 'Orphaned comments handled', given: 'the item a comment thread is attached to is deleted', when: 'the deletion completes', then: 'the comment thread is deleted or archived accordingly, not left pointing at nothing'},
+        {title: 'Reply notifications are batched', given: 'a thread receives many replies in a short window', when: 'a participant would otherwise get one notification per reply', then: 'they receive a single batched notification instead'}
+      ]
+    },
+    {
+      name: 'Integrations, API & Webhooks',
+      keywords: ['integration', 'api', 'webhook', 'connect', 'sync', 'third-party', 'oauth'],
+      edgeCases: [
+        {title: 'Third-party outage or rate limit', desc: 'A connected external service goes down or rate-limits requests, and the integration needs a defined degraded-mode behavior, not a hard failure.'},
+        {title: 'Auth token expiry', desc: 'An OAuth token or API key expires mid-use, silently breaking the integration until a user notices and reconnects.'},
+        {title: 'Webhook delivery failure/retry', desc: 'An outbound webhook fails to reach the receiving endpoint, and needs a retry/backoff policy instead of a single silent attempt.'},
+        {title: 'Schema drift on the external side', desc: "The third-party API changes its response shape without notice, breaking the integration's parsing logic."}
+      ],
+      metricTree: {
+        northStar: '% of integration syncs that complete successfully without manual reconnection',
+        l1: [
+          {label: 'Sync success rate', l2: ['Failure rate by external service', 'Time to detect a failed sync']},
+          {label: 'Auth/token health', l2: ['% of tokens expired without reconnect', 'Time to reconnect after expiry']},
+          {label: 'Webhook delivery rate', l2: ['% delivered on first attempt', '% resolved via retry']}
+        ]
+      },
+      gherkin: [
+        {title: 'Expired token prompts reconnection', given: "a connected integration's auth token expires", when: 'the next sync attempt runs', then: 'the user is notified and prompted to reconnect, rather than syncs failing silently'},
+        {title: 'Webhook retried on failure', given: 'an outbound webhook delivery fails', when: 'the receiving endpoint is unreachable', then: 'the system retries with backoff up to a defined limit before marking it failed'},
+        {title: 'External outage degrades gracefully', given: 'a connected third-party service is down', when: 'a sync is attempted during the outage', then: 'the integration reports a clear degraded state instead of erroring the whole feature'}
+      ]
+    }
+  ];
+
+  function matchKeywordCategory(featureText){
+    var lower = featureText.toLowerCase();
+    var best = null;
+    var bestHits = 0;
+    KEYWORD_CATEGORIES.forEach(function(category){
+      var hits = category.keywords.filter(function(kw){ return lower.indexOf(kw) !== -1; }).length;
+      if(hits > bestHits){
+        bestHits = hits;
+        best = category;
+      }
+    });
+    return best;
+  }
+
   function escapeHtml(str){
     var div = document.createElement('div');
     div.textContent = str;
@@ -181,6 +391,17 @@
     var key = featureText.trim();
     var presets = STAGE_PRESETS[stage] || STAGE_PRESETS['0to1'];
     if(presets[key]) return presets[key];
+
+    var category = matchKeywordCategory(featureText);
+    if(category){
+      return {
+        edgeCases: category.edgeCases,
+        metricTree: category.metricTree,
+        gherkin: category.gherkin,
+        matchedCategory: category.name
+      };
+    }
+
     return buildGenericAnalysis(featureText);
   }
 
@@ -276,7 +497,8 @@
       if(!featureText) return;
 
       var analysis = getAnalysis(featureText, currentStage);
-      if(resultFeature) resultFeature.textContent = '“' + featureText + '”' + (analysis.generic ? ' (generalized template)' : '');
+      var suffix = analysis.generic ? ' (generalized template)' : (analysis.matchedCategory ? ' (matched: ' + analysis.matchedCategory + ' pattern)' : '');
+      if(resultFeature) resultFeature.textContent = '“' + featureText + '”' + suffix;
       renderEdgeCases(edgeList, analysis.edgeCases);
       renderMetricTree(metricTree, analysis.metricTree);
       renderGherkin(gherkinList, analysis.gherkin);
