@@ -8,25 +8,17 @@ Flexy's enrollment funnel was already defined in `product-brief.md`'s PMF sectio
 
 No real-world precedent publishes a funnel structurally identical to this one. ComEd's own EV EMS pilot (twelve residential participants, December 2025 executive summary) discloses only a final enrolled count, not an invited count or a stage-by-stage breakdown. Optiwatt discloses lifetime totals (31,224+ enrolled devices across 44 programs) but no per-program conversion rate. Uplight, a demand-response software vendor, publishes one unaudited figure (a 65% enrollment rate, denominator unstated) and nothing else. Every number below is estimated from adjacent research and Flexy's own persona evidence, not a direct comparable, and is labeled accordingly.
 
-## Stage-by-stage estimate
+## Stage-by-stage estimate & pilot success thresholds
 
-| Stage | Estimated conversion | Confidence | Why |
-|---|---|---|---|
-| Invited → App download | 15-30% | Low (Assumption) | No utility-EV-program precedent discloses this number. Bounded by general owned-channel/trusted-institution reasoning on the low end and Uplight's unaudited 65% marketing claim treated as a soft ceiling rather than an expectation. |
-| App download → EV connected | Likely Flexy's best-converting stage | Medium (Inference) | All four personas reacted positively to the concept of EV automation itself in interviews. The friction here looks like a UX clarity problem (does the user know their car is connected-capable, is the flow's privacy framing clear, are instructions simple) rather than distrust of the product itself. |
-| EV connected → Smart charging activated | Likely Flexy's worst-converting stage | Medium (Inference, but converging with direct persona evidence) | Handing over charging control is Flexy's highest-commitment action, structurally closer to a marketplace's first transaction than a SaaS product's typical low-friction activation step. Products in the highest-commitment activation category convert lowest across a 500+ product benchmark survey. Three of four relevant personas independently named this exact handoff as their trust-breaking point. |
+Estimated conversion says what's likely. Minimum viable threshold says what would count as the pilot succeeding, a different question. Both, plus the reasoning behind each, in one place:
 
-## Success thresholds for the pilot
+| Stage | Estimated conversion | Confidence | Minimum viable threshold | Basis |
+|---|---|---|---|---|
+| Invited → App download | 15-30% | Low (Assumption) | ≥15% | No utility-EV-program precedent discloses the conversion number, so it's bounded by general owned-channel/trusted-institution reasoning on the low end and Uplight's unaudited 65% marketing claim as a soft ceiling. The threshold is set at that range's own low end: below it, the invite channel itself isn't landing, independent of anything the product does downstream. |
+| App download → EV connected | Likely Flexy's best-converting stage | Medium (Inference) | No material drop-off relative to the download rate | All four personas reacted positively to the concept of EV automation itself in interviews; the friction here reads as UX clarity (does the user know their car is connected-capable, is the privacy framing clear, are instructions simple), not distrust of the product. No numeric estimate exists for this stage, so the threshold is relative rather than an invented percentage: a noticeably worse conversion than app download's own rate is that same UX friction, not a separate baseline to hit. |
+| EV connected → Smart charging activated | Likely Flexy's worst-converting stage | Medium (Inference, converging with direct persona evidence) | A majority of connected users activate within the pilot window (deliberately conservative) | Handing over charging control is Flexy's highest-commitment action, structurally closer to a marketplace's first transaction than a SaaS product's typical activation step. Highest-commitment activation categories convert lowest across a 500+ product benchmark survey, and three of four relevant personas independently named this exact handoff as their trust-breaking point. This threshold is also one of `product-brief.md`'s three PMF signals: a minority-activation outcome would mean that trust-breaking point, per `synthetic-interviews.md`, is a real, unmitigated blocker, not a design assumption still to be tested. |
 
-The table above estimates what conversion is likely. It doesn't say what conversion would count as the pilot succeeding, a different question this document didn't previously answer.
-
-| Stage | Minimum viable threshold | Basis |
-|---|---|---|
-| Invited → App download | ≥15% | Assumption. Set at the low end of the estimated 15-30% range above. Below it, the invite channel itself isn't landing, independent of anything the product does downstream. |
-| App download → EV connected | No material drop-off relative to the download rate | Assumption. This stage has no numeric estimate above (see "Why"), so the bar is relative rather than an invented percentage: a noticeably worse conversion than app download's own rate is the UX-clarity friction the estimate already names, not a separate baseline to hit. |
-| EV connected → Smart charging activated | A majority of connected users activate within the pilot window | Assumption, deliberately conservative. This is Flexy's highest-commitment, highest-risk step and one of `product-brief.md`'s three PMF signals. A minority-activation outcome would mean the trust-breaking point three of four personas named in `synthetic-interviews.md` is a real, unmitigated blocker, not a design assumption still to be tested. |
-
-All three are Assumptions: nothing about Flexy has run yet to test them. They mark the point below which the pilot itself needs rethinking, and should be confirmed with ComEd directly before a real pilot starts rather than treated as fixed internal targets.
+All three thresholds are Assumptions: nothing about Flexy has run yet to test them. They mark the point below which the pilot itself needs rethinking, and should be confirmed with ComEd directly before a real pilot starts rather than treated as fixed internal targets.
 
 ## Guardrail metrics
 
