@@ -32,6 +32,7 @@ PROJECTS = {
             ("real-data-integration-guide.md", "real-data-integration-guide.html", "Real Data Integration Guide"),
             ("account-connection-guide.md", "account-connection-guide.html", "Account Connection Guide"),
             ("ai-collaboration-review.md", "ai-collaboration-review.html", "AI Collaboration Review"),
+            ("funnel-analysis.md", "funnel-analysis.html", "Funnel Analysis & Experiment Design"),
         ],
     },
     "sunnysideup": {

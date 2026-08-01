@@ -49,4 +49,4 @@ Expected flow: Flexy flags this at the moment of saving, states specifically wha
 
 ## Status
 
-Drafted from the roadmap's Custom Settings / Max Savings detail and the six personas' JTBD statements. Acceptance criteria are written to be testable once a real build exists; none of the use-case failure flows are implemented in the click-dummy prototype yet.
+Drafted from the roadmap's Custom Settings / Max Savings detail and the four personas' JTBD statements. Acceptance criteria are written to be testable once a real build exists; none of the use-case failure flows are implemented in the click-dummy prototype yet.

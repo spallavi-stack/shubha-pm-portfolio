@@ -1,34 +1,27 @@
-# Flexy — Next Steps (private working list, kept separate from the case study and hub)
+# Flexy, Next Steps (private working list, kept separate from the case study and hub)
 
 ## Prototype gaps
 
-- The four use-case failure flows documented in `user-stories.md` (ComEd connection failure, vehicle below the safety floor, stale price data, achievable-at-setup check failure) are written as acceptance criteria but not built into the click-dummy. Building at least one as a real interactive flow would make the "verify it yourself" story stronger.
-- Custom Settings panel (screen 7) hasn't been audited field-by-field against the roadmap's full list (day-of-week variation, home-only automation, per-vehicle settings for two EVs at once).
-- The Price & Cost view's real-time consumption line uses the same illustrative shape across Today/Week/Month/Year. That's an explicitly documented limitation, but it means the load side of the chart isn't as real as the price side.
+- The four use-case failure flows documented in `user-stories.md` are not wired up in the click-dummy at all, no error states exist in the prototype's code path yet:
+  - UC1 (ComEd connection fails): no "fetch failed, showing last-known data" banner.
+  - UC2 (charge drops below floor mid-session): no live "session in progress" state to interrupt in the first place.
+  - UC3 (stale price data on view-open): no freshness timestamp or "not current" indicator in the Price & Cost view.
+  - UC4 (achievable-at-setup check fails): the success banner exists but there's no failure counterpart message.
+- The Price & Cost view's real-time consumption line uses the same illustrative shape across Today/Week/Month/Year. Accepted limitation, not a gap to close: real per-household consumption data needs actual smart-meter access (see Green Button item below), which this portfolio prototype deliberately doesn't have.
 
-## Missing half of the product: the utility side
-
-Flexy today is entirely B2C-facing, even though the business model is B2B2C. There's no artifact showing what the utility partner (ComEd) would actually see or manage. Optiwatt, a real direct competitor, builds exactly this: an operator-facing dashboard for utility partners to monitor enrollment, program performance, and aggregate load-shifting impact. Building a "Flexy for Utilities" operator dashboard, even a thin one, would close a real, currently visible gap: right now there's no evidence the utility side of the B2B2C story was thought through at all. Best framed as a third Flexy artifact, alongside the consumer prototype and the documentation set, since it's the other half of the same product rather than a separate case study.
-
-## Claims made but not proven
-
-- **Hardware-agnostic EV charging.** The pitch claims Flexy works across EV brands via Smartcar. This is true of Smartcar as a product, but Flexy's own integration has never been tested against more than one real brand's account. A real multi-brand Smartcar sandbox test (e.g. a GM account and a Ford account both connecting successfully) would turn this from an assumed claim into a demonstrated one.
-- **Smart meter data handling.** Flexy's real-time consumption view assumes it can receive and parse interval usage data, but no parser or ingestion path has actually been built or tested. ComEd's real, genuinely self-service "Green Button: Download My Data" export (CSV/XML, ESPI/Atom format) is the concrete next step, download a real file, build a parser against it, and prove the data can actually become the chart it's meant to power.
+Custom Settings panel per-vehicle audit and multi-brand Smartcar validation moved to the roadmap's LATER section (2026-08-01), not MVP-blocking, see `roadmap.md`.
 
 ## Real-data upkeep
 
-- The Week/Month/Year price arrays are baked-in snapshots from specific dates in mid-2026. They'll read as stale if this prototype is still being shown a year from now. Either refresh them periodically or add a visible "as of" date so the staleness is honest rather than invisible.
-- SREC pricing (Illinois Shines) and HEAR rebate county rollout status, referenced in the solar/heat-pump calculators on the roadmap, change over time and aren't wired to any real feed yet.
+- Done (2026-08-01): Today's price already live-fetched ComEd on page load, but silently fell back to a fixed Jul 16 snapshot whenever the fetch failed, which it did in testing (it routed through a third-party CORS proxy, `api.allorigins.win`, that returned nothing; separately, ComEd's API returns no data for "today" until the day is posted). Fixed: fetch ComEd directly (no proxy needed, ComEd's API allows cross-origin requests), and added a same-day-failed fallback to yesterday's real data before falling back to the static snapshot. Week/Month/Year and the last-resort static fallback are refreshed by a new `scripts/refresh_comed_prices.py`, run monthly via `.github/workflows/refresh-flexy-prices.yml` (also manually triggerable), so the portfolio never shows visibly stale data without a live fetch happening.
 
 ## Documentation
 
-- Jobs to Be Done, User Stories & Use Cases, Technical Feasibility, Real Data Integration Guide, and AI Collaboration Review are all rebuilt as of this pass; worth a full re-read end to end for consistency now that they've been reconstructed once already.
-- Persona-count consistency (six personas total) should be spot-checked across all docs whenever personas are touched again.
+- Persona-count consistency spot-check done (2026-08-01): found and fixed a stale "six personas" reference in `user-stories.md`/`.html` left over from before two personas were cut in the v4 freeze; every other doc correctly says four. Re-check whenever personas are touched again.
 
 ## PMF / validation
 
-- No funnel analysis or experiment design exists yet for Flexy. This is listed on the original portfolio plan but not started.
-- No synthesized "what would make a utility actually pilot this" argument exists yet, worth building once the utility-dashboard artifact above exists to point to.
+- Done (2026-08-01): funnel analysis and experiment design built via the discovery-scope → grounding-research → research-auditor process, sourced from Lenny Rachitsky's newsletter/podcast archive (activation-rate benchmarks, A/B-testing scale thresholds, low-volume experimentation alternatives) plus Uplight's and Smartcar's own published materials. See `funnel-experiment-scope.md`, `funnel-experiment-grounding-research.md`, and the public-facing `funnel-analysis.md`/`.html`, linked from the case study page's Product Analytics section.
 
 ## Status
 
