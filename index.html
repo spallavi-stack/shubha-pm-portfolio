@@ -187,11 +187,13 @@
 <nav>
   <div class="wrap">
     <a class="brand" href="index.html">Shubha<em>.</em> PM Portfolio</a>
-    <ul>
-      <li><a href="#case-studies">Case studies</a></li>
-      <li><a href="#pm-lab">Playground</a></li>
-    </ul>
-    <a class="contact" href="contact.html">Get in touch →</a>
+    <div class="nav-right">
+      <ul>
+        <li><a href="#case-studies">Case studies</a></li>
+        <li><a href="#pm-lab" onclick="var d=document.getElementById('pm-lab-details'); if(d) d.open=true;">Playground</a></li>
+      </ul>
+      <a class="contact" href="contact.html">Get in touch</a>
+    </div>
   </div>
 </nav>
 
@@ -425,7 +427,7 @@
 
 <section class="dark-section pm-lab" id="pm-lab">
   <div class="wrap">
-    <details class="section-collapse">
+    <details class="section-collapse" id="pm-lab-details">
     <summary>
       <div class="summary-head">
         <div class="section-kicker" style="margin-bottom:0;">Playground</div>
