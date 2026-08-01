@@ -4,7 +4,7 @@ Full sourcing for every figure and claim below is in `funnel-experiment-groundin
 
 ## The funnel
 
-Flexy's enrollment funnel was already defined in `product-brief.md`'s PMF section and reused as-is in `utility-dashboard-kpi-framework.md`: **invited by ComEd → app download → EV connected → smart charging activated**. This document doesn't redefine that funnel. It estimates conversion at each stage, ranks where the real drop-off risk sits, and lays out how to actually test and improve it once a pilot exists.
+Flexy's enrollment funnel was already defined in `product-brief.md`'s PMF section and reused as-is in `utility-dashboard-kpi-framework.md`: **invited by ComEd → app download → EV connected → smart charging activated**. This document doesn't redefine that funnel. It estimates conversion at each stage and lays out how to actually test and improve it once a pilot exists.
 
 No real-world precedent publishes a funnel structurally identical to this one. ComEd's own EV EMS pilot (twelve residential participants, December 2025 executive summary) discloses only a final enrolled count, not an invited count or a stage-by-stage breakdown. Optiwatt discloses lifetime totals (31,224+ enrolled devices across 44 programs) but no per-program conversion rate. Uplight, a demand-response software vendor, publishes one unaudited figure (a 65% enrollment rate, denominator unstated) and nothing else. Every number below is estimated from adjacent research and Flexy's own persona evidence, not a direct comparable, and is labeled accordingly.
 
@@ -15,14 +15,6 @@ No real-world precedent publishes a funnel structurally identical to this one. C
 | Invited → App download | 15-30% | Low (Assumption) | No utility-EV-program precedent discloses this number. Bounded by general owned-channel/trusted-institution reasoning on the low end and Uplight's unaudited 65% marketing claim treated as a soft ceiling rather than an expectation. |
 | App download → EV connected | Likely Flexy's best-converting stage | Medium (Inference) | All four personas reacted positively to the concept of EV automation itself in interviews. The friction here looks like a UX clarity problem (does the user know their car is connected-capable, is the flow's privacy framing clear, are instructions simple) rather than distrust of the product itself. |
 | EV connected → Smart charging activated | Likely Flexy's worst-converting stage | Medium (Inference, but converging with direct persona evidence) | Handing over charging control is Flexy's highest-commitment action, structurally closer to a marketplace's first transaction than a SaaS product's typical low-friction activation step. Products in the highest-commitment activation category convert lowest across a 500+ product benchmark survey. Three of four relevant personas independently named this exact handoff as their trust-breaking point. |
-
-## Where the real risk sits
-
-Ranked by drop-off risk, highest first:
-
-1. **EV connected → smart charging activated.** This is where Flexy's own research points hardest at a problem: Marcus, Sam, and Jenna each independently named the same fear in synthetic interviews, the car not being ready when actually needed, as what would make them turn the automation off. The roadmap already tried to address exactly this by making a readiness guarantee the default optimization priority over maximum savings. Improving this stage is fundamentally a product-design problem to solve, and funnel copy alone won't move it.
-2. **Invited → download.** The biggest unknown. The risk level itself is unclear because there's no real data anywhere, Flexy's own or a competitor's, to estimate it from. This is the first number worth replacing with something real once any pilot distribution happens.
-3. **Download → EV connected.** Lowest estimated risk. The personas already want this feature, and the drop-off reasons research turns up for this kind of flow (does the user know their car qualifies, is the data-privacy ask clear, are instructions simple) are ordinary UX problems with known fixes rather than a Flexy-specific trust problem.
 
 ## Experiment design
 
