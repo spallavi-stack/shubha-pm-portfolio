@@ -76,6 +76,9 @@ Solar and heat-pump savings calculators, and a solar-aware charging mode paired 
 | Multi-utility and multi-state expansion | Natural next client-acquisition motion once the ComEd relationship is proven. |
 | Pan-European expansion (UK, Netherlands, and so on) | The original multi-market vision, sequenced as future scope once the US model is validated. |
 | Household benchmarking and social proof features | Appears in comparable products (Tibber, Emporia) but wasn't requested by any of our four personas, so it's deprioritized. |
+| Multi-brand Smartcar validation | MVP's hardware-agnostic claim rests on Smartcar's own cross-brand spec, not on Flexy testing more than one real brand's account. A real sandbox test (e.g. a GM account and a Ford account both connecting successfully) would turn this from an assumed claim into a demonstrated one, but isn't required to demonstrate the MVP concept. |
+| Per-vehicle settings UI for two-EV households | Spec'd as part of Custom Settings mode above, but the click-dummy prototype only ever shows one connected vehicle. Building the actual two-vehicle configuration screens is real prototype work, deferred past a single-vehicle MVP demo. |
+| Green Button Connect integration for real usage data | Requires a genuine per-customer OAuth relationship with a utility's Green Button Connect program, not something a portfolio prototype can stand up without a commercial/utility partnership in place. The real-time consumption view stays illustrative until that relationship exists. |
 
 ---
 

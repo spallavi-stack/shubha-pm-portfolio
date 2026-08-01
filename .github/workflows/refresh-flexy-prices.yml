@@ -1,0 +1,34 @@
+name: Refresh Flexy ComEd prices
+
+on:
+  schedule:
+    # Monthly, 1st of the month at 09:00 UTC. Keeps Flexy's baked-in
+    # Week/Month/Year price snapshots (and the last-resort fallback) from
+    # going visibly stale between manual edits.
+    - cron: "0 9 1 * *"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+      - name: Refresh real ComEd price snapshots
+        run: python3 scripts/refresh_comed_prices.py
+      - name: Commit if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          if git diff --quiet -- projects/flexy/prototype.html; then
+            echo "No price changes."
+            exit 0
+          fi
+          git add projects/flexy/prototype.html
+          git commit -m "Refresh Flexy's baked-in ComEd price snapshots"
+          git push

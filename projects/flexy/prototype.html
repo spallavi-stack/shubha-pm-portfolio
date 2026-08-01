@@ -1528,12 +1528,11 @@ function updateHomeChargingCard(){
 // ---- Price & Cost chart: real ComEd data, honestly labeled ----
 const consumption = [0.3,0.2,0.2,0.2,0.3,0.4,0.9,1.1,0.6,0.4,0.3,0.3,0.4,0.5,0.4,0.3,0.9,1.6,1.8,1.2,0.8,0.5,0.4,0.3];
 
-// Real ComEd Hourly Pricing data (cents/kWh), captured 2026-07-16 via
-// https://hourlypricing.comed.com/api?type=day&date=20260716
-// Used as an honest fallback when the live fetch below can't reach ComEd (CORS proxy down, offline, etc.)
+// Real ComEd Hourly Pricing data (cents/kWh), last refreshed by scripts/refresh_comed_prices.py.
+// Used as a last-resort fallback when the live fetch below can't reach ComEd at all (network down, etc.)
 // This is real historical ComEd pricing, not invented numbers, even when it's not live.
-const FALLBACK_COMED_PRICES = [5.5,5.6,3.5,3.4,3.3,3.5,3.7,4.2,3.6,4.3,3.3,7.5,5.0,5.1,7.3,10.0,7.8,13.5,14.5,35.9,16.2,9.6,8.6,6.1];
-const FALLBACK_LABEL = 'Jul 16, 2026';
+const FALLBACK_COMED_PRICES = [3.9,2.9,2.5,2.3,2.2,2.5,3.0,2.7,2.3,2.5,2.7,3.9,3.6,4.1,4.7,3.0,5.8,2.8,1.7,5.6,3.6,3.6,3.6,3.6];
+const FALLBACK_LABEL = 'Jul 31, 2026';
 const RTP_COLORS = {0:'#34C759',1:'#F5A623',2:'#FF6B6B'};
 // ComEd's actual filed residential TOU proposal (ICC docket, targeting a 2026 rollout) doesn't
 // change the real-time supply price at all, it replaces the flat delivery charge with a
@@ -1543,28 +1542,27 @@ const RTP_COLORS = {0:'#34C759',1:'#F5A623',2:'#FF6B6B'};
 const TOU_PEAK_DELTA_CENTS = 4.8;
 const TOU_PREMIUM_COLOR = '#33267A';
 
-let priceState = { hours: FALLBACK_COMED_PRICES, source: 'fallback', label: FALLBACK_LABEL, dateStr: '20260716', touMode: false };
+const FALLBACK_DATE_STR = '20260731';
+let priceState = { hours: FALLBACK_COMED_PRICES, source: 'fallback', isToday: false, label: FALLBACK_LABEL, dateStr: FALLBACK_DATE_STR, touMode: false };
 let currentRange = 'today';
 
-// Week/Month/Year hourly price curves, each averaged from real ComEd data pulled from
-// https://hourlypricing.comed.com/api?type=5minutefeed (custom date range) and
+// Week/Month/Year hourly price curves, each an average of real ComEd days pulled via
 // https://hourlypricing.comed.com/api?type=day&date=YYYYMMDD, not a single day reused or
-// smoothed into a fake shape. WEEK averages five real consecutive days (Jul 13-17, 2026,
-// hundreds of real 5-minute samples grouped by local hour). MONTH and YEAR average real
-// single-day snapshots spread across the months that actually exist in 2026 so far (later
-// months aren't fetchable yet, ComEd only returns data up to the real present day).
+// smoothed into a fake shape. Refreshed periodically by scripts/refresh_comed_prices.py
+// (see RANGE_SOURCE_LABEL below for the exact real dates currently averaged in).
 const RANGE_DAYS = { week: 7, month: 30, year: 365 };
 const RANGE_LABEL = { week: 'weekly', month: 'monthly', year: 'yearly' };
 const RANGE_SOURCE_LABEL = {
-  week: 'Real avg of 5 days, Jul 13–17, 2026',
-  month: 'Real avg of 2 sampled days, Jun–Jul 2026',
-  year: 'Real avg of 5 sampled days, Jan–Jul 2026'
+  week: 'Real avg of 7 days, Jul 25–31, 2026',
+  month: 'Real avg of 2 sampled days, Jul 6–21, 2026',
+  year: 'Real avg of 5 sampled days, Aug 2025–Jul 2026'
 };
 const RANGE_SAVINGS_PCT = { week: -14, month: -11, year: -9 };
+const RANGE_SPOT_CHECK_DATE = { week: '20260731', month: '20260721', year: '20260701' };
 const RANGE_PRICES = {
-  week:  [4.55,3.26,3.12,3.05,3.19,3.43,3.7,3.42,3.73,3.51,6.77,5.99,5.58,7.95,10.05,12.24,17.54,19.04,44.18,29.04,16.1,9.66,6.79,4.7],
-  month: [4.05,4.15,2.9,2.75,2.95,3.05,3.1,3.3,2.8,3.25,2.95,5.05,3.75,3.8,4.9,6.25,5.2,8.05,8.9,19.8,10.05,6.65,5.55,4.0],
-  year:  [2.64,2.92,2.44,2.18,2.02,3.12,2.2,2.72,2.92,2.22,1.88,3.04,2.26,2.3,2.9,3.7,3.44,4.94,5.18,10.12,5.8,3.76,3.06,2.52]
+  week:  [3.21,3.0,2.59,2.56,2.49,2.67,3.13,2.8,2.67,2.96,3.74,3.83,3.86,4.56,4.87,5.09,5.2,5.37,5.26,14.03,7.94,4.63,3.76,3.84],
+  month: [3.3,2.85,2.55,2.4,2.45,2.8,4.45,4.25,4.9,4.2,9.55,4.6,7.3,6.85,5.65,6.35,10.4,6.35,5.65,7.55,7.25,6.65,4.05,3.5],
+  year:  [4.86,4.26,2.84,3.74,3.76,3.86,4.56,4.1,3.44,3.3,5.98,5.76,6.6,4.12,4.84,6.34,5.92,6.74,8.32,12.94,23.3,8.66,5.54,2.66]
 };
 function getRangeCurves(range){
   // Real usage data is still gated behind Green Button Connect (see the technical feasibility
@@ -1712,9 +1710,12 @@ function renderTodayStats(){
   document.getElementById('extraLbl').textContent = 'Cheapest hour today';
 
   const badge = document.getElementById('dataBadge');
-  if (priceState.source === 'live'){
+  if (priceState.source === 'live' && priceState.isToday){
     badge.className = 'data-badge live';
     badge.textContent = 'Live ComEd pricing · updated just now';
+  } else if (priceState.source === 'live'){
+    badge.className = 'data-badge live';
+    badge.textContent = "Live ComEd pricing · today's hours not posted yet, showing " + priceState.label;
   } else {
     badge.className = 'data-badge fallback';
     badge.textContent = 'Real ComEd pricing, captured ' + priceState.label + ' (live fetch unavailable here)';
@@ -1743,24 +1744,42 @@ function parseComedDayResponse(text){
   if (lastFilled < 5) return null;
   return hours.slice(0, lastFilled+1).map((v,i)=> v===null ? hours[i-1] : v);
 }
+function dateStrFor(d){
+  return d.getFullYear() + String(d.getMonth()+1).padStart(2,'0') + String(d.getDate()).padStart(2,'0');
+}
+function labelFor(d){
+  return d.toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'});
+}
+async function fetchComedDay(dateStr){
+  const res = await fetch('https://hourlypricing.comed.com/api?type=day&date=' + dateStr, {cache:'no-store'});
+  if(!res.ok) throw new Error('bad status ' + res.status);
+  const hours = parseComedDayResponse(await res.text());
+  if(!hours) throw new Error('no usable hours for ' + dateStr);
+  return hours;
+}
 async function loadRealComedData(){
-  const now = new Date();
-  const y = now.getFullYear(), m = String(now.getMonth()+1).padStart(2,'0'), d = String(now.getDate()).padStart(2,'0');
-  const target = 'https://hourlypricing.comed.com/api?type=day&date=' + y + m + d;
-  const proxied = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(target);
+  const today = new Date();
+  const yesterday = new Date(today); yesterday.setDate(yesterday.getDate() - 1);
   try{
-    const res = await fetch(proxied, {cache:'no-store'});
-    if(!res.ok) throw new Error('bad status ' + res.status);
-    const hours = parseComedDayResponse(await res.text());
-    if(!hours) throw new Error('no usable hours yet today');
-    priceState.hours = hours;
+    priceState.hours = await fetchComedDay(dateStrFor(today));
     priceState.source = 'live';
-    priceState.dateStr = y + m + d;
+    priceState.isToday = true;
+    priceState.label = labelFor(today);
+    priceState.dateStr = dateStrFor(today);
   } catch(e){
-    priceState.hours = FALLBACK_COMED_PRICES;
-    priceState.source = 'fallback';
-    priceState.label = FALLBACK_LABEL;
-    priceState.dateStr = '20260716';
+    try{
+      priceState.hours = await fetchComedDay(dateStrFor(yesterday));
+      priceState.source = 'live';
+      priceState.isToday = false;
+      priceState.label = labelFor(yesterday);
+      priceState.dateStr = dateStrFor(yesterday);
+    } catch(e2){
+      priceState.hours = FALLBACK_COMED_PRICES;
+      priceState.source = 'fallback';
+      priceState.isToday = false;
+      priceState.label = FALLBACK_LABEL;
+      priceState.dateStr = FALLBACK_DATE_STR;
+    }
   }
   const active = document.querySelector('#s8 .seg button.active');
   if(!active || active.textContent.trim()==='Today') renderTodayStats();
@@ -1792,8 +1811,7 @@ function setRange(btn, range){
   badge.className = 'data-badge fallback';
   badge.textContent = RANGE_SOURCE_LABEL[range] + ' (load profile still modeled, real usage needs Green Button Connect)';
   const link = document.getElementById('verifyLink');
-  const spotCheckDate = { week: '20260716', month: '20260716', year: '20260115' }[range];
-  link.href = 'https://hourlypricing.comed.com/api?type=day&date=' + spotCheckDate;
+  link.href = 'https://hourlypricing.comed.com/api?type=day&date=' + RANGE_SPOT_CHECK_DATE[range];
   link.textContent = 'Spot-check one of the real sampled days →';
   link.style.display = 'block';
 }
