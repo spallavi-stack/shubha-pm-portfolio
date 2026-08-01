@@ -97,6 +97,16 @@
   .dark-section h2.section-title{color:#fff;}
   .dark-section .lede{color:#C6CBE6;}
 
+  details.lab-collapse summary{cursor:pointer;list-style:none;}
+  details.lab-collapse summary::-webkit-details-marker{display:none;}
+  details.lab-collapse summary .lab-collapse-toggle{
+    display:inline-flex;align-items:center;gap:6px;margin-top:18px;
+    font-size:13px;font-weight:700;color:var(--amber);
+  }
+  details.lab-collapse[open] summary .lab-collapse-toggle::before{content:"Hide the tools ▾";}
+  details.lab-collapse:not([open]) summary .lab-collapse-toggle::before{content:"Open the tools ▸";}
+  details.lab-collapse[open] .lab-collapse-body{margin-top:28px;}
+
   .case-bridge{position:relative;overflow:hidden;}
   .about-fade{position:absolute;top:0;left:0;right:0;height:200px;z-index:0;pointer-events:none;background:linear-gradient(to bottom, var(--navy), transparent);}
   .case-bridge .wrap{position:relative;z-index:1;}
@@ -412,9 +422,14 @@
 
 <section class="dark-section pm-lab" id="pm-lab">
   <div class="wrap">
-    <div class="section-kicker">Playground</div>
-    <h2 class="section-title">An interactive PM operating system.</h2>
-    <p class="lede">4 micro-tools you can use right now to make better product decisions, with logic and benchmarks pulled directly from Lenny's Newsletter archive.</p>
+    <details class="lab-collapse">
+    <summary>
+      <div class="section-kicker">Playground</div>
+      <h2 class="section-title">An interactive PM operating system.</h2>
+      <p class="lede">4 micro-tools you can use right now to make better product decisions, with logic and benchmarks pulled directly from Lenny's Newsletter archive.</p>
+      <span class="lab-collapse-toggle"></span>
+    </summary>
+    <div class="lab-collapse-body">
 
     <div class="pm-lab-stage-toggle" role="radiogroup" aria-label="Company stage">
       <button type="button" class="pm-lab-stage-btn is-active" data-stage="0to1" role="radio" aria-checked="true">0&rarr;1</button>
@@ -659,6 +674,9 @@
         </div>
       </div>
     </div>
+
+    </div>
+    </details>
   </div>
 </section>
 
