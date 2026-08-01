@@ -78,7 +78,7 @@ Question 4 and Question 7 both required a fix before this pass could run at all:
 
 ## Cross-persona synthesis
 
-**Consistent theme - trust is built on independence plus honesty about limits, not just a confident answer.** All three personas' trust conditions (Q5/Q6) center on the same mechanism: demonstrated non-referral independence (Graham, Denise) and, for Aisha specifically, willingness to say "this part is genuinely unclear" rather than fake confidence on the one question research itself hasn't settled. This maps directly onto the product's stated differentiation (not paid to say yes) and onto the honest "still open" flag already built into the plug-in viability check.
+**Consistent theme - trust is built on independence plus honesty about limits.** All three personas' trust conditions (Q5/Q6) center on the same mechanism: demonstrated non-referral independence (Graham, Denise) and, for Aisha specifically, willingness to say "this part is genuinely unclear" rather than fake confidence on the one question research itself hasn't settled. This maps directly onto the product's stated differentiation (not paid to say yes) and onto the honest "still open" flag already built into the plug-in viability check.
 
 **Consistent theme - a "red" result is trusted and acted on, not dismissed.** All three would accept an unfavorable result and change their behavior accordingly (walk away, drop the idea, push back on an installer) rather than assume the tool was wrong, directly supporting Hypothesis behavior #2 (validation of unviable results), and specifically because of the non-referral positioning, not as an assumed trait independent of it.
 

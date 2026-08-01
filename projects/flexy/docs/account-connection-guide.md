@@ -8,7 +8,7 @@ The prototype's account-connection screens (entering a ComEd login, seeing "You'
 
 ## The real integration: Green Button Connect My Data
 
-ComEd already operates Green Button Connect My Data (CMD), one of the few utility programs of its kind live in the US today (alongside California's investor-owned utilities). It's an OAuth 2.0-based, opt-in data-sharing standard, not a generic username/password API, and the redirect-to-ComEd pattern already used correctly for the EV-connection step in the prototype is the right shape for this too.
+ComEd already operates Green Button Connect My Data (CMD), one of the few utility programs of its kind live in the US today (alongside California's investor-owned utilities). It's an OAuth 2.0-based, opt-in data-sharing standard, and the redirect-to-ComEd pattern already used correctly for the EV-connection step in the prototype is the right shape for this too.
 
 <svg viewBox="0 0 640 900" xmlns="http://www.w3.org/2000/svg" role="img">
 <title>ComEd account connection flow (Green Button Connect My Data)</title>

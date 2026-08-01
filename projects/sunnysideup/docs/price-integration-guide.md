@@ -6,7 +6,7 @@ Written for a future engineering team: how the prototype's three live data integ
 
 CORS (Cross-Origin Resource Sharing) is a restriction browsers enforce on requests made from a web page's own JavaScript. It has no effect on a server calling an API directly. A pure static-site prototype with no backend has to work within that restriction, or route around it through a proxy.
 
-All three of the external APIs this calculator actually calls were checked directly, and all three return `Access-Control-Allow-Origin: *`, confirmed via live browser tests and direct curl header checks. That's the reason the prototype fetches real, live data straight from the browser today with no CORS proxy in front of it. A fourth source, PVGIS, was tried first for coordinate-precise solar generation and removed for the opposite reason: it sends no CORS header at all, so a browser blocks it outright regardless of calling origin, a real, confirmed dead end for a backend-less prototype, not a hypothetical one.
+All three of the external APIs this calculator actually calls were checked directly, and all three return `Access-Control-Allow-Origin: *`, confirmed via live browser tests and direct curl header checks. That's the reason the prototype fetches real, live data straight from the browser today with no CORS proxy in front of it. A fourth source, PVGIS, was tried first for coordinate-precise solar generation and removed for the opposite reason: it sends no CORS header at all, so a browser blocks it outright regardless of calling origin, a real, confirmed dead end for a backend-less prototype.
 
 ## The three live integrations actually in use
 
@@ -16,7 +16,7 @@ All three of the external APIs this calculator actually calls were checked direc
 
 **3. Octopus Energy's public API**: three chained calls, in order: a Grid Supply Point (GSP) lookup resolves a postcode to one of Great Britain's regional electricity market codes (e.g. `_C` for London); a product lookup finds Octopus's current flagship variable-rate product (filtered from the full product list, since Octopus reissues these under a new dated code roughly every quarter as the Ofgem price cap changes); a unit-rate lookup then fetches that product's current price for the resolved region. Free, no auth, no API key.
 
-## Real bugs found integrating these (not a hypothetical contract)
+## Real bugs found integrating these
 
 Two real defects surfaced during live end-to-end testing against Octopus's actual API, both fixed and confirmed against real regions:
 
