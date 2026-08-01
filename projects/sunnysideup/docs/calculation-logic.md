@@ -1,27 +1,27 @@
-# SunnySideUp calculator — calculation logic
+# SunnySideUp calculator - calculation logic
 
 ## What this document is
 
 A description of how `calculator.js` actually turns user inputs into a green/amber/red
-viability result — the decision logic and formulas, not the sourcing arguments. Written to
+viability result: the decision logic and formulas, not the sourcing arguments. Written to
 be read by a human and by an AI reviewing whether this is *good* logic (correct formulas,
 sensible fallback order, reasonable thresholds), as a follow-up pass to this one.
 
 **What this document is not:** a sourcing/citation document. Every constant below names its
 confidence tier (Fact / Inference / Assumption) so a reviewer knows how solid each number is,
 but the full "why this source, not an alternative" reasoning lives in `calculator.js`'s own
-comments and in `grounding-research.md` — this document doesn't repeat it. If a review of this
+comments and in `grounding-research.md`; this document doesn't repeat it. If a review of this
 logic changes a formula or a fallback order, that's a code change in `calculator.js`; if it
 changes a constant's value, that's also a `calculator.js` change with its own sourcing note.
 
 **Source of truth:** `calculator.js` as of this document's writing (25 July 2026, after the
 Octopus live-fetch bug fixes on `claude/sunnysideup-intake-flow-2h5vm1`). Line numbers below
-are for cross-checking exact code, not required reading — this document should stand on its own.
+are for cross-checking exact code, not required reading. This document should stand on its own.
 
 **Where the decision logic actually lives:** `calculator.js` exports pure scoring functions
 (`calculateRooftopViability`, `calculatePluginViability`) plus async lookup/estimate helpers.
-Two decisions described below — "which consumption path" (exact figure vs. estimate) and
-"which SEG choice" (same supplier / different supplier / don't know) — are made by the UI
+Two decisions described below, "which consumption path" (exact figure vs. estimate) and
+"which SEG choice" (same supplier / different supplier / don't know), are made by the UI
 wiring layer (`calculator-test-standalone.html`'s script), not inside `calculator.js` itself.
 `calculator.js` only ever receives an already-resolved number plus, for SEG, an optional label
 for display. This matters for review: changing *whether* a fallback fires is a UI-layer change;
@@ -39,7 +39,7 @@ changing *what the fallback value is* is a `calculator.js` change.
 
 ---
 
-## 2. Overview — both segments, top to bottom
+## 2. Overview: both segments, top to bottom
 
 ```mermaid
 flowchart TD
@@ -91,14 +91,14 @@ flowchart TD
 
 | Constant | Value | Tier | Note |
 |---|---|---|---|
-| `PLUGIN_KIT_COST_GBP` | £650 | Assumption — weakest-sourced figure in the calculator | Midpoint of reported £400-900 range; no government/MCS/consumer-body source |
+| `PLUGIN_KIT_COST_GBP` | £650 | Assumption, weakest-sourced figure in the calculator | Midpoint of reported £400-900 range; no government/MCS/consumer-body source |
 | `PLUGIN_ANNUAL_GENERATION_KWH` | 770kWh/yr | Assumption, same caveat | Midpoint of reported 640-900kWh/yr range; treated as the south-facing baseline |
-| orientation multiplier | 79% (E/W) / 50% (N) of south | Assumption stacked on Assumption | Borrowed from rooftop's own orientation ratios — no plug-in-specific orientation data exists |
+| orientation multiplier | 79% (E/W) / 50% (N) of south | Assumption stacked on Assumption | Borrowed from rooftop's own orientation ratios; no plug-in-specific orientation data exists |
 | `PLUGIN_PAYBACK_THRESHOLDS` | green ≤5yr, amber ≤8yr | Design judgment, not cited | Loosely anchored to grounding-research.md's reported range |
 
 Output also carries a static `PLUGIN_LEGAL_STATUS` block (electrician install legal since
 2026-04-15 under BS 7671 Amendment 4 [Fact]; DIY self-install not legal until 2026-08-27 under
-SI 2026/848 [Fact]; tenancy consent status unresolved — no relevant provision either way). This
+SI 2026/848 [Fact]; tenancy consent status unresolved, no relevant provision either way). This
 isn't part of the calculation, but ships alongside it in the same result object.
 
 ---
@@ -213,9 +213,9 @@ flowchart TD
 | `ROOFTOP_SYSTEM_COST_GBP` (flat default) | £7,000 | Assumption | Industry range £5,500-8,700; close to MCS's 2025 average |
 | `ROOF_AREA_PER_PANEL_M2` | 2.45m² | Inference | Derived from MCS-anchored range (typical 3-bed semi: 22-30m² usable roof fits 9-12 panels) |
 | `PANEL_WATTAGE_KWP` | 0.43kWp/panel | Inference | Blended across old (350-400W) and new (425-460W) panel stock |
-| `COST_PER_KWP_GBP_BY_TIER` | £1,800/kWp (≤3kWp) / £1,625/kWp (>3kWp) | Fact | MCS's own nonlinear installed-cost figures — smaller systems cost more per kWp |
+| `COST_PER_KWP_GBP_BY_TIER` | £1,800/kWp (≤3kWp) / £1,625/kWp (>3kWp) | Fact | MCS's own nonlinear installed-cost figures; smaller systems cost more per kWp |
 | `PERMITTED_DEVELOPMENT_KWP_CEILING_ENGLAND` | 4kWp | Fact | England only; Scotland/Wales have separate, unresearched thresholds |
-| Regional generation multiplier | England 1.0 / Wales 0.93 / Scotland 0.85 / N.Ireland 0.85 | England: baseline. Scotland: Inference. Wales, N.Ireland: Assumption — extrapolated | No Wales/N.Ireland-specific figure was found; both extrapolated from Scotland's climate/latitude band |
+| Regional generation multiplier | England 1.0 / Wales 0.93 / Scotland 0.85 / N.Ireland 0.85 | England: baseline. Scotland: Inference. Wales, N.Ireland: Assumption, extrapolated | No Wales/N.Ireland-specific figure was found; both extrapolated from Scotland's climate/latitude band |
 | Open-Meteo tilt / performance ratio / assumed peak power | 35° / 0.86 / 4kWp | Assumption (all three) | Same near-optimal-UK-roof and system-loss assumptions used throughout |
 
 ### 4c. Electricity price resolution
@@ -257,10 +257,10 @@ flowchart TD
 
 | Item | Value | Tier | Note |
 |---|---|---|---|
-| `ELECTRICITY_PRICE_PENCE_PER_KWH_DEFAULT` | 26.11p | Fact (default) | Ofgem price cap, Direct Debit standard variable tariff, 1 Jul-30 Sep 2026 — changes quarterly |
-| Live Octopus rate | varies by region | Inference | Confirmed end-to-end via a direct-HTTP test across 4 real UK regions (25 Jul 2026) — see `calculator.js`'s comment on `OCTOPUS_BASE_URL` for the two bugs found and fixed during that test |
-| Product-selection rule | exact "Flexible Octopus" name match, else most-recent `available_from` among filtered candidates | — | Candidates exclude green/tracker/prepay/business/restricted/expired products |
-| Why Octopus's rate stands in for any supplier | — | Fact, empirically checked | 5 real (supplier, region) pairs landed within ~0.03p/kWh of Ofgem's regional cap — standard-variable tariffs are regulatorily pinned to the cap, unlike SEG export rates |
+| `ELECTRICITY_PRICE_PENCE_PER_KWH_DEFAULT` | 26.11p | Fact (default) | Ofgem price cap, Direct Debit standard variable tariff, 1 Jul-30 Sep 2026, changes quarterly |
+| Live Octopus rate | varies by region | Inference | Confirmed end-to-end via a direct-HTTP test across 4 real UK regions (25 Jul 2026); see `calculator.js`'s comment on `OCTOPUS_BASE_URL` for the two bugs found and fixed during that test |
+| Product-selection rule | exact "Flexible Octopus" name match, else most-recent `available_from` among filtered candidates | N/A | Candidates exclude green/tracker/prepay/business/restricted/expired products |
+| Why Octopus's rate stands in for any supplier | N/A | Fact, empirically checked | 5 real (supplier, region) pairs landed within ~0.03p/kWh of Ofgem's regional cap; standard-variable tariffs are regulatorily pinned to the cap, unlike SEG export rates |
 
 ### 4d. SEG export rate resolution (UI-layer logic)
 
@@ -292,15 +292,15 @@ flowchart TD
 
 For the "different supplier" choice, a manually typed rate overrides the table selection if
 both are filled in. Either resolution path also carries the picked row's eligibility text (e.g.
-"requires system installed by that same supplier") into the final result — see §5.
+"requires system installed by that same supplier") into the final result; see §5.
 
 **Key constants** (`calculator.js` L81-173):
 
 | Item | Value | Tier | Note |
 |---|---|---|---|
 | `SEG_RATE_PENCE_PER_KWH_DEFAULT` | 3.01p | Inference | Median of the 10 tariffs in `SEG_TARIFFS` explicitly "open to anyone, no switch needed" |
-| `SEG_TARIFFS` table | 30 rows, £1.00-25.00p, named supplier/tariff/eligibility/source | Mixed — see table | User-provided CSV (23 Jul 2026); 9 rows spot-checked directly (2 confirmed Fact, e.g. Octopus's own "Outgoing Octopus" and "Smart Export Guarantee"; 7 turned up real mismatches, e.g. Ofgem's SEG register lists licensee names only, never rates); 21 rows still unchecked. Full per-row detail in `calculator.js`, not reproduced here. |
-| Fixed-first sort rule | — | — | A structured field (`rateType`), not a parsed guess — surfaced a real issue where the numerically-highest row (Octopus's "Intelligent Octopus Flux") isn't actually a flat quotable rate |
+| `SEG_TARIFFS` table | 30 rows, £1.00-25.00p, named supplier/tariff/eligibility/source | Mixed, see table | User-provided CSV (23 Jul 2026); 9 rows spot-checked directly (2 confirmed Fact, e.g. Octopus's own "Outgoing Octopus" and "Smart Export Guarantee"; 7 turned up real mismatches, e.g. Ofgem's SEG register lists licensee names only, never rates); 21 rows still unchecked. Full per-row detail in `calculator.js`, not reproduced here. |
+| Fixed-first sort rule | N/A | N/A | A structured field (`rateType`), not a parsed guess. It surfaced a real issue where the numerically-highest row (Octopus's "Intelligent Octopus Flux") isn't actually a flat quotable rate |
 
 ### 4e. Core formula
 
@@ -330,7 +330,7 @@ flowchart TD
 
 | Constant | Value | Tier | Note |
 |---|---|---|---|
-| `SELF_CONSUMPTION_RATE` | usually-home 0.55 / usually-out 0.30 | Prototype simplification, not independently researched | Modeled from occupancy as a rough two-tier proxy — `grounding-research.md` names self-consumption rate as a real sensitivity factor but doesn't supply a researched percentage |
+| `SELF_CONSUMPTION_RATE` | usually-home 0.55 / usually-out 0.30 | Prototype simplification, not independently researched | Modeled from occupancy as a rough two-tier proxy. `grounding-research.md` names self-consumption rate as a real sensitivity factor but doesn't supply a researched percentage |
 | `ROOFTOP_PAYBACK_THRESHOLDS` | green ≤8yr, amber ≤13yr | Design judgment, not cited | Loosely anchored to `grounding-research.md`'s reported "roughly 6-14 years across sources" range, not a regulator or industry-body standard |
 
 ---
@@ -338,25 +338,25 @@ flowchart TD
 ## 5. What comes back alongside the number
 
 Every result carries an `assumptions` object naming each input's resolved value, confidence
-tier, and a plain-language note — so a user (or a future reviewer) can see exactly which parts
+tier, and a plain-language note, so a user (or a future reviewer) can see exactly which parts
 of a given result are Fact-backed vs. Assumption-backed, not just the final figure. This is
 sourcing-confidence detail: intended as a collapsible "read it if you want it" section below
 the headline numbers (payback, annual savings, system cost), not something that needs to
 interrupt anyone by default.
 
-Rooftop results also carry a `flags` array — situational, always-worth-surfacing callouts,
+Rooftop results also carry a `flags` array: situational, always-worth-surfacing callouts,
 distinct from `assumptions` in kind, not just placement: `assumptions` explains how confident a
 *number* is, `flags` tells the user about a *condition attached to this specific result* that
 the number alone doesn't convey. Each entry is `{ id, tier, title, note }`. Three are
 unconditional (every rooftop result gets them, since no input this calculator collects tells it
-whether a property is leasehold, listed, or in a conservation area — deliberately not adding new
+whether a property is leasehold, listed, or in a conservation area, deliberately not adding new
 inputs just to gate these):
 
 | id | Trigger | Tier | What it says |
 |---|---|---|---|
 | `permittedDevelopment` | Roof-area-derived system exceeds England's 4kWp Permitted Development ceiling | Fact | May need planning permission for a system this size |
-| `tenancyConsent` | Always | Fact | Leaseholders generally need freeholder consent for exterior alterations; renters should check with their landlord — standard UK leasehold law, not resolved by this tool |
-| `listedBuilding` | Always | Fact | Listed buildings have zero Permitted Development rights for solar at any size — the `permittedDevelopment` flag above only checks size, not listed status |
+| `tenancyConsent` | Always | Fact | Leaseholders generally need freeholder consent for exterior alterations; renters should check with their landlord; standard UK leasehold law, not resolved by this tool |
+| `listedBuilding` | Always | Fact | Listed buildings have zero Permitted Development rights for solar at any size. The `permittedDevelopment` flag above only checks size, not listed status |
 | `conservationArea` | Always | Inference | Street-visible panels in a conservation area may need planning permission even under the size ceiling |
 | `regulatoryRegime` | Postcode resolves to Scotland or Wales | Fact | That country's own permitted-development/building-regulation regime hasn't been researched here |
 | `highExportSensitivity` | No user-picked SEG tariff, and exported share of generation exceeds 50% | Inference | This result uses the low default SEG rate; a high-export household's result moves more than most when a real (much higher) tariff is picked |
@@ -368,7 +368,7 @@ silently masked by its fallback) and `roofAreaSizing`.
 Separately, when a SEG rate comes from a specific named tariff (either the "same as my import
 supplier" lookup or a manually-picked row from the full table), that tariff's eligibility text
 (e.g. "requires system installed by that same supplier") is folded into
-`assumptions.segRatePencePerKwh.note` — not just shown in the picker UI — so the condition
+`assumptions.segRatePencePerKwh.note`, not just shown in the picker UI, so the condition
 attached to the picked rate survives into the calculated result instead of getting lost between
 the two.
 
@@ -376,12 +376,12 @@ the two.
 
 ## 6. Simplifications already flagged in the code
 
-Pulled from `calculator.js`'s own comments, not new critique — worth having in one place for
+Pulled from `calculator.js`'s own comments, not new critique. Worth having in one place for
 the next review pass to weigh in on:
 
 - **Self-consumption rate** is a rough two-tier occupancy proxy (0.55 / 0.30), not an
   independently researched behavioral figure.
-- **Plug-in generation and kit cost** are the weakest-sourced figures in the calculator — no
+- **Plug-in generation and kit cost** are the weakest-sourced figures in the calculator. No
   government, MCS, or established consumer-body source for either.
 - **Plug-in orientation multiplier** stacks one Assumption on another: it borrows rooftop's
   own east/west and north ratios because no plug-in-specific orientation data exists at all.

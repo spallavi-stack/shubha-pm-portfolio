@@ -51,25 +51,25 @@
   </div>
 </nav>
 <article class="wrap">
-<h1>SunnySideUp calculator — calculation logic</h1>
+<h1>SunnySideUp calculator - calculation logic</h1>
 <h2>What this document is</h2>
 <p>A description of how <code>calculator.js</code> actually turns user inputs into a green/amber/red
-viability result — the decision logic and formulas, not the sourcing arguments. Written to
+viability result: the decision logic and formulas, not the sourcing arguments. Written to
 be read by a human and by an AI reviewing whether this is <em>good</em> logic (correct formulas,
 sensible fallback order, reasonable thresholds), as a follow-up pass to this one.</p>
 <p><strong>What this document is not:</strong> a sourcing/citation document. Every constant below names its
 confidence tier (Fact / Inference / Assumption) so a reviewer knows how solid each number is,
 but the full "why this source, not an alternative" reasoning lives in <code>calculator.js</code>'s own
-comments and in <code>grounding-research.md</code> — this document doesn't repeat it. If a review of this
+comments and in <code>grounding-research.md</code>; this document doesn't repeat it. If a review of this
 logic changes a formula or a fallback order, that's a code change in <code>calculator.js</code>; if it
 changes a constant's value, that's also a <code>calculator.js</code> change with its own sourcing note.</p>
 <p><strong>Source of truth:</strong> <code>calculator.js</code> as of this document's writing (25 July 2026, after the
 Octopus live-fetch bug fixes on <code>claude/sunnysideup-intake-flow-2h5vm1</code>). Line numbers below
-are for cross-checking exact code, not required reading — this document should stand on its own.</p>
+are for cross-checking exact code, not required reading. This document should stand on its own.</p>
 <p><strong>Where the decision logic actually lives:</strong> <code>calculator.js</code> exports pure scoring functions
 (<code>calculateRooftopViability</code>, <code>calculatePluginViability</code>) plus async lookup/estimate helpers.
-Two decisions described below — "which consumption path" (exact figure vs. estimate) and
-"which SEG choice" (same supplier / different supplier / don't know) — are made by the UI
+Two decisions described below, "which consumption path" (exact figure vs. estimate) and
+"which SEG choice" (same supplier / different supplier / don't know), are made by the UI
 wiring layer (<code>calculator-test-standalone.html</code>'s script), not inside <code>calculator.js</code> itself.
 <code>calculator.js</code> only ever receives an already-resolved number plus, for SEG, an optional label
 for display. This matters for review: changing <em>whether</em> a fallback fires is a UI-layer change;
@@ -103,7 +103,7 @@ changing <em>what the fallback value is</em> is a <code>calculator.js</code> cha
 </tbody>
 </table>
 <hr />
-<h2>2. Overview — both segments, top to bottom</h2>
+<h2>2. Overview: both segments, top to bottom</h2>
 <pre class="mermaid">flowchart TD
   Start(["User inputs"]) --> Seg{"Segment?"}
 
@@ -156,7 +156,7 @@ roof-area sizing (it's a fixed small kit).</p>
 <tr>
 <td><code>PLUGIN_KIT_COST_GBP</code></td>
 <td>£650</td>
-<td>Assumption — weakest-sourced figure in the calculator</td>
+<td>Assumption, weakest-sourced figure in the calculator</td>
 <td>Midpoint of reported £400-900 range; no government/MCS/consumer-body source</td>
 </tr>
 <tr>
@@ -169,7 +169,7 @@ roof-area sizing (it's a fixed small kit).</p>
 <td>orientation multiplier</td>
 <td>79% (E/W) / 50% (N) of south</td>
 <td>Assumption stacked on Assumption</td>
-<td>Borrowed from rooftop's own orientation ratios — no plug-in-specific orientation data exists</td>
+<td>Borrowed from rooftop's own orientation ratios; no plug-in-specific orientation data exists</td>
 </tr>
 <tr>
 <td><code>PLUGIN_PAYBACK_THRESHOLDS</code></td>
@@ -181,7 +181,7 @@ roof-area sizing (it's a fixed small kit).</p>
 </table>
 <p>Output also carries a static <code>PLUGIN_LEGAL_STATUS</code> block (electrician install legal since
 2026-04-15 under BS 7671 Amendment 4 [Fact]; DIY self-install not legal until 2026-08-27 under
-SI 2026/848 [Fact]; tenancy consent status unresolved — no relevant provision either way). This
+SI 2026/848 [Fact]; tenancy consent status unresolved, no relevant provision either way). This
 isn't part of the calculation, but ships alongside it in the same result object.</p>
 <hr />
 <h2>4. Rooftop solar</h2>
@@ -351,7 +351,7 @@ isn't part of the calculation, but ships alongside it in the same result object.
 <td><code>COST_PER_KWP_GBP_BY_TIER</code></td>
 <td>£1,800/kWp (≤3kWp) / £1,625/kWp (&gt;3kWp)</td>
 <td>Fact</td>
-<td>MCS's own nonlinear installed-cost figures — smaller systems cost more per kWp</td>
+<td>MCS's own nonlinear installed-cost figures; smaller systems cost more per kWp</td>
 </tr>
 <tr>
 <td><code>PERMITTED_DEVELOPMENT_KWP_CEILING_ENGLAND</code></td>
@@ -362,7 +362,7 @@ isn't part of the calculation, but ships alongside it in the same result object.
 <tr>
 <td>Regional generation multiplier</td>
 <td>England 1.0 / Wales 0.93 / Scotland 0.85 / N.Ireland 0.85</td>
-<td>England: baseline. Scotland: Inference. Wales, N.Ireland: Assumption — extrapolated</td>
+<td>England: baseline. Scotland: Inference. Wales, N.Ireland: Assumption, extrapolated</td>
 <td>No Wales/N.Ireland-specific figure was found; both extrapolated from Scotland's climate/latitude band</td>
 </tr>
 <tr>
@@ -420,25 +420,25 @@ isn't part of the calculation, but ships alongside it in the same result object.
 <td><code>ELECTRICITY_PRICE_PENCE_PER_KWH_DEFAULT</code></td>
 <td>26.11p</td>
 <td>Fact (default)</td>
-<td>Ofgem price cap, Direct Debit standard variable tariff, 1 Jul-30 Sep 2026 — changes quarterly</td>
+<td>Ofgem price cap, Direct Debit standard variable tariff, 1 Jul-30 Sep 2026, changes quarterly</td>
 </tr>
 <tr>
 <td>Live Octopus rate</td>
 <td>varies by region</td>
 <td>Inference</td>
-<td>Confirmed end-to-end via a direct-HTTP test across 4 real UK regions (25 Jul 2026) — see <code>calculator.js</code>'s comment on <code>OCTOPUS_BASE_URL</code> for the two bugs found and fixed during that test</td>
+<td>Confirmed end-to-end via a direct-HTTP test across 4 real UK regions (25 Jul 2026); see <code>calculator.js</code>'s comment on <code>OCTOPUS_BASE_URL</code> for the two bugs found and fixed during that test</td>
 </tr>
 <tr>
 <td>Product-selection rule</td>
 <td>exact "Flexible Octopus" name match, else most-recent <code>available_from</code> among filtered candidates</td>
-<td>—</td>
+<td>N/A</td>
 <td>Candidates exclude green/tracker/prepay/business/restricted/expired products</td>
 </tr>
 <tr>
 <td>Why Octopus's rate stands in for any supplier</td>
-<td>—</td>
+<td>N/A</td>
 <td>Fact, empirically checked</td>
-<td>5 real (supplier, region) pairs landed within ~0.03p/kWh of Ofgem's regional cap — standard-variable tariffs are regulatorily pinned to the cap, unlike SEG export rates</td>
+<td>5 real (supplier, region) pairs landed within ~0.03p/kWh of Ofgem's regional cap; standard-variable tariffs are regulatorily pinned to the cap, unlike SEG export rates</td>
 </tr>
 </tbody>
 </table>
@@ -469,7 +469,7 @@ isn't part of the calculation, but ships alongside it in the same result object.
 </pre>
 <p>For the "different supplier" choice, a manually typed rate overrides the table selection if
 both are filled in. Either resolution path also carries the picked row's eligibility text (e.g.
-"requires system installed by that same supplier") into the final result — see §5.</p>
+"requires system installed by that same supplier") into the final result; see §5.</p>
 <p><strong>Key constants</strong> (<code>calculator.js</code> L81-173):</p>
 <table>
 <thead>
@@ -490,14 +490,14 @@ both are filled in. Either resolution path also carries the picked row's eligibi
 <tr>
 <td><code>SEG_TARIFFS</code> table</td>
 <td>30 rows, £1.00-25.00p, named supplier/tariff/eligibility/source</td>
-<td>Mixed — see table</td>
+<td>Mixed, see table</td>
 <td>User-provided CSV (23 Jul 2026); 9 rows spot-checked directly (2 confirmed Fact, e.g. Octopus's own "Outgoing Octopus" and "Smart Export Guarantee"; 7 turned up real mismatches, e.g. Ofgem's SEG register lists licensee names only, never rates); 21 rows still unchecked. Full per-row detail in <code>calculator.js</code>, not reproduced here.</td>
 </tr>
 <tr>
 <td>Fixed-first sort rule</td>
-<td>—</td>
-<td>—</td>
-<td>A structured field (<code>rateType</code>), not a parsed guess — surfaced a real issue where the numerically-highest row (Octopus's "Intelligent Octopus Flux") isn't actually a flat quotable rate</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>A structured field (<code>rateType</code>), not a parsed guess. It surfaced a real issue where the numerically-highest row (Octopus's "Intelligent Octopus Flux") isn't actually a flat quotable rate</td>
 </tr>
 </tbody>
 </table>
@@ -537,7 +537,7 @@ both are filled in. Either resolution path also carries the picked row's eligibi
 <td><code>SELF_CONSUMPTION_RATE</code></td>
 <td>usually-home 0.55 / usually-out 0.30</td>
 <td>Prototype simplification, not independently researched</td>
-<td>Modeled from occupancy as a rough two-tier proxy — <code>grounding-research.md</code> names self-consumption rate as a real sensitivity factor but doesn't supply a researched percentage</td>
+<td>Modeled from occupancy as a rough two-tier proxy. <code>grounding-research.md</code> names self-consumption rate as a real sensitivity factor but doesn't supply a researched percentage</td>
 </tr>
 <tr>
 <td><code>ROOFTOP_PAYBACK_THRESHOLDS</code></td>
@@ -550,17 +550,17 @@ both are filled in. Either resolution path also carries the picked row's eligibi
 <hr />
 <h2>5. What comes back alongside the number</h2>
 <p>Every result carries an <code>assumptions</code> object naming each input's resolved value, confidence
-tier, and a plain-language note — so a user (or a future reviewer) can see exactly which parts
+tier, and a plain-language note, so a user (or a future reviewer) can see exactly which parts
 of a given result are Fact-backed vs. Assumption-backed, not just the final figure. This is
 sourcing-confidence detail: intended as a collapsible "read it if you want it" section below
 the headline numbers (payback, annual savings, system cost), not something that needs to
 interrupt anyone by default.</p>
-<p>Rooftop results also carry a <code>flags</code> array — situational, always-worth-surfacing callouts,
+<p>Rooftop results also carry a <code>flags</code> array: situational, always-worth-surfacing callouts,
 distinct from <code>assumptions</code> in kind, not just placement: <code>assumptions</code> explains how confident a
 <em>number</em> is, <code>flags</code> tells the user about a <em>condition attached to this specific result</em> that
 the number alone doesn't convey. Each entry is <code>{ id, tier, title, note }</code>. Three are
 unconditional (every rooftop result gets them, since no input this calculator collects tells it
-whether a property is leasehold, listed, or in a conservation area — deliberately not adding new
+whether a property is leasehold, listed, or in a conservation area, deliberately not adding new
 inputs just to gate these):</p>
 <table>
 <thead>
@@ -582,13 +582,13 @@ inputs just to gate these):</p>
 <td><code>tenancyConsent</code></td>
 <td>Always</td>
 <td>Fact</td>
-<td>Leaseholders generally need freeholder consent for exterior alterations; renters should check with their landlord — standard UK leasehold law, not resolved by this tool</td>
+<td>Leaseholders generally need freeholder consent for exterior alterations; renters should check with their landlord; standard UK leasehold law, not resolved by this tool</td>
 </tr>
 <tr>
 <td><code>listedBuilding</code></td>
 <td>Always</td>
 <td>Fact</td>
-<td>Listed buildings have zero Permitted Development rights for solar at any size — the <code>permittedDevelopment</code> flag above only checks size, not listed status</td>
+<td>Listed buildings have zero Permitted Development rights for solar at any size. The <code>permittedDevelopment</code> flag above only checks size, not listed status</td>
 </tr>
 <tr>
 <td><code>conservationArea</code></td>
@@ -616,17 +616,17 @@ silently masked by its fallback) and <code>roofAreaSizing</code>.</p>
 <p>Separately, when a SEG rate comes from a specific named tariff (either the "same as my import
 supplier" lookup or a manually-picked row from the full table), that tariff's eligibility text
 (e.g. "requires system installed by that same supplier") is folded into
-<code>assumptions.segRatePencePerKwh.note</code> — not just shown in the picker UI — so the condition
+<code>assumptions.segRatePencePerKwh.note</code>, not just shown in the picker UI, so the condition
 attached to the picked rate survives into the calculated result instead of getting lost between
 the two.</p>
 <hr />
 <h2>6. Simplifications already flagged in the code</h2>
-<p>Pulled from <code>calculator.js</code>'s own comments, not new critique — worth having in one place for
+<p>Pulled from <code>calculator.js</code>'s own comments, not new critique. Worth having in one place for
 the next review pass to weigh in on:</p>
 <ul>
 <li><strong>Self-consumption rate</strong> is a rough two-tier occupancy proxy (0.55 / 0.30), not an
   independently researched behavioral figure.</li>
-<li><strong>Plug-in generation and kit cost</strong> are the weakest-sourced figures in the calculator — no
+<li><strong>Plug-in generation and kit cost</strong> are the weakest-sourced figures in the calculator. No
   government, MCS, or established consumer-body source for either.</li>
 <li><strong>Plug-in orientation multiplier</strong> stacks one Assumption on another: it borrows rooftop's
   own east/west and north ratios because no plug-in-specific orientation data exists at all.</li>

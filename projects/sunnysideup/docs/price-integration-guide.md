@@ -1,4 +1,4 @@
-# SunnySideUp — Price Integration Guide
+# SunnySideUp - Price Integration Guide
 
 Written for a future engineering team: how the prototype's three live data integrations actually work today, why they don't need a CORS proxy, and what changes to serve real users at scale.
 
@@ -10,11 +10,11 @@ All three of the external APIs this calculator actually calls were checked direc
 
 ## The three live integrations actually in use
 
-**1. postcodes.io** — resolves a UK postcode to country, region, and latitude/longitude. Free, no auth, no API key. `GET https://api.postcodes.io/postcodes/{postcode}`.
+**1. postcodes.io**: resolves a UK postcode to country, region, and latitude/longitude. Free, no auth, no API key. `GET https://api.postcodes.io/postcodes/{postcode}`.
 
-**2. Open-Meteo's archive API** — given a latitude/longitude, returns a full past calendar year of hourly global tilted irradiance, which the calculator sums into an annual generation estimate. Free, no auth. Deliberately queries a past, complete calendar year rather than the current one, since Open-Meteo's archive only covers dates that have already happened.
+**2. Open-Meteo's archive API**: given a latitude/longitude, returns a full past calendar year of hourly global tilted irradiance, which the calculator sums into an annual generation estimate. Free, no auth. Deliberately queries a past, complete calendar year rather than the current one, since Open-Meteo's archive only covers dates that have already happened.
 
-**3. Octopus Energy's public API** — three chained calls, in order: a Grid Supply Point (GSP) lookup resolves a postcode to one of Great Britain's regional electricity market codes (e.g. `_C` for London); a product lookup finds Octopus's current flagship variable-rate product (filtered from the full product list, since Octopus reissues these under a new dated code roughly every quarter as the Ofgem price cap changes); a unit-rate lookup then fetches that product's current price for the resolved region. Free, no auth, no API key.
+**3. Octopus Energy's public API**: three chained calls, in order: a Grid Supply Point (GSP) lookup resolves a postcode to one of Great Britain's regional electricity market codes (e.g. `_C` for London); a product lookup finds Octopus's current flagship variable-rate product (filtered from the full product list, since Octopus reissues these under a new dated code roughly every quarter as the Ofgem price cap changes); a unit-rate lookup then fetches that product's current price for the resolved region. Free, no auth, no API key.
 
 ## Real bugs found integrating these (not a hypothetical contract)
 

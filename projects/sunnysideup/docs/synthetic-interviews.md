@@ -1,4 +1,4 @@
-# SunnySideUp — Synthetic User Interviews (v1)
+# SunnySideUp - Synthetic User Interviews (v1)
 
 **Method note (read this first):** These are synthetic interviews. Each persona's answers are generated in character, grounded strictly in what's already established in `personas.md` (goals, pain points, current behavior, tech-savviness) plus the real UK facts documented in `grounding-research.md` and `product-brief.md`. Nothing below is real user data. Treat this as a rehearsal pass that sharpens the questions and surfaces likely themes, not a substitute for eventually talking to real UK homeowners, renters, and leaseholders.
 
@@ -16,7 +16,7 @@ Question 4 and Question 7 both required a fix before this pass could run at all:
 
 ---
 
-## 1. Graham Whitfield — The Sales-Call Avoider
+## 1. Graham Whitfield - The Sales-Call Avoider
 
 **Q1:** I've been reading about the government's solar targets and thinking about it for months, but I haven't actually called anyone. Every "get a free quote" thing online is really just asking for my number so someone can ring me.
 
@@ -36,7 +36,7 @@ Question 4 and Question 7 both required a fix before this pass could run at all:
 
 ---
 
-## 2. Denise Okafor — The Quote Skeptic
+## 2. Denise Okafor - The Quote Skeptic
 
 **Q1:** Right now I'm Googling the installer's name plus "reviews" and asking in a local Facebook group, and neither of those actually tells me if my specific numbers make sense.
 
@@ -56,7 +56,7 @@ Question 4 and Question 7 both required a fix before this pass could run at all:
 
 ---
 
-## 3. Aisha Rahman — The Plug-In Fence-Sitter
+## 3. Aisha Rahman - The Plug-In Fence-Sitter
 
 **Q1:** I've read blog posts, a government consultation summary, and a Reddit thread from someone who actually drilled panels into their own wall and wired the whole thing up themselves, trying to piece together whether I'm even allowed to do this in my flat, and honestly whether I could even manage what they did.
 
@@ -78,17 +78,17 @@ Question 4 and Question 7 both required a fix before this pass could run at all:
 
 ## Cross-persona synthesis
 
-**Consistent theme — trust is built on independence plus honesty about limits, not just a confident answer.** All three personas' trust conditions (Q5/Q6) center on the same mechanism: demonstrated non-referral independence (Graham, Denise) and, for Aisha specifically, willingness to say "this part is genuinely unclear" rather than fake confidence on the one question research itself hasn't settled. This maps directly onto the product's stated differentiation (not paid to say yes) and onto the honest "still open" flag already built into the plug-in viability check.
+**Consistent theme - trust is built on independence plus honesty about limits, not just a confident answer.** All three personas' trust conditions (Q5/Q6) center on the same mechanism: demonstrated non-referral independence (Graham, Denise) and, for Aisha specifically, willingness to say "this part is genuinely unclear" rather than fake confidence on the one question research itself hasn't settled. This maps directly onto the product's stated differentiation (not paid to say yes) and onto the honest "still open" flag already built into the plug-in viability check.
 
-**Consistent theme — a "red" result is trusted and acted on, not dismissed.** All three would accept an unfavorable result and change their behavior accordingly (walk away, drop the idea, push back on an installer) rather than assume the tool was wrong, directly supporting Hypothesis behavior #2 (validation of unviable results), and specifically because of the non-referral positioning, not as an assumed trait independent of it.
+**Consistent theme - a "red" result is trusted and acted on, not dismissed.** All three would accept an unfavorable result and change their behavior accordingly (walk away, drop the idea, push back on an installer) rather than assume the tool was wrong, directly supporting Hypothesis behavior #2 (validation of unviable results), and specifically because of the non-referral positioning, not as an assumed trait independent of it.
 
-**Consistent theme — sharing is peer-to-peer, not broad social virality.** All three said they'd tell someone specific (a neighbour, a sister, a renters' Facebook group) rather than post publicly, supporting Hypothesis behavior #3 (organic word-of-mouth) but suggesting the realistic channel is closer to the community-distribution tactics already in Go-to-market than to viral social sharing.
+**Consistent theme - sharing is peer-to-peer, not broad social virality.** All three said they'd tell someone specific (a neighbour, a sister, a renters' Facebook group) rather than post publicly, supporting Hypothesis behavior #3 (organic word-of-mouth) but suggesting the realistic channel is closer to the community-distribution tactics already in Go-to-market than to viral social sharing.
 
 **Divergent and worth flagging as the single most useful finding here: Aisha's disappointment is capped, and no product design fixes that.** Graham and Denise are both "very disappointed" without qualification. Aisha is only "somewhat," and says so specifically because SunnySideUp can only partly resolve her actual blocker (the unsettled tenancy-consent question), not because the concept itself is weaker for her. This means the plug-in segment's ceiling on trust and satisfaction may be structurally lower than the rooftop segment's for as long as that legal question stays open, independent of anything SunnySideUp itself does well. Worth deciding whether that's an acceptable standing limitation to build around, or a reason to prioritize further legal research (the tenancy-agreement question flagged in `product-brief.md`'s Open Questions) before the plug-in segment's messaging goes out to real users.
 
 **Not tested here: Hypothesis behavior #4 (institutional sponsorship).** None of these three personas can validate whether a public body or innovation fund would actually sponsor SunnySideUp, that's a question for an institutional stakeholder, not an end-user, and is out of scope for a persona-based interview pass.
 
-**Flag — genuinely uncertain vs. plausible-sounding:** the specific dialogue above is illustrative, generated in character to be consistent with each persona's brief and the real research already established, not independently verified against real UK homeowners, renters, or leaseholders. The four themes above (independence-plus-honesty as the trust mechanism, red-results-are-trusted, peer-to-peer sharing, and Aisha's capped ceiling) are the actual output to carry forward; individual lines of dialogue shouldn't be cited as if they were real quotes.
+**Flag - genuinely uncertain vs. plausible-sounding:** the specific dialogue above is illustrative, generated in character to be consistent with each persona's brief and the real research already established, not independently verified against real UK homeowners, renters, or leaseholders. The four themes above (independence-plus-honesty as the trust mechanism, red-results-are-trusted, peer-to-peer sharing, and Aisha's capped ceiling) are the actual output to carry forward; individual lines of dialogue shouldn't be cited as if they were real quotes.
 
 ## Status
 **Draft v1, audited.** Synthetic interviews complete for all 3 personas, using a concept-test format (persona is told what SunnySideUp is before being asked the disappointment question), per the fix made to `product-brief.md`'s Go/no-go test. Four themes identified to carry into roadmap prioritization: independence-plus-honesty as the trust mechanism, red-results-are-trusted-and-acted-on, peer-to-peer (not viral) sharing, and Aisha's capped disappointment ceiling tied to the unresolved tenancy-consent question. Institutional sponsorship (Hypothesis behavior #4) remains untested by design, out of scope for end-user personas. `research-auditor` run: Aisha's interview initially reflected only her legal-uncertainty motivation, missing the DIY-skill-barrier and energy-security dimensions already established in `personas.md`; fixed to draw on all three, since the method note claims strict grounding in the persona sheet.

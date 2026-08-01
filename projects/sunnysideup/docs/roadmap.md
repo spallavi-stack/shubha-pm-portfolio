@@ -1,8 +1,8 @@
-# SunnySideUp — Roadmap (v1)
+# SunnySideUp - Roadmap (v1)
 
 ## Prioritization framework: ICE
 
-Using ICE (Impact, Confidence, Ease) rather than RICE. Reach isn't meaningfully estimable yet since SunnySideUp has no real user base or institutional partner in place, so ICE fits a pre-launch, research-grounded prioritization better. Each scored 1–10; ICE score is the average of the three. Every score is justified against a specific persona JTBD, `grounding-research.md` finding, or `synthetic-interviews.md` theme, not a gut feeling.
+Using ICE (Impact, Confidence, Ease) rather than RICE. Reach isn't meaningfully estimable yet since SunnySideUp has no real user base or institutional partner in place, so ICE fits a pre-launch, research-grounded prioritization better. Each scored 1–10; ICE score is the average of the three. Every score is justified against a specific persona JTBD, `grounding-research.md` finding, or `synthetic-interviews.md` theme.
 
 **Legend:** Impact = how much this moves the needle on the core problem. Confidence = how sure we are, based on persona/interview evidence or grounding-research sourcing strength, that this is the right feature. Ease = technical/data feasibility given known constraints.
 
@@ -51,8 +51,8 @@ Quote-document parsing scores well on Impact, since it would remove real frictio
 
 | Item | Rationale |
 |---|---|
-| Real data integration (smart-meter or bank-linked automatic consumption pull, replacing self-report) | No UK equivalent mechanism has been researched yet. Self-report is the realistic near-term input source; matches Flexy's own precedent of keeping real data integration as a separate future guide rather than an MVP/Next roadmap item. |
-| Scotland/Wales-specific guidance | `grounding-research.md` flags Scotland and Wales as having their own "broadly similar but distinct regimes," explicitly not researched in depth — a genuine, named deferral rather than an oversight. |
+| Real data integration (smart-meter or bank-linked automatic consumption pull, replacing self-report) | No UK equivalent mechanism has been researched yet. Self-report is the realistic near-term input source; real data integration is documented as a separate future guide rather than an MVP/Next roadmap item. |
+| Scotland/Wales-specific guidance | `grounding-research.md` flags Scotland and Wales as having their own "broadly similar but distinct regimes," explicitly not researched in depth, a genuine, named deferral rather than an oversight. |
 | Institutional/DNO/local-authority portal integrations | A distribution and partnership motion, already named in `product-brief.md`'s Go-to-market. Not a product capability to sequence on an engineering roadmap. |
 | Further legal research on individual tenancy-agreement consent | A research task, not a product feature. Tracked in `product-brief.md`'s Open Questions, not this roadmap. |
 
