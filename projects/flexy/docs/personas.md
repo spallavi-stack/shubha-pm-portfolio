@@ -31,7 +31,7 @@ Template per persona: identity, quote, goal, pain point, current behavior/workar
 **Pain point:** She's often home doing laundry in the afternoon - exactly the window the proposed TOU rate charges the most for.
 **Current behavior:** Stuck on her current rate; found ComEd's rate-comparison PDF confusing and gave up trying to model it herself.
 **Desired solution (her words):** "Just show me, based on how I actually use electricity, whether I'd save money or lose money if I switched."
-**Tech-savviness:** Low-to-moderate - comfortable with basic apps, not a spreadsheet person.
+**Tech-savviness:** Low-to-moderate - comfortable with basic apps, no interest in building her own spreadsheet.
 **JTBD:** When ComEd's TOU rate becomes available, I want a clear before/after comparison based on my real usage, so I can decide without guessing.
 **Flexy feature:** Price graph (today/tomorrow/monthly/annual views) to compare her real usage against both rate structures.
 **Grounding fact:** ComEd's proposed TOU plan pairs a steep peak delivery charge with a significant overnight discount, per the 2026 filing before state regulators.

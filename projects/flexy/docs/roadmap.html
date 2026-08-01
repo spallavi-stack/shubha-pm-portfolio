@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Roadmap - Flexy | Shubha's PM Portfolio</title>
+<title>Roadmap, Flexy | Shubha's PM Portfolio</title>
 <style>
   :root{
     --teal:#C2790E; --teal-dark:#96600A; --navy:#1C1712;
@@ -33,6 +33,8 @@
   article th{font-size:11px;text-transform:uppercase;letter-spacing:0.04em;color:var(--ink-soft);}
   article code{background:var(--paper-soft);padding:1px 5px;border-radius:4px;font-size:13px;}
   article svg{max-width:100%;height:auto;display:block;margin:20px 0;border:1px solid var(--border);border-radius:12px;padding:10px;background:#fff;}
+  article pre.mermaid{background:none;border:none;padding:0;margin:20px 0;overflow-x:auto;text-align:center;}
+  article pre.mermaid svg{margin:0 auto;}
   .doc-footer{margin-top:40px;padding-top:20px;border-top:1px solid var(--border);font-size:13px;color:var(--ink-soft);}
   footer{background:var(--navy);color:#C9BBA0;padding:32px 0;text-align:center;font-size:13px;}
   footer a{color:#F6D9A0;}
@@ -51,7 +53,7 @@
 <article class="wrap">
 <h1>Flexy, Roadmap (v2)</h1>
 <h2>Prioritization framework: ICE</h2>
-<p>Using ICE (Impact, Confidence, Ease) rather than RICE. Reach isn't meaningfully estimable yet since Flexy has no real user base or ComEd partnership in place, so ICE fits a pre-launch, research-grounded prioritization better. Each scored 1-10; ICE score is the average of the three. Every score is justified against a specific persona, JTBD statement, or interview-synthesis theme, not a gut feeling.</p>
+<p>Using ICE (Impact, Confidence, Ease) rather than RICE. Reach isn't meaningfully estimable yet since Flexy has no real user base or ComEd partnership in place, so ICE fits a pre-launch, research-grounded prioritization better. Each scored 1-10; ICE score is the average of the three. Every score is justified against a specific persona, JTBD statement, or interview-synthesis theme.</p>
 <p><strong>Legend:</strong> Impact = how much this moves the needle on the core problem. Confidence = how sure we are, based on persona/interview evidence or real-world precedent, that this is the right feature. Ease = technical/data feasibility given known constraints.</p>
 <hr />
 <h2>NOW (MVP, build first)</h2>
@@ -86,7 +88,7 @@
 </tbody>
 </table>
 <h3>Price &amp; Cost view: what changed and why</h3>
-<p>We looked at a real Tibber + Home Assistant community dashboard for inspiration (dual-axis bars and line, four time-range tabs, a separate Aktuell/Statistik split). It's a genuinely useful data model, consumption and price on one timeline plus a derived cost figure, but it's a power-user pattern built by and for Home Assistant hobbyists. For personas like Bob or Priya, a dual-axis chart with multiple tabs would be a barrier, not a feature.</p>
+<p>We looked at a real Tibber + Home Assistant community dashboard for inspiration (dual-axis bars and line, four time-range tabs, a separate Aktuell/Statistik split). It's a genuinely useful data model, consumption and price on one timeline plus a derived cost figure, but it's a power-user pattern built by and for Home Assistant hobbyists. For personas like Bob or Priya, a dual-axis chart with multiple tabs would be a barrier.</p>
 <p>So instead of copying that layout, Flexy takes the underlying idea (show consumption and price together, and surface the actual cost) and presents it more simply:</p>
 <ul>
 <li>One chart, not two axes: price shown as color-coded bands in the background (cheap, moderate, expensive) rather than a second numeric axis; the household's own consumption overlaid as a simple shape rather than competing bars.</li>
@@ -215,5 +217,14 @@
 <footer>
   <div class="wrap">Flexy is a fictional case study built for portfolio purposes. Market research is real and cited; personas, interviews, and user data are synthetic.</div>
 </footer>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'neutral',
+    fontFamily: '-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif',
+    flowchart: { curve: 'basis' },
+  });
+</script>
 </body>
 </html>

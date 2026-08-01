@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Jobs to Be Done - Flexy | Shubha's PM Portfolio</title>
+<title>Jobs to Be Done, Flexy | Shubha's PM Portfolio</title>
 <style>
   :root{
     --teal:#C2790E; --teal-dark:#96600A; --navy:#1C1712;
@@ -33,6 +33,8 @@
   article th{font-size:11px;text-transform:uppercase;letter-spacing:0.04em;color:var(--ink-soft);}
   article code{background:var(--paper-soft);padding:1px 5px;border-radius:4px;font-size:13px;}
   article svg{max-width:100%;height:auto;display:block;margin:20px 0;border:1px solid var(--border);border-radius:12px;padding:10px;background:#fff;}
+  article pre.mermaid{background:none;border:none;padding:0;margin:20px 0;overflow-x:auto;text-align:center;}
+  article pre.mermaid svg{margin:0 auto;}
   .doc-footer{margin-top:40px;padding-top:20px;border-top:1px solid var(--border);font-size:13px;color:var(--ink-soft);}
   footer{background:var(--navy);color:#C9BBA0;padding:32px 0;text-align:center;font-size:13px;}
   footer a{color:#F6D9A0;}
@@ -115,5 +117,14 @@
 <footer>
   <div class="wrap">Flexy is a fictional case study built for portfolio purposes. Market research is real and cited; personas, interviews, and user data are synthetic.</div>
 </footer>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'neutral',
+    fontFamily: '-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif',
+    flowchart: { curve: 'basis' },
+  });
+</script>
 </body>
 </html>

@@ -2,7 +2,7 @@
 
 ## Prioritization framework: ICE
 
-Using ICE (Impact, Confidence, Ease) rather than RICE. Reach isn't meaningfully estimable yet since Flexy has no real user base or ComEd partnership in place, so ICE fits a pre-launch, research-grounded prioritization better. Each scored 1-10; ICE score is the average of the three. Every score is justified against a specific persona, JTBD statement, or interview-synthesis theme, not a gut feeling.
+Using ICE (Impact, Confidence, Ease) rather than RICE. Reach isn't meaningfully estimable yet since Flexy has no real user base or ComEd partnership in place, so ICE fits a pre-launch, research-grounded prioritization better. Each scored 1-10; ICE score is the average of the three. Every score is justified against a specific persona, JTBD statement, or interview-synthesis theme.
 
 **Legend:** Impact = how much this moves the needle on the core problem. Confidence = how sure we are, based on persona/interview evidence or real-world precedent, that this is the right feature. Ease = technical/data feasibility given known constraints.
 
@@ -17,7 +17,7 @@ Using ICE (Impact, Confidence, Ease) rather than RICE. Reach isn't meaningfully 
 
 ### Price & Cost view: what changed and why
 
-We looked at a real Tibber + Home Assistant community dashboard for inspiration (dual-axis bars and line, four time-range tabs, a separate Aktuell/Statistik split). It's a genuinely useful data model, consumption and price on one timeline plus a derived cost figure, but it's a power-user pattern built by and for Home Assistant hobbyists. For personas like Bob or Priya, a dual-axis chart with multiple tabs would be a barrier, not a feature.
+We looked at a real Tibber + Home Assistant community dashboard for inspiration (dual-axis bars and line, four time-range tabs, a separate Aktuell/Statistik split). It's a genuinely useful data model, consumption and price on one timeline plus a derived cost figure, but it's a power-user pattern built by and for Home Assistant hobbyists. For personas like Bob or Priya, a dual-axis chart with multiple tabs would be a barrier.
 
 So instead of copying that layout, Flexy takes the underlying idea (show consumption and price together, and surface the actual cost) and presents it more simply:
 
