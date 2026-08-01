@@ -22,6 +22,7 @@ Custom Settings panel per-vehicle audit and multi-brand Smartcar validation move
 ## PMF / validation
 
 - Done (2026-08-01): funnel analysis and experiment design built via the discovery-scope → grounding-research → research-auditor process, sourced from Lenny Rachitsky's newsletter/podcast archive (activation-rate benchmarks, A/B-testing scale thresholds, low-volume experimentation alternatives) plus Uplight's and Smartcar's own published materials. See `funnel-experiment-scope.md`, `funnel-experiment-grounding-research.md`, and the public-facing `funnel-analysis.md`/`.html`, linked from the case study page's Product Analytics section.
+- Done (2026-08-01): `funnel-analysis.md` revised to v2 after an external critique of the v1 draft. Added pilot success thresholds, guardrail metrics (disconnect/revoke rate, manual override frequency, missed-readiness rate), an event taxonomy for engineering, and a go/no-go decision framework, all Assumption-tagged pending real pilot data. The critique's fifth suggestion, sub-segment funnels by vehicle OEM/tariff/OS, was deliberately deferred rather than built out: a pilot at ComEd's own scale (a dozen to low hundreds of participants) can't support that much slicing without each segment dropping below reasoning range, which would have quietly undercut the document's own core point about sample-size honesty.
 
 ## Status
 
