@@ -8,7 +8,7 @@
   var CYCLE_SCORE = {instant: 0, '1-3': 10, '3-6': 20, '6-12': 30};
   var CYCLE_LABEL = {instant: 'an instant', '1-3': 'a 1-3 month', '3-6': 'a 3-6 month', '6-12': 'a 6-12 month'};
   var PERSONA_SCORE = {'end-user': 0, 'team-lead': 15, 'exec-vp': 30};
-  var PERSONA_LABEL = {'end-user': 'an individual end-user', 'team-lead': 'a team lead', 'exec-vp': 'an executive/VP buyer'};
+  var PERSONA_LABEL = {'end-user': 'an individual contributor (self-serve)', 'team-lead': 'a team lead', 'exec-vp': 'an executive/VP buyer'};
 
   var DIAL_PATH_LENGTH = Math.PI * 80; // semicircle, r=80
 
