@@ -178,9 +178,6 @@ flowchart TD
     RA2["Panels =<br/>floor(area /<br/>2.45m²)"]
     RA3{"≥1 panel<br/>fits?"}
     RA4["kWp = panels<br/>x 0.43;<br/>cost tier by kWp"]
-    RA5{"kWp over 4?"}
-    RA6["Flag: exceeds<br/>Permitted Dev<br/>ceiling"]
-    RA7["No flag"]
     RA8["System size<br/>+ cost resolved"]
 
     RA0 -->|No| RA1
@@ -188,12 +185,8 @@ flowchart TD
     RA2 --> RA3
     RA3 -->|No| RA1
     RA3 -->|Yes| RA4
-    RA4 --> RA5
-    RA5 -->|Yes| RA6
-    RA5 -->|No| RA7
     RA1 --> RA8
-    RA6 --> RA8
-    RA7 --> RA8
+    RA4 --> RA8
   end
 
   SCALE["Final generation<br/>= pre-scaling x<br/>(kWp / 4 ref)"]
@@ -214,7 +207,21 @@ flowchart TD
 | `ROOF_AREA_PER_PANEL_M2` | 2.45m² | Inference | Derived from MCS-anchored range (typical 3-bed semi: 22-30m² usable roof fits 9-12 panels) |
 | `PANEL_WATTAGE_KWP` | 0.43kWp/panel | Inference | Blended across old (350-400W) and new (425-460W) panel stock |
 | `COST_PER_KWP_GBP_BY_TIER` | £1,800/kWp (≤3kWp) / £1,625/kWp (>3kWp) | Fact | MCS's own nonlinear installed-cost figures; smaller systems cost more per kWp |
-| `PERMITTED_DEVELOPMENT_KWP_CEILING_ENGLAND` | 4kWp | Fact | England only; Scotland/Wales have separate, unresearched thresholds |
+
+Corrected 1 Aug 2026: this table previously included a `PERMITTED_DEVELOPMENT_KWP_CEILING_ENGLAND`
+constant (4kWp, tagged Fact), and the roof-area sizing flow above fired a "may need planning
+permission" flag whenever a roof-area-derived system exceeded it. That was wrong: the real GPDO
+2015 Schedule 2 Part 14 Class J test for Permitted Development is physical (panel protrusion
+≤200mm from the roof slope/wall, not projecting above the roof's highest point, not on a listed
+building — see `grounding-research.md` §Permitted development), not a kWp ceiling. No source in
+this project's own research ever supported a 4kWp figure for this purpose; it most likely got
+conflated with the unrelated G98 DNO grid-connection fast-track threshold (~3.68kW, see
+`grounding-research.md` §G98 vs G99), which governs when a supplier must be notified of a new
+connection, not planning law. Removed the constant and the size-triggered flag entirely, since
+there's no correct kWp number to replace it with — this calculator has no roof pitch, ridge
+height, or protrusion inputs to actually evaluate the real test. See §5's `permittedDevelopment`
+flag, now unconditional and stating the real criteria instead of a false determination.
+
 | Regional generation multiplier | England 1.0 / Wales 0.93 / Scotland 0.85 / N.Ireland 0.85 | England: baseline. Scotland: Inference. Wales, N.Ireland: Assumption, extrapolated | No Wales/N.Ireland-specific figure was found; both extrapolated from Scotland's climate/latitude band |
 | Open-Meteo tilt / performance ratio / assumed peak power | 35° / 0.86 / 4kWp | Assumption (all three) | Same near-optimal-UK-roof and system-loss assumptions used throughout |
 
@@ -347,17 +354,17 @@ interrupt anyone by default.
 Rooftop results also carry a `flags` array: situational, always-worth-surfacing callouts,
 distinct from `assumptions` in kind, not just placement: `assumptions` explains how confident a
 *number* is, `flags` tells the user about a *condition attached to this specific result* that
-the number alone doesn't convey. Each entry is `{ id, tier, title, note }`. Three are
+the number alone doesn't convey. Each entry is `{ id, tier, title, note }`. Four are
 unconditional (every rooftop result gets them, since no input this calculator collects tells it
-whether a property is leasehold, listed, or in a conservation area, deliberately not adding new
-inputs just to gate these):
+whether a property is leasehold, listed, in a conservation area, or physically eligible for
+Permitted Development, deliberately not adding new inputs just to gate these):
 
 | id | Trigger | Tier | What it says |
 |---|---|---|---|
-| `permittedDevelopment` | Roof-area-derived system exceeds England's 4kWp Permitted Development ceiling | Fact | May need planning permission for a system this size |
+| `permittedDevelopment` | Always | Fact | States the real GPDO physical test (protrusion ≤200mm, not above roof ridge, not on a listed building) and says this calculator can't check it — no roof pitch/ridge/protrusion inputs collected. Corrected 1 Aug 2026: previously fired only when a roof-area-derived system exceeded a hardcoded 4kWp figure wrongly labeled a Permitted Development ceiling — that figure isn't part of the real GPDO test (see §4b's note and `calculator.js`'s correction comment) |
 | `tenancyConsent` | Always | Fact | Leaseholders generally need freeholder consent for exterior alterations; renters should check with their landlord; standard UK leasehold law, not resolved by this tool |
-| `listedBuilding` | Always | Fact | Listed buildings have zero Permitted Development rights for solar at any size. The `permittedDevelopment` flag above only checks size, not listed status |
-| `conservationArea` | Always | Inference | Street-visible panels in a conservation area may need planning permission even under the size ceiling |
+| `listedBuilding` | Always | Fact | Listed buildings have zero Permitted Development rights for solar at any size |
+| `conservationArea` | Always | Inference | Street-visible panels in a conservation area may need planning permission even if the physical criteria are otherwise met |
 | `regulatoryRegime` | Postcode resolves to Scotland or Wales | Fact | That country's own permitted-development/building-regulation regime hasn't been researched here |
 | `highExportSensitivity` | No user-picked SEG tariff, and exported share of generation exceeds 50% | Inference | This result uses the low default SEG rate; a high-export household's result moves more than most when a real (much higher) tariff is picked |
 

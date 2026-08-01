@@ -276,9 +276,6 @@ isn't part of the calculation, but ships alongside it in the same result object.
     RA2["Panels =<br/>floor(area /<br/>2.45m²)"]
     RA3{"≥1 panel<br/>fits?"}
     RA4["kWp = panels<br/>x 0.43;<br/>cost tier by kWp"]
-    RA5{"kWp over 4?"}
-    RA6["Flag: exceeds<br/>Permitted Dev<br/>ceiling"]
-    RA7["No flag"]
     RA8["System size<br/>+ cost resolved"]
 
     RA0 -->|No| RA1
@@ -286,12 +283,8 @@ isn't part of the calculation, but ships alongside it in the same result object.
     RA2 --> RA3
     RA3 -->|No| RA1
     RA3 -->|Yes| RA4
-    RA4 --> RA5
-    RA5 -->|Yes| RA6
-    RA5 -->|No| RA7
     RA1 --> RA8
-    RA6 --> RA8
-    RA7 --> RA8
+    RA4 --> RA8
   end
 
   SCALE["Final generation<br/>= pre-scaling x<br/>(kWp / 4 ref)"]
@@ -353,12 +346,11 @@ isn't part of the calculation, but ships alongside it in the same result object.
 <td>Fact</td>
 <td>MCS's own nonlinear installed-cost figures; smaller systems cost more per kWp</td>
 </tr>
-<tr>
-<td><code>PERMITTED_DEVELOPMENT_KWP_CEILING_ENGLAND</code></td>
-<td>4kWp</td>
-<td>Fact</td>
-<td>England only; Scotland/Wales have separate, unresearched thresholds</td>
-</tr>
+</tbody>
+</table>
+<blockquote>Corrected 1 Aug 2026: this table previously included a <code>PERMITTED_DEVELOPMENT_KWP_CEILING_ENGLAND</code> constant (4kWp, tagged Fact), and the roof-area sizing flow above fired a "may need planning permission" flag whenever a roof-area-derived system exceeded it. That was wrong: the real GPDO 2015 Schedule 2 Part 14 Class J test for Permitted Development is physical (panel protrusion ≤200mm from the roof slope/wall, not projecting above the roof's highest point, not on a listed building — see <code>grounding-research.md</code> §Permitted development), not a kWp ceiling. No source in this project's own research ever supported a 4kWp figure for this purpose; it most likely got conflated with the unrelated G98 DNO grid-connection fast-track threshold (~3.68kW, see <code>grounding-research.md</code> §G98 vs G99), which governs when a supplier must be notified of a new connection, not planning law. Removed the constant and the size-triggered flag entirely, since there's no correct kWp number to replace it with — this calculator has no roof pitch, ridge height, or protrusion inputs to actually evaluate the real test. See §5's <code>permittedDevelopment</code> flag, now unconditional and stating the real criteria instead of a false determination.</blockquote>
+<table>
+<tbody>
 <tr>
 <td>Regional generation multiplier</td>
 <td>England 1.0 / Wales 0.93 / Scotland 0.85 / N.Ireland 0.85</td>
@@ -558,10 +550,10 @@ interrupt anyone by default.</p>
 <p>Rooftop results also carry a <code>flags</code> array: situational, always-worth-surfacing callouts,
 distinct from <code>assumptions</code> in kind, not just placement: <code>assumptions</code> explains how confident a
 <em>number</em> is, <code>flags</code> tells the user about a <em>condition attached to this specific result</em> that
-the number alone doesn't convey. Each entry is <code>{ id, tier, title, note }</code>. Three are
+the number alone doesn't convey. Each entry is <code>{ id, tier, title, note }</code>. Four are
 unconditional (every rooftop result gets them, since no input this calculator collects tells it
-whether a property is leasehold, listed, or in a conservation area, deliberately not adding new
-inputs just to gate these):</p>
+whether a property is leasehold, listed, in a conservation area, or physically eligible for
+Permitted Development, deliberately not adding new inputs just to gate these):</p>
 <table>
 <thead>
 <tr>
@@ -574,9 +566,9 @@ inputs just to gate these):</p>
 <tbody>
 <tr>
 <td><code>permittedDevelopment</code></td>
-<td>Roof-area-derived system exceeds England's 4kWp Permitted Development ceiling</td>
+<td>Always</td>
 <td>Fact</td>
-<td>May need planning permission for a system this size</td>
+<td>States the real GPDO physical test (protrusion ≤200mm, not above roof ridge, not on a listed building) and says this calculator can't check it — no roof pitch/ridge/protrusion inputs collected. Corrected 1 Aug 2026: previously fired only when a roof-area-derived system exceeded a hardcoded 4kWp figure wrongly labeled a Permitted Development ceiling — that figure isn't part of the real GPDO test</td>
 </tr>
 <tr>
 <td><code>tenancyConsent</code></td>
@@ -588,13 +580,13 @@ inputs just to gate these):</p>
 <td><code>listedBuilding</code></td>
 <td>Always</td>
 <td>Fact</td>
-<td>Listed buildings have zero Permitted Development rights for solar at any size. The <code>permittedDevelopment</code> flag above only checks size, not listed status</td>
+<td>Listed buildings have zero Permitted Development rights for solar at any size</td>
 </tr>
 <tr>
 <td><code>conservationArea</code></td>
 <td>Always</td>
 <td>Inference</td>
-<td>Street-visible panels in a conservation area may need planning permission even under the size ceiling</td>
+<td>Street-visible panels in a conservation area may need planning permission even if the physical criteria are otherwise met</td>
 </tr>
 <tr>
 <td><code>regulatoryRegime</code></td>

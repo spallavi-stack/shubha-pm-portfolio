@@ -211,9 +211,13 @@ const REFERENCE_SYSTEM_SIZE_KWP = 4;
 const ROOF_AREA_PER_PANEL_M2 = 2.45;
 const PANEL_WATTAGE_KWP = 0.43;
 const COST_PER_KWP_GBP_BY_TIER = { smallSystemThresholdKwp: 3, smallSystemCostPerKwp: 1800, standardCostPerKwp: 1625 };
-// [Fact] 4kWp is the largest system covered by Permitted Development Rights
-// in England; Scotland/Wales have their own separate, unresearched thresholds.
-const PERMITTED_DEVELOPMENT_KWP_CEILING_ENGLAND = 4;
+// CORRECTED 1 Aug 2026: removed a PERMITTED_DEVELOPMENT_KWP_CEILING_ENGLAND = 4
+// constant that wrongly claimed 4kWp as a Permitted Development size ceiling
+// (likely a conflation with G98's unrelated 3.68kW DNO fast-track threshold).
+// The real GPDO test is physical (protrusion/ridge height/listed status), not
+// electrical — see calculator.js for the full correction note. No kWp-based
+// replacement value exists; see the unconditional `permittedDevelopment` flag
+// below instead.
 
 function estimateSystemSizeFromRoofArea(roofAreaM2) {
   const panelCount = Math.floor(Math.max(0, roofAreaM2) / ROOF_AREA_PER_PANEL_M2);
@@ -225,7 +229,6 @@ function estimateSystemSizeFromRoofArea(roofAreaM2) {
     systemSizeKwp,
     costPerKwpGbp,
     systemCostGbp: Math.round(systemSizeKwp * costPerKwpGbp),
-    exceedsPermittedDevelopmentEngland: systemSizeKwp > PERMITTED_DEVELOPMENT_KWP_CEILING_ENGLAND,
   };
 }
 
@@ -647,14 +650,12 @@ function calculateRooftopViability({ orientation, occupancy, annualConsumptionKw
   // no new ones added) can tell it whether a property is leasehold, listed,
   // or in a conservation area, so every rooftop result carries them.
   const flags = [];
-  if (roofAreaSizing && roofAreaSizing.exceedsPermittedDevelopmentEngland) {
-    flags.push({
-      id: 'permittedDevelopment',
-      tier: 'Fact',
-      title: 'May need planning permission',
-      note: `Your roof-area-derived system (${roofAreaSizing.systemSizeKwp}kWp) is larger than the ${PERMITTED_DEVELOPMENT_KWP_CEILING_ENGLAND}kWp ceiling covered by Permitted Development Rights in England — you may need planning permission for a system this size. Scotland and Wales have their own separate thresholds, not researched here.`,
-    });
-  }
+  flags.push({
+    id: 'permittedDevelopment',
+    tier: 'Fact',
+    title: 'Check Permitted Development criteria before installing',
+    note: 'Roof-mounted domestic solar in England is normally Permitted Development (no planning application) only if it does not protrude more than 200mm from the roof slope or wall, does not project above the roof\'s highest point (excluding chimney), and is no more than 1m above a flat roof\'s highest point. These are physical constraints this calculator cannot check (it has no roof pitch, ridge height, or protrusion inputs) — system size in kWp is not itself part of the test. Scotland and Wales have their own separate regimes, not researched here.',
+  });
   flags.push({
     id: 'tenancyConsent',
     tier: 'Fact',
@@ -665,7 +666,7 @@ function calculateRooftopViability({ orientation, occupancy, annualConsumptionKw
     id: 'listedBuilding',
     tier: 'Fact',
     title: 'Listed building? No permitted development rights apply',
-    note: 'This result only checks the size-based Permitted Development ceiling above. Listed buildings have no permitted development rights for solar at all, regardless of system size — not checked by this tool.',
+    note: 'Listed buildings have no permitted development rights for solar at all, regardless of system size — not checked by this tool.',
   });
   flags.push({
     id: 'conservationArea',

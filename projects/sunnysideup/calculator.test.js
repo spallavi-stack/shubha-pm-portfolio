@@ -133,26 +133,29 @@ console.log('\n--- estimateSystemSizeFromRoofArea(1) (too small for one panel) -
 console.log(estimateSystemSizeFromRoofArea(1));
 console.log('- Should be null.');
 
-// A roof large enough to exceed the small-system cost tier (>3kWp) and the
-// Permitted Development ceiling (>4kWp) in the same call.
+// A roof large enough to exceed the small-system cost tier (>3kWp).
+// (No more "Permitted Development ceiling" here — that was a false size-based
+// threshold removed 1 Aug 2026; see calculator.js's correction note. Permitted
+// Development eligibility is now surfaced as an unconditional flag instead,
+// since it depends on roof pitch/ridge height/protrusion, not kWp.)
 console.log('\n--- estimateSystemSizeFromRoofArea(60) ---');
 console.log(JSON.stringify(estimateSystemSizeFromRoofArea(60), null, 2));
-console.log('- panelCount 24 (floor(60/2.45)), systemSizeKwp 10.32 (24 x 0.43), costPerKwpGbp 1625 (standard tier, >3kWp), exceedsPermittedDevelopmentEngland true (>4kWp).');
+console.log('- panelCount 24 (floor(60/2.45)), systemSizeKwp 10.32 (24 x 0.43), costPerKwpGbp 1625 (standard tier, >3kWp). No exceedsPermittedDevelopmentEngland field (removed).');
 
 // A small roof that stays within the small-system cost tier (<=3kWp).
 console.log('\n--- estimateSystemSizeFromRoofArea(12) ---');
 console.log(JSON.stringify(estimateSystemSizeFromRoofArea(12), null, 2));
-console.log('- panelCount 4 (floor(12/2.45)), systemSizeKwp 1.72, costPerKwpGbp 1800 (small-system tier, <=3kWp), exceedsPermittedDevelopmentEngland false.');
+console.log('- panelCount 4 (floor(12/2.45)), systemSizeKwp 1.72, costPerKwpGbp 1800 (small-system tier, <=3kWp). No exceedsPermittedDevelopmentEngland field (removed).');
 
 // calculateRooftopViability with roofAreaM2: should override the flat
 // REFERENCE_SYSTEM_SIZE_KWP default entirely (systemCostGbp, systemSizeKwp,
-// generationKwh all scaled), attach roofAreaSizing, and lead the flags array
-// with a "permittedDevelopment" entry since 60m2 produces >4kWp.
+// generationKwh all scaled) and attach roofAreaSizing. flags[0] is always
+// "permittedDevelopment" now (unconditional, not size-triggered).
 printResult(
-  'Rooftop — south-facing, usually home, 4,000kWh/yr, 60m² roof area (exceeds Permitted Development ceiling)',
+  'Rooftop — south-facing, usually home, 4,000kWh/yr, 60m² roof area',
   calculateRooftopViability({ orientation: 'southFacing', occupancy: 'usuallyHome', annualConsumptionKwh: 4000, roofAreaM2: 60 })
 );
-console.log('- systemSizeKwp should be 10.32, systemCostGbp should be 16,770 (10.32 x £1,625/kWp), generationKwh should be scaled up from the flat 3,800kWh baseline (10.32/4 x 3,800 = 9,804), and flags[0].id should be "permittedDevelopment" (followed by the always-present tenancyConsent/listedBuilding/conservationArea flags).');
+console.log('- systemSizeKwp should be 10.32, systemCostGbp should be 16,770 (10.32 x £1,625/kWp), generationKwh should be scaled up from the flat 3,800kWh baseline (10.32/4 x 3,800 = 9,804), and flags[0].id should be "permittedDevelopment" (followed by tenancyConsent/listedBuilding/conservationArea).');
 
 // Roof area interacting with an existing generation adjustment (regional
 // multiplier here, standing in for what a real postcode call would also
@@ -176,7 +179,7 @@ printResult(
   'Rooftop — south-facing, usually home, 4,000kWh/yr, 1m² roof area (too small to fit a panel)',
   calculateRooftopViability({ orientation: 'southFacing', occupancy: 'usuallyHome', annualConsumptionKwh: 4000, roofAreaM2: 1 })
 );
-console.log('- Should fall back to the flat default entirely: systemSizeKwp 4, systemCostGbp 7,000, generationKwh 3,800, no roofAreaSizing field and no "permittedDevelopment" entry in flags (the always-present tenancyConsent/listedBuilding/conservationArea flags should still be there), no NaN/Infinity anywhere.');
+console.log('- Should fall back to the flat default entirely: systemSizeKwp 4, systemCostGbp 7,000, generationKwh 3,800, no roofAreaSizing field. flags should still include "permittedDevelopment" (unconditional now, not size-triggered) plus tenancyConsent/listedBuilding/conservationArea, no NaN/Infinity anywhere.');
 
 // Regional generation multiplier applied manually (regionalGeneration is the
 // public shape returned by REGIONAL_GENERATION_MULTIPLIER[country], not a
