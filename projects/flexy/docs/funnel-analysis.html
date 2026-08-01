@@ -56,43 +56,14 @@
 <h2>The funnel</h2>
 <p>Flexy's enrollment funnel was already defined in <code>product-brief.md</code>'s PMF section and reused as-is in <code>utility-dashboard-kpi-framework.md</code>: <strong>invited by ComEd → app download → EV connected → smart charging activated</strong>. This document doesn't redefine that funnel. It estimates conversion at each stage and lays out how to actually test and improve it once a pilot exists.</p>
 <p>No real-world precedent publishes a funnel structurally identical to this one. ComEd's own EV EMS pilot (twelve residential participants, December 2025 executive summary) discloses only a final enrolled count, not an invited count or a stage-by-stage breakdown. Optiwatt discloses lifetime totals (31,224+ enrolled devices across 44 programs) but no per-program conversion rate. Uplight, a demand-response software vendor, publishes one unaudited figure (a 65% enrollment rate, denominator unstated) and nothing else. Every number below is estimated from adjacent research and Flexy's own persona evidence, not a direct comparable, and is labeled accordingly.</p>
-<h2>Stage-by-stage estimate</h2>
+<h2>Stage-by-stage estimate &amp; pilot success thresholds</h2>
+<p>Estimated conversion says what's likely. Minimum viable threshold says what would count as the pilot succeeding, a different question. Both, plus the reasoning behind each, in one place:</p>
 <table>
 <thead>
 <tr>
 <th>Stage</th>
 <th>Estimated conversion</th>
 <th>Confidence</th>
-<th>Why</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Invited → App download</td>
-<td>15-30%</td>
-<td>Low (Assumption)</td>
-<td>No utility-EV-program precedent discloses this number. Bounded by general owned-channel/trusted-institution reasoning on the low end and Uplight's unaudited 65% marketing claim treated as a soft ceiling rather than an expectation.</td>
-</tr>
-<tr>
-<td>App download → EV connected</td>
-<td>Likely Flexy's best-converting stage</td>
-<td>Medium (Inference)</td>
-<td>All four personas reacted positively to the concept of EV automation itself in interviews. The friction here looks like a UX clarity problem (does the user know their car is connected-capable, is the flow's privacy framing clear, are instructions simple) rather than distrust of the product itself.</td>
-</tr>
-<tr>
-<td>EV connected → Smart charging activated</td>
-<td>Likely Flexy's worst-converting stage</td>
-<td>Medium (Inference, but converging with direct persona evidence)</td>
-<td>Handing over charging control is Flexy's highest-commitment action, structurally closer to a marketplace's first transaction than a SaaS product's typical low-friction activation step. Products in the highest-commitment activation category convert lowest across a 500+ product benchmark survey. Three of four relevant personas independently named this exact handoff as their trust-breaking point.</td>
-</tr>
-</tbody>
-</table>
-<h2>Success thresholds for the pilot</h2>
-<p>The table above estimates what conversion is likely. It doesn't say what conversion would count as the pilot succeeding, a different question this document didn't previously answer.</p>
-<table>
-<thead>
-<tr>
-<th>Stage</th>
 <th>Minimum viable threshold</th>
 <th>Basis</th>
 </tr>
@@ -100,22 +71,28 @@
 <tbody>
 <tr>
 <td>Invited → App download</td>
+<td>15-30%</td>
+<td>Low (Assumption)</td>
 <td>≥15%</td>
-<td>Assumption. Set at the low end of the estimated 15-30% range above. Below it, the invite channel itself isn't landing, independent of anything the product does downstream.</td>
+<td>No utility-EV-program precedent discloses the conversion number, so it's bounded by general owned-channel/trusted-institution reasoning on the low end and Uplight's unaudited 65% marketing claim as a soft ceiling. The threshold is set at that range's own low end: below it, the invite channel itself isn't landing, independent of anything the product does downstream.</td>
 </tr>
 <tr>
 <td>App download → EV connected</td>
+<td>Likely Flexy's best-converting stage</td>
+<td>Medium (Inference)</td>
 <td>No material drop-off relative to the download rate</td>
-<td>Assumption. This stage has no numeric estimate above (see "Why"), so the bar is relative rather than an invented percentage: a noticeably worse conversion than app download's own rate is the UX-clarity friction the estimate already names, not a separate baseline to hit.</td>
+<td>All four personas reacted positively to the concept of EV automation itself in interviews; the friction here reads as UX clarity (does the user know their car is connected-capable, is the privacy framing clear, are instructions simple), not distrust of the product. No numeric estimate exists for this stage, so the threshold is relative rather than an invented percentage: a noticeably worse conversion than app download's own rate is that same UX friction, not a separate baseline to hit.</td>
 </tr>
 <tr>
 <td>EV connected → Smart charging activated</td>
-<td>A majority of connected users activate within the pilot window</td>
-<td>Assumption, deliberately conservative. This is Flexy's highest-commitment, highest-risk step and one of <code>product-brief.md</code>'s three PMF signals. A minority-activation outcome would mean the trust-breaking point three of four personas named in <code>synthetic-interviews.md</code> is a real, unmitigated blocker, not a design assumption still to be tested.</td>
+<td>Likely Flexy's worst-converting stage</td>
+<td>Medium (Inference, converging with direct persona evidence)</td>
+<td>A majority of connected users activate within the pilot window (deliberately conservative)</td>
+<td>Handing over charging control is Flexy's highest-commitment action, structurally closer to a marketplace's first transaction than a SaaS product's typical activation step. Highest-commitment activation categories convert lowest across a 500+ product benchmark survey, and three of four relevant personas independently named this exact handoff as their trust-breaking point. This threshold is also one of <code>product-brief.md</code>'s three PMF signals: a minority-activation outcome would mean that trust-breaking point, per <code>synthetic-interviews.md</code>, is a real, unmitigated blocker, not a design assumption still to be tested.</td>
 </tr>
 </tbody>
 </table>
-<p>All three are Assumptions: nothing about Flexy has run yet to test them. They mark the point below which the pilot itself needs rethinking, and should be confirmed with ComEd directly before a real pilot starts rather than treated as fixed internal targets.</p>
+<p>All three thresholds are Assumptions: nothing about Flexy has run yet to test them. They mark the point below which the pilot itself needs rethinking, and should be confirmed with ComEd directly before a real pilot starts rather than treated as fixed internal targets.</p>
 <h2>Guardrail metrics</h2>
 <p>Conversion measures whether someone moves through the funnel. It doesn't measure whether the product is quietly failing people who already converted, which matters more here than in a typical SaaS funnel: Flexy asks someone to hand over control of a physical asset they need working on a schedule. Three guardrail metrics for the pilot, alongside conversion, not instead of it:</p>
 <ul>
