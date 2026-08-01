@@ -14,17 +14,14 @@
 ## Real-data upkeep
 
 - The Week/Month/Year price arrays are baked-in snapshots from specific dates in mid-2026. They'll read as stale if this prototype is still being shown a year from now. Either refresh them periodically or add a visible "as of" date so the staleness is honest rather than invisible.
-- SREC pricing (Illinois Shines) and HEAR rebate county rollout status, referenced in the solar/heat-pump calculators on the roadmap, change over time and aren't wired to any real feed yet.
 
 ## Documentation
 
-- Jobs to Be Done, User Stories & Use Cases, Technical Feasibility, Real Data Integration Guide, and AI Collaboration Review are all rebuilt as of this pass; worth a full re-read end to end for consistency now that they've been reconstructed once already.
-- Persona-count consistency (six personas total) should be spot-checked across all docs whenever personas are touched again.
+- Persona-count consistency spot-check done (2026-08-01): found and fixed a stale "six personas" reference in `user-stories.md`/`.html` left over from before two personas were cut in the v4 freeze; every other doc correctly says four. Re-check whenever personas are touched again.
 
 ## PMF / validation
 
 - No funnel analysis or experiment design exists yet for Flexy. This is listed on the original portfolio plan but not started.
-- No synthesized "what would make a utility actually pilot this" argument exists yet, now that the utility-dashboard artifact and utility-partnership offer doc exist to point to.
 
 ## Status
 
