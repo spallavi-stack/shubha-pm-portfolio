@@ -21,7 +21,7 @@ Custom Settings panel per-vehicle audit and multi-brand Smartcar validation move
 
 ## PMF / validation
 
-- No funnel analysis or experiment design exists yet for Flexy. This is listed on the original portfolio plan but not started.
+- Done (2026-08-01): funnel analysis and experiment design built via the discovery-scope → grounding-research → research-auditor process, sourced from Lenny Rachitsky's newsletter/podcast archive (activation-rate benchmarks, A/B-testing scale thresholds, low-volume experimentation alternatives) plus Uplight's and Smartcar's own published materials. See `funnel-experiment-scope.md`, `funnel-experiment-grounding-research.md`, and the public-facing `funnel-analysis.md`/`.html`, linked from the case study page's Product Analytics section.
 
 ## Status
 
