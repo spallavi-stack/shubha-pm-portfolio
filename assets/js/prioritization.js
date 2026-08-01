@@ -163,6 +163,65 @@
     }
   }
 
+  // Shared tooltip bubble for the column-header info icons. Appended to
+  // <body> and positioned with getBoundingClientRect() on demand, so it
+  // escapes the RICE table's horizontally-scrolling wrapper instead of
+  // being clipped by it. Hover/focus shows it (desktop); a tap toggles
+  // it open and outside-click/Escape closes it (touch).
+  function initInfoTooltips(root){
+    var buttons = Array.prototype.slice.call(root.querySelectorAll('.rice-info'));
+    if(!buttons.length) return;
+
+    var bubble = document.createElement('div');
+    bubble.className = 'rice-tooltip-bubble';
+    bubble.setAttribute('role', 'tooltip');
+    document.body.appendChild(bubble);
+
+    var openBtn = null;
+
+    function positionBubble(btn){
+      var rect = btn.getBoundingClientRect();
+      bubble.style.top = (rect.bottom + 8) + 'px';
+      var left = rect.left + rect.width / 2 - bubble.offsetWidth / 2;
+      left = Math.max(8, Math.min(left, window.innerWidth - bubble.offsetWidth - 8));
+      bubble.style.left = left + 'px';
+    }
+
+    function show(btn){
+      bubble.textContent = btn.getAttribute('data-tooltip') || '';
+      bubble.classList.add('is-visible');
+      positionBubble(btn);
+    }
+
+    function hide(){
+      bubble.classList.remove('is-visible');
+      if(openBtn) openBtn.classList.remove('is-open');
+      openBtn = null;
+    }
+
+    buttons.forEach(function(btn){
+      btn.addEventListener('mouseenter', function(){ show(btn); });
+      btn.addEventListener('mouseleave', function(){ if(btn !== openBtn) hide(); });
+      btn.addEventListener('focus', function(){ show(btn); });
+      btn.addEventListener('blur', function(){ if(btn !== openBtn) hide(); });
+      btn.addEventListener('click', function(e){
+        e.stopPropagation();
+        if(openBtn === btn){
+          hide();
+        } else {
+          if(openBtn) openBtn.classList.remove('is-open');
+          openBtn = btn;
+          btn.classList.add('is-open');
+          show(btn);
+        }
+      });
+    });
+
+    document.addEventListener('click', function(){ if(openBtn) hide(); });
+    document.addEventListener('keydown', function(e){ if(e.key === 'Escape' && openBtn) hide(); });
+    window.addEventListener('scroll', function(){ if(openBtn) positionBubble(openBtn); }, true);
+  }
+
   function initPrioritization(){
     var root = document.getElementById('prioritization-root');
     var tbody = document.getElementById('riceTableBody');
@@ -170,6 +229,8 @@
     var riskPanel = document.getElementById('riceRiskPanel');
     var riskList = document.getElementById('riceRiskList');
     if(!root || !tbody || !riskPanel || !riskList) return;
+
+    initInfoTooltips(root);
 
     function computeAll(){
       var rows = Array.prototype.slice.call(tbody.querySelectorAll('[data-rice-row]'));
