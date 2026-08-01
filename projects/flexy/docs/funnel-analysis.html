@@ -54,7 +54,7 @@
 <h1>Flexy - Funnel Analysis &amp; Experiment Design</h1>
 <p>Full sourcing for every figure and claim below is in <code>funnel-experiment-grounding-research.md</code>. This document is the compressed, reader-facing summary; that one carries the full citations and confidence levels.</p>
 <h2>The funnel</h2>
-<p>Flexy's enrollment funnel was already defined in <code>product-brief.md</code>'s PMF section and reused as-is in <code>utility-dashboard-kpi-framework.md</code>: <strong>invited by ComEd → app download → EV connected → smart charging activated</strong>. This document doesn't redefine that funnel. It estimates conversion at each stage, ranks where the real drop-off risk sits, and lays out how to actually test and improve it once a pilot exists.</p>
+<p>Flexy's enrollment funnel was already defined in <code>product-brief.md</code>'s PMF section and reused as-is in <code>utility-dashboard-kpi-framework.md</code>: <strong>invited by ComEd → app download → EV connected → smart charging activated</strong>. This document doesn't redefine that funnel. It estimates conversion at each stage and lays out how to actually test and improve it once a pilot exists.</p>
 <p>No real-world precedent publishes a funnel structurally identical to this one. ComEd's own EV EMS pilot (twelve residential participants, December 2025 executive summary) discloses only a final enrolled count, not an invited count or a stage-by-stage breakdown. Optiwatt discloses lifetime totals (31,224+ enrolled devices across 44 programs) but no per-program conversion rate. Uplight, a demand-response software vendor, publishes one unaudited figure (a 65% enrollment rate, denominator unstated) and nothing else. Every number below is estimated from adjacent research and Flexy's own persona evidence, not a direct comparable, and is labeled accordingly.</p>
 <h2>Stage-by-stage estimate</h2>
 <table>
@@ -87,13 +87,6 @@
 </tr>
 </tbody>
 </table>
-<h2>Where the real risk sits</h2>
-<p>Ranked by drop-off risk, highest first:</p>
-<ol>
-<li><strong>EV connected → smart charging activated.</strong> This is where Flexy's own research points hardest at a problem: Marcus, Sam, and Jenna each independently named the same fear in synthetic interviews, the car not being ready when actually needed, as what would make them turn the automation off. The roadmap already tried to address exactly this by making a readiness guarantee the default optimization priority over maximum savings. Improving this stage is fundamentally a product-design problem to solve, and funnel copy alone won't move it.</li>
-<li><strong>Invited → download.</strong> The biggest unknown. The risk level itself is unclear because there's no real data anywhere, Flexy's own or a competitor's, to estimate it from. This is the first number worth replacing with something real once any pilot distribution happens.</li>
-<li><strong>Download → EV connected.</strong> Lowest estimated risk. The personas already want this feature, and the drop-off reasons research turns up for this kind of flow (does the user know their car qualifies, is the data-privacy ask clear, are instructions simple) are ordinary UX problems with known fixes rather than a Flexy-specific trust problem.</li>
-</ol>
 <h2>Experiment design</h2>
 <p>Flexy's realistic first deployment is a single-utility pilot, comparable in scale to ComEd's own EV EMS pilot (twelve participants) or, optimistically, a low-hundreds cohort. That's several orders of magnitude below what canonical A/B testing needs. Ronny Kohavi's rule of thumb: detecting a realistic 5-10% lift, the range worth targeting rather than 1%, needs roughly tens of thousands up to 200,000 users for a typical conversion metric. A pilot cohort doesn't get there at any funnel stage, so this isn't a design that reaches for a standard split test by default.</p>
 <h3>What to actually run, by stage</h3>
