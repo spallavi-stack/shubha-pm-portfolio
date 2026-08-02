@@ -159,14 +159,11 @@
   }
 
   function buildRiskMessage(item){
-    var reasons = [];
-    if(item.techDebt !== 'none') reasons.push('High Tech Debt Risk (' + item.techDebt + ')');
-    if(item.retentionGap !== 'none') reasons.push('Missing Retention Loop (' + item.retentionGap + ')');
     var combinedPenalty = 1 - (1 - SEVERITY_PENALTY[item.techDebt]) * (1 - SEVERITY_PENALTY[item.retentionGap]);
     var penaltyPct = Math.round(combinedPenalty * 100);
-    return '<strong>' + item.name + '</strong> ranks lower than its raw RICE score suggests: flagged for ' +
-      reasons.join(' and ') + ', a combined &minus;' + penaltyPct + '% penalty (' +
-      item.rawScore.toFixed(1) + ' &rarr; ' + item.penalizedScore.toFixed(1) + ').';
+    var penaltyLabel = (item.flagCount > 1 ? 'a combined &minus;' : 'a &minus;') + penaltyPct + '% penalty';
+    return '<strong>' + item.name + '</strong> ranks lower than its raw RICE score suggests: ' +
+      penaltyLabel + ' (' + item.rawScore.toFixed(1) + ' &rarr; ' + item.penalizedScore.toFixed(1) + ').';
   }
 
   function computeDriceRoi(driceRow){
