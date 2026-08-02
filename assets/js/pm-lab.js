@@ -1,4 +1,4 @@
-/* PM Strategy & Execution Lab (Playground) — tab switching and the
+/* PM Strategy & Execution Lab (Playground): tab switching and the
    0→1 / 1→n stage toggle. Vanilla JS, no dependencies. Individual
    tool scripts (gtm-engine.js, prioritization.js, prd-analyzer.js,
    ab-test.js) mount into the .pm-lab-tool containers independently

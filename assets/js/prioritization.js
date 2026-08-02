@@ -1,10 +1,10 @@
-/* Prioritization & ROI Stress-Tester — dynamic RICE matrix.
+/* Prioritization & ROI Stress-Tester: dynamic RICE matrix.
    RICE Score = (Reach * Impact * Confidence) / Effort.
    'High Tech Debt Risk' and 'Missing Retention Loop' each apply a
    20% penalty to the raw score (multiplicative, so both together
    is a 36% penalty), surfaced in a Strategic Risk Flag panel that
    explains why the flagged feature ranked lower than its raw score
-   would suggest. That penalty is my own addition, not part of RICE.
+   would suggest. That penalty is my own addition, separate from RICE.
 
    Each row can also be stress-tested DRICE-style (Darius Contractor
    & Alexey Komissarouk, "Introducing DRICE"): a Hypothesis, a
@@ -12,7 +12,7 @@
    estimate, computed out to a real ROI-per-engineering-week.
 
    Sample rows swap per the 0→1 / 1→n stage toggle (window.pmLabStage,
-   set by pm-lab.js) — same tool, different example features so the
+   set by pm-lab.js): same tool, different example features so the
    sample data actually fits the selected company stage. */
 (function(){
   var PENALTY_PER_FLAG = 0.2;
@@ -167,9 +167,9 @@
   // stress-test panel fields, including rows added later via "+ Add
   // feature" or a stage switch). Appended to <body> and positioned with
   // getBoundingClientRect() on demand, so it escapes the RICE table's
-  // horizontally-scrolling wrapper instead of being clipped by it. Wired
-  // via delegation on `root` (not per-button) so it keeps working for
-  // icons that don't exist yet at init time. Hover/focus shows it
+  // horizontally-scrolling wrapper and stays unclipped. Wired via
+  // delegation on `root` so it keeps working for icons that don't
+  // exist yet at init time. Hover/focus shows it
   // (desktop); a tap toggles it open and outside-click/Escape closes it
   // (touch).
   function initInfoTooltips(root){
