@@ -1,23 +1,24 @@
-/* GTM Trade-Off Engine — PLG vs. enterprise sales motion calculator.
+/* GTM Trade-Off Engine: PLG vs. enterprise sales motion calculator.
    Scoring model is directionally grounded in the growth-benchmark
    frameworks Lenny's Newsletter has published from Elena Verna and
    Kyle Poyar (ACV and deal complexity as the primary axes separating
    PLG from sales-led motions), simplified into a single 0-100 score
-   for a client-side calculator. Not a substitute for a real GTM model. */
+   for a client-side calculator, meant as a directional starting point
+   for a deeper GTM conversation. */
 (function(){
   var CYCLE_SCORE = {instant: 0, '1-3': 10, '3-6': 20, '6-12': 30};
   var CYCLE_LABEL = {instant: 'an instant', '1-3': 'a 1-3 month', '3-6': 'a 3-6 month', '6-12': 'a 6-12 month'};
   var PERSONA_SCORE = {'end-user': 0, 'team-lead': 15, 'exec-vp': 30};
   var PERSONA_LABEL = {'end-user': 'an individual contributor (self-serve)', 'team-lead': 'a team lead', 'exec-vp': 'an executive/VP buyer'};
 
-  // Illustrative anchors only — these companies' actual GTM motions have
-  // evolved and blend multiple approaches. Matched to strategy category,
-  // not to the exact ACV/cycle/persona inputs.
+  // Illustrative anchors only: these companies' actual GTM motions have
+  // evolved and blend multiple approaches. Matched to the strategy
+  // category, at the level of the whole recommendation.
   var STRATEGY_EXAMPLE = {
     'Pure PLG (Product-Led Growth)': 'Calendly and Loom grew this way early on: cheap enough per seat that self-serve signup had to carry the whole motion.',
     'PLG + Sales-Assist Hybrid': 'Notion and Figma started here: free to self-serve, with a sales-assist layer added once accounts got big enough to justify a rep.',
     'Product-Led Sales / Enterprise Hybrid': 'Slack and Zoom run this today: usage inside a free or team plan sources and qualifies the pipeline, but a rep closes the enterprise upgrade.',
-    'Enterprise Sales-Led': 'Salesforce and Workday: six/seven-figure deals, a VP+ buyer, and a sales cycle measured in quarters, not days.'
+    'Enterprise Sales-Led': 'Salesforce and Workday: six/seven-figure deals, a VP+ buyer, and a sales cycle measured in quarters.'
   };
 
   var DIAL_PATH_LENGTH = Math.PI * 80; // semicircle, r=80
@@ -82,7 +83,7 @@
     } else {
       result = {
         label: 'Enterprise Sales-Led',
-        desc: 'High ACV, a long cycle, and an executive buyer point to a fully sales-led motion, with product usage as supporting evidence in the deal rather than the primary driver of it.',
+        desc: 'High ACV, a long cycle, and an executive buyer point to a fully sales-led motion, where product usage serves as supporting evidence in the deal.',
         metrics: ['Win Rate', 'Sales Cycle Length']
       };
     }
