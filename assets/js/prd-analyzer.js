@@ -36,7 +36,7 @@
       ]
     },
     'Implement Team Member Permissions Grid': {
-      info: 'A settings screen where an admin assigns each team member specific access levels, instead of everyone sharing the same access.',
+      info: 'A settings screen where an admin assigns each team member specific access levels.',
       edgeCases: [
         {title: 'Last admin lockout', desc: 'Removing or downgrading the only remaining Admin leaves the team with no one able to manage access at all.'},
         {title: 'Permission change mid-session', desc: "A user's access is revoked or downgraded while they already have an active session or open tab."},
@@ -151,11 +151,11 @@
       ]
     },
     'Add enterprise SSO/SAML login': {
-      info: "Letting a company's employees log in with their own company identity system, like Okta or Azure AD, instead of a separate password. Almost always required before a large enterprise signs.",
+      info: "Letting a company's employees use their own company identity system, like Okta or Azure AD, to log in. Almost always required before a large enterprise signs.",
       edgeCases: [
-        {title: 'Deprovisioning isn\'t a delete', desc: 'Most identity providers deactivate a user with an update rather than a delete request; logic built only around a delete never fires and leaves departed employees with access.'},
+        {title: 'Deprovisioning isn\'t a delete', desc: 'Most identity providers deactivate a user by updating their status. Logic built only around a delete request never fires, leaving departed employees with access.'},
         {title: 'Domain ownership disputes', desc: 'A company claims a domain for SSO that another existing customer already uses email addresses under, creating an access conflict.'},
-        {title: 'JIT-provisioned user before assignment', desc: 'A new employee logs in via SSO before IT has assigned them a role, and the product needs a defined default rather than blocking them entirely or over-granting access.'},
+        {title: 'JIT-provisioned user before assignment', desc: "A new employee logs in via SSO before IT has assigned them a role, and the product needs a defined default so they're neither blocked entirely nor over-granted access."},
         {title: 'Retry-triggered duplicates', desc: 'The identity provider retries a provisioning request after a slow response, and a non-idempotent handler creates two records for the same user.'}
       ],
       metricTree: {
@@ -167,10 +167,10 @@
         ]
       },
       gherkin: [
-        {title: 'Deactivation is treated as removal', given: 'an identity provider marks a user inactive rather than deleting them', when: 'the deactivation event is received', then: "the system revokes that user's access exactly as it would for a deletion"},
+        {title: 'Deactivation is treated as removal', given: 'an identity provider deactivates a user without deleting their record', when: 'the deactivation event is received', then: "the system revokes that user's access exactly as it would for a deletion"},
         {title: 'Domain conflict is caught before activation', given: 'a company attempts to claim a domain for SSO', when: 'that domain is already associated with another account', then: 'the claim is blocked and flagged for manual review before SSO is enabled'},
-        {title: 'JIT-provisioned user gets a safe default', given: 'a new employee logs in via SSO before any role is explicitly assigned', when: 'their first login completes', then: 'they receive a defined minimum-access default role, not full access and not a blocked login'},
-        {title: 'Retried provisioning request is idempotent', given: 'an identity provider retries a provisioning request after a timeout', when: 'the retry is received', then: 'it updates the existing user record rather than creating a duplicate'}
+        {title: 'JIT-provisioned user gets a safe default', given: 'a new employee logs in via SSO before any role is explicitly assigned', when: 'their first login completes', then: 'they receive a defined minimum-access default role: neither full access nor a blocked login'},
+        {title: 'Retried provisioning request is idempotent', given: 'an identity provider retries a provisioning request after a timeout', when: 'the retry is received', then: 'it updates the existing user record and does not create a duplicate'}
       ]
     },
     'Add rate limiting to a public API': {
@@ -192,7 +192,7 @@
       gherkin: [
         {title: '429 includes a clear reason and retry time', given: 'a client exceeds its rate limit', when: 'the request is rejected', then: 'the response includes which limit was hit and how long to wait before retrying'},
         {title: 'Legitimate high-volume customer can request a higher limit', given: "a customer's integration consistently needs more throughput than the default limit", when: 'they request an increase', then: 'there is a defined process to raise their specific limit without changing it for everyone else'},
-        {title: 'Concurrency limit is distinguished from rate limit', given: 'a client is blocked for having too many simultaneous requests in flight', when: 'the request is rejected', then: 'the error explicitly identifies it as a concurrency limit, not a per-second rate limit'}
+        {title: 'Concurrency limit is distinguished from rate limit', given: 'a client is blocked for having too many simultaneous requests in flight', when: 'the request is rejected', then: 'the error names the limit type explicitly as concurrency, distinguishing it from a per-second rate limit'}
       ]
     },
     'Add soft-delete with a restore window': {
@@ -201,7 +201,7 @@
         {title: 'Restore window expectations mismatch', desc: 'A user assumes delete is instant and permanent, or assumes trash is permanent storage and never checks it before the window closes.'},
         {title: 'Bulk delete fills trash silently', desc: 'A large bulk delete moves thousands of items to trash at once, and nothing tells the user how much space or how many items that now represents.'},
         {title: 'Restoring breaks a dependent reference', desc: 'An item is restored after something else was created assuming it was gone, such as a new item reusing its name or slot, creating a conflict.'},
-        {title: 'Permanent-delete override', desc: "A user wants an item actually deleted immediately, for legal or privacy reasons, and there needs to be a real \"empty trash now\" action rather than only a wait."}
+        {title: 'Permanent-delete override', desc: "A user wants an item actually deleted immediately, for legal or privacy reasons, so a real \"empty trash now\" action needs to exist alongside the retention wait."}
       ],
       metricTree: {
         northStar: '% of accidental deletions successfully recovered within the restore window',
@@ -215,14 +215,14 @@
         {title: 'Deleted item is recoverable within the window', given: 'a user deletes an item', when: 'they view trash within the defined restore window', then: 'the item is there and can be restored to its original location'},
         {title: 'Trash auto-empties after the window', given: 'an item has been in trash past the defined retention period', when: 'the retention job runs', then: 'the item is permanently deleted and no longer restorable'},
         {title: 'Immediate permanent deletion is available', given: 'a user needs an item permanently deleted right away', when: 'they choose "delete forever"', then: 'it is removed immediately, bypassing the restore window'},
-        {title: 'Restoring a conflicting item is flagged', given: 'a restored item conflicts with something created after it was deleted', when: 'the restore completes', then: 'the conflict is surfaced to the user rather than silently overwriting either item'}
+        {title: 'Restoring a conflicting item is flagged', given: 'a restored item conflicts with something created after it was deleted', when: 'the restore completes', then: 'the conflict is surfaced to the user, and neither item is silently overwritten'}
       ]
     },
     'Sunset a legacy feature or API version': {
       info: 'Retiring an old feature or API version that customers still depend on: giving notice, a migration path, and a hard cutoff date.',
       edgeCases: [
         {title: 'Silent breakage at cutoff', desc: 'Customers who never migrated hit a hard failure the moment the old version is retired, with no warning visible to them specifically.'},
-        {title: 'No usage visibility', desc: "The team doesn't actually know which customers are still on the legacy version, so notice goes out broadly instead of being targeted to those affected."},
+        {title: 'No usage visibility', desc: "The team doesn't actually know which customers are still on the legacy version, so notice goes out broadly, without being targeted to those affected."},
         {title: 'Migration path incomplete', desc: "The new version doesn't yet support every capability of the old one, so some customers have no way to fully migrate even if they want to."},
         {title: 'Repeated deadline extensions erode urgency', desc: 'The cutoff date gets pushed back more than once, so customers learn to ignore the deadline entirely.'}
       ],
@@ -235,7 +235,7 @@
         ]
       },
       gherkin: [
-        {title: 'Deprecation notice reaches active users specifically', given: 'a legacy version is being sunset', when: 'the deprecation is announced', then: 'every customer still actively using it is notified directly, not just via a general changelog post'},
+        {title: 'Deprecation notice reaches active users specifically', given: 'a legacy version is being sunset', when: 'the deprecation is announced', then: 'every customer still actively using it is notified directly, beyond a general changelog post'},
         {title: 'Response headers signal the coming cutoff', given: 'a client calls a deprecated API version', when: 'the response is returned', then: 'it includes the deprecation date and the hard sunset date in the response headers'},
         {title: 'Cutoff is enforced as communicated', given: 'the announced sunset date arrives', when: 'a request is made to the retired version', then: 'it is rejected with a clear message pointing to the migration guide, matching the date that was communicated'},
         {title: 'Migration gap is identified before sunset', given: 'a capability in the legacy version has no equivalent in the new version', when: 'the migration plan is reviewed', then: 'that gap is closed or explicitly addressed before the cutoff date is finalized'}
@@ -266,8 +266,8 @@
     'Handle a compensation-rate change for existing vs. new customers': {
       info: 'When a policy changes how much someone is paid for something, like solar export credits, existing customers who signed up under the old rate often keep it, while new customers get the new one.',
       edgeCases: [
-        {title: 'Cohort not tracked at signup', desc: "The system only stores a customer's current rate, not which rate vintage they qualified under, so there's no way to tell who should be grandfathered when the policy changes."},
-        {title: 'Equipment change misclassified as a new signup', desc: 'A customer who adds new equipment, like a battery, to an existing grandfathered system gets incorrectly bumped to the new rate instead of keeping their original one.'},
+        {title: 'Cohort not tracked at signup', desc: "The system tracks a customer's current rate but not which rate vintage they originally qualified under, so there's no way to tell who should be grandfathered when the policy changes."},
+        {title: 'Equipment change misclassified as a new signup', desc: 'A customer who adds new equipment, like a battery, to an existing grandfathered system gets incorrectly bumped to the new rate, losing their original one.'},
         {title: 'Two customers, same usage, different numbers', desc: "A calculator shows two customers with identical usage two different outputs because they're on different rate cohorts, which looks like a bug unless it's explained."},
         {title: 'Grandfathering period has an end date', desc: "A customer's protected rate is only guaranteed for a defined number of years, and nothing currently tracks or communicates when that protection itself expires."}
       ],
@@ -281,7 +281,7 @@
       },
       gherkin: [
         {title: 'Rate cohort is recorded at signup', given: 'a new customer is approved under the current compensation rate', when: 'their account is created', then: 'the specific rate and the date it was locked in are stored permanently on their record'},
-        {title: 'Adding equipment does not change the rate cohort', given: 'a grandfathered customer adds new equipment to their existing system', when: 'the addition is processed', then: 'they retain their original grandfathered rate rather than being reassessed under the current rate'},
+        {title: 'Adding equipment does not change the rate cohort', given: 'a grandfathered customer adds new equipment to their existing system', when: 'the addition is processed', then: 'they retain their original grandfathered rate and are not reassessed under the current rate'},
         {title: 'Differing outputs are explained', given: 'two customers with identical usage are on different rate cohorts', when: 'either customer views their calculation', then: 'the result explains which rate cohort applies to them and why it may differ from someone else\'s'},
         {title: 'Grandfathering expiry is communicated in advance', given: "a customer's grandfathered rate has a defined end date", when: 'that date approaches', then: 'they are notified in advance of what rate applies afterward'}
       ]
@@ -291,7 +291,7 @@
       edgeCases: [
         {title: 'Vendors interpret the protocol differently', desc: 'Two charge points from different manufacturers report the same charging status using different timing or field values, even though both claim to support the same protocol version.'},
         {title: 'Charger goes offline mid-session', desc: 'Connectivity drops while a vehicle is actively charging, and the system needs a defined behavior for whether charging continues locally or halts.'},
-        {title: 'Firmware-level instability', desc: "A specific charger model's firmware has a memory leak or bug that only appears after sustained real-world use, not in a lab test."},
+        {title: 'Firmware-level instability', desc: "A specific charger model's firmware has a memory leak or bug that appears only after sustained real-world use, beyond what a lab test covers."},
         {title: 'Meter-value disputes', desc: "The charger's own reported energy delivered doesn't match what the billing system calculates, creating a discrepancy in what the customer gets charged."}
       ],
       metricTree: {
@@ -303,9 +303,9 @@
         ]
       },
       gherkin: [
-        {title: 'Offline session behavior is defined', given: 'a charge point loses connectivity mid-session', when: 'the disconnection is detected', then: 'the system applies a defined fallback, either continuing locally or halting, rather than leaving the session in an undefined state'},
-        {title: 'Vendor-specific quirks are isolated', given: "a charger model reports status fields differently from the spec's expected behavior", when: 'that model is onboarded', then: 'a documented vendor-specific handling rule accounts for the difference, rather than the discrepancy silently corrupting session data'},
-        {title: 'Meter-value discrepancy is flagged, not silently billed', given: "a charger's reported energy delivered differs from the billing system's own calculation", when: 'the session closes', then: 'the discrepancy is flagged for review rather than the customer being billed for either figure without reconciliation'},
+        {title: 'Offline session behavior is defined', given: 'a charge point loses connectivity mid-session', when: 'the disconnection is detected', then: 'the system applies a defined fallback, either continuing locally or halting, and the session never sits in an undefined state'},
+        {title: 'Vendor-specific quirks are isolated', given: "a charger model reports status fields differently from the spec's expected behavior", when: 'that model is onboarded', then: 'a documented vendor-specific handling rule accounts for the difference, so the discrepancy never silently corrupts session data'},
+        {title: 'Meter-value discrepancy is flagged before billing', given: "a charger's reported energy delivered differs from the billing system's own calculation", when: 'the session closes', then: 'the discrepancy is flagged for review, and the customer is not billed either figure until it is reconciled'},
         {title: 'New charger model is soak-tested before rollout', given: 'a new charger hardware model is being integrated', when: 'it completes lab testing', then: 'it also runs a live soak test before being rolled out broadly, to catch firmware issues that only appear under sustained real-world load'}
       ]
     }
@@ -358,7 +358,7 @@
         ]
       },
       'Add a one-click referral invite': {
-        info: 'A single button existing users can send to friends or colleagues, so inviting someone is one step instead of a multi-step referral process.',
+        info: 'A single button existing users can send to friends or colleagues, turning a referral into one step.',
         edgeCases: [
           {title: 'Referral fraud / self-referral', desc: 'A user refers their own second email address to claim a reward twice.'},
           {title: 'Invited user already has an account', desc: 'The referral link points to a signup flow, but the invitee is already a user under a different account.'},
@@ -490,8 +490,8 @@
         },
         gherkin: [
           {title: 'New account sees guided empty state', given: 'a user opens a section with no data yet', when: 'the page loads', then: 'they see an explanation of what belongs there and a direct action to create the first one'},
-          {title: 'Empty state after deletion differs from first-run', given: 'a user deletes their last remaining item', when: 'the list becomes empty', then: 'they see a message reflecting that they just deleted their last item, not the new-user welcome message'},
-          {title: 'Sample data is clearly labeled', given: 'a product shows sample data to illustrate an empty state', when: 'the user views it', then: 'it is visibly marked as sample data, not mistakable for something they created'}
+          {title: 'Empty state after deletion differs from first-run', given: 'a user deletes their last remaining item', when: 'the list becomes empty', then: 'they see a message reflecting that they just deleted their last item, different from the new-user welcome message'},
+          {title: 'Sample data is clearly labeled', given: 'a product shows sample data to illustrate an empty state', when: 'the user views it', then: 'it is visibly marked as sample data they could not mistake for something they created'}
         ]
       },
       'Decide what to instrument before you have any users': {
@@ -511,9 +511,9 @@
           ]
         },
         gherkin: [
-          {title: 'Event exists before the feature ships', given: 'a new feature is being built', when: 'it is scheduled to ship', then: 'the events needed to measure its usage are defined and verified before launch, not added afterward'},
+          {title: 'Event exists before the feature ships', given: 'a new feature is being built', when: 'it is scheduled to ship', then: 'the events needed to measure its usage are defined and verified before launch'},
           {title: 'Event names follow one convention', given: 'a new event is added to the tracking plan', when: 'it is implemented', then: 'its name follows the same naming convention as every other tracked event'},
-          {title: 'Duplicate firing is caught', given: 'an event is wired to fire on a user action', when: 'that action happens once', then: 'exactly one event is recorded, not two'}
+          {title: 'Duplicate firing is caught', given: 'an event is wired to fire on a user action', when: 'that action happens once', then: 'exactly one event is recorded'}
         ]
       },
       'Publish a public changelog or build-in-public roadmap': {
@@ -533,15 +533,15 @@
           ]
         },
         gherkin: [
-          {title: 'Roadmap items are labeled by confidence', given: 'an item appears on the public roadmap', when: 'a user views it', then: 'it is labeled as exploring, planned, or in progress, not shown as a firm commitment unless it is one'},
-          {title: 'Changelog entries stay factual', given: 'a changelog entry describes a shipped change', when: 'it is published', then: 'it describes only what actually shipped, not upcoming unreleased detail'},
-          {title: 'Deprioritized items are removed, not left stale', given: 'a roadmap item is no longer being worked on', when: 'the roadmap is next updated', then: 'that item is removed or clearly marked as deprioritized rather than left listed indefinitely'}
+          {title: 'Roadmap items are labeled by confidence', given: 'an item appears on the public roadmap', when: 'a user views it', then: 'it is labeled as exploring, planned, or in progress, so only genuine commitments are shown as firm'},
+          {title: 'Changelog entries stay factual', given: 'a changelog entry describes a shipped change', when: 'it is published', then: 'it describes only what actually shipped'},
+          {title: 'Deprioritized items are removed promptly', given: 'a roadmap item is no longer being worked on', when: 'the roadmap is next updated', then: 'that item is removed or clearly marked as deprioritized, so it is never left listed indefinitely'}
         ]
       },
       "Connect a customer's utility account to pull their real usage data": {
-        info: "Letting a user log into their electric utility account so the product can pull real usage and billing data automatically, instead of them uploading a bill by hand.",
+        info: "Letting a user log into their electric utility account so the product can pull real usage and billing data automatically, skipping a manual bill upload.",
         edgeCases: [
-          {title: 'Invalid login on first connect', desc: 'A user enters the wrong utility-site credentials, and the failure needs to say so clearly rather than looking like the connection is broken.'},
+          {title: 'Invalid login on first connect', desc: "A user enters the wrong utility-site credentials, and the failure needs to say so clearly, so it doesn't look like the connection is broken."},
           {title: 'Authorization quietly expires', desc: "Unless the customer granted indefinite access, the link to their utility account expires after a period and silently stops pulling new data."},
           {title: 'Utility site itself is down', desc: "The connection attempt fails because the utility's own portal is unavailable, which looks identical to a wrong password unless the product tells them apart."},
           {title: 'Multiple accounts under one login', desc: 'A single utility login covers several properties or meters, and the product needs the user to pick which one this connection is for.'}
@@ -555,9 +555,9 @@
           ]
         },
         gherkin: [
-          {title: 'Invalid credentials explained clearly', given: 'a user enters incorrect utility login credentials', when: 'the connection attempt runs', then: 'they see a specific invalid-login message and a way to try again, not a generic error'},
+          {title: 'Invalid credentials explained clearly', given: 'a user enters incorrect utility login credentials', when: 'the connection attempt runs', then: 'they see a specific invalid-login message, distinct from a generic error, and a way to try again'},
           {title: 'Expired authorization prompts reconnection', given: "a customer's utility authorization has expired", when: 'the next scheduled data pull runs', then: 'the user is notified and given a direct link to reauthorize'},
-          {title: 'Utility outage is distinguished from bad credentials', given: "the utility's own site is down during a connection attempt", when: 'the attempt fails', then: 'the user sees a message identifying it as a utility-side outage, not a login problem, with guidance to retry later'},
+          {title: 'Utility outage is distinguished from bad credentials', given: "the utility's own site is down during a connection attempt", when: 'the attempt fails', then: 'the user sees a message identifying it specifically as a utility-side outage, with guidance to retry later'},
           {title: 'Multiple accounts require explicit selection', given: 'a utility login covers more than one account or meter', when: 'the user connects it', then: 'they are prompted to select which specific account this connection applies to'}
         ]
       }
