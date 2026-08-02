@@ -398,9 +398,6 @@
 
 .ab-context-row{display:flex;flex-wrap:wrap;align-items:flex-end;gap:16px;margin-top:20px;}
 
-.ab-empty-state{max-width:560px;color:#8B90B3;font-size:13.5px;line-height:1.6;margin:20px 0 0;}
-.ab-empty-state strong{color:#C6CBE6;}
-
 .ab-result{margin-top:24px;}
 .ab-validity-banner{
   font-size:13px;line-height:1.55;padding:12px 16px;border-radius:10px;margin-bottom:20px;

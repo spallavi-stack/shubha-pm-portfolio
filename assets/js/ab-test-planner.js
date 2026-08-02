@@ -20,7 +20,6 @@
     var mdeInput = document.getElementById('abplanMde');
     var reachInput = document.getElementById('abplanReach');
     var runBtn = document.getElementById('abplanRunBtn');
-    var emptyState = document.getElementById('abplanEmptyState');
     var result = document.getElementById('abplanResult');
     var banner = document.getElementById('abplanBanner');
     var details = document.getElementById('abplanDetails');
@@ -36,7 +35,6 @@
         banner.className = 'ab-validity-banner is-underpowered';
         banner.textContent = 'Enter a conversion rate and lift that stay between 0 and 100%.';
         details.innerHTML = '';
-        emptyState.hidden = true;
         result.hidden = false;
         return;
       }
@@ -62,7 +60,6 @@
         'Assumes the standard 95% confidence / 80% power used by most experimentation platforms.'
       ].map(function(t){ return '<li>' + t + '</li>'; }).join('');
 
-      emptyState.hidden = true;
       result.hidden = false;
     }
 
