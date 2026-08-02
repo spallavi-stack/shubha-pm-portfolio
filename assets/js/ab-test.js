@@ -13,7 +13,7 @@
   var MIN_RELIABLE_REACH = 1000; // monthly visitors; my own threshold, not Kohavi's literal number
 
   var STAGE_DEFAULTS = {
-    '0to1': {reach: 250, a: "Welcome! Let's get your account set up", b: "You're in — here's your first step"},
+    '0to1': {reach: 250, a: "Welcome! Let's get your account set up", b: "You're in. Here's your first step"},
     '1ton': {reach: 4000, a: 'Save 20% when you upgrade to our new plan', b: 'Try it free for 14 days, no credit card required'}
   };
 
@@ -34,10 +34,10 @@
 
     if(wordCount > 0 && wordCount <= 12){
       score += 10;
-      reasons.push(label + ' is concise (' + wordCount + ' words) — reads clearly at a glance.');
+      reasons.push(label + ' is concise (' + wordCount + ' words). It reads clearly at a glance.');
     } else if(wordCount > 20){
       score -= 10;
-      reasons.push(label + ' is long (' + wordCount + ' words) — risks losing the reader before the point lands.');
+      reasons.push(label + ' is long (' + wordCount + ' words) and risks losing the reader before the point lands.');
     }
 
     var vagueHits = countMatches(text, VAGUE_WORDS);
@@ -117,9 +117,9 @@
       if(winner){
         reasoning.push('Predicted winner: Variant ' + winner + ', based on the factors above.');
       } else {
-        reasoning.push('Both variants score too close to call — treat this as a coin flip, not a confident pick.');
+        reasoning.push('Both variants score too close to call, so treat this as a coin flip.');
       }
-      reasoning.push('A/B testing works best for incremental copy tweaks like this, not for testing strategy, vision, or anything that only happens once.');
+      reasoning.push('A/B testing works best for incremental copy tweaks like this. Strategy, vision, and other one-off decisions need a different kind of validation.');
 
       reasoningList.innerHTML = reasoning.map(function(r){ return '<li>' + r + '</li>'; }).join('');
 
