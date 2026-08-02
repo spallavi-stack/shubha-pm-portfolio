@@ -7,7 +7,11 @@
    that A/B testing needs "enough units... for the statistics to work
    out." Below that reach, the tool says so plainly. The scoring
    weights and thresholds below are my own implementation of those
-   principles, separate from the sources cited. */
+   principles, separate from the sources cited. Checks like the digit
+   test below detect the presence of a pattern (a number, a friction
+   phrase), not the quality of what's there, so "Save 72%" and
+   "Save 2%" score identically. That's a real limit of a pattern-match
+   heuristic, not a bug to hide; the reasoning text says so explicitly. */
 (function(){
   var MIN_RELIABLE_REACH = 1000; // monthly visitors; my own threshold, not Kohavi's literal number
 
@@ -59,7 +63,7 @@
 
     if(/\d/.test(text)){
       score += 12;
-      reasons.push(label + ' cites a concrete number, which reads as more credible than an unspecific claim.');
+      reasons.push(label + ' cites a specific number instead of a vague claim. (This checks for the presence of a number only, not whether that number itself is a credible or plausible one.)');
     }
 
     var frictionHits = countMatches(text, FRICTION_PHRASES);

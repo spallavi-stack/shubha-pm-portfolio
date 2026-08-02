@@ -457,6 +457,12 @@
       <button class="pm-lab-tab" type="button" role="tab" id="pm-lab-tab-ab" aria-controls="pm-lab-panel-ab" aria-selected="false">
         <span class="pm-lab-tab-num">4</span> A/B Test It
       </button>
+      <button class="pm-lab-tab" type="button" role="tab" id="pm-lab-tab-abplan" aria-controls="pm-lab-panel-abplan" aria-selected="false">
+        <span class="pm-lab-tab-num">5</span> A/B Test Planner
+      </button>
+      <button class="pm-lab-tab" type="button" role="tab" id="pm-lab-tab-payback" aria-controls="pm-lab-panel-payback" aria-selected="false">
+        <span class="pm-lab-tab-num">6</span> Payback Period Calculator
+      </button>
     </div>
 
     <div class="pm-lab-panels">
@@ -680,7 +686,101 @@
             <li><a href="https://www.youtube.com/watch?v=8xLquwfx6p0" target="_blank" rel="noopener">"5 questions to ask when your product stops growing", Jason Cohen</a>, podcast, Jan 2026 (contrarian take: A/B testing is unreliable for small samples and shouldn't be used for strategy/vision calls)</li>
             <li><a href="https://www.lennysnewsletter.com/p/what-is-a-good-activation-rate" target="_blank" rel="noopener">"What is a good activation rate"</a>, newsletter, Oct 2022 (real copy-optimization categories: clarity, friction, value-prop specificity)</li>
           </ul>
-          <p class="pm-lab-sources-note">The scoring heuristic itself (word counts, keyword weights) is my own implementation of these principles, separate from the sources cited above.</p>
+          <p class="pm-lab-sources-note">The scoring heuristic itself (word counts, keyword weights) is my own implementation of these principles, separate from the sources cited above. It detects patterns, not quality: "Save 72%" and "Save 2%" score identically, since the check only looks for the presence of a number, not whether that number is credible.</p>
+        </div>
+      </div>
+
+      <div class="pm-lab-panel" id="pm-lab-panel-abplan" role="tabpanel" aria-labelledby="pm-lab-tab-abplan">
+        <p class="pm-lab-panel-intro">Plan a real A/B test: how many visitors you need and how long to run it, based on your baseline conversion rate and the lift you'd actually care about. This doesn't predict which copy wins, no tool can do that from text alone, it tells you what a valid test of your own copy would require.</p>
+        <div class="pm-lab-tool" id="abplan-root" data-pm-tool="ab-planner">
+          <div class="ab-input-grid">
+            <div class="ab-input-field">
+              <label class="gtm-label" for="abplanBaseline">Current conversion rate (%)</label>
+              <input type="number" id="abplanBaseline" class="rice-input rice-input-num" min="0.1" max="99" step="0.1" value="5">
+            </div>
+            <div class="ab-input-field">
+              <label class="gtm-label" for="abplanMde">Smallest lift worth detecting (percentage points)</label>
+              <input type="number" id="abplanMde" class="rice-input rice-input-num" min="0.1" max="90" step="0.1" value="1">
+            </div>
+          </div>
+
+          <div class="ab-context-row">
+            <div class="ab-input-field ab-reach-field">
+              <label class="gtm-label" for="abplanReach">Estimated monthly reach (visitors who'd see this)</label>
+              <input type="number" id="abplanReach" class="rice-input rice-input-num ab-reach-input" min="0" step="100" value="4000">
+            </div>
+            <button type="button" class="rice-add-btn" id="abplanRunBtn">Calculate</button>
+          </div>
+
+          <p class="ab-empty-state" id="abplanEmptyState">Enter your numbers and click <strong>Calculate</strong> to see how many visitors and how long a valid test would need.</p>
+
+          <div class="ab-result" id="abplanResult" hidden>
+            <div class="ab-validity-banner" id="abplanBanner"></div>
+            <div class="ab-reasoning">
+              <div class="ab-reasoning-title">Details</div>
+              <ul class="ab-reasoning-list" id="abplanDetails"></ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="pm-lab-sources">
+          <div class="pm-lab-sources-title">Sources</div>
+          <ul class="pm-lab-sources-list">
+            <li><a href="https://www.youtube.com/watch?v=hEzpiDuYFoE" target="_blank" rel="noopener">"The ultimate guide to A/B testing", Ronny Kohavi (Airbnb, Microsoft, Amazon)</a>, podcast, Jul 2023 (source of the general point that A/B testing needs enough units for the statistics to work; the sample-size formula itself is the standard classical two-proportion z-test, not something this episode states)</li>
+            <li><a href="https://select-statistics.co.uk/calculators/sample-size-calculator-two-proportions/" target="_blank" rel="noopener">Two-proportion z-test sample size formula, Select Statistical Consultants</a> (source of the classical fixed-horizon formula used here)</li>
+            <li><a href="https://www.statsig.com/perspectives/sequential-testing-ab-peek" target="_blank" rel="noopener">"Sequential testing: How to peek at A/B test results without ruining validity", Statsig</a> (source of the peeking-problem warning and false-positive-rate figure below; also documented in Ronny Kohavi's book <em>Trustworthy Online Controlled Experiments</em>, not the podcast episode above)</li>
+          </ul>
+          <p class="pm-lab-sources-note">Assumes the standard 95% confidence / 80% power used by most experimentation platforms. This tells you what a valid test of your own copy requires, it can't tell you which variant will actually win.</p>
+        </div>
+      </div>
+
+      <div class="pm-lab-panel" id="pm-lab-panel-payback" role="tabpanel" aria-labelledby="pm-lab-tab-payback">
+        <p class="pm-lab-panel-intro">How long it takes to earn back what you spent acquiring a customer, benchmarked against a survey of 16 growth operators. A shorter payback period isn't automatically better, see the note below, but it's the number that tells you how fast you can reinvest in growth.</p>
+        <div class="pm-lab-tool" id="payback-root" data-pm-tool="payback">
+          <div class="ab-input-grid">
+            <div class="ab-input-field">
+              <label class="gtm-label" for="pbCac">Customer acquisition cost (in your currency)</label>
+              <input type="number" id="pbCac" class="rice-input rice-input-num" min="0" step="10" value="1200">
+            </div>
+            <div class="ab-input-field">
+              <label class="gtm-label" for="pbRevenue">Monthly revenue per customer</label>
+              <input type="number" id="pbRevenue" class="rice-input rice-input-num" min="0.01" step="5" value="150">
+            </div>
+          </div>
+
+          <div class="ab-context-row">
+            <div class="ab-input-field">
+              <label class="gtm-label" for="pbMargin">Gross margin (%)</label>
+              <input type="number" id="pbMargin" class="rice-input rice-input-num" min="1" max="100" step="1" value="75">
+            </div>
+            <div class="ab-input-field">
+              <label class="gtm-label" for="pbSegment">Segment</label>
+              <select id="pbSegment" class="rice-input rice-select">
+                <option value="b2c">B2C</option>
+                <option value="smb">B2B, SMB</option>
+                <option value="ent">B2B, Enterprise</option>
+              </select>
+            </div>
+            <button type="button" class="rice-add-btn" id="pbRunBtn">Calculate</button>
+          </div>
+
+          <p class="ab-empty-state" id="pbEmptyState">Enter your numbers and click <strong>Calculate</strong> to see your payback period.</p>
+
+          <div class="ab-result" id="pbResult" hidden>
+            <div class="ab-validity-banner" id="pbBanner"></div>
+            <div class="ab-reasoning">
+              <div class="ab-reasoning-title">Details</div>
+              <ul class="ab-reasoning-list" id="pbDetails"></ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="pm-lab-sources">
+          <div class="pm-lab-sources-title">Sources</div>
+          <ul class="pm-lab-sources-list">
+            <li><a href="https://www.lennysnewsletter.com/p/what-is-a-good-payback-period" target="_blank" rel="noopener">"What is a good payback period?", Lenny's Newsletter</a>, Dec 2021 (source of the benchmark table, the CAC &divide; gross profit formula, and the Rothenberg/Winters quotes below, based on a survey of 16 named growth operators)</li>
+          </ul>
+          <p class="pm-lab-sources-note">Benchmarks reflect that survey's consensus, not a universal rule. Business stage and model change what a good target looks like, see the note below the result.</p>
         </div>
       </div>
     </div>
@@ -706,6 +806,8 @@
 <script src="assets/js/prioritization.js"></script>
 <script src="assets/js/prd-analyzer.js"></script>
 <script src="assets/js/ab-test.js"></script>
+<script src="assets/js/ab-test-planner.js"></script>
+<script src="assets/js/payback-calculator.js"></script>
 <script>
 (function(){
   function initCarousel(){
