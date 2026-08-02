@@ -67,6 +67,9 @@
     }
 
     runBtn.addEventListener('click', run);
+
+    var root = document.getElementById('abplan-root');
+    if(root && window.pmLabInitInfoTooltips) window.pmLabInitInfoTooltips(root);
   }
 
   if(document.readyState === 'loading'){

@@ -65,8 +65,8 @@
       banner.textContent = bannerText;
 
       details.innerHTML = [
-        'Calculated off revenue instead of gross profit, a common mistake, this would look like ' + monthsRevenueBasis.toFixed(1) + ' months instead. "Revenue doesn’t pay your salaries, gross profit does." — Brian Rothenberg',
-        'A shorter payback period isn’t automatically better. Operators in this survey point to real cases where a longer payback period is the right call: mature businesses with predictable long-term LTV, multi-year enterprise contracts with renewal data, or a deliberate growth-stage investment. Treat this as a reference point, not a verdict.'
+        'Calculated off revenue instead of gross profit, a common mistake, this would look like ' + monthsRevenueBasis.toFixed(1) + ' months instead. As Brian Rothenberg put it, revenue doesn’t pay your salaries, gross profit does.',
+        'A shorter payback period isn’t automatically better. Operators in this survey point to real cases where a longer payback period is the right call: mature businesses with predictable long-term LTV, multi-year enterprise contracts with renewal data, or a deliberate growth-stage investment. Weigh this classification against your own stage and business model.'
       ].map(function(t){ return '<li>' + t + '</li>'; }).join('');
 
       emptyState.hidden = true;
@@ -74,6 +74,9 @@
     }
 
     runBtn.addEventListener('click', run);
+
+    var root = document.getElementById('payback-root');
+    if(root && window.pmLabInitInfoTooltips) window.pmLabInitInfoTooltips(root);
   }
 
   if(document.readyState === 'loading'){
