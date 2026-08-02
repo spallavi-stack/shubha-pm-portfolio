@@ -240,17 +240,16 @@
 /* ============================================================
    Tool 3 — AI Spec & PRD Auditor
    ============================================================ */
-.prd-input-controls{display:flex;gap:12px;flex-wrap:wrap;}
-.prd-input{
-  flex:1 1 320px;font-family:var(--font-body);font-size:14px;color:#fff;
-  background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.16);border-radius:10px;
-  padding:12px 14px;
+.prd-picker-group{margin-bottom:20px;}
+.prd-picker-group:last-child{margin-bottom:0;}
+.prd-picker-label{
+  font-size:12.5px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;color:#B9C0DD;
+  margin-bottom:10px;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;
 }
-.prd-input:focus{outline:none;border-color:var(--amber);}
-.prd-analyze-btn{flex:0 0 auto;}
-
-.prd-presets{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;}
+.prd-picker-sub{font-size:11.5px;font-weight:500;letter-spacing:0;text-transform:none;color:#8B90B3;}
+.prd-picker-row{display:flex;flex-wrap:wrap;gap:8px;}
 .prd-preset-btn{font-size:12.5px;}
+.prd-preset-btn-pattern{border-style:dashed;}
 
 .prd-empty-state{max-width:560px;color:#8B90B3;font-size:13.5px;line-height:1.6;margin:24px 0 0;}
 .prd-empty-state strong{color:#C6CBE6;}
@@ -337,7 +336,6 @@
 .prd-kw{color:var(--amber);font-weight:700;margin-right:6px;}
 
 @media(max-width:640px){
-  .prd-input-controls{flex-direction:column;align-items:stretch;}
   .prd-tree-l1-row{gap:18px;}
 }
 

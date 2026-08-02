@@ -1,16 +1,16 @@
-/* AI Spec & PRD Auditor — turns a raw feature idea into an edge-case
-   audit, a metric tree, and Gherkin acceptance criteria. This is a demo
-   playground, not a live model call — there's no LLM behind it. Instead:
-   1) the preset features below are curated by hand, exact-matched;
-   2) anything else is keyword-matched against a library of common
-      feature domains (payments, uploads, notifications, search, bulk
-      actions, real-time/collab, comments, integrations) so a typed-in
-      idea like "add file upload" gets upload-specific content, not a
-      generic filler;
-   3) if nothing matches, it falls back to a fully generic template.
-   Each path is labeled in the UI so it's clear which one produced the
-   result. Presets swap per the 0→1 / 1→n stage toggle (window.pmLabStage,
-   set by pm-lab.js) so the examples actually fit company stage. */
+/* AI Spec & PRD Auditor. This is a demo playground with no LLM behind
+   it, so there's no free-text input implying it can analyze anything
+   you type. Instead you pick from two clearly-labeled groups:
+   1) "Curated examples": a small set of features with hand-written,
+      specific analysis, exact to that feature.
+   2) "General patterns": broader domain patterns (payments, uploads,
+      notifications, search, bulk actions, real-time/collab, comments,
+      integrations) with hand-written analysis accurate for the domain
+      and written at that general level.
+   Both are labeled in the UI and in the result header so it's always
+   clear which kind of content is showing. Curated examples swap per
+   the 0→1 / 1→n stage toggle (window.pmLabStage, set by pm-lab.js) so
+   they actually fit company stage; general patterns stay constant. */
 (function(){
   var STAGE_PRESETS = {
     '1ton': {
@@ -32,8 +32,8 @@
       gherkin: [
         {title: 'Successful OTP verification', given: 'a user with 2FA enabled attempts to log in', when: 'they enter the correct OTP within the validity window', then: 'they are granted access and a login event is logged'},
         {title: 'Expired OTP', given: 'a user requests an OTP', when: 'they submit the code after it has expired', then: 'the system rejects the code and prompts them to request a new one'},
-        {title: 'SMS delivery failure fallback', given: "a user's carrier fails to deliver the OTP within 30 seconds", when: 'the user requests a resend twice', then: 'the system offers an alternate delivery channel (voice call) instead of retrying SMS indefinitely'},
-        {title: 'Lost phone recovery', given: 'a user no longer has access to their enrolled phone number', when: 'they attempt account recovery', then: 'they are routed to an identity-verified backup recovery flow, not a silent 2FA bypass'}
+        {title: 'SMS delivery failure fallback', given: "a user's carrier fails to deliver the OTP within 30 seconds", when: 'the user requests a resend twice', then: 'the system offers an alternate delivery channel (voice call) after the second failed attempt'},
+        {title: 'Lost phone recovery', given: 'a user no longer has access to their enrolled phone number', when: 'they attempt account recovery', then: 'they are routed to an identity-verified backup recovery flow that still requires proof of identity'}
       ]
     },
     'Implement Team Member Permissions Grid': {
@@ -54,7 +54,7 @@
       gherkin: [
         {title: 'Prevent last admin downgrade', given: 'a team has exactly one Admin', when: 'that Admin tries to downgrade their own role', then: 'the system blocks the change and prompts them to assign another Admin first'},
         {title: 'Immediate permission revocation', given: "a user's role is downgraded mid-session", when: 'their next action requires the removed permission', then: 'they are denied access and their session is re-validated against current permissions'},
-        {title: 'Bulk import role conflict', given: 'an admin bulk-imports users with an unrecognized role value', when: 'the import runs', then: 'conflicting rows are flagged for manual review instead of silently defaulting to the highest-privilege role'},
+        {title: 'Bulk import role conflict', given: 'an admin bulk-imports users with an unrecognized role value', when: 'the import runs', then: 'conflicting rows are flagged for manual review before any role is assigned'},
         {title: 'Resource reassignment on removal', given: 'a user who owns team resources is removed from the team', when: 'the removal is confirmed', then: "the admin is prompted to reassign ownership of that user's resources before the removal completes"}
       ]
     },
@@ -74,19 +74,85 @@
         ]
       },
       gherkin: [
-        {title: 'Large export succeeds asynchronously', given: 'a user requests an export covering more than 90 days of data', when: 'the dataset exceeds the synchronous export threshold', then: 'the system queues the export and emails the user when it is ready, instead of timing out the request'},
-        {title: 'CSV injection is neutralized', given: 'a report value begins with a formula-triggering character (=, +, -, @)', when: 'the CSV is generated', then: 'that value is escaped so spreadsheet apps render it as text, not an executable formula'},
+        {title: 'Large export succeeds asynchronously', given: 'a user requests an export covering more than 90 days of data', when: 'the dataset exceeds the synchronous export threshold', then: 'the system queues the export and emails the user when it is ready'},
+        {title: 'CSV injection is neutralized', given: 'a report value begins with a formula-triggering character (=, +, -, @)', when: 'the CSV is generated', then: 'that value is escaped so spreadsheet apps render it as plain text'},
         {title: "Timestamps match the exporting user's timezone", given: 'a user in a non-UTC timezone exports a report', when: 'the CSV is generated', then: "all timestamps are rendered in the user's account timezone, with the timezone labeled in the column header"},
-        {title: 'Export reflects a consistent snapshot', given: 'report data is still aggregating when an export is requested', when: 'the export is generated', then: 'it is built from a single consistent snapshot, not partially-updated data, and the snapshot time is noted in the file'}
+        {title: 'Export reflects a consistent snapshot', given: 'report data is still aggregating when an export is requested', when: 'the export is generated', then: 'it is built from a single consistent snapshot, with the snapshot time noted in the file'}
+      ]
+    },
+    'Add usage-based billing tiers': {
+      edgeCases: [
+        {title: 'Mid-cycle tier changes', desc: "A customer crosses a usage threshold mid-billing-cycle, and it's unclear whether they're billed at the new tier immediately, retroactively, or at the next cycle."},
+        {title: 'Usage metering drift', desc: 'The usage counter used for billing and the usage a customer sees in their dashboard disagree, undermining trust in the bill.'},
+        {title: 'Overage surprise', desc: 'A customer has no visibility into approaching a usage threshold until the bill arrives showing a large overage charge.'},
+        {title: 'Proration on downgrade', desc: 'A customer downgrades mid-cycle, and the proration logic for the difference is undefined.'}
+      ],
+      metricTree: {
+        northStar: '% of bills that match customer-visible usage with no disputed charges',
+        l1: [
+          {label: 'Usage visibility', l2: ['% of customers who view usage dashboard before bill', 'Threshold-warning open rate']},
+          {label: 'Billing dispute rate', l2: ['% of bills disputed', 'Avg. time to resolve a dispute']},
+          {label: 'Tier conversion rate', l2: ['% of customers who upgrade after a threshold warning', 'Involuntary downgrade rate']}
+        ]
+      },
+      gherkin: [
+        {title: 'Threshold warning before overage', given: 'a customer approaches a usage tier threshold', when: 'they cross 80% of their current tier', then: 'they receive a warning with enough time to upgrade before incurring overage charges'},
+        {title: 'Usage dashboard matches billed usage', given: 'a customer views their usage dashboard', when: 'the billing cycle closes', then: 'the number on their invoice matches what the dashboard showed them throughout the cycle'},
+        {title: 'Mid-cycle tier change is prorated', given: 'a customer upgrades tiers mid-cycle', when: 'the change takes effect', then: 'they are billed a prorated amount for the remainder of the cycle at the new tier'},
+        {title: 'Downgrade takes effect at cycle end', given: 'a customer requests a downgrade', when: 'they are mid-cycle', then: 'the downgrade takes effect at the next billing cycle, and they are informed of the effective date'}
+      ]
+    },
+    'Build an admin audit log': {
+      edgeCases: [
+        {title: 'Log tampering', desc: 'An admin with access to the audit log can delete or alter entries covering their own actions.'},
+        {title: 'Volume at scale', desc: 'A busy team generates thousands of loggable events per day, and the log view has no filtering or search, making it hard to use in practice.'},
+        {title: 'Sensitive data in log entries', desc: "Log entries capture full field values on a change, including data that shouldn't be broadly visible even to other admins, such as a password reset token."},
+        {title: 'Retention undefined', desc: 'Nothing specifies how long audit log entries are kept, so storage grows unbounded, or entries needed for a compliance review have already been purged.'}
+      ],
+      metricTree: {
+        northStar: '% of admin actions with a complete, tamper-evident audit trail',
+        l1: [
+          {label: 'Log coverage', l2: ['% of admin action types instrumented', 'Events logged per day']},
+          {label: 'Log usability', l2: ['Search/filter usage rate', 'Time to find a specific event during an investigation']},
+          {label: 'Compliance readiness', l2: ['% of retention policy checks passed', 'Time to produce an audit export on request']}
+        ]
+      },
+      gherkin: [
+        {title: 'Audit entries are immutable', given: 'an admin action is logged', when: 'any user, including admins, attempts to edit or delete that entry', then: 'the system blocks the change, and the attempt itself is logged'},
+        {title: 'Sensitive fields are redacted', given: 'a logged action includes a sensitive field, such as a password reset token', when: 'the log entry is created', then: 'that field is redacted or masked in the stored entry'},
+        {title: 'Log entries are searchable', given: 'an admin needs to investigate a specific change', when: 'they search the audit log by user, action type, or date range', then: 'matching entries are returned promptly'},
+        {title: 'Retention policy enforced', given: 'a log entry reaches the defined retention period', when: 'the retention job runs', then: 'the entry is archived or deleted according to the documented policy, and that action is itself logged'}
+      ]
+    },
+    'Add multi-region data residency': {
+      edgeCases: [
+        {title: 'Cross-region data leakage', desc: "A feature such as search indexing, analytics, or backups unintentionally replicates a customer's data outside their chosen region."},
+        {title: 'Region migration for existing customers', desc: 'A customer who signed up before regional choice existed has no defined path to move their data into a specific region now.'},
+        {title: 'Latency for cross-region teams', desc: "A team with members across two regions gets degraded performance for whichever members sit outside the team's assigned data region."},
+        {title: 'Regional outage isolation', desc: "An outage in one region needs to stay contained to that region's customers, without degrading service for customers hosted elsewhere."}
+      ],
+      metricTree: {
+        northStar: '% of customer data provably stored and processed only within their selected region',
+        l1: [
+          {label: 'Region assignment coverage', l2: ['% of customers with an explicit region set', '% of data flows audited for region compliance']},
+          {label: 'Cross-region latency', l2: ['p95 latency for out-of-region team members', 'Support tickets citing regional performance']},
+          {label: 'Regional incident isolation', l2: ['% of incidents contained to a single region', 'Cross-region blast-radius incidents per quarter']}
+        ]
+      },
+      gherkin: [
+        {title: 'New customer selects a data region', given: 'a new customer signs up', when: 'they complete onboarding', then: 'they select a data region, and all their data is provisioned within that region'},
+        {title: 'Existing customer can migrate region', given: 'a customer signed up before regional choice existed', when: 'they request a specific region', then: 'a defined migration process moves their data into that region with a documented timeline'},
+        {title: 'Regional outage contained', given: 'one region experiences an infrastructure outage', when: 'the outage occurs', then: 'customers in other regions continue operating without disruption'},
+        {title: 'Auxiliary data flows respect region', given: 'a feature like search indexing or analytics processes customer data', when: 'that data flow runs', then: "it stays within the customer's selected region, using an in-region processing pipeline"}
       ]
     }
     },
     '0to1': {
       'Add magic-link (passwordless) signup': {
         edgeCases: [
-          {title: 'Link expiry mid-click', desc: 'A user clicks an old/expired magic link from a stale email tab and hits a dead end that reads as a broken product, not an expected "request a new link" state.'},
+          {title: 'Link expiry mid-click', desc: "A user clicks an old or expired magic link from a stale email tab. The dead end they hit needs to clearly explain the link expired and offer a way to request a new one."},
           {title: 'Email delivery failure or spam folder', desc: 'The login-critical email lands in spam or is delayed, with no fallback path to get in.'},
-          {title: 'Multiple pending links', desc: 'A user impatiently requests several magic links in a row; clicking an old one needs to fail predictably, not silently do nothing.'},
+          {title: 'Multiple pending links', desc: "A user requests several magic links in a row. Clicking an old one needs to fail with a clear, predictable message explaining it's no longer valid."},
           {title: 'Shared or public inbox access', desc: 'A magic link sent to a shared team inbox can let anyone with inbox access log in as that user, with no second factor.'}
         ],
         metricTree: {
@@ -100,8 +166,8 @@
         gherkin: [
           {title: 'Valid link within window', given: 'a user requests a magic link', when: 'they click it within the validity window', then: 'they are logged in directly, with no password prompt'},
           {title: 'Expired link', given: 'a user clicks a magic link after it has expired', when: 'the system detects the expiry', then: 'it explains the link expired and offers to send a new one immediately'},
-          {title: 'Old link after a new one is requested', given: 'a user has requested a second magic link', when: 'they click the first, older link', then: 'it is rejected as superseded, not silently ignored'},
-          {title: 'Email non-delivery', given: "a magic-link email hasn't arrived after 60 seconds", when: 'the user requests a resend', then: 'the system offers an alternate way to confirm identity rather than just resending blindly'}
+          {title: 'Old link after a new one is requested', given: 'a user has requested a second magic link', when: 'they click the first, older link', then: 'it is rejected as superseded, with a message explaining a newer link was requested'},
+          {title: 'Email non-delivery', given: "a magic-link email hasn't arrived after 60 seconds", when: 'the user requests a resend', then: 'the system offers an alternate way to confirm identity, such as a fallback delivery channel'}
         ]
       },
       'Build a 3-step onboarding checklist': {
@@ -122,16 +188,16 @@
         gherkin: [
           {title: 'Sequential completion', given: 'a new user starts the checklist', when: 'they complete step 1', then: 'step 2 unlocks and their progress is saved immediately'},
           {title: 'Refresh preserves progress', given: 'a user has completed step 1', when: 'they refresh or return later', then: 'the checklist still shows step 1 as complete'},
-          {title: 'Irrelevant step for plan', given: "a user is on a plan that excludes a checklist step's feature", when: 'they view the checklist', then: 'that step is hidden rather than shown as permanently incomplete'},
-          {title: 'Team account shared progress', given: 'one teammate completes a checklist step on a team account', when: 'another teammate views the checklist', then: 'they see the same step marked complete, not a separate copy'}
+          {title: 'Irrelevant step for plan', given: "a user is on a plan that excludes a checklist step's feature", when: 'they view the checklist', then: 'that step is hidden from their checklist'},
+          {title: 'Team account shared progress', given: 'one teammate completes a checklist step on a team account', when: 'another teammate views the checklist', then: 'they see that same step marked complete'}
         ]
       },
       'Add a one-click referral invite': {
         edgeCases: [
           {title: 'Referral fraud / self-referral', desc: 'A user refers their own second email address to claim a reward twice.'},
           {title: 'Invited user already has an account', desc: 'The referral link points to a signup flow, but the invitee is already a user under a different account.'},
-          {title: 'Reward timing mismatch', desc: 'The referrer expects credit immediately on send, but the reward should only trigger once the invitee actually activates, not just signs up.'},
-          {title: 'Revoked or abandoned referral', desc: 'The referrer deletes their account, or the invite goes unused for months; the pending referral state needs a defined expiry, not to sit open forever.'}
+          {title: 'Reward timing mismatch', desc: 'The referrer expects credit immediately on send, but the reward should only trigger once the invitee actually activates.'},
+          {title: 'Revoked or abandoned referral', desc: 'The referrer deletes their account, or the invite goes unused for months; the pending referral state needs a defined expiry.'}
         ],
         metricTree: {
           northStar: 'Net new activated users acquired via referral per month',
@@ -144,25 +210,90 @@
         gherkin: [
           {title: 'Successful referral and reward', given: 'a user sends a referral link', when: 'the invitee signs up and reaches the activation milestone', then: "the referrer's reward is granted automatically"},
           {title: 'Self-referral blocked', given: 'a referral link is used to sign up', when: "the new account's email or payment method matches the referrer's existing account", then: 'the referral is flagged and no reward is granted'},
-          {title: 'Invitee already has an account', given: 'an invitee clicks a referral link', when: 'they already have an existing account', then: "they're logged into their existing account and the referral is marked invalid, not duplicated"},
-          {title: 'Reward before activation', given: 'an invitee has signed up but not yet activated', when: 'the referrer checks their referral status', then: 'it shows "pending," not "rewarded," until activation actually happens'}
+          {title: 'Invitee already has an account', given: 'an invitee clicks a referral link', when: 'they already have an existing account', then: "they're logged into their existing account and the referral is marked invalid"},
+          {title: 'Reward before activation', given: 'an invitee has signed up but not yet activated', when: 'the referrer checks their referral status', then: 'it shows "pending" until activation actually happens'}
+        ]
+      },
+      'Add a waitlist with referral-based queue jumping': {
+        edgeCases: [
+          {title: 'Gaming the referral count', desc: 'A user creates fake accounts or asks strangers to click a referral link without ever converting, inflating their queue position for no real signal.'},
+          {title: 'Queue position confusion', desc: "A user's position moves up and down as others join or refer, and without a visible explanation for the change, this can look like a bug."},
+          {title: 'Founder/team bypass expectations', desc: "Early hand-picked users, such as friends, advisors, or press, need a way into the product ahead of the public queue without undermining the queue's credibility for everyone else."},
+          {title: 'Waitlist abandonment', desc: 'Most signups never convert once finally invited, because the invite arrives long after the initial interest has faded.'}
+        ],
+        metricTree: {
+          northStar: '% of waitlist signups that activate within 7 days of being invited',
+          l1: [
+            {label: 'Waitlist signup rate', l2: ['Landing page conversion to waitlist', 'Referral link share rate']},
+            {label: 'Queue movement / referral effectiveness', l2: ['Avg. positions gained per referral', '% of signups who refer at least one person']},
+            {label: 'Invite-to-activation rate', l2: ['Time from invite to first login', '% who never activate after invite']}
+          ]
+        },
+        gherkin: [
+          {title: 'Referral moves queue position', given: 'a waitlisted user refers a new signup', when: 'the referral completes', then: 'the referring user moves up a defined number of positions and can see the new count'},
+          {title: 'Fake referral does not count', given: 'a referral link is used to sign up', when: 'the new signup never verifies their email', then: 'the referral does not count toward queue movement'},
+          {title: 'Hand-picked early access', given: 'the team wants to admit a specific user ahead of the public queue', when: 'that user is manually granted access', then: 'they are invited immediately, and the public queue continues moving independently'},
+          {title: 'Stale invite expires', given: 'a user is invited off the waitlist', when: 'they do not activate within a defined window', then: 'their invite expires and their spot opens for the next person in line'}
+        ]
+      },
+      'Build a single-tenant pilot for your first paying customer': {
+        edgeCases: [
+          {title: 'Diverging codebase', desc: "Custom requests for the pilot customer get built directly into their environment, and nothing tracks which changes need to fold back into the main product."},
+          {title: 'No clear pilot exit criteria', desc: 'The pilot runs indefinitely because success criteria for converting to a standard paid plan were never defined upfront.'},
+          {title: 'Support load concentration', desc: "One pilot customer's direct access to the founding team sets a response-time expectation that becomes unsustainable as the customer base grows."},
+          {title: 'Data migration at pilot end', desc: "Moving the pilot customer from their custom single-tenant setup to the standard multi-tenant product has no defined migration path."}
+        ],
+        metricTree: {
+          northStar: '% of pilots that convert to a standard paid contract by the agreed decision date',
+          l1: [
+            {label: 'Pilot engagement', l2: ['Weekly active usage by pilot customer', 'Number of custom requests raised']},
+            {label: 'Custom-to-core feature ratio', l2: ['% of pilot requests folded into the core product', '% left as one-off customizations']},
+            {label: 'Time to conversion decision', l2: ['Days from pilot start to go/no-go call', '% of pilots reaching a decision on schedule']}
+          ]
+        },
+        gherkin: [
+          {title: 'Pilot exit criteria defined upfront', given: 'a pilot agreement is signed with a new customer', when: 'the pilot begins', then: 'the specific criteria for converting to a paid contract are documented and shared with the customer before any custom work starts'},
+          {title: 'Custom request triaged', given: 'the pilot customer requests a feature specific to their workflow', when: 'the request is reviewed', then: 'it is explicitly marked as either a core-product candidate or a one-off customization'},
+          {title: 'Pilot end triggers migration plan', given: 'a pilot reaches its decision date and converts to a paid contract', when: 'the conversion is confirmed', then: 'a defined migration plan moves the customer off any single-tenant customizations and onto the standard product'},
+          {title: 'Pilot support boundaries set', given: 'the pilot customer has direct access to the founding team', when: 'the pilot begins', then: 'response-time expectations are set explicitly so they can be sustained as the customer base grows'}
+        ]
+      },
+      'Add an in-app feedback widget for beta users': {
+        edgeCases: [
+          {title: 'Feedback goes unread', desc: 'Feedback submissions pile up in a queue nobody reviews, and beta users who submitted feedback never hear back or see it acted on.'},
+          {title: 'Widget interrupts core flow', desc: 'The feedback prompt appears mid-task and blocks the action the user was trying to complete.'},
+          {title: 'No context captured', desc: 'Feedback text arrives with no attached context, such as which page, action, or state, so triaging it requires guessing what the user was doing.'},
+          {title: 'Feedback fatigue', desc: 'The same beta users get prompted for feedback repeatedly across sessions until they start ignoring or dismissing it by reflex.'}
+        ],
+        metricTree: {
+          northStar: '% of submitted feedback items that get a visible response or product change within 2 weeks',
+          l1: [
+            {label: 'Feedback submission rate', l2: ['% of beta users who submit at least one item', 'Avg. submissions per active beta user']},
+            {label: 'Feedback triage time', l2: ['Time from submission to first internal review', '% submissions reviewed within 48 hours']},
+            {label: 'Feedback prompt fatigue', l2: ['Dismiss rate on the prompt', '% of users who mute after first dismissal']}
+          ]
+        },
+        gherkin: [
+          {title: 'Feedback captures context automatically', given: 'a beta user opens the feedback widget', when: 'they submit feedback', then: 'the current page and relevant state are attached automatically, without the user typing it manually'},
+          {title: 'Widget does not block the current task', given: 'a user is mid-task when they open the feedback widget', when: 'they submit or dismiss it', then: 'they return to exactly where they left off in their task'},
+          {title: 'Repeat prompting respects dismissal', given: 'a user dismisses the feedback prompt', when: 'they encounter it again in a later session', then: 'the prompt appears less frequently, based on a defined cooldown'},
+          {title: 'Submitter sees their feedback acknowledged', given: 'a user submits feedback that leads to a product change', when: 'the change ships', then: 'the submitter is notified that their feedback was acted on'}
         ]
       }
     }
   };
 
-  // Keyword-matched fallback library. Not exact-preset content, but not
-  // the fully generic template either — matched by counting keyword hits
-  // in the typed feature text against each category below.
-  var KEYWORD_CATEGORIES = [
+  // General-pattern library: broader domain guidance shown under the
+  // "General patterns" group, distinct from the exact, curated examples
+  // above. Selected directly by name, not matched against typed text.
+  var GENERAL_PATTERNS = [
     {
       name: 'Payments & Billing',
-      keywords: ['payment', 'pay', 'billing', 'checkout', 'invoice', 'subscription', 'credit card', 'price', 'pricing', 'refund', 'charge'],
       edgeCases: [
         {title: 'Failed or declined payment mid-flow', desc: "A card is declined after the user believes they've completed checkout, leaving an ambiguous state between \"trying to pay\" and \"paid.\""},
         {title: 'Double charge on retry', desc: 'A user retries after a slow response, unaware the first charge already went through, risking a duplicate charge.'},
         {title: 'Currency / locale mismatch', desc: 'Price is calculated in one currency but displayed or charged in another for international users.'},
-        {title: 'Refund/chargeback reconciliation', desc: 'A refund or chargeback needs to reverse downstream state (access, usage, invoices), not just the payment record.'}
+        {title: 'Refund/chargeback reconciliation', desc: 'A refund or chargeback needs to reverse downstream state as well, including access, usage, and invoices.'}
       ],
       metricTree: {
         northStar: '% of checkout attempts that complete successfully without a support ticket',
@@ -180,11 +311,10 @@
     },
     {
       name: 'File Upload & Import',
-      keywords: ['upload', 'import', 'attach', 'file', 'photo', 'image', 'document'],
       edgeCases: [
-        {title: 'Oversized or malformed file', desc: 'A file exceeds the size limit or is corrupted mid-upload, and the failure needs a clear reason, not a silent hang.'},
-        {title: 'Unsupported file type', desc: "A user uploads a file type the system doesn't handle, and needs to be told before wasting an upload attempt, not after."},
-        {title: 'Interrupted upload', desc: 'A network drop or tab close mid-upload leaves a partial file; the system needs to detect and discard it rather than treat it as complete.'},
+        {title: 'Oversized or malformed file', desc: 'A file exceeds the size limit or is corrupted mid-upload, and the failure needs to surface a clear reason to the user.'},
+        {title: 'Unsupported file type', desc: "A user uploads a file type the system doesn't handle, and should be told which types are supported before attempting the upload."},
+        {title: 'Interrupted upload', desc: 'A network drop or tab close mid-upload leaves a partial file; the system needs to detect the partial file and discard it.'},
         {title: 'Malicious file content', desc: 'An uploaded file could contain malware or a script payload disguised as an accepted type, so validation can\'t rely on file extension alone.'}
       ],
       metricTree: {
@@ -197,21 +327,20 @@
       },
       gherkin: [
         {title: 'Oversized file rejected early', given: 'a user selects a file over the size limit', when: 'they attempt to upload it', then: 'the system rejects it before starting the upload and states the limit'},
-        {title: 'Interrupted upload is discarded', given: "a user's upload is interrupted by a network drop", when: 'the connection resumes', then: 'the partial file is discarded and the user is prompted to retry, not left with a corrupt file'},
+        {title: 'Interrupted upload is discarded', given: "a user's upload is interrupted by a network drop", when: 'the connection resumes', then: 'the partial file is discarded and the user is prompted to retry'},
         {title: 'Unsupported type blocked', given: 'a user selects a file type the system does not support', when: 'they attempt to upload it', then: 'they are told which types are supported before the upload starts'}
       ]
     },
     {
       name: 'Notifications & Email',
-      keywords: ['notification', 'notify', 'email', 'alert', 'reminder', 'push', 'sms', 'digest'],
       edgeCases: [
-        {title: 'Notification fatigue / no granular control', desc: 'Every event sends a notification with no way to mute or batch, so users disable notifications entirely rather than tune them.'},
+        {title: 'Notification fatigue / no granular control', desc: 'Every event sends a notification with no way to mute or batch, so users end up disabling notifications entirely to get relief.'},
         {title: 'Delivery failure goes unnoticed', desc: "An email or push notification fails to send and nothing surfaces that failure, so the product silently stops informing the user."},
         {title: 'Stale or duplicate notification', desc: 'An action is undone or changed after the notification is queued, so the user receives a notification about a state that no longer exists.'},
         {title: 'Timezone-insensitive timing', desc: 'A digest or reminder is sent at a fixed UTC time, landing at 3am for users in other timezones.'}
       ],
       metricTree: {
-        northStar: '% of notifications that lead to the intended user action, not an unsubscribe',
+        northStar: '% of notifications that lead to the intended user action',
         l1: [
           {label: 'Notification delivery rate', l2: ['Failure rate by channel', 'Delivery latency']},
           {label: 'Notification engagement rate', l2: ['Open/click-through rate', 'Time from send to action']},
@@ -219,14 +348,13 @@
         ]
       },
       gherkin: [
-        {title: 'Muting reduces volume, not everything', given: 'a user finds a notification type unhelpful', when: 'they mute that type', then: 'they stop receiving it while still receiving other types, not all notifications'},
-        {title: 'Stale notification suppressed', given: 'an action a notification refers to is undone before the notification sends', when: 'the send job runs', then: 'the notification is skipped rather than sent about a state that no longer exists'},
-        {title: 'Delivery failure is visible', given: 'a notification fails to send', when: 'the failure is detected', then: 'it is logged and retried according to a defined policy, not silently dropped'}
+        {title: 'Muting reduces volume for that type only', given: 'a user finds a notification type unhelpful', when: 'they mute that type', then: 'they stop receiving that type while continuing to receive others'},
+        {title: 'Stale notification suppressed', given: 'an action a notification refers to is undone before the notification sends', when: 'the send job runs', then: 'the notification is skipped, since the state it would describe no longer exists'},
+        {title: 'Delivery failure is visible', given: 'a notification fails to send', when: 'the failure is detected', then: 'it is logged and retried according to a defined policy'}
       ]
     },
     {
       name: 'Search',
-      keywords: ['search', 'filter', 'query', 'find'],
       edgeCases: [
         {title: 'Empty or zero-result queries', desc: "A query returns nothing, and the user is left without guidance on whether that's correct or a typo/filter issue."},
         {title: 'Stale index', desc: 'The underlying data changes but the search index lags, so users see outdated or since-deleted results.'},
@@ -242,16 +370,15 @@
         ]
       },
       gherkin: [
-        {title: 'Zero results shown clearly', given: 'a user searches for a term with no matches', when: 'the search runs', then: 'they see a clear zero-results state with a suggestion to adjust the query, not a blank screen'},
+        {title: 'Zero results shown clearly', given: 'a user searches for a term with no matches', when: 'the search runs', then: 'they see a clear zero-results state with a suggestion to adjust the query'},
         {title: 'Search input is sanitized', given: 'a user enters special characters in the search box', when: 'the query runs', then: 'the input is safely escaped and does not break or manipulate the underlying query'},
         {title: 'Recently changed data reflected', given: 'an item matching a saved search is deleted', when: 'the user re-runs the search', then: "the deleted item no longer appears, even if the index hasn't fully caught up elsewhere"}
       ]
     },
     {
       name: 'Bulk Actions',
-      keywords: ['bulk', 'batch', 'mass', 'multiple', 'select all'],
       edgeCases: [
-        {title: 'Partial failure mid-batch', desc: 'Some items in a bulk action succeed and others fail, and the user needs to know exactly which, not just an aggregate error.'},
+        {title: 'Partial failure mid-batch', desc: 'Some items in a bulk action succeed and others fail, and the user needs to know exactly which ones and why.'},
         {title: 'No undo for an irreversible bulk action', desc: 'A bulk delete or bulk status change is applied instantly with no confirmation step or undo window.'},
         {title: 'Performance/timeout on large selections', desc: "Selecting \"all\" on a large dataset queues an operation too big to complete synchronously."},
         {title: 'Permission mismatch within a selection', desc: "A bulk action is applied to a selection that includes items the user doesn't actually have permission to modify."}
@@ -265,16 +392,15 @@
         ]
       },
       gherkin: [
-        {title: 'Partial failure reported clearly', given: 'a user runs a bulk action on 50 items', when: '10 fail and 40 succeed', then: 'they see exactly which 10 failed and why, not just a generic partial-success message'},
+        {title: 'Partial failure reported clearly', given: 'a user runs a bulk action on 50 items', when: '10 fail and 40 succeed', then: 'they see exactly which 10 failed and why'},
         {title: 'Destructive bulk action requires confirmation', given: 'a user selects a bulk delete on multiple items', when: 'they submit it', then: 'they must confirm the count and action before it executes, with a short undo window after'},
         {title: 'Permission-scoped bulk action', given: 'a user selects items for a bulk action, some of which they lack permission to modify', when: 'they submit it', then: 'the action applies only to items they have permission for, with the rest flagged'}
       ]
     },
     {
       name: 'Real-Time & Collaboration',
-      keywords: ['real-time', 'realtime', 'collaborate', 'collaboration', 'live', 'multiplayer', 'co-edit', 'presence'],
       edgeCases: [
-        {title: 'Conflicting simultaneous edits', desc: 'Two users edit the same record at the same time, and the system needs a defined resolution (last-write-wins, merge, lock), not silent data loss.'},
+        {title: 'Conflicting simultaneous edits', desc: 'Two users edit the same record at the same time, and the system needs a defined resolution, such as last-write-wins, a merge, or a lock.'},
         {title: 'Stale client state', desc: "A user's view goes out of sync after a dropped connection, showing outdated data as if it were current."},
         {title: 'Presence/awareness inaccuracy', desc: "The \"who's online/editing\" indicator lags or shows a user as present after they've actually left."},
         {title: 'Reconnection storms', desc: 'Many clients reconnecting at once after an outage overwhelm the real-time infrastructure.'}
@@ -288,14 +414,13 @@
         ]
       },
       gherkin: [
-        {title: 'Conflicting edits resolved predictably', given: 'two users edit the same field at the same time', when: 'both changes are submitted', then: 'the system applies a defined resolution rule and both users can see what happened, not a silent overwrite'},
+        {title: 'Conflicting edits resolved predictably', given: 'two users edit the same field at the same time', when: 'both changes are submitted', then: 'the system applies a defined resolution rule, and both users can see what happened'},
         {title: 'Reconnection refreshes state', given: "a user's connection drops and reconnects", when: 'they reconnect', then: 'their view is refreshed to the current state before they can make further edits'},
-        {title: 'Presence reflects actual activity', given: 'a user closes the tab without an explicit logout', when: 'their connection times out', then: 'they are shown as offline within a defined grace period, not indefinitely as present'}
+        {title: 'Presence reflects actual activity', given: 'a user closes the tab without an explicit logout', when: 'their connection times out', then: 'they are shown as offline within a defined grace period'}
       ]
     },
     {
       name: 'Comments & Social',
-      keywords: ['comment', 'reply', 'mention', 'like', 'react', 'post', 'feed'],
       edgeCases: [
         {title: 'Abusive or spam content', desc: 'Nothing moderates or rate-limits comment content, opening the door to spam, harassment, or abuse with no reporting path.'},
         {title: 'Deleted parent content', desc: 'A comment is left dangling when the item, thread, or user it belongs to is deleted.'},
@@ -311,18 +436,17 @@
         ]
       },
       gherkin: [
-        {title: 'Reported content is actionable', given: 'a user reports a comment as abusive', when: 'the report is submitted', then: 'it is queued for moderation review and the reporting user gets confirmation, not silence'},
-        {title: 'Orphaned comments handled', given: 'the item a comment thread is attached to is deleted', when: 'the deletion completes', then: 'the comment thread is deleted or archived accordingly, not left pointing at nothing'},
+        {title: 'Reported content is actionable', given: 'a user reports a comment as abusive', when: 'the report is submitted', then: 'it is queued for moderation review and the reporting user gets a confirmation message'},
+        {title: 'Orphaned comments handled', given: 'the item a comment thread is attached to is deleted', when: 'the deletion completes', then: 'the comment thread is deleted or archived accordingly'},
         {title: 'Reply notifications are batched', given: 'a thread receives many replies in a short window', when: 'a participant would otherwise get one notification per reply', then: 'they receive a single batched notification instead'}
       ]
     },
     {
       name: 'Integrations, API & Webhooks',
-      keywords: ['integration', 'api', 'webhook', 'connect', 'sync', 'third-party', 'oauth'],
       edgeCases: [
-        {title: 'Third-party outage or rate limit', desc: 'A connected external service goes down or rate-limits requests, and the integration needs a defined degraded-mode behavior, not a hard failure.'},
+        {title: 'Third-party outage or rate limit', desc: 'A connected external service goes down or rate-limits requests, and the integration needs a defined degraded-mode behavior.'},
         {title: 'Auth token expiry', desc: 'An OAuth token or API key expires mid-use, silently breaking the integration until a user notices and reconnects.'},
-        {title: 'Webhook delivery failure/retry', desc: 'An outbound webhook fails to reach the receiving endpoint, and needs a retry/backoff policy instead of a single silent attempt.'},
+        {title: 'Webhook delivery failure/retry', desc: 'An outbound webhook fails to reach the receiving endpoint, and needs a retry/backoff policy.'},
         {title: 'Schema drift on the external side', desc: "The third-party API changes its response shape without notice, breaking the integration's parsing logic."}
       ],
       metricTree: {
@@ -334,75 +458,17 @@
         ]
       },
       gherkin: [
-        {title: 'Expired token prompts reconnection', given: "a connected integration's auth token expires", when: 'the next sync attempt runs', then: 'the user is notified and prompted to reconnect, rather than syncs failing silently'},
+        {title: 'Expired token prompts reconnection', given: "a connected integration's auth token expires", when: 'the next sync attempt runs', then: 'the user is notified and prompted to reconnect'},
         {title: 'Webhook retried on failure', given: 'an outbound webhook delivery fails', when: 'the receiving endpoint is unreachable', then: 'the system retries with backoff up to a defined limit before marking it failed'},
-        {title: 'External outage degrades gracefully', given: 'a connected third-party service is down', when: 'a sync is attempted during the outage', then: 'the integration reports a clear degraded state instead of erroring the whole feature'}
+        {title: 'External outage degrades gracefully', given: 'a connected third-party service is down', when: 'a sync is attempted during the outage', then: 'the integration reports a clear degraded state for that connection alone'}
       ]
     }
   ];
-
-  function matchKeywordCategory(featureText){
-    var lower = featureText.toLowerCase();
-    var best = null;
-    var bestHits = 0;
-    KEYWORD_CATEGORIES.forEach(function(category){
-      var hits = category.keywords.filter(function(kw){ return lower.indexOf(kw) !== -1; }).length;
-      if(hits > bestHits){
-        bestHits = hits;
-        best = category;
-      }
-    });
-    return best;
-  }
 
   function escapeHtml(str){
     var div = document.createElement('div');
     div.textContent = str;
     return div.innerHTML;
-  }
-
-  function buildGenericAnalysis(featureText){
-    var name = featureText.trim() || 'this feature';
-    return {
-      generic: true,
-      edgeCases: [
-        {title: 'Abuse & rate-limit exposure', desc: 'Nothing yet bounds how often "' + name + '" can be triggered per user, which usually means bulk or automated abuse until a limit is added.'},
-        {title: 'Timeout & partial-failure handling', desc: 'If any step of "' + name + '" depends on a slow or external call, define what the user sees when it times out partway through.'},
-        {title: 'Permission & access edge case', desc: 'Confirm what happens when a user loses the access level "' + name + '" assumes they have, mid-flow rather than at entry.'},
-        {title: 'Data consistency under concurrent change', desc: 'If the underlying data behind "' + name + '" can change while the feature is in use, define which version of the data the user actually sees.'}
-      ],
-      metricTree: {
-        northStar: 'Successful completion rate of ' + name,
-        l1: [
-          {label: 'Adoption rate', l2: ['Discovery/entry-point CTR', 'Time-to-first-use']},
-          {label: 'Error / failure rate', l2: ['% of attempts that fail', 'Retry rate after failure']},
-          {label: 'Related support tickets', l2: ['% citing confusion', '% citing a defect']}
-        ]
-      },
-      gherkin: [
-        {title: 'Happy path', given: 'a user is eligible to use ' + name, when: 'they complete the flow with valid input', then: 'the action succeeds and is reflected immediately in the UI'},
-        {title: 'Invalid input', given: 'a user attempts to use ' + name + ' with invalid or incomplete input', when: 'they submit', then: 'the system blocks the action with a specific, correctable error message'},
-        {title: 'Loss of access mid-flow', given: 'a user starts ' + name + ' with valid access', when: 'their access is revoked before they finish', then: 'the system stops the flow safely rather than completing it on stale permissions'}
-      ]
-    };
-  }
-
-  function getAnalysis(featureText, stage){
-    var key = featureText.trim();
-    var presets = STAGE_PRESETS[stage] || STAGE_PRESETS['0to1'];
-    if(presets[key]) return presets[key];
-
-    var category = matchKeywordCategory(featureText);
-    if(category){
-      return {
-        edgeCases: category.edgeCases,
-        metricTree: category.metricTree,
-        gherkin: category.gherkin,
-        matchedCategory: category.name
-      };
-    }
-
-    return buildGenericAnalysis(featureText);
   }
 
   function renderEdgeCases(container, edgeCases){
@@ -447,8 +513,6 @@
 
   function initPrdAnalyzer(){
     var root = document.getElementById('prd-analyzer-root');
-    var input = document.getElementById('prdInput');
-    var analyzeBtn = document.getElementById('prdAnalyzeBtn');
     var presetsWrap = document.getElementById('prdPresets');
     var emptyState = document.getElementById('prdEmptyState');
     var result = document.getElementById('prdResult');
@@ -458,28 +522,10 @@
     var gherkinList = document.getElementById('prdGherkinList');
     var tabs = result ? Array.prototype.slice.call(result.querySelectorAll('.prd-tab')) : [];
     var panels = result ? Array.prototype.slice.call(result.querySelectorAll('.prd-result-panel')) : [];
-    if(!root || !input || !analyzeBtn || !presetsWrap || !result) return;
+    if(!root || !presetsWrap || !result) return;
 
     var currentStage = window.pmLabStage;
-
-    function syncPresetHighlight(){
-      var value = input.value.trim();
-      Array.prototype.forEach.call(presetsWrap.querySelectorAll('.prd-preset-btn'), function(btn){
-        btn.classList.toggle('is-active', btn.getAttribute('data-preset') === value);
-      });
-    }
-
-    function renderPresetButtons(stage){
-      var presets = STAGE_PRESETS[stage] || STAGE_PRESETS['0to1'];
-      var names = Object.keys(presets);
-      presetsWrap.innerHTML = names.map(function(name){
-        return '<button type="button" class="gtm-segment prd-preset-btn" data-preset="' + name.replace(/"/g, '&quot;') + '">' + name + '</button>';
-      }).join('');
-      input.value = names[0] || '';
-      syncPresetHighlight();
-      if(emptyState) emptyState.hidden = false;
-      result.hidden = true;
-    }
+    var currentTopics = [];
 
     function activateTab(panelId){
       tabs.forEach(function(tab){
@@ -492,37 +538,62 @@
       });
     }
 
-    function runAnalysis(){
-      var featureText = input.value.trim();
-      if(!featureText) return;
-
-      var analysis = getAnalysis(featureText, currentStage);
-      var suffix = analysis.generic ? ' (generalized template)' : (analysis.matchedCategory ? ' (matched: ' + analysis.matchedCategory + ' pattern)' : '');
-      if(resultFeature) resultFeature.textContent = '“' + featureText + '”' + suffix;
-      renderEdgeCases(edgeList, analysis.edgeCases);
-      renderMetricTree(metricTree, analysis.metricTree);
-      renderGherkin(gherkinList, analysis.gherkin);
+    function renderTopic(topic){
+      var suffix = topic.source === 'pattern' ? ' (general pattern)' : '';
+      if(resultFeature) resultFeature.textContent = '“' + topic.name + '”' + suffix;
+      renderEdgeCases(edgeList, topic.edgeCases);
+      renderMetricTree(metricTree, topic.metricTree);
+      renderGherkin(gherkinList, topic.gherkin);
 
       if(emptyState) emptyState.hidden = true;
       result.hidden = false;
       activateTab('prd-panel-edge');
     }
 
+    function buildTopicButtons(topics, groupClass){
+      return topics.map(function(topic, i){
+        var globalIndex = currentTopics.indexOf(topic);
+        return '<button type="button" class="gtm-segment prd-preset-btn ' + groupClass + '" data-topic-idx="' + globalIndex + '">' + escapeHtml(topic.name) + '</button>';
+      }).join('');
+    }
+
+    function renderPresetButtons(stage){
+      var presets = STAGE_PRESETS[stage] || STAGE_PRESETS['0to1'];
+      var curated = Object.keys(presets).map(function(name){
+        var data = presets[name];
+        return {name: name, source: 'preset', edgeCases: data.edgeCases, metricTree: data.metricTree, gherkin: data.gherkin};
+      });
+      var patterns = GENERAL_PATTERNS.map(function(p){
+        return {name: p.name, source: 'pattern', edgeCases: p.edgeCases, metricTree: p.metricTree, gherkin: p.gherkin};
+      });
+
+      currentTopics = curated.concat(patterns);
+
+      presetsWrap.innerHTML =
+        '<div class="prd-picker-group">' +
+          '<div class="prd-picker-label">Curated examples <span class="prd-picker-sub">Exact analysis for this specific feature</span></div>' +
+          '<div class="prd-picker-row">' + buildTopicButtons(curated, 'prd-preset-btn-curated') + '</div>' +
+        '</div>' +
+        '<div class="prd-picker-group">' +
+          '<div class="prd-picker-label">General patterns <span class="prd-picker-sub">Domain-level guidance that applies broadly across features like this</span></div>' +
+          '<div class="prd-picker-row">' + buildTopicButtons(patterns, 'prd-preset-btn-pattern') + '</div>' +
+        '</div>';
+
+      if(emptyState) emptyState.hidden = false;
+      result.hidden = true;
+    }
+
     presetsWrap.addEventListener('click', function(e){
       var btn = e.target.closest('.prd-preset-btn');
       if(!btn) return;
-      input.value = btn.getAttribute('data-preset');
-      syncPresetHighlight();
-      input.focus();
-    });
+      var idx = Number(btn.getAttribute('data-topic-idx'));
+      var topic = currentTopics[idx];
+      if(!topic) return;
 
-    input.addEventListener('input', syncPresetHighlight);
-    analyzeBtn.addEventListener('click', runAnalysis);
-    input.addEventListener('keydown', function(e){
-      if(e.key === 'Enter'){
-        e.preventDefault();
-        runAnalysis();
-      }
+      Array.prototype.forEach.call(presetsWrap.querySelectorAll('.prd-preset-btn'), function(b){
+        b.classList.toggle('is-active', b === btn);
+      });
+      renderTopic(topic);
     });
 
     tabs.forEach(function(tab){
