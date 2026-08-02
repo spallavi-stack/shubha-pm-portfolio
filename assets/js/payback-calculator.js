@@ -28,7 +28,6 @@
     var marginInput = document.getElementById('pbMargin');
     var segmentInput = document.getElementById('pbSegment');
     var runBtn = document.getElementById('pbRunBtn');
-    var emptyState = document.getElementById('pbEmptyState');
     var result = document.getElementById('pbResult');
     var banner = document.getElementById('pbBanner');
     var details = document.getElementById('pbDetails');
@@ -44,7 +43,6 @@
         banner.className = 'ab-validity-banner is-underpowered';
         banner.textContent = 'Enter a CAC, monthly revenue, and gross margin greater than zero.';
         details.innerHTML = '';
-        emptyState.hidden = true;
         result.hidden = false;
         return;
       }
@@ -69,7 +67,6 @@
         'A shorter payback period isn’t automatically better. Operators in this survey point to real cases where a longer payback period is the right call: mature businesses with predictable long-term LTV, multi-year enterprise contracts with renewal data, or a deliberate growth-stage investment. Weigh this classification against your own stage and business model.'
       ].map(function(t){ return '<li>' + t + '</li>'; }).join('');
 
-      emptyState.hidden = true;
       result.hidden = false;
     }
 
