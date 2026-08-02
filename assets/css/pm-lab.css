@@ -161,6 +161,7 @@
 .rice-th-sub{display:block;font-size:10px;font-weight:500;text-transform:none;letter-spacing:0;color:#8B90B3;margin-top:2px;}
 .rice-th-name{min-width:220px;}
 .rice-th-remove{width:36px;}
+.rice-table th.rice-th-center{text-align:center;}
 
 .rice-info{
   display:inline-flex;align-items:center;justify-content:center;
@@ -194,7 +195,7 @@
 .rice-input-num{width:80px;}
 .rice-input-name{min-width:200px;}
 
-.rice-td-check{text-align:center;}
+.rice-table td.rice-td-check{text-align:center;}
 .rice-check{width:18px;height:18px;accent-color:var(--amber);cursor:pointer;}
 
 .rice-td-score{white-space:nowrap;}
