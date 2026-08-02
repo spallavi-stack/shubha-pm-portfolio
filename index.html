@@ -454,14 +454,11 @@
       <button class="pm-lab-tab" type="button" role="tab" id="pm-lab-tab-prd" aria-controls="pm-lab-panel-prd" aria-selected="false">
         <span class="pm-lab-tab-num">3</span> Spec Deep-Dives
       </button>
-      <button class="pm-lab-tab" type="button" role="tab" id="pm-lab-tab-ab" aria-controls="pm-lab-panel-ab" aria-selected="false">
-        <span class="pm-lab-tab-num">4</span> A/B Test It
-      </button>
       <button class="pm-lab-tab" type="button" role="tab" id="pm-lab-tab-abplan" aria-controls="pm-lab-panel-abplan" aria-selected="false">
-        <span class="pm-lab-tab-num">5</span> A/B Test Planner
+        <span class="pm-lab-tab-num">4</span> A/B Test Planner
       </button>
       <button class="pm-lab-tab" type="button" role="tab" id="pm-lab-tab-payback" aria-controls="pm-lab-panel-payback" aria-selected="false">
-        <span class="pm-lab-tab-num">6</span> Payback Period Calculator
+        <span class="pm-lab-tab-num">5</span> Payback Period Calculator
       </button>
     </div>
 
@@ -626,91 +623,28 @@
         </div>
       </div>
 
-      <div class="pm-lab-panel" id="pm-lab-panel-ab" role="tabpanel" aria-labelledby="pm-lab-tab-ab">
-        <p class="pm-lab-panel-intro">Enter two landing/marketing copy variants and get a predicted winner, grounded in real copywriting and experimentation principles.</p>
-        <div class="pm-lab-tool" id="ab-test-root" data-pm-tool="ab-test">
-          <div class="prd-picker-group">
-            <div class="prd-picker-label">Try an example <span class="prd-picker-sub">Or edit the fields below directly, the scoring runs on whatever text you enter</span></div>
-            <div class="prd-picker-row" id="abPresets"></div>
-          </div>
-
-          <div class="ab-input-grid">
-            <div class="ab-input-field">
-              <label class="gtm-label" for="abVariantA">Variant A</label>
-              <textarea id="abVariantA" class="ab-textarea" rows="3">Save 20% when you upgrade to our new plan</textarea>
-            </div>
-            <div class="ab-input-field">
-              <label class="gtm-label" for="abVariantB">Variant B</label>
-              <textarea id="abVariantB" class="ab-textarea" rows="3">Try it free for 14 days, no credit card required</textarea>
-            </div>
-          </div>
-
-          <div class="ab-context-row">
-            <div class="ab-input-field ab-reach-field">
-              <label class="gtm-label" for="abReach">Estimated monthly reach (visitors who'd see this)</label>
-              <input type="number" id="abReach" class="rice-input rice-input-num ab-reach-input" min="0" step="100" value="4000">
-            </div>
-            <button type="button" class="rice-add-btn" id="abRunBtn">Run A/B Test</button>
-          </div>
-
-          <p class="ab-empty-state" id="abEmptyState">Enter two variants and click <strong>Run A/B Test</strong> to see a predicted winner and reasoning.</p>
-
-          <div class="ab-result" id="abResult" hidden>
-            <div class="ab-validity-banner" id="abValidityBanner"></div>
-
-            <div class="ab-verdict-row">
-              <div class="ab-variant-card" id="abCardA">
-                <div class="ab-variant-label">Variant A</div>
-                <div class="ab-variant-text" id="abTextA"></div>
-                <div class="ab-variant-score" id="abScoreA"></div>
-              </div>
-              <div class="ab-variant-vs">vs</div>
-              <div class="ab-variant-card" id="abCardB">
-                <div class="ab-variant-label">Variant B</div>
-                <div class="ab-variant-text" id="abTextB"></div>
-                <div class="ab-variant-score" id="abScoreB"></div>
-              </div>
-            </div>
-
-            <div class="ab-reasoning">
-              <div class="ab-reasoning-title">Why</div>
-              <ul class="ab-reasoning-list" id="abReasoningList"></ul>
-            </div>
-          </div>
-        </div>
-
-        <div class="pm-lab-sources">
-          <div class="pm-lab-sources-title">Sources</div>
-          <ul class="pm-lab-sources-list">
-            <li><a href="https://www.youtube.com/watch?v=hEzpiDuYFoE" target="_blank" rel="noopener">"The ultimate guide to A/B testing", Ronny Kohavi (Airbnb, Microsoft, Amazon)</a>, podcast, Jul 2023 (source of the minimum-reach validity check)</li>
-            <li><a href="https://www.youtube.com/watch?v=8xLquwfx6p0" target="_blank" rel="noopener">"5 questions to ask when your product stops growing", Jason Cohen</a>, podcast, Jan 2026 (contrarian take: A/B testing is unreliable for small samples and shouldn't be used for strategy/vision calls)</li>
-            <li><a href="https://www.lennysnewsletter.com/p/what-is-a-good-activation-rate" target="_blank" rel="noopener">"What is a good activation rate"</a>, newsletter, Oct 2022 (real copy-optimization categories: clarity, friction, value-prop specificity)</li>
-          </ul>
-          <p class="pm-lab-sources-note">The scoring heuristic itself (word counts, keyword weights) is my own implementation of these principles, separate from the sources cited above. It detects patterns, not quality: "Save 72%" and "Save 2%" score identically, since the check only looks for the presence of a number, not whether that number is credible.</p>
-        </div>
-      </div>
-
       <div class="pm-lab-panel" id="pm-lab-panel-abplan" role="tabpanel" aria-labelledby="pm-lab-tab-abplan">
         <p class="pm-lab-panel-intro">Plan a real A/B test: how many visitors you need and how long to run it, based on your baseline conversion rate and the lift you'd actually care about. This doesn't predict which copy wins, no tool can do that from text alone, it tells you what a valid test of your own copy would require.</p>
         <div class="pm-lab-tool" id="abplan-root" data-pm-tool="ab-planner">
-          <div class="ab-input-grid">
+          <div class="ab-input-grid-3">
             <div class="ab-input-field">
-              <label class="gtm-label" for="abplanBaseline">Current conversion rate (%)</label>
+              <label class="gtm-label" for="abplanBaseline">Current conversion rate (%)<button type="button" class="rice-info" data-tooltip="Your existing conversion rate before any change, e.g. the % of visitors who currently sign up or upgrade." aria-label="What is current conversion rate?">i</button></label>
               <input type="number" id="abplanBaseline" class="rice-input rice-input-num" min="0.1" max="99" step="0.1" value="5">
             </div>
             <div class="ab-input-field">
-              <label class="gtm-label" for="abplanMde">Smallest lift worth detecting (percentage points)</label>
+              <label class="gtm-label" for="abplanMde">Smallest lift worth detecting (points)<button type="button" class="rice-info" data-tooltip="The smallest improvement you'd actually act on, in percentage points added to your current rate (e.g. 5% to 6% is 1 point). Smaller lifts are harder to detect and need more visitors to confirm." aria-label="What is minimum detectable effect?">i</button></label>
               <input type="number" id="abplanMde" class="rice-input rice-input-num" min="0.1" max="90" step="0.1" value="1">
+            </div>
+            <div class="ab-input-field">
+              <label class="gtm-label" for="abplanReach">Estimated monthly reach<button type="button" class="rice-info" data-tooltip="How many visitors per month would see this test, split across both variants." aria-label="What is estimated monthly reach?">i</button></label>
+              <input type="number" id="abplanReach" class="rice-input rice-input-num" min="0" step="100" value="4000">
             </div>
           </div>
 
           <div class="ab-context-row">
-            <div class="ab-input-field ab-reach-field">
-              <label class="gtm-label" for="abplanReach">Estimated monthly reach (visitors who'd see this)</label>
-              <input type="number" id="abplanReach" class="rice-input rice-input-num ab-reach-input" min="0" step="100" value="4000">
-            </div>
             <button type="button" class="rice-add-btn" id="abplanRunBtn">Calculate</button>
           </div>
+          <p class="rice-formula-note">Sample size per variant = (1.96 + 0.84)&sup2; &times; [p1&times;(1&minus;p1) + p2&times;(1&minus;p2)] &divide; (p1&minus;p2)&sup2;, where p1 is your current rate and p2 is p1 plus the lift you're testing for.</p>
 
           <p class="ab-empty-state" id="abplanEmptyState">Enter your numbers and click <strong>Calculate</strong> to see how many visitors and how long a valid test would need.</p>
 
@@ -737,34 +671,33 @@
       <div class="pm-lab-panel" id="pm-lab-panel-payback" role="tabpanel" aria-labelledby="pm-lab-tab-payback">
         <p class="pm-lab-panel-intro">How long it takes to earn back what you spent acquiring a customer, benchmarked against a survey of 16 growth operators. A shorter payback period isn't automatically better, see the note below, but it's the number that tells you how fast you can reinvest in growth.</p>
         <div class="pm-lab-tool" id="payback-root" data-pm-tool="payback">
-          <div class="ab-input-grid">
+          <div class="ab-input-grid-4">
             <div class="ab-input-field">
-              <label class="gtm-label" for="pbCac">Customer acquisition cost (in your currency)</label>
+              <label class="gtm-label" for="pbCac">Customer acquisition cost<button type="button" class="rice-info" data-tooltip="What it costs, in your currency, to acquire one new customer, including marketing and sales spend." aria-label="What is customer acquisition cost?">i</button></label>
               <input type="number" id="pbCac" class="rice-input rice-input-num" min="0" step="10" value="1200">
             </div>
             <div class="ab-input-field">
-              <label class="gtm-label" for="pbRevenue">Monthly revenue per customer</label>
+              <label class="gtm-label" for="pbRevenue">Monthly revenue per customer<button type="button" class="rice-info" data-tooltip="What one customer pays you per month, on average, before subtracting the cost of serving them." aria-label="What is monthly revenue per customer?">i</button></label>
               <input type="number" id="pbRevenue" class="rice-input rice-input-num" min="0.01" step="5" value="150">
             </div>
-          </div>
-
-          <div class="ab-context-row">
             <div class="ab-input-field">
-              <label class="gtm-label" for="pbMargin">Gross margin (%)</label>
+              <label class="gtm-label" for="pbMargin">Gross margin (%)<button type="button" class="rice-info" data-tooltip="The share of revenue left after subtracting the direct cost of serving that customer. Used to convert revenue into gross profit, since payback should be measured on profit, not revenue." aria-label="What is gross margin?">i</button></label>
               <input type="number" id="pbMargin" class="rice-input rice-input-num" min="1" max="100" step="1" value="75">
             </div>
             <div class="ab-input-field">
-              <label class="gtm-label" for="pbSegment">Segment</label>
+              <label class="gtm-label" for="pbSegment">Segment<button type="button" class="rice-info" data-tooltip="Which benchmark row to compare against: B2C, B2B selling to small/medium businesses, or B2B selling to enterprises." aria-label="What is segment used for?">i</button></label>
               <select id="pbSegment" class="rice-input rice-select">
                 <option value="b2c">B2C</option>
                 <option value="smb">B2B, SMB</option>
                 <option value="ent">B2B, Enterprise</option>
               </select>
             </div>
-            <button type="button" class="rice-add-btn" id="pbRunBtn">Calculate</button>
           </div>
 
-          <p class="ab-empty-state" id="pbEmptyState">Enter your numbers and click <strong>Calculate</strong> to see your payback period.</p>
+          <div class="ab-context-row">
+            <button type="button" class="rice-add-btn" id="pbRunBtn">Calculate</button>
+          </div>
+          <p class="rice-formula-note">Payback period (months) = CAC &divide; (monthly revenue &times; gross margin).</p>
 
           <div class="ab-result" id="pbResult" hidden>
             <div class="ab-validity-banner" id="pbBanner"></div>
@@ -780,7 +713,7 @@
           <ul class="pm-lab-sources-list">
             <li><a href="https://www.lennysnewsletter.com/p/what-is-a-good-payback-period" target="_blank" rel="noopener">"What is a good payback period?", Lenny's Newsletter</a>, Dec 2021 (source of the benchmark table, the CAC &divide; gross profit formula, and the Rothenberg/Winters quotes below, based on a survey of 16 named growth operators)</li>
           </ul>
-          <p class="pm-lab-sources-note">Benchmarks reflect that survey's consensus, not a universal rule. Business stage and model change what a good target looks like, see the note below the result.</p>
+          <p class="pm-lab-sources-note">These benchmarks reflect one survey's consensus among 16 growth operators. Business stage and business model both change what a good target looks like, see the note below the result.</p>
         </div>
       </div>
     </div>
@@ -805,7 +738,6 @@
 <script src="assets/js/gtm-engine.js"></script>
 <script src="assets/js/prioritization.js"></script>
 <script src="assets/js/prd-analyzer.js"></script>
-<script src="assets/js/ab-test.js"></script>
 <script src="assets/js/ab-test-planner.js"></script>
 <script src="assets/js/payback-calculator.js"></script>
 <script>
