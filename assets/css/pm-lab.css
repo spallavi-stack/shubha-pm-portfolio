@@ -21,19 +21,22 @@
 
 /* ---------- Tabs ---------- */
 .pm-lab-tabs{
-  display:flex;flex-wrap:wrap;gap:6px;margin-top:32px;
+  display:flex;flex-wrap:nowrap;gap:4px;margin-top:32px;
   border-bottom:1px solid rgba(255,255,255,0.14);
+  overflow-x:auto;scrollbar-width:thin;
 }
+.pm-lab-tabs::-webkit-scrollbar{height:4px;}
+.pm-lab-tabs::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.18);border-radius:4px;}
 .pm-lab-tab{
-  font-family:var(--font-body);font-size:14px;font-weight:600;color:#B9C0DD;
-  background:transparent;border:none;padding:14px 18px;cursor:pointer;
-  position:relative;display:flex;align-items:center;gap:10px;
+  font-family:var(--font-body);font-size:13.5px;font-weight:600;color:#B9C0DD;
+  background:transparent;border:none;padding:14px 14px;cursor:pointer;white-space:nowrap;
+  position:relative;display:flex;align-items:center;gap:8px;flex-shrink:0;
   transition:color var(--dur-fast) var(--ease-out);
 }
 .pm-lab-tab:hover{color:#fff;}
 .pm-lab-tab:focus-visible{outline:2px solid var(--amber);outline-offset:-2px;}
 .pm-lab-tab::after{
-  content:'';position:absolute;left:18px;right:18px;bottom:-1px;height:2px;
+  content:'';position:absolute;left:14px;right:14px;bottom:-1px;height:2px;
   background:var(--amber);transform:scaleX(0);transform-origin:center;
   transition:transform var(--dur-fast) var(--ease-out);
 }
@@ -42,7 +45,7 @@
 
 .pm-lab-tab-num{
   font-family:var(--font-display);font-size:12px;font-weight:600;color:#2B2118;
-  background:rgba(255,255,255,0.35);width:20px;height:20px;border-radius:50%;
+  background:rgba(255,255,255,0.35);width:18px;height:18px;border-radius:50%;
   display:flex;align-items:center;justify-content:center;flex-shrink:0;
   transition:background var(--dur-fast) var(--ease-out);
 }
@@ -397,9 +400,6 @@
 .ab-input-field{display:flex;flex-direction:column;gap:8px;}
 
 .ab-context-row{display:flex;flex-wrap:wrap;align-items:flex-end;gap:16px;margin-top:20px;}
-
-.ab-empty-state{max-width:560px;color:#8B90B3;font-size:13.5px;line-height:1.6;margin:20px 0 0;}
-.ab-empty-state strong{color:#C6CBE6;}
 
 .ab-result{margin-top:24px;}
 .ab-validity-banner{
