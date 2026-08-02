@@ -163,78 +163,6 @@
     }
   }
 
-  // Shared tooltip bubble for the info icons (column headers + the DRICE
-  // stress-test panel fields, including rows added later via "+ Add
-  // feature" or a stage switch). Appended to <body> and positioned with
-  // getBoundingClientRect() on demand, so it escapes the RICE table's
-  // horizontally-scrolling wrapper and stays unclipped. Wired via
-  // delegation on `root` so it keeps working for icons that don't
-  // exist yet at init time. Hover/focus shows it
-  // (desktop); a tap toggles it open and outside-click/Escape closes it
-  // (touch).
-  function initInfoTooltips(root){
-    var bubble = document.createElement('div');
-    bubble.className = 'rice-tooltip-bubble';
-    bubble.setAttribute('role', 'tooltip');
-    document.body.appendChild(bubble);
-
-    var openBtn = null;
-
-    function positionBubble(btn){
-      var rect = btn.getBoundingClientRect();
-      bubble.style.top = (rect.bottom + 8) + 'px';
-      var left = rect.left + rect.width / 2 - bubble.offsetWidth / 2;
-      left = Math.max(8, Math.min(left, window.innerWidth - bubble.offsetWidth - 8));
-      bubble.style.left = left + 'px';
-    }
-
-    function show(btn){
-      bubble.textContent = btn.getAttribute('data-tooltip') || '';
-      bubble.classList.add('is-visible');
-      positionBubble(btn);
-    }
-
-    function hide(){
-      bubble.classList.remove('is-visible');
-      if(openBtn) openBtn.classList.remove('is-open');
-      openBtn = null;
-    }
-
-    root.addEventListener('mouseover', function(e){
-      var btn = e.target.closest('.rice-info');
-      if(btn) show(btn);
-    });
-    root.addEventListener('mouseout', function(e){
-      var btn = e.target.closest('.rice-info');
-      if(btn && btn !== openBtn) hide();
-    });
-    root.addEventListener('focusin', function(e){
-      var btn = e.target.closest('.rice-info');
-      if(btn) show(btn);
-    });
-    root.addEventListener('focusout', function(e){
-      var btn = e.target.closest('.rice-info');
-      if(btn && btn !== openBtn) hide();
-    });
-    root.addEventListener('click', function(e){
-      var btn = e.target.closest('.rice-info');
-      if(!btn) return;
-      e.stopPropagation();
-      if(openBtn === btn){
-        hide();
-      } else {
-        if(openBtn) openBtn.classList.remove('is-open');
-        openBtn = btn;
-        btn.classList.add('is-open');
-        show(btn);
-      }
-    });
-
-    document.addEventListener('click', function(){ if(openBtn) hide(); });
-    document.addEventListener('keydown', function(e){ if(e.key === 'Escape' && openBtn) hide(); });
-    window.addEventListener('scroll', function(){ if(openBtn) positionBubble(openBtn); }, true);
-  }
-
   function initPrioritization(){
     var root = document.getElementById('prioritization-root');
     var tbody = document.getElementById('riceTableBody');
@@ -243,7 +171,7 @@
     var riskList = document.getElementById('riceRiskList');
     if(!root || !tbody || !riskPanel || !riskList) return;
 
-    initInfoTooltips(root);
+    window.pmLabInitInfoTooltips(root);
 
     function computeAll(){
       var rows = Array.prototype.slice.call(tbody.querySelectorAll('[data-rice-row]'));

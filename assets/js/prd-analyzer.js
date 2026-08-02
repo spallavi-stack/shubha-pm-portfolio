@@ -1,20 +1,19 @@
-/* AI Spec & PRD Auditor. This is a demo playground with no LLM behind
-   it, so there's no free-text input implying it can analyze anything
-   you type. Instead you pick from two clearly-labeled groups:
-   1) "Curated examples": a small set of features with hand-written,
-      specific analysis, exact to that feature.
-   2) "General patterns": broader domain patterns (payments, uploads,
-      notifications, search, bulk actions, real-time/collab, comments,
-      integrations) with hand-written analysis accurate for the domain
-      and written at that general level.
-   Both are labeled in the UI and in the result header so it's always
-   clear which kind of content is showing. Curated examples swap per
-   the 0→1 / 1→n stage toggle (window.pmLabStage, set by pm-lab.js) so
-   they actually fit company stage; general patterns stay constant. */
+/* Spec Deep-Dives. A gallery of worked examples, not a live analyzer:
+   there's no LLM behind it, and picking a feature only displays a
+   hand-written breakdown of that exact feature (edge cases, a metric
+   tree, Gherkin acceptance criteria), not an analysis of anything
+   typed in. Each feature name has a small "i" info button next to it
+   (window.pmLabInitInfoTooltips, shared with the RICE table) giving a
+   one-line plain-language description of what the feature actually
+   is, since some of these (e.g. a trial-expiration flow) aren't
+   self-explanatory from the name alone. The feature set swaps per the
+   0→1 / 1→n stage toggle (window.pmLabStage, set by pm-lab.js) so the
+   examples fit company stage. */
 (function(){
   var STAGE_PRESETS = {
     '1ton': {
     'Add 2FA via SMS to login flow': {
+      info: 'A second login step where a one-time code is texted to your phone, in addition to your password.',
       edgeCases: [
         {title: 'SMS delivery failure / carrier rate limits', desc: 'Carriers throttle or drop messages, especially internationally, leaving a user unable to complete login with no visible cause.'},
         {title: 'OTP timeout & replay', desc: 'A code expires mid-entry, or a user (or attacker) resubmits a previously-used code after the window has closed.'},
@@ -37,6 +36,7 @@
       ]
     },
     'Implement Team Member Permissions Grid': {
+      info: 'A settings screen where an admin assigns each team member specific access levels, instead of everyone sharing the same access.',
       edgeCases: [
         {title: 'Last admin lockout', desc: 'Removing or downgrading the only remaining Admin leaves the team with no one able to manage access at all.'},
         {title: 'Permission change mid-session', desc: "A user's access is revoked or downgraded while they already have an active session or open tab."},
@@ -59,6 +59,7 @@
       ]
     },
     'Build CSV Export for Analytics Reports': {
+      info: 'A button that lets a user download their report data as a spreadsheet file, to analyze or share outside the product.',
       edgeCases: [
         {title: 'Large dataset timeout', desc: 'Exporting a wide date range times out the request or crashes the browser tab before the file finishes generating.'},
         {title: 'CSV formula injection', desc: 'Cell values starting with =, +, -, or @ can execute as formulas when opened in Excel or Sheets.'},
@@ -81,6 +82,7 @@
       ]
     },
     'Add usage-based billing tiers': {
+      info: 'Pricing that charges customers based on how much they actually use, moving them up a tier automatically as usage crosses a threshold.',
       edgeCases: [
         {title: 'Mid-cycle tier changes', desc: "A customer crosses a usage threshold mid-billing-cycle, and it's unclear whether they're billed at the new tier immediately, retroactively, or at the next cycle."},
         {title: 'Usage metering drift', desc: 'The usage counter used for billing and the usage a customer sees in their dashboard disagree, undermining trust in the bill.'},
@@ -103,6 +105,7 @@
       ]
     },
     'Build an admin audit log': {
+      info: 'A record of every action an admin takes (who changed what, and when), kept for accountability and investigation.',
       edgeCases: [
         {title: 'Log tampering', desc: 'An admin with access to the audit log can delete or alter entries covering their own actions.'},
         {title: 'Volume at scale', desc: 'A busy team generates thousands of loggable events per day, and the log view has no filtering or search, making it hard to use in practice.'},
@@ -125,6 +128,7 @@
       ]
     },
     'Add multi-region data residency': {
+      info: 'Letting a customer choose which geographic region their data is stored and processed in, usually for legal or compliance reasons.',
       edgeCases: [
         {title: 'Cross-region data leakage', desc: "A feature such as search indexing, analytics, or backups unintentionally replicates a customer's data outside their chosen region."},
         {title: 'Region migration for existing customers', desc: 'A customer who signed up before regional choice existed has no defined path to move their data into a specific region now.'},
@@ -145,10 +149,170 @@
         {title: 'Regional outage contained', given: 'one region experiences an infrastructure outage', when: 'the outage occurs', then: 'customers in other regions continue operating without disruption'},
         {title: 'Auxiliary data flows respect region', given: 'a feature like search indexing or analytics processes customer data', when: 'that data flow runs', then: "it stays within the customer's selected region, using an in-region processing pipeline"}
       ]
+    },
+    'Add enterprise SSO/SAML login': {
+      info: "Letting a company's employees log in with their own company identity system, like Okta or Azure AD, instead of a separate password. Almost always required before a large enterprise signs.",
+      edgeCases: [
+        {title: 'Deprovisioning isn\'t a delete', desc: 'Most identity providers deactivate a user with an update rather than a delete request; logic built only around a delete never fires and leaves departed employees with access.'},
+        {title: 'Domain ownership disputes', desc: 'A company claims a domain for SSO that another existing customer already uses email addresses under, creating an access conflict.'},
+        {title: 'JIT-provisioned user before assignment', desc: 'A new employee logs in via SSO before IT has assigned them a role, and the product needs a defined default rather than blocking them entirely or over-granting access.'},
+        {title: 'Retry-triggered duplicates', desc: 'The identity provider retries a provisioning request after a slow response, and a non-idempotent handler creates two records for the same user.'}
+      ],
+      metricTree: {
+        northStar: "% of SSO-connected accounts with access that exactly matches their identity provider's current roster",
+        l1: [
+          {label: 'Provisioning accuracy', l2: ['% of new SSO logins correctly assigned a default role', 'Time from IT role assignment to access reflected']},
+          {label: 'Deprovisioning speed', l2: ['Time from employee deactivation at the IdP to access revoked', '% of deprovisioning events handled without manual intervention']},
+          {label: 'Connection reliability', l2: ['% of provisioning requests processed without duplication', 'Domain-conflict incidents per quarter']}
+        ]
+      },
+      gherkin: [
+        {title: 'Deactivation is treated as removal', given: 'an identity provider marks a user inactive rather than deleting them', when: 'the deactivation event is received', then: "the system revokes that user's access exactly as it would for a deletion"},
+        {title: 'Domain conflict is caught before activation', given: 'a company attempts to claim a domain for SSO', when: 'that domain is already associated with another account', then: 'the claim is blocked and flagged for manual review before SSO is enabled'},
+        {title: 'JIT-provisioned user gets a safe default', given: 'a new employee logs in via SSO before any role is explicitly assigned', when: 'their first login completes', then: 'they receive a defined minimum-access default role, not full access and not a blocked login'},
+        {title: 'Retried provisioning request is idempotent', given: 'an identity provider retries a provisioning request after a timeout', when: 'the retry is received', then: 'it updates the existing user record rather than creating a duplicate'}
+      ]
+    },
+    'Add rate limiting to a public API': {
+      info: "Capping how many requests a customer's integration can make in a given time window, so one heavy user can't degrade the product for everyone else.",
+      edgeCases: [
+        {title: 'Legitimate burst traffic gets blocked', desc: "A customer's normal batch job triggers the limit even though it isn't abuse, with no way to request a higher allowance."},
+        {title: 'Retry storms after a 429', desc: 'A client retries immediately after being rate-limited, and without a defined backoff signal, that retry itself gets rate-limited again in a loop.'},
+        {title: 'Limit differs silently by endpoint', desc: "One endpoint has a stricter limit than another with no documentation, so a customer's integration fails unpredictably depending on which endpoint they call."},
+        {title: 'Concurrent limit vs. rate limit confusion', desc: "A customer is blocked by a concurrency cap but the error message implies they've exceeded their per-second rate, sending them to fix the wrong thing."}
+      ],
+      metricTree: {
+        northStar: '% of API requests from good-faith integrations that succeed without a rate-limit error',
+        l1: [
+          {label: 'Rate-limit accuracy', l2: ['% of 429s from actual abuse vs. legitimate burst traffic', 'Support tickets requesting a higher limit']},
+          {label: 'Client retry behavior', l2: ['% of clients using proper exponential backoff', 'Repeat-429 rate within 60 seconds of a prior 429']},
+          {label: 'Limit transparency', l2: ['% of endpoints with a documented limit', 'Time to diagnose a rate-limit-related integration failure']}
+        ]
+      },
+      gherkin: [
+        {title: '429 includes a clear reason and retry time', given: 'a client exceeds its rate limit', when: 'the request is rejected', then: 'the response includes which limit was hit and how long to wait before retrying'},
+        {title: 'Legitimate high-volume customer can request a higher limit', given: "a customer's integration consistently needs more throughput than the default limit", when: 'they request an increase', then: 'there is a defined process to raise their specific limit without changing it for everyone else'},
+        {title: 'Concurrency limit is distinguished from rate limit', given: 'a client is blocked for having too many simultaneous requests in flight', when: 'the request is rejected', then: 'the error explicitly identifies it as a concurrency limit, not a per-second rate limit'}
+      ]
+    },
+    'Add soft-delete with a restore window': {
+      info: 'Instead of permanently deleting something the instant a user clicks delete, moving it to a recoverable trash for a set period, like Gmail or Google Drive.',
+      edgeCases: [
+        {title: 'Restore window expectations mismatch', desc: 'A user assumes delete is instant and permanent, or assumes trash is permanent storage and never checks it before the window closes.'},
+        {title: 'Bulk delete fills trash silently', desc: 'A large bulk delete moves thousands of items to trash at once, and nothing tells the user how much space or how many items that now represents.'},
+        {title: 'Restoring breaks a dependent reference', desc: 'An item is restored after something else was created assuming it was gone, such as a new item reusing its name or slot, creating a conflict.'},
+        {title: 'Permanent-delete override', desc: "A user wants an item actually deleted immediately, for legal or privacy reasons, and there needs to be a real \"empty trash now\" action rather than only a wait."}
+      ],
+      metricTree: {
+        northStar: '% of accidental deletions successfully recovered within the restore window',
+        l1: [
+          {label: 'Restore usage', l2: ['% of deleted items restored before expiry', 'Time from delete to restore']},
+          {label: 'Trash awareness', l2: ['% of users who have viewed their trash at least once', 'Support tickets asking "how do I get this back?"']},
+          {label: 'Permanent-deletion accuracy', l2: ['% of trash correctly auto-purged at window end', '% of manual "delete forever" requests honored immediately']}
+        ]
+      },
+      gherkin: [
+        {title: 'Deleted item is recoverable within the window', given: 'a user deletes an item', when: 'they view trash within the defined restore window', then: 'the item is there and can be restored to its original location'},
+        {title: 'Trash auto-empties after the window', given: 'an item has been in trash past the defined retention period', when: 'the retention job runs', then: 'the item is permanently deleted and no longer restorable'},
+        {title: 'Immediate permanent deletion is available', given: 'a user needs an item permanently deleted right away', when: 'they choose "delete forever"', then: 'it is removed immediately, bypassing the restore window'},
+        {title: 'Restoring a conflicting item is flagged', given: 'a restored item conflicts with something created after it was deleted', when: 'the restore completes', then: 'the conflict is surfaced to the user rather than silently overwriting either item'}
+      ]
+    },
+    'Sunset a legacy feature or API version': {
+      info: 'Retiring an old feature or API version that customers still depend on: giving notice, a migration path, and a hard cutoff date.',
+      edgeCases: [
+        {title: 'Silent breakage at cutoff', desc: 'Customers who never migrated hit a hard failure the moment the old version is retired, with no warning visible to them specifically.'},
+        {title: 'No usage visibility', desc: "The team doesn't actually know which customers are still on the legacy version, so notice goes out broadly instead of being targeted to those affected."},
+        {title: 'Migration path incomplete', desc: "The new version doesn't yet support every capability of the old one, so some customers have no way to fully migrate even if they want to."},
+        {title: 'Repeated deadline extensions erode urgency', desc: 'The cutoff date gets pushed back more than once, so customers learn to ignore the deadline entirely.'}
+      ],
+      metricTree: {
+        northStar: '% of active users of the legacy version successfully migrated before the hard cutoff',
+        l1: [
+          {label: 'Migration progress', l2: ['% of legacy usage migrated to the new version, tracked weekly', 'Days remaining vs. % still unmigrated']},
+          {label: 'Notice effectiveness', l2: ['% of still-active legacy users who acknowledge the deprecation notice', 'Time from first notice to first migration action']},
+          {label: 'Cutoff integrity', l2: ['% of cutoff dates honored without extension', 'Support tickets from users broken by the cutoff']}
+        ]
+      },
+      gherkin: [
+        {title: 'Deprecation notice reaches active users specifically', given: 'a legacy version is being sunset', when: 'the deprecation is announced', then: 'every customer still actively using it is notified directly, not just via a general changelog post'},
+        {title: 'Response headers signal the coming cutoff', given: 'a client calls a deprecated API version', when: 'the response is returned', then: 'it includes the deprecation date and the hard sunset date in the response headers'},
+        {title: 'Cutoff is enforced as communicated', given: 'the announced sunset date arrives', when: 'a request is made to the retired version', then: 'it is rejected with a clear message pointing to the migration guide, matching the date that was communicated'},
+        {title: 'Migration gap is identified before sunset', given: 'a capability in the legacy version has no equivalent in the new version', when: 'the migration plan is reviewed', then: 'that gap is closed or explicitly addressed before the cutoff date is finalized'}
+      ]
+    },
+    "Handle account deletion and GDPR's right to be forgotten": {
+      info: 'Honoring a legal right to have personal data permanently deleted, including copies sitting in backups, analytics tools, and other connected systems.',
+      edgeCases: [
+        {title: 'Data survives in backups', desc: "A user's data is deleted from the live database but still exists in older backups for months, technically still processed data under the law."},
+        {title: 'Data replicated to third-party tools', desc: 'Personal data was synced to an analytics tool, a support-ticket system, or an email platform, and deleting it in the core product does not touch those copies.'},
+        {title: 'Deletion conflicts with a legal retention requirement', desc: 'A record needs to be kept for a defined period for tax, audit, or fraud purposes, so full erasure has to wait until that requirement expires.'},
+        {title: 'Shared data with other users', desc: "A user requests deletion, but their data, such as a comment or shared document, is also visible to or owned partly by other users who haven't requested deletion."}
+      ],
+      metricTree: {
+        northStar: '% of deletion requests fully completed across all systems within the required timeframe',
+        l1: [
+          {label: 'Deletion completeness', l2: ['% of requests verified deleted across backups and third-party tools', 'Systems still missed by an average request']},
+          {label: 'Time to fulfill', l2: ['Days from request to full completion', '% completed within the legally required window']},
+          {label: 'Legal-hold handling', l2: ['% of requests correctly delayed for a documented retention requirement', 'Time from retention expiry to actual deletion']}
+        ]
+      },
+      gherkin: [
+        {title: 'Deletion request reaches all systems', given: 'a user submits a data-deletion request', when: 'the request is processed', then: 'their personal data is removed from the live database, backups on their next cycle, and any connected third-party tool holding it'},
+        {title: 'Legal retention requirement delays but does not block deletion', given: 'a record is subject to a defined legal retention period', when: 'a deletion request is received for that record', then: 'deletion is scheduled for the moment the retention period ends, and the user is told why'},
+        {title: "Shared content is handled without deleting others' data", given: "a user's data is shared with or referenced by another user's content", when: 'the deletion request is processed', then: "the requesting user's personal data is removed while the other user's independent content is preserved"}
+      ]
+    },
+    'Handle a compensation-rate change for existing vs. new customers': {
+      info: 'When a policy changes how much someone is paid for something, like solar export credits, existing customers who signed up under the old rate often keep it, while new customers get the new one.',
+      edgeCases: [
+        {title: 'Cohort not tracked at signup', desc: "The system only stores a customer's current rate, not which rate vintage they qualified under, so there's no way to tell who should be grandfathered when the policy changes."},
+        {title: 'Equipment change misclassified as a new signup', desc: 'A customer who adds new equipment, like a battery, to an existing grandfathered system gets incorrectly bumped to the new rate instead of keeping their original one.'},
+        {title: 'Two customers, same usage, different numbers', desc: "A calculator shows two customers with identical usage two different outputs because they're on different rate cohorts, which looks like a bug unless it's explained."},
+        {title: 'Grandfathering period has an end date', desc: "A customer's protected rate is only guaranteed for a defined number of years, and nothing currently tracks or communicates when that protection itself expires."}
+      ],
+      metricTree: {
+        northStar: '% of customers billed or calculated under the correct rate cohort with no disputed discrepancy',
+        l1: [
+          {label: 'Cohort tracking accuracy', l2: ['% of customers with an explicit rate-vintage recorded at signup', 'Misclassification incidents per quarter']},
+          {label: 'Calculator trust', l2: ['Support tickets citing "two customers, different numbers"', '% of rate-difference questions resolved without escalation']},
+          {label: 'Grandfathering expiry readiness', l2: ['% of customers notified before their protected rate ends', 'Time from expiry to customer acknowledgment']}
+        ]
+      },
+      gherkin: [
+        {title: 'Rate cohort is recorded at signup', given: 'a new customer is approved under the current compensation rate', when: 'their account is created', then: 'the specific rate and the date it was locked in are stored permanently on their record'},
+        {title: 'Adding equipment does not change the rate cohort', given: 'a grandfathered customer adds new equipment to their existing system', when: 'the addition is processed', then: 'they retain their original grandfathered rate rather than being reassessed under the current rate'},
+        {title: 'Differing outputs are explained', given: 'two customers with identical usage are on different rate cohorts', when: 'either customer views their calculation', then: 'the result explains which rate cohort applies to them and why it may differ from someone else\'s'},
+        {title: 'Grandfathering expiry is communicated in advance', given: "a customer's grandfathered rate has a defined end date", when: 'that date approaches', then: 'they are notified in advance of what rate applies afterward'}
+      ]
+    },
+    'Integrate with third-party EV charging hardware (OCPP)': {
+      info: "Connecting a charging network product to physical charge points from different hardware vendors using the shared OCPP protocol, so software can monitor and control chargers it didn't build.",
+      edgeCases: [
+        {title: 'Vendors interpret the protocol differently', desc: 'Two charge points from different manufacturers report the same charging status using different timing or field values, even though both claim to support the same protocol version.'},
+        {title: 'Charger goes offline mid-session', desc: 'Connectivity drops while a vehicle is actively charging, and the system needs a defined behavior for whether charging continues locally or halts.'},
+        {title: 'Firmware-level instability', desc: "A specific charger model's firmware has a memory leak or bug that only appears after sustained real-world use, not in a lab test."},
+        {title: 'Meter-value disputes', desc: "The charger's own reported energy delivered doesn't match what the billing system calculates, creating a discrepancy in what the customer gets charged."}
+      ],
+      metricTree: {
+        northStar: '% of charging sessions that complete with no reported hardware/software mismatch',
+        l1: [
+          {label: 'Cross-vendor reliability', l2: ['% of sessions with a status field mismatch by charger model', 'Charger models requiring vendor-specific handling']},
+          {label: 'Offline resilience', l2: ['% of sessions surviving a connectivity drop without billing error', 'Time to detect and flag an offline charger']},
+          {label: 'Billing accuracy', l2: ['% of sessions with a meter-value discrepancy', 'Average discrepancy size when one occurs']}
+        ]
+      },
+      gherkin: [
+        {title: 'Offline session behavior is defined', given: 'a charge point loses connectivity mid-session', when: 'the disconnection is detected', then: 'the system applies a defined fallback, either continuing locally or halting, rather than leaving the session in an undefined state'},
+        {title: 'Vendor-specific quirks are isolated', given: "a charger model reports status fields differently from the spec's expected behavior", when: 'that model is onboarded', then: 'a documented vendor-specific handling rule accounts for the difference, rather than the discrepancy silently corrupting session data'},
+        {title: 'Meter-value discrepancy is flagged, not silently billed', given: "a charger's reported energy delivered differs from the billing system's own calculation", when: 'the session closes', then: 'the discrepancy is flagged for review rather than the customer being billed for either figure without reconciliation'},
+        {title: 'New charger model is soak-tested before rollout', given: 'a new charger hardware model is being integrated', when: 'it completes lab testing', then: 'it also runs a live soak test before being rolled out broadly, to catch firmware issues that only appear under sustained real-world load'}
+      ]
     }
     },
     '0to1': {
       'Add magic-link (passwordless) signup': {
+        info: 'A login flow where clicking a one-time link sent to your email signs you in, with no password to create or remember.',
         edgeCases: [
           {title: 'Link expiry mid-click', desc: "A user clicks an old or expired magic link from a stale email tab. The dead end they hit needs to clearly explain the link expired and offer a way to request a new one."},
           {title: 'Email delivery failure or spam folder', desc: 'The login-critical email lands in spam or is delayed, with no fallback path to get in.'},
@@ -171,6 +335,7 @@
         ]
       },
       'Build a 3-step onboarding checklist': {
+        info: 'A short, sequential list of setup steps shown to new users right after signup, guiding them to their first real action.',
         edgeCases: [
           {title: 'Steps completed out of order', desc: 'The checklist assumes step 1→2→3, but a user jumps to step 3 first via a direct link or the browser back button.'},
           {title: 'Checklist state lost on refresh', desc: "Progress isn't persisted server-side, so reloading the page resets what looked \"done.\""},
@@ -193,6 +358,7 @@
         ]
       },
       'Add a one-click referral invite': {
+        info: 'A single button existing users can send to friends or colleagues, so inviting someone is one step instead of a multi-step referral process.',
         edgeCases: [
           {title: 'Referral fraud / self-referral', desc: 'A user refers their own second email address to claim a reward twice.'},
           {title: 'Invited user already has an account', desc: 'The referral link points to a signup flow, but the invitee is already a user under a different account.'},
@@ -215,6 +381,7 @@
         ]
       },
       'Add a waitlist with referral-based queue jumping': {
+        info: 'A signup waitlist where referring other people moves you up the line faster than waiting alone.',
         edgeCases: [
           {title: 'Gaming the referral count', desc: 'A user creates fake accounts or asks strangers to click a referral link without ever converting, inflating their queue position for no real signal.'},
           {title: 'Queue position confusion', desc: "A user's position moves up and down as others join or refer, and without a visible explanation for the change, this can look like a bug."},
@@ -237,6 +404,7 @@
         ]
       },
       'Build a single-tenant pilot for your first paying customer': {
+        info: 'A custom, isolated environment built for one early customer, before the product has a standard multi-tenant setup for everyone.',
         edgeCases: [
           {title: 'Diverging codebase', desc: "Custom requests for the pilot customer get built directly into their environment, and nothing tracks which changes need to fold back into the main product."},
           {title: 'No clear pilot exit criteria', desc: 'The pilot runs indefinitely because success criteria for converting to a standard paid plan were never defined upfront.'},
@@ -259,6 +427,7 @@
         ]
       },
       'Add an in-app feedback widget for beta users': {
+        info: 'A built-in way for beta users to submit feedback from inside the product, without leaving to email or fill out a separate form.',
         edgeCases: [
           {title: 'Feedback goes unread', desc: 'Feedback submissions pile up in a queue nobody reviews, and beta users who submitted feedback never hear back or see it acted on.'},
           {title: 'Widget interrupts core flow', desc: 'The feedback prompt appears mid-task and blocks the action the user was trying to complete.'},
@@ -279,191 +448,121 @@
           {title: 'Repeat prompting respects dismissal', given: 'a user dismisses the feedback prompt', when: 'they encounter it again in a later session', then: 'the prompt appears less frequently, based on a defined cooldown'},
           {title: 'Submitter sees their feedback acknowledged', given: 'a user submits feedback that leads to a product change', when: 'the change ships', then: 'the submitter is notified that their feedback was acted on'}
         ]
+      },
+      'Add a free trial with an expiration flow': {
+        info: "A time-limited free trial that converts to paid or locks access once it ends. The decision covers trial length, what happens at expiry, and whether there's a grace period.",
+        edgeCases: [
+          {title: 'Trial ends mid-task', desc: 'A user is in the middle of an important action when access cuts off, with no warning that it was about to happen.'},
+          {title: 'No card on file at signup', desc: 'The trial expires with no way to charge anyone, so converting requires an explicit add-card step the product has to prompt for.'},
+          {title: 'Silent expiry', desc: "A user doesn't notice the trial ended until they try to log in days later and assume the product is broken."},
+          {title: 'Team trial with one converter', desc: "On a team trial, one person adds payment info, and it's unclear whether that covers the whole team or just that person."}
+        ],
+        metricTree: {
+          northStar: '% of trial users who become paying customers by trial end',
+          l1: [
+            {label: 'Trial activation rate', l2: ['% who complete core setup during trial', 'Days to first value moment']},
+            {label: 'Expiry conversion rate', l2: ['% who add payment before expiry', '% who convert during a grace period']},
+            {label: 'Post-expiry support tickets', l2: ['% citing "lost access unexpectedly"', '% citing billing confusion']}
+          ]
+        },
+        gherkin: [
+          {title: 'Trial-ending reminder', given: 'a user is 3 days from trial expiry', when: 'they log in', then: 'they see a clear reminder of the expiry date and a prompt to add payment'},
+          {title: 'Trial expires without payment', given: 'a trial ends with no payment method on file', when: 'the user next logs in', then: 'they see a locked state explaining the trial ended, with a direct path to add payment'},
+          {title: 'Grace period honored', given: 'a user adds payment within the defined grace period after expiry', when: 'the payment is confirmed', then: 'their account and data are restored exactly as they left them'},
+          {title: 'Team trial conversion is unambiguous', given: 'multiple people are using a shared team trial', when: 'one member adds payment', then: 'the system clearly states whether that covers the whole team or just that member'}
+        ]
+      },
+      'Design the empty state for a brand-new account': {
+        info: "What a user sees before they've created anything: an empty dashboard, inbox, or project list. The decision is whether to show nothing, instructions, or sample data.",
+        edgeCases: [
+          {title: 'Blank screen reads as broken', desc: 'A literally empty container gives no signal whether the product is working or stuck.'},
+          {title: 'Sample data left behind', desc: 'Demo content meant to illustrate the empty state is mistaken for real data, or never gets cleaned up.'},
+          {title: 'Same empty state after a bulk delete', desc: 'A user who deletes everything sees the identical welcome empty state meant for new users, which reads as ignoring what they just did.'},
+          {title: 'Empty state hides the create action', desc: 'The guidance text describes what to do, but the actual button to do it sits somewhere else on the page.'}
+        ],
+        metricTree: {
+          northStar: "% of new accounts that create their first real item within the first session",
+          l1: [
+            {label: 'Empty-state engagement', l2: ['% who click the primary action shown', 'Time spent on an empty screen before acting']},
+            {label: 'First-item creation rate', l2: ['% who create an item in session 1', 'Drop-off rate on empty screens']},
+            {label: 'Confusion signals', l2: ['Support tickets asking "is this broken?"', 'Rage clicks on empty containers']}
+          ]
+        },
+        gherkin: [
+          {title: 'New account sees guided empty state', given: 'a user opens a section with no data yet', when: 'the page loads', then: 'they see an explanation of what belongs there and a direct action to create the first one'},
+          {title: 'Empty state after deletion differs from first-run', given: 'a user deletes their last remaining item', when: 'the list becomes empty', then: 'they see a message reflecting that they just deleted their last item, not the new-user welcome message'},
+          {title: 'Sample data is clearly labeled', given: 'a product shows sample data to illustrate an empty state', when: 'the user views it', then: 'it is visibly marked as sample data, not mistakable for something they created'}
+        ]
+      },
+      'Decide what to instrument before you have any users': {
+        info: "The first analytics decision: which user actions actually get logged, before there's real usage to learn from. Get this wrong and you can't tell later if anyone's stuck.",
+        edgeCases: [
+          {title: 'Instrumenting too late', desc: 'The team ships a feature, gets real usage, and only later realizes no events were logged for it, so early data is unrecoverable.'},
+          {title: 'Vanity events only', desc: 'Only easy-to-log events like page views get tracked, while the harder, more meaningful ones, like whether someone actually completed the task, do not.'},
+          {title: 'No consistent naming', desc: 'Events get named ad hoc by whoever wrote that feature, so the same conceptual action shows up under three different event names.'},
+          {title: 'Duplicate/double-fired events', desc: 'An event fires twice for a single user action, such as once on click and once on page load, inflating every downstream count.'}
+        ],
+        metricTree: {
+          northStar: '% of core user actions with a logged event, verified against real usage',
+          l1: [
+            {label: 'Instrumentation coverage', l2: ['% of key actions with an event defined before launch', 'Time from feature ship to event verified live']},
+            {label: 'Data trustworthiness', l2: ['% of events passing a naming/schema check', 'Known duplicate-event incidents']},
+            {label: 'Decision usability', l2: ['% of product decisions backed by an actual event', '% of "we don\'t know" answers to basic usage questions']}
+          ]
+        },
+        gherkin: [
+          {title: 'Event exists before the feature ships', given: 'a new feature is being built', when: 'it is scheduled to ship', then: 'the events needed to measure its usage are defined and verified before launch, not added afterward'},
+          {title: 'Event names follow one convention', given: 'a new event is added to the tracking plan', when: 'it is implemented', then: 'its name follows the same naming convention as every other tracked event'},
+          {title: 'Duplicate firing is caught', given: 'an event is wired to fire on a user action', when: 'that action happens once', then: 'exactly one event is recorded, not two'}
+        ]
+      },
+      'Publish a public changelog or build-in-public roadmap': {
+        info: "A public page showing what shipped recently and what's next, used by small teams to build trust before they have a big brand name to lean on.",
+        edgeCases: [
+          {title: 'Nothing to publish some weeks', desc: 'A quiet week with no real progress leaves a gap that makes the product look abandoned if the changelog goes silent.'},
+          {title: 'Public roadmap read as a promise', desc: 'An item listed as exploring gets treated by a customer as a committed release date.'},
+          {title: 'Internal-only detail leaks', desc: 'A changelog entry accidentally describes an unreleased feature in enough detail to tip off a competitor.'},
+          {title: 'Stale entries never removed', desc: "Old planned items stay listed long after they were quietly deprioritized, and a visitor has no way to tell what's still active."}
+        ],
+        metricTree: {
+          northStar: "% of early users who report the product feels like it's actively improving",
+          l1: [
+            {label: 'Changelog engagement', l2: ['% of users who visit the changelog', 'Return visit rate to the changelog page']},
+            {label: 'Roadmap-driven signups', l2: ['% of new signups citing a public roadmap item', 'Upvotes/comments per roadmap item']},
+            {label: 'Roadmap credibility', l2: ['% of "planned" items shipped within stated window', 'Support questions doubting a stated timeline']}
+          ]
+        },
+        gherkin: [
+          {title: 'Roadmap items are labeled by confidence', given: 'an item appears on the public roadmap', when: 'a user views it', then: 'it is labeled as exploring, planned, or in progress, not shown as a firm commitment unless it is one'},
+          {title: 'Changelog entries stay factual', given: 'a changelog entry describes a shipped change', when: 'it is published', then: 'it describes only what actually shipped, not upcoming unreleased detail'},
+          {title: 'Deprioritized items are removed, not left stale', given: 'a roadmap item is no longer being worked on', when: 'the roadmap is next updated', then: 'that item is removed or clearly marked as deprioritized rather than left listed indefinitely'}
+        ]
+      },
+      "Connect a customer's utility account to pull their real usage data": {
+        info: "Letting a user log into their electric utility account so the product can pull real usage and billing data automatically, instead of them uploading a bill by hand.",
+        edgeCases: [
+          {title: 'Invalid login on first connect', desc: 'A user enters the wrong utility-site credentials, and the failure needs to say so clearly rather than looking like the connection is broken.'},
+          {title: 'Authorization quietly expires', desc: "Unless the customer granted indefinite access, the link to their utility account expires after a period and silently stops pulling new data."},
+          {title: 'Utility site itself is down', desc: "The connection attempt fails because the utility's own portal is unavailable, which looks identical to a wrong password unless the product tells them apart."},
+          {title: 'Multiple accounts under one login', desc: 'A single utility login covers several properties or meters, and the product needs the user to pick which one this connection is for.'}
+        ],
+        metricTree: {
+          northStar: '% of connected utility accounts still successfully syncing 90 days later',
+          l1: [
+            {label: 'Connection success rate', l2: ['% of first-attempt logins that succeed', '% failing due to utility site outage vs. bad credentials']},
+            {label: 'Reauthorization rate', l2: ['% of expired connections successfully reauthorized', 'Time from expiry to reauthorization']},
+            {label: 'Data completeness', l2: ['% of expected billing cycles successfully pulled', 'Support tickets citing missing usage data']}
+          ]
+        },
+        gherkin: [
+          {title: 'Invalid credentials explained clearly', given: 'a user enters incorrect utility login credentials', when: 'the connection attempt runs', then: 'they see a specific invalid-login message and a way to try again, not a generic error'},
+          {title: 'Expired authorization prompts reconnection', given: "a customer's utility authorization has expired", when: 'the next scheduled data pull runs', then: 'the user is notified and given a direct link to reauthorize'},
+          {title: 'Utility outage is distinguished from bad credentials', given: "the utility's own site is down during a connection attempt", when: 'the attempt fails', then: 'the user sees a message identifying it as a utility-side outage, not a login problem, with guidance to retry later'},
+          {title: 'Multiple accounts require explicit selection', given: 'a utility login covers more than one account or meter', when: 'the user connects it', then: 'they are prompted to select which specific account this connection applies to'}
+        ]
       }
     }
   };
-
-  // General-pattern library: broader domain guidance shown under the
-  // "General patterns" group, distinct from the exact, curated examples
-  // above. Selected directly by name, not matched against typed text.
-  var GENERAL_PATTERNS = [
-    {
-      name: 'Payments & Billing',
-      edgeCases: [
-        {title: 'Failed or declined payment mid-flow', desc: "A card is declined after the user believes they've completed checkout, leaving an ambiguous state between \"trying to pay\" and \"paid.\""},
-        {title: 'Double charge on retry', desc: 'A user retries after a slow response, unaware the first charge already went through, risking a duplicate charge.'},
-        {title: 'Currency / locale mismatch', desc: 'Price is calculated in one currency but displayed or charged in another for international users.'},
-        {title: 'Refund/chargeback reconciliation', desc: 'A refund or chargeback needs to reverse downstream state as well, including access, usage, and invoices.'}
-      ],
-      metricTree: {
-        northStar: '% of checkout attempts that complete successfully without a support ticket',
-        l1: [
-          {label: 'Checkout completion rate', l2: ['Card decline rate', 'Time to complete checkout']},
-          {label: 'Payment-related support tickets', l2: ['% citing double charge', '% citing failed payment']},
-          {label: 'Refund/chargeback rate', l2: ['Time to resolve refund', '% resulting in churn']}
-        ]
-      },
-      gherkin: [
-        {title: 'Declined card', given: 'a user submits a payment', when: 'the card is declined', then: 'they see a specific reason and can retry with a different method without losing their cart'},
-        {title: 'Prevented double charge', given: 'a user has already submitted a successful payment', when: 'they resubmit the same checkout (e.g. double-click, refresh)', then: 'the system detects the duplicate and blocks a second charge'},
-        {title: 'Refund reverses access', given: 'a payment is refunded', when: 'the refund is processed', then: 'any access or entitlement granted by that payment is revoked accordingly'}
-      ]
-    },
-    {
-      name: 'File Upload & Import',
-      edgeCases: [
-        {title: 'Oversized or malformed file', desc: 'A file exceeds the size limit or is corrupted mid-upload, and the failure needs to surface a clear reason to the user.'},
-        {title: 'Unsupported file type', desc: "A user uploads a file type the system doesn't handle, and should be told which types are supported before attempting the upload."},
-        {title: 'Interrupted upload', desc: 'A network drop or tab close mid-upload leaves a partial file; the system needs to detect the partial file and discard it.'},
-        {title: 'Malicious file content', desc: 'An uploaded file could contain malware or a script payload disguised as an accepted type, so validation can\'t rely on file extension alone.'}
-      ],
-      metricTree: {
-        northStar: '% of upload attempts that complete successfully on the first try',
-        l1: [
-          {label: 'Upload success rate', l2: ['Failure rate by file size', 'Failure rate by file type']},
-          {label: 'Time to complete upload', l2: ['Avg. upload duration', 'Retry rate']},
-          {label: 'Upload-related support tickets', l2: ['% citing unsupported file type', '% citing stuck/failed upload']}
-        ]
-      },
-      gherkin: [
-        {title: 'Oversized file rejected early', given: 'a user selects a file over the size limit', when: 'they attempt to upload it', then: 'the system rejects it before starting the upload and states the limit'},
-        {title: 'Interrupted upload is discarded', given: "a user's upload is interrupted by a network drop", when: 'the connection resumes', then: 'the partial file is discarded and the user is prompted to retry'},
-        {title: 'Unsupported type blocked', given: 'a user selects a file type the system does not support', when: 'they attempt to upload it', then: 'they are told which types are supported before the upload starts'}
-      ]
-    },
-    {
-      name: 'Notifications & Email',
-      edgeCases: [
-        {title: 'Notification fatigue / no granular control', desc: 'Every event sends a notification with no way to mute or batch, so users end up disabling notifications entirely to get relief.'},
-        {title: 'Delivery failure goes unnoticed', desc: "An email or push notification fails to send and nothing surfaces that failure, so the product silently stops informing the user."},
-        {title: 'Stale or duplicate notification', desc: 'An action is undone or changed after the notification is queued, so the user receives a notification about a state that no longer exists.'},
-        {title: 'Timezone-insensitive timing', desc: 'A digest or reminder is sent at a fixed UTC time, landing at 3am for users in other timezones.'}
-      ],
-      metricTree: {
-        northStar: '% of notifications that lead to the intended user action',
-        l1: [
-          {label: 'Notification delivery rate', l2: ['Failure rate by channel', 'Delivery latency']},
-          {label: 'Notification engagement rate', l2: ['Open/click-through rate', 'Time from send to action']},
-          {label: 'Unsubscribe / mute rate', l2: ['% muting after first week', '% disabling all notifications']}
-        ]
-      },
-      gherkin: [
-        {title: 'Muting reduces volume for that type only', given: 'a user finds a notification type unhelpful', when: 'they mute that type', then: 'they stop receiving that type while continuing to receive others'},
-        {title: 'Stale notification suppressed', given: 'an action a notification refers to is undone before the notification sends', when: 'the send job runs', then: 'the notification is skipped, since the state it would describe no longer exists'},
-        {title: 'Delivery failure is visible', given: 'a notification fails to send', when: 'the failure is detected', then: 'it is logged and retried according to a defined policy'}
-      ]
-    },
-    {
-      name: 'Search',
-      edgeCases: [
-        {title: 'Empty or zero-result queries', desc: "A query returns nothing, and the user is left without guidance on whether that's correct or a typo/filter issue."},
-        {title: 'Stale index', desc: 'The underlying data changes but the search index lags, so users see outdated or since-deleted results.'},
-        {title: 'Performance at scale', desc: 'Search response time degrades as the dataset or query complexity grows, with no defined latency budget.'},
-        {title: 'Special characters / query injection', desc: "Search input isn't sanitized, allowing special characters to break the query or inject into a backing query language."}
-      ],
-      metricTree: {
-        northStar: '% of searches that result in the user clicking a result',
-        l1: [
-          {label: 'Zero-result rate', l2: ['% of queries with no results', 'Refinement rate after zero results']},
-          {label: 'Search latency', l2: ['p50/p95 response time', 'Timeout rate']},
-          {label: 'Result click-through rate', l2: ['Avg. result position clicked', 'Re-search rate (proxy for bad relevance)']}
-        ]
-      },
-      gherkin: [
-        {title: 'Zero results shown clearly', given: 'a user searches for a term with no matches', when: 'the search runs', then: 'they see a clear zero-results state with a suggestion to adjust the query'},
-        {title: 'Search input is sanitized', given: 'a user enters special characters in the search box', when: 'the query runs', then: 'the input is safely escaped and does not break or manipulate the underlying query'},
-        {title: 'Recently changed data reflected', given: 'an item matching a saved search is deleted', when: 'the user re-runs the search', then: "the deleted item no longer appears, even if the index hasn't fully caught up elsewhere"}
-      ]
-    },
-    {
-      name: 'Bulk Actions',
-      edgeCases: [
-        {title: 'Partial failure mid-batch', desc: 'Some items in a bulk action succeed and others fail, and the user needs to know exactly which ones and why.'},
-        {title: 'No undo for an irreversible bulk action', desc: 'A bulk delete or bulk status change is applied instantly with no confirmation step or undo window.'},
-        {title: 'Performance/timeout on large selections', desc: "Selecting \"all\" on a large dataset queues an operation too big to complete synchronously."},
-        {title: 'Permission mismatch within a selection', desc: "A bulk action is applied to a selection that includes items the user doesn't actually have permission to modify."}
-      ],
-      metricTree: {
-        northStar: '% of bulk actions that complete fully successfully on the first attempt',
-        l1: [
-          {label: 'Bulk action completion rate', l2: ['% partially failed', '% fully failed']},
-          {label: 'Undo usage rate', l2: ['% of bulk actions undone', 'Time to undo after action']},
-          {label: 'Bulk-action support tickets', l2: ['% citing unexpected changes', '% citing permission errors']}
-        ]
-      },
-      gherkin: [
-        {title: 'Partial failure reported clearly', given: 'a user runs a bulk action on 50 items', when: '10 fail and 40 succeed', then: 'they see exactly which 10 failed and why'},
-        {title: 'Destructive bulk action requires confirmation', given: 'a user selects a bulk delete on multiple items', when: 'they submit it', then: 'they must confirm the count and action before it executes, with a short undo window after'},
-        {title: 'Permission-scoped bulk action', given: 'a user selects items for a bulk action, some of which they lack permission to modify', when: 'they submit it', then: 'the action applies only to items they have permission for, with the rest flagged'}
-      ]
-    },
-    {
-      name: 'Real-Time & Collaboration',
-      edgeCases: [
-        {title: 'Conflicting simultaneous edits', desc: 'Two users edit the same record at the same time, and the system needs a defined resolution, such as last-write-wins, a merge, or a lock.'},
-        {title: 'Stale client state', desc: "A user's view goes out of sync after a dropped connection, showing outdated data as if it were current."},
-        {title: 'Presence/awareness inaccuracy', desc: "The \"who's online/editing\" indicator lags or shows a user as present after they've actually left."},
-        {title: 'Reconnection storms', desc: 'Many clients reconnecting at once after an outage overwhelm the real-time infrastructure.'}
-      ],
-      metricTree: {
-        northStar: '% of concurrent edit sessions that resolve without a reported conflict or data loss',
-        l1: [
-          {label: 'Conflict rate', l2: ['% of sessions with simultaneous edits', '% of conflicts auto-resolved vs. manual']},
-          {label: 'Sync latency', l2: ['Time from edit to visible for other users', 'Reconnection time after drop']},
-          {label: 'Data-loss reports', l2: ['% citing lost edits', '% citing stale view']}
-        ]
-      },
-      gherkin: [
-        {title: 'Conflicting edits resolved predictably', given: 'two users edit the same field at the same time', when: 'both changes are submitted', then: 'the system applies a defined resolution rule, and both users can see what happened'},
-        {title: 'Reconnection refreshes state', given: "a user's connection drops and reconnects", when: 'they reconnect', then: 'their view is refreshed to the current state before they can make further edits'},
-        {title: 'Presence reflects actual activity', given: 'a user closes the tab without an explicit logout', when: 'their connection times out', then: 'they are shown as offline within a defined grace period'}
-      ]
-    },
-    {
-      name: 'Comments & Social',
-      edgeCases: [
-        {title: 'Abusive or spam content', desc: 'Nothing moderates or rate-limits comment content, opening the door to spam, harassment, or abuse with no reporting path.'},
-        {title: 'Deleted parent content', desc: 'A comment is left dangling when the item, thread, or user it belongs to is deleted.'},
-        {title: 'Notification storms on active threads', desc: 'A popular thread with many replies triggers a notification per reply to every participant, overwhelming them.'},
-        {title: 'Edit/delete after others have reacted', desc: "A comment is edited or deleted after other users have already liked, replied to, or quoted it, and downstream context breaks."}
-      ],
-      metricTree: {
-        northStar: '% of comment threads with meaningful engagement and no reported abuse',
-        l1: [
-          {label: 'Comment/reply rate', l2: ['Comments per active thread', 'Reply rate to existing comments']},
-          {label: 'Moderation actions', l2: ['% flagged by users', '% auto-flagged by filters']},
-          {label: 'Notification opt-out rate', l2: ['% muting active threads', '% disabling comment notifications']}
-        ]
-      },
-      gherkin: [
-        {title: 'Reported content is actionable', given: 'a user reports a comment as abusive', when: 'the report is submitted', then: 'it is queued for moderation review and the reporting user gets a confirmation message'},
-        {title: 'Orphaned comments handled', given: 'the item a comment thread is attached to is deleted', when: 'the deletion completes', then: 'the comment thread is deleted or archived accordingly'},
-        {title: 'Reply notifications are batched', given: 'a thread receives many replies in a short window', when: 'a participant would otherwise get one notification per reply', then: 'they receive a single batched notification instead'}
-      ]
-    },
-    {
-      name: 'Integrations, API & Webhooks',
-      edgeCases: [
-        {title: 'Third-party outage or rate limit', desc: 'A connected external service goes down or rate-limits requests, and the integration needs a defined degraded-mode behavior.'},
-        {title: 'Auth token expiry', desc: 'An OAuth token or API key expires mid-use, silently breaking the integration until a user notices and reconnects.'},
-        {title: 'Webhook delivery failure/retry', desc: 'An outbound webhook fails to reach the receiving endpoint, and needs a retry/backoff policy.'},
-        {title: 'Schema drift on the external side', desc: "The third-party API changes its response shape without notice, breaking the integration's parsing logic."}
-      ],
-      metricTree: {
-        northStar: '% of integration syncs that complete successfully without manual reconnection',
-        l1: [
-          {label: 'Sync success rate', l2: ['Failure rate by external service', 'Time to detect a failed sync']},
-          {label: 'Auth/token health', l2: ['% of tokens expired without reconnect', 'Time to reconnect after expiry']},
-          {label: 'Webhook delivery rate', l2: ['% delivered on first attempt', '% resolved via retry']}
-        ]
-      },
-      gherkin: [
-        {title: 'Expired token prompts reconnection', given: "a connected integration's auth token expires", when: 'the next sync attempt runs', then: 'the user is notified and prompted to reconnect'},
-        {title: 'Webhook retried on failure', given: 'an outbound webhook delivery fails', when: 'the receiving endpoint is unreachable', then: 'the system retries with backoff up to a defined limit before marking it failed'},
-        {title: 'External outage degrades gracefully', given: 'a connected third-party service is down', when: 'a sync is attempted during the outage', then: 'the integration reports a clear degraded state for that connection alone'}
-      ]
-    }
-  ];
 
   function escapeHtml(str){
     var div = document.createElement('div');
@@ -539,8 +638,7 @@
     }
 
     function renderTopic(topic){
-      var suffix = topic.source === 'pattern' ? ' (general pattern)' : '';
-      if(resultFeature) resultFeature.textContent = '“' + topic.name + '”' + suffix;
+      if(resultFeature) resultFeature.textContent = '“' + topic.name + '”';
       renderEdgeCases(edgeList, topic.edgeCases);
       renderMetricTree(metricTree, topic.metricTree);
       renderGherkin(gherkinList, topic.gherkin);
@@ -550,33 +648,27 @@
       activateTab('prd-panel-edge');
     }
 
-    function buildTopicButtons(topics, groupClass){
+    function buildTopicButtons(topics){
       return topics.map(function(topic, i){
         var globalIndex = currentTopics.indexOf(topic);
-        return '<button type="button" class="gtm-segment prd-preset-btn ' + groupClass + '" data-topic-idx="' + globalIndex + '">' + escapeHtml(topic.name) + '</button>';
+        return '<span class="prd-preset-item">' +
+          '<button type="button" class="gtm-segment prd-preset-btn" data-topic-idx="' + globalIndex + '">' + escapeHtml(topic.name) + '</button>' +
+          '<button type="button" class="rice-info" data-tooltip="' + escapeHtml(topic.info || '') + '" aria-label="What is &#8220;' + escapeHtml(topic.name) + '&#8221;?">i</button>' +
+          '</span>';
       }).join('');
     }
 
     function renderPresetButtons(stage){
       var presets = STAGE_PRESETS[stage] || STAGE_PRESETS['0to1'];
-      var curated = Object.keys(presets).map(function(name){
+      currentTopics = Object.keys(presets).map(function(name){
         var data = presets[name];
-        return {name: name, source: 'preset', edgeCases: data.edgeCases, metricTree: data.metricTree, gherkin: data.gherkin};
+        return {name: name, info: data.info, edgeCases: data.edgeCases, metricTree: data.metricTree, gherkin: data.gherkin};
       });
-      var patterns = GENERAL_PATTERNS.map(function(p){
-        return {name: p.name, source: 'pattern', edgeCases: p.edgeCases, metricTree: p.metricTree, gherkin: p.gherkin};
-      });
-
-      currentTopics = curated.concat(patterns);
 
       presetsWrap.innerHTML =
         '<div class="prd-picker-group">' +
-          '<div class="prd-picker-label">Curated examples <span class="prd-picker-sub">Exact analysis for this specific feature</span></div>' +
-          '<div class="prd-picker-row">' + buildTopicButtons(curated, 'prd-preset-btn-curated') + '</div>' +
-        '</div>' +
-        '<div class="prd-picker-group">' +
-          '<div class="prd-picker-label">General patterns <span class="prd-picker-sub">Domain-level guidance that applies broadly across features like this</span></div>' +
-          '<div class="prd-picker-row">' + buildTopicButtons(patterns, 'prd-preset-btn-pattern') + '</div>' +
+          '<div class="prd-picker-label">Feature examples <span class="prd-picker-sub">Pick one to see it worked through, or hover/tap the <span class="prd-info-hint" aria-hidden="true">i</span> icon for what it means</span></div>' +
+          '<div class="prd-picker-row">' + buildTopicButtons(currentTopics) + '</div>' +
         '</div>';
 
       if(emptyState) emptyState.hidden = false;
@@ -595,6 +687,8 @@
       });
       renderTopic(topic);
     });
+
+    window.pmLabInitInfoTooltips(presetsWrap);
 
     tabs.forEach(function(tab){
       tab.addEventListener('click', function(){

@@ -452,7 +452,7 @@
         <span class="pm-lab-tab-num">2</span> Prioritization &amp; ROI Stress-Tester
       </button>
       <button class="pm-lab-tab" type="button" role="tab" id="pm-lab-tab-prd" aria-controls="pm-lab-panel-prd" aria-selected="false">
-        <span class="pm-lab-tab-num">3</span> AI Spec &amp; PRD Auditor
+        <span class="pm-lab-tab-num">3</span> Spec Deep-Dives
       </button>
       <button class="pm-lab-tab" type="button" role="tab" id="pm-lab-tab-ab" aria-controls="pm-lab-panel-ab" aria-selected="false">
         <span class="pm-lab-tab-num">4</span> A/B Test It
@@ -571,16 +571,16 @@
         </div>
       </div>
       <div class="pm-lab-panel" id="pm-lab-panel-prd" role="tabpanel" aria-labelledby="pm-lab-tab-prd">
-        <p class="pm-lab-panel-intro">Pick a feature idea to see it turned into an edge-case audit, a metric tree, and engineering-ready user stories.</p>
+        <p class="pm-lab-panel-intro">Hand-written worked examples, not a live analyzer: pick a feature idea to see how it breaks down into edge cases, a metric tree, and engineering-ready acceptance criteria.</p>
         <div class="pm-lab-tool" id="prd-analyzer-root" data-pm-tool="prd-analyzer">
           <div class="prd-picker-wrap">
             <div class="prd-presets" id="prdPresets"></div>
           </div>
 
-          <p class="prd-empty-state" id="prdEmptyState">Pick a feature idea above to see it turned into a full spec.</p>
+          <p class="prd-empty-state" id="prdEmptyState">Pick a feature idea above to see a worked example of the full spec.</p>
 
           <div class="prd-result" id="prdResult" hidden>
-            <div class="prd-result-heading">Spec audit for <span id="prdResultFeature"></span></div>
+            <div class="prd-result-heading">Spec walkthrough for <span id="prdResultFeature"></span></div>
 
             <div class="prd-tabs" role="tablist" aria-label="Spec audit sections">
               <button class="prd-tab is-active" type="button" role="tab" id="prd-tab-edge" aria-controls="prd-panel-edge" aria-selected="true">

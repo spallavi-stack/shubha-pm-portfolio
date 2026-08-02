@@ -7,6 +7,78 @@
    when the toggle changes. */
 window.pmLabStage = window.pmLabStage || '0to1';
 
+// Shared hover/tap tooltip for any ".rice-info" icon button with a
+// data-tooltip attribute, used by both the RICE table's column/field
+// info icons and the Spec Deep-Dives preset buttons. Appended to
+// <body> and positioned with getBoundingClientRect() on demand, so it
+// escapes any scrolling/overflow container and stays unclipped. Wired
+// via delegation on the passed-in root so it keeps working for icons
+// added later (new RICE rows, a stage switch). Hover/focus shows it
+// (desktop); a tap toggles it open and outside-click/Escape closes it
+// (touch).
+window.pmLabInitInfoTooltips = function(root){
+  var bubble = document.createElement('div');
+  bubble.className = 'rice-tooltip-bubble';
+  bubble.setAttribute('role', 'tooltip');
+  document.body.appendChild(bubble);
+
+  var openBtn = null;
+
+  function positionBubble(btn){
+    var rect = btn.getBoundingClientRect();
+    bubble.style.top = (rect.bottom + 8) + 'px';
+    var left = rect.left + rect.width / 2 - bubble.offsetWidth / 2;
+    left = Math.max(8, Math.min(left, window.innerWidth - bubble.offsetWidth - 8));
+    bubble.style.left = left + 'px';
+  }
+
+  function show(btn){
+    bubble.textContent = btn.getAttribute('data-tooltip') || '';
+    bubble.classList.add('is-visible');
+    positionBubble(btn);
+  }
+
+  function hide(){
+    bubble.classList.remove('is-visible');
+    if(openBtn) openBtn.classList.remove('is-open');
+    openBtn = null;
+  }
+
+  root.addEventListener('mouseover', function(e){
+    var btn = e.target.closest('.rice-info');
+    if(btn) show(btn);
+  });
+  root.addEventListener('mouseout', function(e){
+    var btn = e.target.closest('.rice-info');
+    if(btn && btn !== openBtn) hide();
+  });
+  root.addEventListener('focusin', function(e){
+    var btn = e.target.closest('.rice-info');
+    if(btn) show(btn);
+  });
+  root.addEventListener('focusout', function(e){
+    var btn = e.target.closest('.rice-info');
+    if(btn && btn !== openBtn) hide();
+  });
+  root.addEventListener('click', function(e){
+    var btn = e.target.closest('.rice-info');
+    if(!btn) return;
+    e.stopPropagation();
+    if(openBtn === btn){
+      hide();
+    } else {
+      if(openBtn) openBtn.classList.remove('is-open');
+      openBtn = btn;
+      btn.classList.add('is-open');
+      show(btn);
+    }
+  });
+
+  document.addEventListener('click', function(){ if(openBtn) hide(); });
+  document.addEventListener('keydown', function(e){ if(e.key === 'Escape' && openBtn) hide(); });
+  window.addEventListener('scroll', function(){ if(openBtn) positionBubble(openBtn); }, true);
+};
+
 (function(){
   var STAGE_CAPTIONS = {
     '0to1': 'Defaults and sample data below are set for an early-stage team finding its first users.',
