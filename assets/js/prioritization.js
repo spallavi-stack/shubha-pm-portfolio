@@ -114,7 +114,7 @@
               '<input type="text" class="rice-drice-input" data-drice-field="hypothesis" placeholder="If we build X, we believe Y will happen because Z" value="' + escapeAttr(data.hypothesis) + '">' +
             '</div>' +
             '<div class="rice-drice-field">' +
-              '<label>$ Impact estimate (annual)<button type="button" class="rice-info" data-tooltip="Your best guess at how much this feature is worth in dollars per year, if the hypothesis above holds true." aria-label="What is dollar impact estimate?">i</button></label>' +
+              '<label>$ Impact estimate (annual)</label>' +
               '<input type="number" class="rice-drice-input" data-drice-field="dollarImpact" min="0" step="1000" value="' + data.dollarImpact + '">' +
             '</div>' +
             '<div class="rice-drice-field">' +
@@ -159,14 +159,11 @@
   }
 
   function buildRiskMessage(item){
-    var reasons = [];
-    if(item.techDebt !== 'none') reasons.push('High Tech Debt Risk (' + item.techDebt + ')');
-    if(item.retentionGap !== 'none') reasons.push('Missing Retention Loop (' + item.retentionGap + ')');
     var combinedPenalty = 1 - (1 - SEVERITY_PENALTY[item.techDebt]) * (1 - SEVERITY_PENALTY[item.retentionGap]);
     var penaltyPct = Math.round(combinedPenalty * 100);
-    return '<strong>' + item.name + '</strong> ranks lower than its raw RICE score suggests: flagged for ' +
-      reasons.join(' and ') + ', a combined &minus;' + penaltyPct + '% penalty (' +
-      item.rawScore.toFixed(1) + ' &rarr; ' + item.penalizedScore.toFixed(1) + ').';
+    var penaltyLabel = (item.flagCount > 1 ? 'a combined &minus;' : 'a &minus;') + penaltyPct + '% penalty';
+    return '<strong>' + item.name + '</strong> ranks lower than its raw RICE score suggests: ' +
+      penaltyLabel + ' (' + item.rawScore.toFixed(1) + ' &rarr; ' + item.penalizedScore.toFixed(1) + ').';
   }
 
   function computeDriceRoi(driceRow){
