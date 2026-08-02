@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Shubha's PM Portfolio — Product case studies for the energy transition</title>
+<title>Shubha's PM Portfolio: Product case studies for the energy transition</title>
 <meta name="description" content="0-to-1 product case studies in climate mitigation, energy efficiency, and consumer clean-energy products: real research, honest process, working prototypes.">
 <link rel="preload" href="assets/fonts/fraunces-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="assets/fonts/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
@@ -534,8 +534,8 @@
               <thead>
                 <tr>
                   <th class="rice-th-name">Feature</th>
-                  <th>Reach<span class="rice-th-sub">users/quarter</span><button type="button" class="rice-info" data-tooltip="How many users or customers this specific feature would touch in a quarter &mdash; not your total user base, just the ones this row actually affects." aria-label="What is Reach?">i</button></th>
-                  <th>Impact<span class="rice-th-sub">0.25&ndash;3</span><button type="button" class="rice-info" data-tooltip="How much this feature will move the needle for someone who experiences it &mdash; from 0.25 (barely noticeable) to 3 (massive)." aria-label="What is Impact?">i</button></th>
+                  <th>Reach<span class="rice-th-sub">users/quarter</span><button type="button" class="rice-info" data-tooltip="How many users or customers this specific feature would touch in a quarter." aria-label="What is Reach?">i</button></th>
+                  <th>Impact<span class="rice-th-sub">0.25&ndash;3</span><button type="button" class="rice-info" data-tooltip="How much this feature will move the needle for someone who experiences it, from 0.25 (barely noticeable) to 3 (massive)." aria-label="What is Impact?">i</button></th>
                   <th>Confidence<span class="rice-th-sub">%</span><button type="button" class="rice-info" data-tooltip="How sure you are about your Reach and Impact numbers, as a percentage. Lower means you&rsquo;re guessing more than measuring." aria-label="What is Confidence?">i</button></th>
                   <th>Effort<span class="rice-th-sub">person-months</span><button type="button" class="rice-info" data-tooltip="How many person-months of work this will take to build." aria-label="What is Effort?">i</button></th>
                   <th class="rice-th-center">High Tech<br>Debt Risk<button type="button" class="rice-info" data-tooltip="Check this if shipping it fast now will make the codebase harder to change later. Docks 20% off the score." aria-label="What is High Tech Debt Risk?">i</button></th>
@@ -571,18 +571,13 @@
         </div>
       </div>
       <div class="pm-lab-panel" id="pm-lab-panel-prd" role="tabpanel" aria-labelledby="pm-lab-tab-prd">
-        <p class="pm-lab-panel-intro">See a raw feature idea turned into an edge-case audit, a metric tree, and engineering-ready user stories.</p>
+        <p class="pm-lab-panel-intro">Pick a feature idea to see it turned into an edge-case audit, a metric tree, and engineering-ready user stories.</p>
         <div class="pm-lab-tool" id="prd-analyzer-root" data-pm-tool="prd-analyzer">
-          <div class="prd-input-row">
-            <label class="gtm-label" for="prdInput">Feature idea</label>
-            <div class="prd-input-controls">
-              <input type="text" id="prdInput" class="prd-input" value="" placeholder="Describe a feature idea…">
-              <button type="button" class="rice-add-btn prd-analyze-btn" id="prdAnalyzeBtn">Analyze Spec Complexity</button>
-            </div>
+          <div class="prd-picker-wrap">
             <div class="prd-presets" id="prdPresets"></div>
           </div>
 
-          <p class="prd-empty-state" id="prdEmptyState">Pick a preset above (or write your own feature idea) and click <strong>Analyze Spec Complexity</strong> to see it turned into a full spec.</p>
+          <p class="prd-empty-state" id="prdEmptyState">Pick a feature idea above to see it turned into a full spec.</p>
 
           <div class="prd-result" id="prdResult" hidden>
             <div class="prd-result-heading">Spec audit for <span id="prdResultFeature"></span></div>
@@ -620,7 +615,7 @@
             <li><a href="https://www.lennysnewsletter.com/p/bending-the-universe-in-your-favor" target="_blank" rel="noopener">"Bending the universe in your favor"</a>, Claire Vo (LaunchDarkly, Color, Optimizely, ChatPRD), podcast, Apr 2024</li>
             <li><a href="https://www.lennysnewsletter.com/p/how-anthropics-product-team-moves" target="_blank" rel="noopener">"How Anthropic's product team moves faster than anyone else"</a>, Cat Wu (Head of Product, Claude Code), podcast, Apr 2026</li>
           </ul>
-          <p class="pm-lab-sources-note">Edge cases and the metric tree are standard PM/eng practice I wrote myself, not sourced from these episodes.</p>
+          <p class="pm-lab-sources-note">Edge cases and the metric tree are standard PM/eng practice I wrote myself, separate from the sourced material above.</p>
         </div>
       </div>
 
