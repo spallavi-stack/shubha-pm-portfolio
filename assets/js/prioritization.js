@@ -1,10 +1,18 @@
 /* Prioritization & ROI Stress-Tester: dynamic RICE matrix.
    RICE Score = (Reach * Impact * Confidence) / Effort.
-   'High Tech Debt Risk' and 'Missing Retention Loop' each apply a
-   20% penalty to the raw score (multiplicative, so both together
-   is a 36% penalty), surfaced in a Strategic Risk Flag panel that
-   explains why the flagged feature ranked lower than its raw score
-   would suggest. That penalty is my own addition, separate from RICE.
+   'High Tech Debt Risk' and 'Missing Retention Loop' each let the user
+   pick a severity (none/mild/moderate/severe) that applies a
+   multiplicative penalty to the raw score, surfaced in a Strategic
+   Risk Flag panel explaining why a flagged feature ranked lower than
+   its raw score would suggest. The tier values themselves (10/20/35%)
+   are my own judgment call, not a measured benchmark, same as the
+   flat 20% this replaced. Letting the user pick the severity, rather
+   than a fixed deduction, is the actual improvement; the qualitative
+   reasoning for why "missing retention loop" is a real risk (not just
+   a made-up flag) comes from Jessica Lachs (VP Analytics, DoorDash on
+   Lenny's podcast): retention can't be driven directly in the short
+   term, so a missing retention loop is a proxy for risk you can't
+   measure yet, not something you can price precisely.
 
    Each row can also be stress-tested DRICE-style (Darius Contractor
    & Alexey Komissarouk, "Introducing DRICE"): a Hypothesis, a
@@ -15,12 +23,13 @@
    set by pm-lab.js): same tool, different example features so the
    sample data actually fits the selected company stage. */
 (function(){
-  var PENALTY_PER_FLAG = 0.2;
+  var SEVERITY_LEVELS = ['none', 'mild', 'moderate', 'severe'];
+  var SEVERITY_PENALTY = { none: 0, mild: 0.1, moderate: 0.2, severe: 0.35 };
   var WORK_DAYS_PER_WEEK = 5;
 
   var BLANK_ROW = {
     name: 'New feature', reach: 500, impact: 1, confidence: 50, effort: 1,
-    techDebt: false, retentionGap: false,
+    techDebt: 'none', retentionGap: 'none',
     hypothesis: '', dollarImpact: 0, engDays: 5
   };
 
@@ -28,19 +37,19 @@
     '0to1': [
       {
         name: 'Simplify onboarding to 3 steps', reach: 300, impact: 2, confidence: 70, effort: 0.5,
-        techDebt: false, retentionGap: false,
+        techDebt: 'none', retentionGap: 'none',
         hypothesis: 'If onboarding drops from 8 steps to 3, we believe activation roughly doubles, because most signups currently drop off before reaching first value.',
         dollarImpact: 0, engDays: 3
       },
       {
         name: 'Manual concierge onboarding for first 20 users', reach: 20, impact: 3, confidence: 90, effort: 0.25,
-        techDebt: false, retentionGap: false,
+        techDebt: 'none', retentionGap: 'none',
         hypothesis: "If we personally onboard our first 20 users by call, we believe we'll learn the real activation blocker faster than any amount of analytics.",
         dollarImpact: 0, engDays: 1
       },
       {
         name: 'Launch a paid annual plan', reach: 300, impact: 2, confidence: 50, effort: 1.5,
-        techDebt: false, retentionGap: true,
+        techDebt: 'none', retentionGap: 'moderate',
         hypothesis: 'If we charge for an annual plan now, we believe a portion of active users will pay, but we have no evidence yet that they stick around long enough to renew.',
         dollarImpact: 0, engDays: 5
       }
@@ -48,19 +57,19 @@
     '1ton': [
       {
         name: 'Self-Service Team Invite Flow', reach: 1200, impact: 2, confidence: 80, effort: 1.5,
-        techDebt: false, retentionGap: false,
+        techDebt: 'none', retentionGap: 'none',
         hypothesis: 'If self-serve invites remove the need for IT to add teammates manually, we believe more teams activate within their first week.',
         dollarImpact: 180000, engDays: 7
       },
       {
         name: 'Custom Enterprise SSO', reach: 150, impact: 3, confidence: 90, effort: 3,
-        techDebt: true, retentionGap: false,
+        techDebt: 'moderate', retentionGap: 'none',
         hypothesis: 'If we replace per-seat SSO setup calls with a self-serve SAML config, we believe the security-review blocker disappears for mid-market deals.',
         dollarImpact: 90000, engDays: 15
       },
       {
         name: 'AI Automated Summary Widget', reach: 2000, impact: 1, confidence: 50, effort: 1,
-        techDebt: false, retentionGap: true,
+        techDebt: 'none', retentionGap: 'severe',
         hypothesis: 'If summaries save reviewers time, we believe weekly active usage rises, but without a reason to return, usage may fade after the novelty wears off.',
         dollarImpact: 60000, engDays: 4
       }
@@ -77,6 +86,13 @@
     return String(str).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
   }
 
+  function severityOptionsHTML(selected){
+    return SEVERITY_LEVELS.map(function(level){
+      var label = level.charAt(0).toUpperCase() + level.slice(1);
+      return '<option value="' + level + '"' + (level === selected ? ' selected' : '') + '>' + label + '</option>';
+    }).join('');
+  }
+
   function buildRowHTML(data){
     return (
       '<tr class="rice-row" data-rice-row>' +
@@ -85,8 +101,8 @@
         '<td><input type="number" class="rice-input rice-input-num" data-field="impact" value="' + data.impact + '" min="0.25" max="3" step="0.25"></td>' +
         '<td><input type="number" class="rice-input rice-input-num" data-field="confidence" value="' + data.confidence + '" min="0" max="100" step="5"></td>' +
         '<td><input type="number" class="rice-input rice-input-num" data-field="effort" value="' + data.effort + '" min="0.1" step="0.1"></td>' +
-        '<td class="rice-td-check"><input type="checkbox" class="rice-check" data-field="techDebt"' + (data.techDebt ? ' checked' : '') + '></td>' +
-        '<td class="rice-td-check"><input type="checkbox" class="rice-check" data-field="retentionGap"' + (data.retentionGap ? ' checked' : '') + '></td>' +
+        '<td class="rice-td-select"><select class="rice-input rice-select" data-field="techDebt">' + severityOptionsHTML(data.techDebt) + '</select></td>' +
+        '<td class="rice-td-select"><select class="rice-input rice-select" data-field="retentionGap">' + severityOptionsHTML(data.retentionGap) + '</select></td>' +
         '<td class="rice-td-score"><span class="rice-score-value" data-rice-score>0</span><span class="rice-rank-badge" data-rice-rank></span><button type="button" class="rice-drice-toggle" data-drice-toggle>Stress-test (DRICE) &#9656;</button></td>' +
         '<td class="rice-td-remove"><button type="button" class="rice-remove-btn" aria-label="Remove this feature row">&times;</button></td>' +
       '</tr>' +
@@ -122,12 +138,14 @@
     var impact = Number(get('impact').value) || 0;
     var confidence = clamp(Number(get('confidence').value) || 0, 0, 100);
     var effort = Math.max(Number(get('effort').value) || 0, 0.01);
-    var techDebt = get('techDebt').checked;
-    var retentionGap = get('retentionGap').checked;
+    var techDebt = get('techDebt').value;
+    var retentionGap = get('retentionGap').value;
 
     var rawScore = (reach * impact * (confidence / 100)) / effort;
-    var flagCount = (techDebt ? 1 : 0) + (retentionGap ? 1 : 0);
-    var penalizedScore = rawScore * Math.pow(1 - PENALTY_PER_FLAG, flagCount);
+    var techDebtPenalty = SEVERITY_PENALTY[techDebt] || 0;
+    var retentionPenalty = SEVERITY_PENALTY[retentionGap] || 0;
+    var flagCount = (techDebt !== 'none' ? 1 : 0) + (retentionGap !== 'none' ? 1 : 0);
+    var penalizedScore = rawScore * (1 - techDebtPenalty) * (1 - retentionPenalty);
 
     return {
       row: row,
@@ -142,9 +160,10 @@
 
   function buildRiskMessage(item){
     var reasons = [];
-    if(item.techDebt) reasons.push('High Tech Debt Risk');
-    if(item.retentionGap) reasons.push('Missing Retention Loop');
-    var penaltyPct = Math.round((1 - Math.pow(1 - PENALTY_PER_FLAG, item.flagCount)) * 100);
+    if(item.techDebt !== 'none') reasons.push('High Tech Debt Risk (' + item.techDebt + ')');
+    if(item.retentionGap !== 'none') reasons.push('Missing Retention Loop (' + item.retentionGap + ')');
+    var combinedPenalty = 1 - (1 - SEVERITY_PENALTY[item.techDebt]) * (1 - SEVERITY_PENALTY[item.retentionGap]);
+    var penaltyPct = Math.round(combinedPenalty * 100);
     return '<strong>' + item.name + '</strong> ranks lower than its raw RICE score suggests: flagged for ' +
       reasons.join(' and ') + ', a combined &minus;' + penaltyPct + '% penalty (' +
       item.rawScore.toFixed(1) + ' &rarr; ' + item.penalizedScore.toFixed(1) + ').';
