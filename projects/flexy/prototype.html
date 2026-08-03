@@ -320,6 +320,18 @@
   }
   .tou-toggle .lab{font-size:13px;font-weight:700;color:var(--flexy-ink);}
   .tou-toggle .sub{font-size:11px;color:var(--gray);margin-top:1px;}
+  .tou-info-wrap{position:relative;display:inline-flex;align-items:center;margin-left:6px;}
+  .tou-info-btn{
+    width:16px;height:16px;border-radius:50%;border:1.5px solid var(--gray);color:var(--gray);
+    background:none;font-size:10px;font-weight:700;line-height:1;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;padding:0;
+  }
+  .tou-info-pop{
+    display:none;position:absolute;top:22px;left:-14px;width:220px;z-index:5;
+    background:#fff;border-radius:10px;padding:12px;box-shadow:0 8px 24px rgba(20,30,40,.18);
+    font-size:11.5px;line-height:1.5;color:var(--flexy-ink);font-weight:400;
+  }
+  .tou-info-pop.open{display:block;}
   .switch{position:relative;width:44px;height:26px;flex-shrink:0;}
   .switch input{opacity:0;width:0;height:0;}
   .slider-toggle{
@@ -1123,7 +1135,13 @@
       </div>
 
       <div class="tou-toggle">
-        <div><div class="lab">Time of Use</div></div>
+        <div style="display:flex;align-items:center;">
+          <div class="lab">Time of Use</div>
+          <span class="tou-info-wrap">
+            <button type="button" class="tou-info-btn" aria-label="What is Time of Use?" onclick="event.stopPropagation();toggleTouInfo();">i</button>
+            <span class="tou-info-pop" id="touInfoPop">Time of Use pricing charges more for delivery during peak demand hours instead of a flat rate. Under ComEd's filed TOU proposal, peak hours are 1&#8211;7pm daily, at 10.7&#162;/kWh delivery versus 5.9&#162;/kWh standard, a difference of 4.8&#162;/kWh.</span>
+          </span>
+        </div>
         <label class="switch">
           <input type="checkbox" id="touSwitch" onchange="toggleTOU()">
           <span class="slider-toggle"></span>
@@ -1725,6 +1743,13 @@ function renderTodayStats(){
     ? "Check ComEd's live feed for today →"
     : "Check ComEd's public feed for " + priceState.label + " →";
 }
+function toggleTouInfo(){
+  document.getElementById('touInfoPop').classList.toggle('open');
+}
+document.addEventListener('click', (e)=>{
+  const pop = document.getElementById('touInfoPop');
+  if (pop && pop.classList.contains('open') && !pop.contains(e.target)) pop.classList.remove('open');
+});
 function toggleTOU(){
   priceState.touMode = document.getElementById('touSwitch').checked;
   if (currentRange === 'today') renderTodayStats();
