@@ -894,11 +894,11 @@
 
         <div class="stat-row" style="margin:0;">
           <div class="stat" style="box-shadow:none;background:var(--flexy-bg);padding:18px 14px;">
-            <div class="val" style="font-size:26px;">$2.64</div>
+            <div class="val" style="font-size:26px;" id="homeCostVal">$2.64</div>
             <div class="lbl" style="font-size:12px;margin-top:5px;">Cost today</div>
           </div>
           <div class="stat" style="box-shadow:none;background:var(--flexy-bg);padding:18px 14px;">
-            <div class="val" style="font-size:26px;">21.4&cent;</div>
+            <div class="val" style="font-size:26px;" id="homeAvgVal">21.4&cent;</div>
             <div class="lbl" style="font-size:12px;margin-top:5px;">Avg price paid / kWh</div>
           </div>
         </div>
@@ -1721,6 +1721,10 @@ function renderTodayStats(){
   document.getElementById('costLbl').textContent = priceState.touMode
     ? 'Cost so far (real supply + TOU delivery × modeled load)'
     : 'Cost so far (real price × modeled load)';
+  const homeCostVal = document.getElementById('homeCostVal');
+  const homeAvgVal = document.getElementById('homeAvgVal');
+  if (homeCostVal) homeCostVal.textContent = '$' + cost.toFixed(2);
+  if (homeAvgVal) homeAvgVal.textContent = avgPrice.toFixed(1) + '¢';
   document.getElementById('avgVal').textContent = avgPrice.toFixed(1) + '¢';
   document.getElementById('extraVal').textContent = hourLabel(cheapestIdx);
   document.getElementById('extraLbl').textContent = 'Cheapest hour today';
