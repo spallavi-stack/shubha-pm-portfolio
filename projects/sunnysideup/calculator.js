@@ -396,8 +396,43 @@ function selfConsumptionFactorFromDemandRatio(generationKwh, consumptionKwh) {
 // judgment loosely anchored to grounding-research.md's own reported payback
 // range ("roughly 6-14 years across sources" for rooftop), not a regulator
 // or industry-body standard.
+//
+// ADDRESSED 1 Aug 2026 (without inventing new precision): these cutoffs were
+// criticized on two distinct grounds. (1) Payback tolerance is genuinely
+// subjective — how long someone plans to own the property, and how much
+// they weight upfront cost vs. long-term saving, both change what "good"
+// means, and no single cutoff can be right for everyone. This calculator
+// doesn't try to personalize the thresholds (that would mean asking for a
+// planned ownership horizon and inventing an unresearched mapping from
+// horizon to acceptable payback — a worse kind of false precision than the
+// fixed cutoffs it would replace). Instead, both results now carry an
+// explicit `paybackYears` entry in `assumptions` naming the thresholds as a
+// design judgment and pointing back to the raw number, which was already
+// shown as the headline figure, not hidden behind the color. (2) The
+// payback model previously ignored a real, quantifiable mid-life cost:
+// inverter replacement. See INVERTER_REPLACEMENT_COST_GBP /
+// _YEAR below and calculateRooftopViability's own comment for how that's
+// now factored in for rooftop specifically (not plug-in — no comparable
+// cost research exists at plug-in's much smaller scale, and reusing the
+// rooftop figure would repeat the same rooftop-borrowed-for-plugin mismatch
+// already flagged elsewhere in this file for orientation ratios).
 const ROOFTOP_PAYBACK_THRESHOLDS = { green: 8, amber: 13 };
 const PLUGIN_PAYBACK_THRESHOLDS = { green: 5, amber: 8 };
+
+// [Assumption — consumer-guide convergence, no MCS/government primary
+// source found, checked 1 Aug 2026] A like-for-like string inverter
+// replacement for a residential 3-4kWp system is commonly cited around
+// £700-1,200 including labour (equipment £600-1,200 + labour £200-400);
+// £950 is a midpoint. Standard string inverters are commonly cited as
+// lasting 10-15 years, materially shorter than a panel's own ~25-year
+// lifespan; 12 is a midpoint, consistent with the "around year 10-12"
+// figure this constant addresses. Micro-inverters (e.g. Enphase) carry
+// 25-year warranties and aren't expected to need this at all, so this is
+// itself a simplification (assumes a string inverter, the more common UK
+// residential setup, not a system-specific inverter type input this
+// calculator doesn't collect).
+const INVERTER_REPLACEMENT_COST_GBP = 950;
+const INVERTER_REPLACEMENT_YEAR = 12;
 
 // [Fact] SI 2026/848 legal status, verified directly against legislation.gov.uk.
 // grounding-research.md §Plug-in / balcony solar.
@@ -630,7 +665,23 @@ function calculateRooftopViability({
 
   const annualSavingsGbp = (selfConsumedKwh * usedElectricityPrice + exportedKwh * usedSegRate) / 100;
 
-  const paybackYears = systemCostGbp / annualSavingsGbp;
+  // If the naive payback (cost ÷ annual savings) already runs past
+  // INVERTER_REPLACEMENT_YEAR, a real cost lands inside that payback window
+  // that the naive number ignores: a replacement inverter. Re-solving for
+  // when cumulative savings actually clears (systemCost + inverterCost),
+  // not just systemCost, pushes payback out further — a materially more
+  // honest number for any result already running into double digits.
+  // Deliberately only ever adds one replacement cycle: if payback still
+  // exceeds two replacement cycles (24yr+) even after this adjustment, that
+  // result is already deep in "red" territory regardless of the exact
+  // figure, so a second cycle's precision wouldn't change what the number
+  // tells the user. See INVERTER_REPLACEMENT_COST_GBP/_YEAR's comment for
+  // sourcing.
+  const naivePaybackYears = systemCostGbp / annualSavingsGbp;
+  const paybackAssumesInverterReplacement = naivePaybackYears > INVERTER_REPLACEMENT_YEAR;
+  const paybackYears = paybackAssumesInverterReplacement
+    ? (systemCostGbp + INVERTER_REPLACEMENT_COST_GBP) / annualSavingsGbp
+    : naivePaybackYears;
   const status = scoreStatus(paybackYears, ROOFTOP_PAYBACK_THRESHOLDS);
 
   const result = {
@@ -682,6 +733,11 @@ function calculateRooftopViability({
         value: Math.round(selfConsumptionRate * 1000) / 1000,
         tier: 'Inference — DESNZ Home Energy Model formula, applied annually rather than per-timestep',
         note: `Computed from the ratio of your annual generation (${generation}kWh) to your annual consumption (${annualConsumptionKwh}kWh) via DESNZ's own Home Energy Model self-consumption formula (HEM-TP-18), not from occupancy pattern directly. Applying a formula designed for sub-hourly timesteps to annual totals is a coarser approximation — it can't distinguish a household whose consumption is concentrated in daylight hours (higher real self-consumption) from one whose same annual total is mostly evening (lower real self-consumption).`,
+      },
+      paybackYears: {
+        value: Math.round(paybackYears * 10) / 10,
+        tier: 'Design judgment (color thresholds)' + (paybackAssumesInverterReplacement ? ' + Inference (inverter replacement cost)' : ''),
+        note: `The green/amber/red cutoffs (≤${ROOFTOP_PAYBACK_THRESHOLDS.green}yr / ≤${ROOFTOP_PAYBACK_THRESHOLDS.amber}yr / longer) are this calculator's own design judgment, loosely anchored to a researched 6-14yr range, not a personalized recommendation — how long you plan to own the property and how you weigh upfront cost against long-term saving both change what counts as a good payback for you specifically. Weigh the raw number above against your own plans rather than the color alone.${paybackAssumesInverterReplacement ? ` This figure also assumes one inverter replacement (£${INVERTER_REPLACEMENT_COST_GBP}, around year ${INVERTER_REPLACEMENT_YEAR}) partway through the payback period, since the unadjusted payback (${Math.round(naivePaybackYears * 10) / 10}yr) ran past a typical string inverter's working life — see the inverterReplacementFactored flag.` : ''}`,
       },
     },
   };
@@ -769,6 +825,15 @@ function calculateRooftopViability({
       tier: 'Inference',
       title: "Usually out during the day? Your real self-consumption may be lower than this",
       note: "This result's self-consumption figure comes from your annual generation-to-consumption ratio (DESNZ's Home Energy Model formula), not from your occupancy pattern directly — it assumes your consumption is reasonably well spread across the day. If you're usually out on weekdays, your actual consumption is more likely concentrated in the morning/evening, outside peak solar hours, which would make your real self-consumption (and savings) lower than this estimate. A battery or a smart diverter for a timed load (immersion heater, EV charger) can close some of that gap.",
+    });
+  }
+
+  if (paybackAssumesInverterReplacement) {
+    flags.push({
+      id: 'inverterReplacementFactored',
+      tier: 'Inference',
+      title: 'This payback figure includes one inverter replacement',
+      note: `Your unadjusted payback (${Math.round(naivePaybackYears * 10) / 10}yr) ran past a typical string inverter's working life, so this result adds one replacement (£${INVERTER_REPLACEMENT_COST_GBP}, around year ${INVERTER_REPLACEMENT_YEAR} — a consumer-guide-sourced estimate, no MCS/government figure found) to the payback math. Panels themselves are commonly warrantied well beyond this; the inverter is the part that typically needs mid-life replacement.`,
     });
   }
 
@@ -1328,6 +1393,11 @@ function calculatePluginViability({ occupancy, orientation, electricityPricePenc
             tier: 'Assumption, not verified for this result',
             note: "No household consumption figure was given, so this defaults to assuming full self-consumption — the weakest assumption in this calculator's plug-in segment. See the pluginSelfConsumptionUnverified flag.",
           },
+      paybackYears: {
+        value: Math.round(paybackYears * 10) / 10,
+        tier: 'Design judgment',
+        note: `The green/amber/red cutoffs (≤${PLUGIN_PAYBACK_THRESHOLDS.green}yr / ≤${PLUGIN_PAYBACK_THRESHOLDS.amber}yr / longer) are this calculator's own design judgment, not a personalized recommendation — how long you plan to keep the kit and how you weigh upfront cost against long-term saving both change what counts as a good payback for you specifically. Weigh the raw number above against your own plans rather than the color alone. (No inverter-replacement adjustment is modeled here, unlike rooftop's payback figure — no cost research exists at plug-in's much smaller scale.)`,
+      },
     },
   };
 }
@@ -1374,6 +1444,8 @@ const SunnySideUpCalculator = {
     SELF_CONSUMPTION_DEMAND_RATIO_EXPONENT,
     ROOFTOP_PAYBACK_THRESHOLDS,
     PLUGIN_PAYBACK_THRESHOLDS,
+    INVERTER_REPLACEMENT_COST_GBP,
+    INVERTER_REPLACEMENT_YEAR,
     PLUGIN_LEGAL_STATUS,
   },
 };

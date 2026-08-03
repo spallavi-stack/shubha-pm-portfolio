@@ -268,6 +268,20 @@ This research is now live in `calculator.js`'s `estimateAnnualConsumptionKwh()`:
 
 **[Assumption — no official dataset found]** No primary UK government, MCS, or established-body payback study was located. Secondary sources converge loosely on 8–13 years for panels alone, generally agreeing that adding a battery purely for arbitrage/self-consumption *lengthens* rather than shortens payback — one source states a battery's own payback often exceeds its working lifespan. Present as a wide range (roughly 6–14 years across sources) with explicit sensitivity to self-consumption rate, occupancy, export tariff, and region — not a single confident number.
 
+### Inverter replacement cost and lifespan (added 1 Aug 2026)
+
+Prompted by a review of the payback model, which had no maintenance/replacement cost of any kind, only upfront system cost against annual savings.
+
+**[Assumption — consumer-guide convergence, no MCS/government primary source found, checked 1 Aug 2026]** A like-for-like string inverter replacement for a residential 3-4kWp system is commonly cited around £700-1,200 including labour (equipment £600-1,200 + labour £200-400 in one breakdown); £950 used as a midpoint. Standard string inverters are commonly cited as lasting 10-15 years, materially shorter than a panel's own ~25-year lifespan; 12 used as a midpoint. Sources are all commercial solar-installer or comparison-site content (greenmatch.co.uk, solarpanelsnetwork.com, and similar), the same tier as this document's other consumer-guide-sourced figures (e.g. `ROOFTOP_SYSTEM_COST_GBP`) — no MCS or government figure was found for inverter replacement specifically.
+
+**[Fact, same sources]** Micro-inverters (e.g. Enphase) carry warranties around 25 years and aren't expected to need mid-life replacement the way string inverters are — this figure specifically models a string inverter, the more common UK residential setup, not a system-specific inverter type this calculator doesn't collect as an input.
+
+#### Implementation note (1 Aug 2026)
+
+`calculator.js`'s rooftop payback calculation now adds one inverter replacement to the payback math when the naive figure (`systemCost / annualSavings`) already runs past `INVERTER_REPLACEMENT_YEAR` (12): the adjusted payback re-solves for when cumulative savings clears `systemCost + INVERTER_REPLACEMENT_COST_GBP` (£950) instead. Flagged on the result (`inverterReplacementFactored`) rather than silently changing the number. Deliberately caps at one replacement cycle — a result whose payback still exceeds two cycles (24yr+) is already deep "red" regardless of the exact figure. Not applied to plug-in: no comparable cost research exists at that much smaller scale, and reusing this rooftop-scale figure would repeat the same rooftop-borrowed-for-plugin mismatch already flagged for orientation ratios (§Plug-in/balcony solar cost and generation).
+
+Separately, the payback color thresholds (`ROOFTOP_PAYBACK_THRESHOLDS`/`PLUGIN_PAYBACK_THRESHOLDS`) were also critiqued as too subjective to hardcode, given that ownership horizon and personal risk tolerance both change what counts as an acceptable payback. Rather than inventing an unresearched horizon-to-tolerance mapping (a worse kind of false precision), both segments' results now carry an explicit `assumptions.paybackYears` entry naming the thresholds as this calculator's own design judgment and pointing back to the raw number already shown as the headline figure.
+
 ### Self-consumption rate (added 1 Aug 2026)
 
 This section previously named self-consumption rate as a real payback sensitivity factor (above) without supplying a specific researched percentage — the calculator filled that gap with a hardcoded, unsourced two-tier occupancy guess (0.55 home / 0.30 out). Checked directly rather than left as a standing gap, prompted by a review of the calculator's self-consumption modeling.

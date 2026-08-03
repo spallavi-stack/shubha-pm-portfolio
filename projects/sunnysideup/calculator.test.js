@@ -35,10 +35,30 @@ printResult(
   calculateRooftopViability({ orientation: 'southFacing', occupancy: 'usuallyOut', annualConsumptionKwh: 4000 })
 );
 
-// Rooftop, north-facing (worst case). Expect: red, long payback.
+// Rooftop, north-facing (worst case). Expect: red, long payback. Also the
+// first scenario in this file where the naive payback (cost/savings) runs
+// past INVERTER_REPLACEMENT_YEAR (12), so this should exercise the 1 Aug
+// 2026 inverter-replacement adjustment: paybackYears should be LONGER than
+// systemCostGbp/annualSavingsGbp alone would give, flags should include
+// "inverterReplacementFactored" naming the naive (unadjusted) figure, and
+// assumptions.paybackYears.tier should mention "Inference (inverter
+// replacement cost)" in addition to "Design judgment (color thresholds)".
 printResult(
   'Rooftop — north-facing, usually home, 4,000kWh/yr household use',
   calculateRooftopViability({ orientation: 'northFacing', occupancy: 'usuallyHome', annualConsumptionKwh: 4000 })
+);
+
+// Rooftop, same as the very first scenario (south-facing, amber, ~9.6yr
+// naive payback) — confirms the inverter adjustment does NOT engage when
+// naive payback is under INVERTER_REPLACEMENT_YEAR: no
+// "inverterReplacementFactored" flag, and assumptions.paybackYears.tier
+// should read only "Design judgment (color thresholds)", no inverter
+// mention. (Re-run here explicitly rather than just inferring it from the
+// first case, since this is the behavior actually being checked by this
+// addition.)
+printResult(
+  'Rooftop — south-facing, usually home, 4,000kWh/yr (re-run: confirms no inverter adjustment below the 12yr threshold)',
+  calculateRooftopViability({ orientation: 'southFacing', occupancy: 'usuallyHome', annualConsumptionKwh: 4000 })
 );
 
 // Rooftop, low household consumption caps self-consumption below the
@@ -53,7 +73,7 @@ printResult(
 // flagged fallback, not a silent default) — payback should still land near
 // the weak source's claimed 3-4yr figure.
 printResult('Plug-in — standard case (defaults, no consumption given)', calculatePluginViability({ occupancy: 'usuallyHome' }));
-console.log('- selfConsumedKwh should equal generationKwh (770), unselfConsumedKwh 0, and flags should include "pluginSelfConsumptionUnverified" warning this may overstate savings.');
+console.log('- selfConsumedKwh should equal generationKwh (770), unselfConsumedKwh 0, flags should include "pluginSelfConsumptionUnverified" warning this may overstate savings, and assumptions.paybackYears (added 1 Aug 2026) should explain the green/amber/red cutoffs are a design judgment, with no inverter-replacement mention (not modeled for plug-in scale).');
 
 // Plug-in, no consumption figure given (unusual placement, but keeping this
 // scenario for orientation coverage): north should score meaningfully worse

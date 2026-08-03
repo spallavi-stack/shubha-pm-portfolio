@@ -102,7 +102,7 @@ flowchart TD
 | `PLUGIN_ANNUAL_GENERATION_KWH` | 770kWh/yr | Assumption, same caveat | Midpoint of reported 640-900kWh/yr range; treated as the south-facing baseline |
 | orientation multiplier | 79% (E/W) / 50% (N) of south | Assumption stacked on Assumption | Borrowed from rooftop's own orientation ratios; no plug-in-specific orientation data exists |
 | self-consumption rate | Demand-ratio formula (if consumption given) / 100% (fallback) | Inference / Assumption | Same `selfConsumptionFactorFromDemandRatio` as rooftop §4e when `annualConsumptionKwh` is provided; falls back to the old fully-self-consumed assumption otherwise, now explicitly flagged rather than silent |
-| `PLUGIN_PAYBACK_THRESHOLDS` | green ≤5yr, amber ≤8yr | Design judgment, not cited | Loosely anchored to grounding-research.md's reported range |
+| `PLUGIN_PAYBACK_THRESHOLDS` | green ≤5yr, amber ≤8yr | Design judgment, not cited | Loosely anchored to grounding-research.md's reported range. Named as a design judgment (not a personalized recommendation) in every result's `assumptions.paybackYears`, added 1 Aug 2026 — same fix as rooftop §4e, minus the inverter-replacement adjustment (not modeled at plug-in's scale, no cost research exists) |
 
 Corrected 1 Aug 2026: this segment previously treated 100% of generation as self-consumed
 unconditionally, with no export/unmet-demand concept at all — not a sourcing gap like the
@@ -340,7 +340,10 @@ flowchart TD
   F1["selfConsumed =<br/>min(generation x<br/>rate, consumption)"]
   F2["exported =<br/>generation −<br/>selfConsumed"]
   F3["savings =<br/>(selfConsumed x price<br/>+ exported x SEG) / 100"]
-  F4["payback =<br/>systemCost / savings"]
+  F4["naivePayback =<br/>systemCost / savings"]
+  F4b{"naivePayback ><br/>12yr (inverter<br/>replacement year)?"}
+  F4c["payback =<br/>(systemCost + £950) /<br/>savings"]
+  F4d["payback =<br/>naivePayback"]
   F5{"payback<br/>≤ 8?"}
   F6{"payback<br/>≤ 13?"}
   Green(["green"])
@@ -351,7 +354,11 @@ flowchart TD
   F1 --> F2
   F2 --> F3
   F3 --> F4
-  F4 --> F5
+  F4 --> F4b
+  F4b -->|Yes| F4c
+  F4b -->|No| F4d
+  F4c --> F5
+  F4d --> F5
   F5 -->|Yes| Green
   F5 -->|No| F6
   F6 -->|Yes| Amber
@@ -359,14 +366,16 @@ flowchart TD
 ```
 
 `rate` above (the self-consumption factor feeding F1) is no longer an occupancy lookup — see the
-correction note and constants table below.
+correction note and constants table below. The inverter-replacement branch (F4b-F4d) is new as of
+1 Aug 2026 — see the correction note further below.
 
 **Key constants** (`calculator.js`, self-consumption formula + payback thresholds):
 
 | Constant | Value | Tier | Note |
 |---|---|---|---|
 | `SELF_CONSUMPTION_DEMAND_RATIO_COEFFICIENT` / `_EXPONENT` | 0.6748 / -0.703 | Fact (formula), Inference (annual application) | DESNZ Home Energy Model's own self-consumption formula (`HEM-TP-18`, gov.uk, fetched and extracted directly 1 Aug 2026): `factor = min(0.6748 x demandRatio^-0.703, 1)`, where `demandRatio = generation / consumption`. Derived from field data across a small UK dwelling sample, cross-checked against other datasets in HEM's own literature review. HEM applies this per timestep (sub-hourly); this calculator applies it once to the annual demand ratio, a coarser approximation that can't distinguish daytime-concentrated consumption from evening-concentrated consumption at the same annual total |
-| `ROOFTOP_PAYBACK_THRESHOLDS` | green ≤8yr, amber ≤13yr | Design judgment, not cited | Loosely anchored to `grounding-research.md`'s reported "roughly 6-14 years across sources" range, not a regulator or industry-body standard |
+| `ROOFTOP_PAYBACK_THRESHOLDS` | green ≤8yr, amber ≤13yr | Design judgment, not cited | Loosely anchored to `grounding-research.md`'s reported "roughly 6-14 years across sources" range, not a regulator or industry-body standard. Named as a design judgment (not a personalized recommendation) in every result's `assumptions.paybackYears`, added 1 Aug 2026 — see the correction note below |
+| `INVERTER_REPLACEMENT_COST_GBP` / `_YEAR` | £950 / year 12 | Assumption — consumer-guide convergence, no MCS/government source found | Added 1 Aug 2026. String inverter replacement commonly cited ~£700-1,200 incl. labour for a 3-4kWp system (£950 midpoint); typical lifespan 10-15yr (12 midpoint). Applied only when the naive payback (`systemCost / savings`) already exceeds 12yr — see correction note |
 
 Corrected 1 Aug 2026: this row previously read `SELF_CONSUMPTION_RATE`, a hardcoded two-tier
 occupancy lookup (usually-home 0.55 / usually-out 0.30), tagged "Prototype simplification, not
@@ -380,6 +389,28 @@ or EV) lowers the demand ratio, which the formula translates into a higher self-
 factor, without inventing a new unresearched per-appliance modifier. `occupancy` is no longer used
 to compute the number itself; see §5's new `occupancyMayLowerRealSelfConsumption` flag for how it's
 still used, as a caveat rather than an input to the formula.
+
+Corrected 1 Aug 2026 (a second, separate fix in the same pass): the payback critique named two
+distinct problems with the thresholds above. First, payback tolerance is genuinely subjective —
+how long someone plans to own the property and how they weigh upfront cost against long-term
+saving both change what counts as a "good" payback, and no fixed cutoff can be right for everyone.
+This calculator doesn't try to personalize the thresholds (asking for a planned ownership horizon
+and inventing an unresearched horizon-to-tolerance mapping would just be a different, worse kind
+of false precision than the fixed cutoffs it would replace). Instead, every result now carries an
+explicit `assumptions.paybackYears` entry naming the thresholds as a design judgment and pointing
+back to the raw number, which was already the headline figure shown, not hidden behind the color.
+Second, the payback model ignored a real, quantifiable mid-life cost: inverter replacement. Panels
+themselves are typically warrantied well beyond 12 years, but a standard string inverter commonly
+needs replacing around then — a cost the naive `systemCost / savings` payback simply never
+accounted for. When the naive payback already exceeds `INVERTER_REPLACEMENT_YEAR`, this result
+now re-solves for when cumulative savings actually clears `systemCost + INVERTER_REPLACEMENT_COST_GBP`
+instead, and flags the adjustment (`inverterReplacementFactored`) rather than silently changing the
+number. Deliberately caps at one replacement cycle: a result whose payback still runs past two
+cycles (24yr+) is already deep in "red" territory regardless of the exact figure, so a second
+cycle's added precision wouldn't change what the number tells the user. Not modeled for plug-in
+(§3) — no comparable cost research exists at plug-in's much smaller scale, and reusing the rooftop
+figure would repeat the same rooftop-borrowed-for-plugin mismatch already flagged elsewhere in this
+file for orientation ratios.
 
 ---
 
@@ -409,6 +440,7 @@ Permitted Development, deliberately not adding new inputs just to gate these):
 | `regulatoryRegime` | Postcode resolves to Scotland or Wales | Fact | That country's own permitted-development/building-regulation regime hasn't been researched here |
 | `highExportSensitivity` | No user-picked SEG tariff, and exported share of generation exceeds 50% | Inference | This result uses the low default SEG rate; a high-export household's result moves more than most when a real (much higher) tariff is picked |
 | `occupancyMayLowerRealSelfConsumption` | `occupancy` is `usuallyOut` | Inference | Added 1 Aug 2026, alongside the self-consumption formula fix above. The formula is annual-average and can't see *when* within the day consumption happens — only its total relative to generation. A usually-out household's consumption is more likely concentrated outside midday solar hours than the annual total alone suggests, which would make real self-consumption lower than the formula's estimate. Not shown for `usuallyHome`, since there's no comparably clear directional bias to flag for that case |
+| `inverterReplacementFactored` | Naive payback (`systemCost / savings`) exceeds `INVERTER_REPLACEMENT_YEAR` (12) | Inference | Added 1 Aug 2026, alongside the payback-thresholds fix. Names the naive (unadjusted) payback figure and the replacement cost/year added, so the adjustment is visible rather than a silent change to the headline number |
 
 Rooftop results additionally carry, when applicable: `postcodeLookup`, `openMeteoLookup`,
 `electricityPriceLookup` (each `{ ok, error? }`, so a failed live lookup is visible rather than
@@ -447,7 +479,14 @@ the next review pass to weigh in on:
 - **East/west and north-facing rooftop generation** figures are a prototype-only proportional
   estimate, not independently researched the way the south-facing figure is.
 - **Payback thresholds** (both segments) are a design judgment loosely anchored to the
-  researched payback range, not a cited industry or regulatory standard.
+  researched payback range, not a cited industry or regulatory standard — this is now stated
+  explicitly in every result's `assumptions.paybackYears` (added 1 Aug 2026) rather than left
+  implicit, since payback tolerance genuinely depends on ownership horizon and risk preference the
+  calculator has no way to know.
+- **Rooftop's payback now factors in one inverter replacement** (£950, year 12, both
+  consumer-guide-sourced, added 1 Aug 2026) when the naive payback runs past that year — a real
+  cost the model previously ignored entirely. Not modeled for plug-in: no comparable cost research
+  exists at plug-in's much smaller scale.
 - **21 of 30 rows** in the SEG tariff table are still unverified against their named source.
 - **Wales and Northern Ireland** regional generation multipliers are extrapolated from
   Scotland's climate/latitude band, not independently found.

@@ -781,6 +781,7 @@ function fillAssumptions(result, segment) {
   body.appendChild(renderAssumptionRow(segment === 'plugin' ? 'Kit cost' : 'System cost', gbp(segment === 'plugin' ? result.kitCostGbp : result.systemCostGbp), a.systemCostGbp ? a.systemCostGbp.tier : a.kitCostGbp.tier, a.systemCostGbp ? a.systemCostGbp.note : a.kitCostGbp.note));
   body.appendChild(renderAssumptionRow('Annual generation', `${result.generationKwh.toLocaleString()} kWh`, a.generationKwh.tier, a.generationKwh.note));
   if (a.selfConsumptionRate) body.appendChild(renderAssumptionRow('Self-consumption rate', `${Math.round(a.selfConsumptionRate.value * 100)}%`, a.selfConsumptionRate.tier, a.selfConsumptionRate.note));
+  if (a.paybackYears) body.appendChild(renderAssumptionRow('Payback color thresholds', `${result.paybackYears}yr`, a.paybackYears.tier, a.paybackYears.note));
 
   if (result.consumptionEstimate) {
     const ce = result.consumptionEstimate;
