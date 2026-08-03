@@ -86,7 +86,7 @@ flowchart TD
   M --> G
   E --> G
   F --> G
-  G --> H["Payback =<br/>650 / savings"]
+  G --> H["Payback =<br/>simulatePaybackYears<br/>(same loop as rooftop<br/>§4e, no inverter cost)"]
   H --> I{"Payback<br/>≤ 5?"}
   I -->|Yes| Green(["green"])
   I -->|No| J{"Payback<br/>≤ 8?"}
@@ -102,7 +102,7 @@ flowchart TD
 | `PLUGIN_ANNUAL_GENERATION_KWH` | 770kWh/yr | Assumption, same caveat | Midpoint of reported 640-900kWh/yr range; treated as the south-facing baseline. Own mounting-tilt assumption unverified — see correction note below |
 | `PLUGIN_VERTICAL_ORIENTATION_MULTIPLIER` | 85% (E/W) / 40% (N) of south | Inference (tilt-loss magnitude) / Assumption (orientation-specific ratios) | Corrected 1 Aug 2026 from rooftop's borrowed 79%/50% ratios (calibrated to rooftop's ~35° tilt) to vertical-mount-specific figures — see correction note below |
 | self-consumption rate | Demand-ratio formula (if consumption given) / 100% (fallback) | Inference / Assumption | Same `selfConsumptionFactorFromDemandRatio` as rooftop §4e when `annualConsumptionKwh` is provided; falls back to the old fully-self-consumed assumption otherwise, now explicitly flagged rather than silent |
-| `PLUGIN_PAYBACK_THRESHOLDS` | green ≤5yr, amber ≤8yr | Design judgment, not cited | Loosely anchored to grounding-research.md's reported range. Named as a design judgment (not a personalized recommendation) in every result's `assumptions.paybackYears`, added 1 Aug 2026 — same fix as rooftop §4e, minus the inverter-replacement adjustment (not modeled at plug-in's scale, no cost research exists) |
+| `PLUGIN_PAYBACK_THRESHOLDS` | green ≤5yr, amber ≤8yr | Design judgment, not cited | Loosely anchored to grounding-research.md's reported range. Named as a design judgment (not a personalized recommendation) in every result's `assumptions.paybackYears`, added 1 Aug 2026 — same fix as rooftop §4e. Payback is simulated with the same price-escalation/degradation assumptions as rooftop (a general PV/market assumption, not rooftop-specific), but with no inverter-replacement cost (no cost research exists at plug-in's much smaller scale) |
 
 Corrected 1 Aug 2026: this segment previously treated 100% of generation as self-consumed
 unconditionally, with no export/unmet-demand concept at all — not a sourcing gap like the
@@ -371,11 +371,8 @@ flowchart TD
   F0["demandRatio =<br/>generation /<br/>consumption"]
   F1["selfConsumed =<br/>min(generation x<br/>rate, consumption)"]
   F2["exported =<br/>generation −<br/>selfConsumed"]
-  F3["savings =<br/>(selfConsumed x price<br/>+ exported x SEG) / 100"]
-  F4["naivePayback =<br/>systemCost / savings"]
-  F4b{"naivePayback ><br/>12yr (inverter<br/>replacement year)?"}
-  F4c["payback =<br/>(systemCost + £950) /<br/>savings"]
-  F4d["payback =<br/>naivePayback"]
+  F3["baseYearSavings =<br/>(selfConsumed x price<br/>+ exported x SEG) / 100"]
+  SIM["simulatePaybackYears:<br/>year-by-year loop<br/>(see below)"]
   F5{"payback<br/>≤ 8?"}
   F6{"payback<br/>≤ 13?"}
   Green(["green"])
@@ -385,12 +382,8 @@ flowchart TD
   F0 --> F1
   F1 --> F2
   F2 --> F3
-  F3 --> F4
-  F4 --> F4b
-  F4b -->|Yes| F4c
-  F4b -->|No| F4d
-  F4c --> F5
-  F4d --> F5
+  F3 --> SIM
+  SIM --> F5
   F5 -->|Yes| Green
   F5 -->|No| F6
   F6 -->|Yes| Amber
@@ -398,16 +391,48 @@ flowchart TD
 ```
 
 `rate` above (the self-consumption factor feeding F1) is no longer an occupancy lookup — see the
-correction note and constants table below. The inverter-replacement branch (F4b-F4d) is new as of
-1 Aug 2026 — see the correction note further below.
+first correction note below. `simulatePaybackYears` (added 1 Aug 2026, replacing the flat
+`systemCost / savings` division and the two-branch inverter-only adjustment that preceded it) runs
+a year-by-year loop:
 
-**Key constants** (`calculator.js`, self-consumption formula + payback thresholds):
+```mermaid
+flowchart TD
+  Y0["year = 1..30"]
+  Y1{"inverter due<br/>this year?"}
+  Y2["cumulativeCost +=<br/>£950"]
+  Y3["degradation =<br/>(1 − 0.5%)^(year−1)"]
+  Y4["escalatedPrice =<br/>price x (1 + 3%)^(year−1)"]
+  Y5["yearSavings =<br/>(selfConsumed x degradation<br/>x escalatedPrice + exported<br/>x degradation x SEG) / 100"]
+  Y6["cumulativeSavings<br/>+= yearSavings"]
+  Y7{"cumulativeSavings<br/>≥ cumulativeCost?"}
+  Y8["payback = year − 1 +<br/>fraction of this year needed"]
+  Y9["next year"]
+  Y10["payback = Infinity<br/>(never recovered<br/>within 30yr)"]
+
+  Y0 --> Y1
+  Y1 -->|Yes| Y2
+  Y1 -->|No| Y3
+  Y2 --> Y3
+  Y3 --> Y4
+  Y4 --> Y5
+  Y5 --> Y6
+  Y6 --> Y7
+  Y7 -->|Yes| Y8
+  Y7 -->|No| Y9
+  Y9 --> Y0
+  Y0 -->|"loop exhausted"| Y10
+```
+
+**Key constants** (`calculator.js`, self-consumption formula + payback simulation):
 
 | Constant | Value | Tier | Note |
 |---|---|---|---|
 | `SELF_CONSUMPTION_DEMAND_RATIO_COEFFICIENT` / `_EXPONENT` | 0.6748 / -0.703 | Fact (formula), Inference (annual application) | DESNZ Home Energy Model's own self-consumption formula (`HEM-TP-18`, gov.uk, fetched and extracted directly 1 Aug 2026): `factor = min(0.6748 x demandRatio^-0.703, 1)`, where `demandRatio = generation / consumption`. Derived from field data across a small UK dwelling sample, cross-checked against other datasets in HEM's own literature review. HEM applies this per timestep (sub-hourly); this calculator applies it once to the annual demand ratio, a coarser approximation that can't distinguish daytime-concentrated consumption from evening-concentrated consumption at the same annual total |
 | `ROOFTOP_PAYBACK_THRESHOLDS` | green ≤8yr, amber ≤13yr | Design judgment, not cited | Loosely anchored to `grounding-research.md`'s reported "roughly 6-14 years across sources" range, not a regulator or industry-body standard. Named as a design judgment (not a personalized recommendation) in every result's `assumptions.paybackYears`, added 1 Aug 2026 — see the correction note below |
-| `INVERTER_REPLACEMENT_COST_GBP` / `_YEAR` | £950 / year 12 | Assumption — consumer-guide convergence, no MCS/government source found | Added 1 Aug 2026. String inverter replacement commonly cited ~£700-1,200 incl. labour for a 3-4kWp system (£950 midpoint); typical lifespan 10-15yr (12 midpoint). Applied only when the naive payback (`systemCost / savings`) already exceeds 12yr — see correction note |
+| `INVERTER_REPLACEMENT_COST_GBP` / `_YEAR` | £950 / year 12 | Assumption — consumer-guide convergence, no MCS/government source found | Added 1 Aug 2026. String inverter replacement commonly cited ~£700-1,200 incl. labour for a 3-4kWp system (£950 midpoint); typical lifespan 10-15yr (12 midpoint). Recurring: added again every 12 years the simulation runs, not just once |
+| `ELECTRICITY_PRICE_ANNUAL_ESCALATION_RATE` | 3%/yr | Assumption — consumer-guide convergence on a commonly-used industry modeling figure | Added 1 Aug 2026. A primary DESNZ appraisal document ("Valuation of energy use and greenhouse gas emissions for appraisal," Nov 2023, gov.uk) was fetched and checked directly but its long-run price projections live in an accompanying spreadsheet not accessible from this session — no single quotable figure found there, so this falls back to industry-convergence sourcing (3-5% range cited). Applied only to the import price (self-consumed portion); SEG export rate is left flat, a named simplification |
+| `PANEL_DEGRADATION_ANNUAL_RATE` | 0.5%/yr | Assumption — manufacturer-warranty/consumer-guide convergence | Added 1 Aug 2026. Commonly cited 0.3-0.8%/yr, retaining ~85-90% of output after 25 years; (1-0.005)^25 ≈ 88%, inside that range |
+| `PAYBACK_SIMULATION_MAX_YEARS` | 30 | N/A (a safety cap, not a researched figure) | Matches commonly-cited panel working life; if payback isn't reached by then, the result is treated as not recovered within the panel's life (see `paybackNotReachedWithinSimulation` flag, §5) |
 
 Corrected 1 Aug 2026: this row previously read `SELF_CONSUMPTION_RATE`, a hardcoded two-tier
 occupancy lookup (usually-home 0.55 / usually-out 0.30), tagged "Prototype simplification, not
@@ -433,16 +458,34 @@ explicit `assumptions.paybackYears` entry naming the thresholds as a design judg
 back to the raw number, which was already the headline figure shown, not hidden behind the color.
 Second, the payback model ignored a real, quantifiable mid-life cost: inverter replacement. Panels
 themselves are typically warrantied well beyond 12 years, but a standard string inverter commonly
-needs replacing around then — a cost the naive `systemCost / savings` payback simply never
-accounted for. When the naive payback already exceeds `INVERTER_REPLACEMENT_YEAR`, this result
-now re-solves for when cumulative savings actually clears `systemCost + INVERTER_REPLACEMENT_COST_GBP`
-instead, and flags the adjustment (`inverterReplacementFactored`) rather than silently changing the
-number. Deliberately caps at one replacement cycle: a result whose payback still runs past two
-cycles (24yr+) is already deep in "red" territory regardless of the exact figure, so a second
-cycle's added precision wouldn't change what the number tells the user. Not modeled for plug-in
-(§3) — no comparable cost research exists at plug-in's much smaller scale, and reusing the rooftop
-figure would repeat the same rooftop-borrowed-for-plugin mismatch already flagged elsewhere in this
-file for orientation ratios.
+needs replacing around then. Originally fixed (this same day) with a two-branch shortcut: if the
+naive `systemCost / savings` figure already exceeded `INVERTER_REPLACEMENT_YEAR`, re-solve for
+`(systemCost + INVERTER_REPLACEMENT_COST_GBP) / savings` instead, capped at one replacement cycle.
+That shortcut has since been superseded by the fuller simulation described below, which handles
+recurring replacements properly instead of an artificial one-cycle cap.
+
+Corrected 1 Aug 2026 (a third, separate fix in the same pass, superseding the inverter-only
+shortcut above with a fuller model): both segments' payback previously used a single-year snapshot
+(this year's price, this year's generation) linearly annualized across a 10-25 year horizon — no
+price escalation, no panel degradation. A static rate isn't itself wrong for a same-year
+comparison, but stretching it across decades understates how solar's own value tends to compound:
+UK electricity prices have historically trended upward, so a flat-rate payback is, if anything,
+conservative on that front — the opposite of "inflating savings." Degradation cuts the other way.
+`simulatePaybackYears` now runs a year-by-year loop (see the second mermaid diagram above) that
+nets both effects plus recurring inverter replacement (rooftop only) into a single realistic
+payback figure, replacing the flat division and the two-branch inverter shortcut entirely. In
+practice, price escalation (3%/yr assumed) is bigger than degradation (0.5%/yr) and the inverter
+cost combined, so simulated payback usually comes out *shorter* than the old flat figure would
+give, even once an inverter replacement is included — a genuinely counterintuitive result worth
+stating plainly, since a reader might reasonably assume "more realistic" means "more pessimistic."
+Both the simulated figure and what a flat calculation would have given are shown side by side in
+`assumptions.paybackYears.note`, so the size of the effect is visible, not just its direction. If
+the loop runs the full `PAYBACK_SIMULATION_MAX_YEARS` (30) without cumulative savings clearing
+cumulative cost, `paybackYears` is `null` (not a raw `Infinity`, which is JSON-invalid) and a
+`paybackNotReachedWithinSimulation` flag fires. Applied to both segments — degradation and price
+escalation are general PV/market assumptions, not rooftop-specific the way the inverter cost figure
+is (no comparable inverter-cost research exists at plug-in's scale, §3), so plug-in gets the same
+escalation/degradation treatment but no inverter-replacement cost.
 
 ---
 
@@ -472,7 +515,8 @@ Permitted Development, deliberately not adding new inputs just to gate these):
 | `regulatoryRegime` | Postcode resolves to Scotland or Wales | Fact | That country's own permitted-development/building-regulation regime hasn't been researched here |
 | `highExportSensitivity` | No user-picked SEG tariff, and exported share of generation exceeds 50% | Inference | This result uses the low default SEG rate; a high-export household's result moves more than most when a real (much higher) tariff is picked |
 | `occupancyMayLowerRealSelfConsumption` | `occupancy` is `usuallyOut` | Inference | Added 1 Aug 2026, alongside the self-consumption formula fix above. The formula is annual-average and can't see *when* within the day consumption happens — only its total relative to generation. A usually-out household's consumption is more likely concentrated outside midday solar hours than the annual total alone suggests, which would make real self-consumption lower than the formula's estimate. Not shown for `usuallyHome`, since there's no comparably clear directional bias to flag for that case |
-| `inverterReplacementFactored` | Naive payback (`systemCost / savings`) exceeds `INVERTER_REPLACEMENT_YEAR` (12) | Inference | Added 1 Aug 2026, alongside the payback-thresholds fix. Names the naive (unadjusted) payback figure and the replacement cost/year added, so the adjustment is visible rather than a silent change to the headline number |
+| `inverterReplacementFactored` | Simulated payback period includes ≥1 inverter replacement | Inference | Rooftop only. Names how many replacements were folded in and the flat (no-escalation/no-degradation/no-inverter) comparison figure, so the adjustment is visible rather than a silent change to the headline number. Updated 1 Aug 2026 to report a count (can be more than one for a very long payback) rather than a single fixed adjustment |
+| `paybackNotReachedWithinSimulation` | Simulated cumulative savings never clear cumulative cost within `PAYBACK_SIMULATION_MAX_YEARS` (30) | Inference | Added 1 Aug 2026, both segments. `paybackYears` is `null` in this case rather than a raw `Infinity` |
 
 Rooftop results additionally carry, when applicable: `postcodeLookup`, `openMeteoLookup`,
 `electricityPriceLookup` (each `{ ok, error? }`, so a failed live lookup is visible rather than
@@ -519,10 +563,18 @@ the next review pass to weigh in on:
   explicitly in every result's `assumptions.paybackYears` (added 1 Aug 2026) rather than left
   implicit, since payback tolerance genuinely depends on ownership horizon and risk preference the
   calculator has no way to know.
-- **Rooftop's payback now factors in one inverter replacement** (£950, year 12, both
-  consumer-guide-sourced, added 1 Aug 2026) when the naive payback runs past that year — a real
-  cost the model previously ignored entirely. Not modeled for plug-in: no comparable cost research
-  exists at plug-in's much smaller scale.
+- **Both segments' payback is now simulated year-by-year** (added 1 Aug 2026, `simulatePaybackYears`,
+  replacing a flat single-year-snapshot division that implicitly assumed price and generation both
+  stay constant forever): 3%/yr electricity price escalation and 0.5%/yr panel degradation, both
+  consumer-guide-sourced (no official DESNZ/Ofgem figure found specifically for the escalation
+  rate, despite a primary DESNZ appraisal document being checked directly), and — rooftop only — a
+  recurring inverter replacement (£950, every 12 years, also consumer-guide-sourced) whenever the
+  payback period runs that long. Not modeled for plug-in: no comparable inverter-cost research
+  exists at plug-in's much smaller scale, though the escalation/degradation assumptions do apply
+  there too (general PV/market assumptions, not rooftop-specific). Price escalation is assumed
+  larger than degradation, so simulated payback usually comes out shorter than the old flat figure,
+  even with an inverter replacement included — the flat comparison figure is always shown alongside
+  the simulated one so the size of this effect is visible.
 - **21 of 30 rows** in the SEG tariff table are still unverified against their named source.
 - **Wales and Northern Ireland** regional generation multipliers are extrapolated from
   Scotland's climate/latitude band, not independently found.

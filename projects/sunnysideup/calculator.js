@@ -471,6 +471,112 @@ const PLUGIN_PAYBACK_THRESHOLDS = { green: 5, amber: 8 };
 const INVERTER_REPLACEMENT_COST_GBP = 950;
 const INVERTER_REPLACEMENT_YEAR = 12;
 
+// ADDED 1 Aug 2026: both segments' payback previously used a single-year
+// snapshot (this year's price, this year's generation) linearly annualized
+// across a 10-25 year horizon — no price escalation, no panel degradation.
+// A static rate isn't itself wrong for a same-year comparison, but
+// stretching it across decades understates how solar's own value tends to
+// compound: UK electricity prices have historically trended upward, so a
+// flat-rate payback is, if anything, conservative on that front, the
+// opposite of "inflating savings." Degradation cuts the other way. Real
+// long-horizon payback should net both effects, not silently assume they're
+// zero.
+//
+// [Assumption — consumer-guide convergence on a commonly-used industry
+// modeling figure; checked 1 Aug 2026, no official DESNZ/Ofgem figure found
+// specifically for this purpose. A primary DESNZ appraisal document
+// ("Valuation of energy use and greenhouse gas emissions for appraisal,"
+// Nov 2023, gov.uk, fetched and pdftotext-extracted directly) was checked
+// and does reference long-run energy price projections, but only via an
+// accompanying data spreadsheet not accessible from this session — no
+// single quotable %/year figure appears in the document's own text, so this
+// falls back to industry-convergence sourcing rather than a primary figure]
+// Solar payback calculators commonly assume ~3% annual electricity price
+// inflation (real terms) when projecting long-horizon savings; a 3-5% range
+// is cited across sources. Applied only to the import electricity price
+// (the self-consumed portion's value); no comparable escalation assumption
+// exists for SEG export rates, so those are left flat — a real, named
+// simplification, not an oversight.
+const ELECTRICITY_PRICE_ANNUAL_ESCALATION_RATE = 0.03;
+
+// [Assumption — consumer-guide/manufacturer-warranty convergence, checked 1
+// Aug 2026] Modern panels are commonly cited as degrading 0.3-0.8%/year,
+// retaining roughly 85-90% of original output after 25 years — (1-0.005)^25
+// ≈ 88%, inside that range. 0.5%/year used as a flat, simplified midpoint;
+// not modeling the separate, slightly higher first-year drop some sources
+// cite, a level of precision this calculator can't actually verify.
+const PANEL_DEGRADATION_ANNUAL_RATE = 0.005;
+
+// Safety cap matching commonly-cited panel working life. If simulated
+// cumulative savings never clear cumulative cost within this many years,
+// treated as not recovered within the panel's working life rather than
+// simulated indefinitely.
+const PAYBACK_SIMULATION_MAX_YEARS = 30;
+
+/**
+ * Simulates year-by-year cumulative savings against cumulative cost to find
+ * a realistic payback point, replacing a flat-annuity division
+ * (systemCost / annualSavings) that implicitly assumed generation and
+ * price both stay constant forever. Accounts for panel output degradation
+ * (compounding every year, including the inverter-replacement year) and
+ * electricity price escalation (import price only — see
+ * ELECTRICITY_PRICE_ANNUAL_ESCALATION_RATE's sourcing note for why SEG
+ * export rate is left flat). Optionally accounts for recurring inverter
+ * replacement cost, added to cumulative cost every `inverterReplacementEveryYears`
+ * (omit both inverter params for a segment with no such cost modeled, e.g.
+ * plug-in — see PLUGIN_VERTICAL_ORIENTATION_MULTIPLIER's sourcing note for
+ * why that cost isn't modeled at plug-in's scale).
+ * @param {Object} input
+ * @param {number} input.systemCostGbp
+ * @param {number} input.baseSelfConsumedKwh - year-1 self-consumed kWh, before degradation
+ * @param {number} input.baseSecondaryKwh - year-1 kWh in the second bucket (rooftop's exported kWh, or plug-in's unselfConsumedKwh)
+ * @param {number} input.secondaryRatePencePerKwh - rate applied to baseSecondaryKwh (SEG rate for rooftop, 0 for plug-in — that bucket earns nothing)
+ * @param {number} input.electricityPricePencePerKwh - year-1 import price, escalated in later years
+ * @param {number} [input.inverterReplacementCostGbp]
+ * @param {number} [input.inverterReplacementEveryYears]
+ */
+function simulatePaybackYears({
+  systemCostGbp,
+  baseSelfConsumedKwh,
+  baseSecondaryKwh,
+  secondaryRatePencePerKwh,
+  electricityPricePencePerKwh,
+  inverterReplacementCostGbp,
+  inverterReplacementEveryYears,
+}) {
+  const baseYearSavingsGbp = (baseSelfConsumedKwh * electricityPricePencePerKwh + baseSecondaryKwh * secondaryRatePencePerKwh) / 100;
+  const flatPaybackYears = baseYearSavingsGbp > 0 ? systemCostGbp / baseYearSavingsGbp : Infinity;
+  if (baseYearSavingsGbp <= 0) {
+    return { paybackYears: Infinity, flatPaybackYears, inverterReplacementsFactored: 0 };
+  }
+
+  let cumulativeSavingsGbp = 0;
+  let cumulativeCostGbp = systemCostGbp;
+  let inverterReplacementsFactored = 0;
+
+  for (let year = 1; year <= PAYBACK_SIMULATION_MAX_YEARS; year += 1) {
+    if (inverterReplacementCostGbp && year > 1 && (year - 1) % inverterReplacementEveryYears === 0) {
+      cumulativeCostGbp += inverterReplacementCostGbp;
+      inverterReplacementsFactored += 1;
+    }
+
+    const degradationFactor = (1 - PANEL_DEGRADATION_ANNUAL_RATE) ** (year - 1);
+    const escalatedPrice = electricityPricePencePerKwh * (1 + ELECTRICITY_PRICE_ANNUAL_ESCALATION_RATE) ** (year - 1);
+    const yearSavingsGbp = (baseSelfConsumedKwh * degradationFactor * escalatedPrice + baseSecondaryKwh * degradationFactor * secondaryRatePencePerKwh) / 100;
+
+    const savingsBeforeThisYear = cumulativeSavingsGbp;
+    cumulativeSavingsGbp += yearSavingsGbp;
+
+    if (cumulativeSavingsGbp >= cumulativeCostGbp) {
+      const remainder = cumulativeCostGbp - savingsBeforeThisYear;
+      const fraction = yearSavingsGbp > 0 ? remainder / yearSavingsGbp : 0;
+      return { paybackYears: (year - 1) + fraction, flatPaybackYears, inverterReplacementsFactored };
+    }
+  }
+
+  return { paybackYears: Infinity, flatPaybackYears, inverterReplacementsFactored };
+}
+
 // [Fact] SI 2026/848 legal status, verified directly against legislation.gov.uk.
 // grounding-research.md §Plug-in / balcony solar.
 const PLUGIN_LEGAL_STATUS = {
@@ -700,31 +806,34 @@ function calculateRooftopViability({
   const usedSegRate = segRatePencePerKwh ?? SEG_RATE_PENCE_PER_KWH_DEFAULT;
   const segRateIsUserProvided = segRatePencePerKwh != null;
 
+  // Year-1 snapshot, still the headline "annual savings" figure shown to
+  // the user (what this system would save at today's price and today's
+  // generation) — not the same as the payback calculation below, which
+  // simulates how both change over the panels' working life.
   const annualSavingsGbp = (selfConsumedKwh * usedElectricityPrice + exportedKwh * usedSegRate) / 100;
 
-  // If the naive payback (cost ÷ annual savings) already runs past
-  // INVERTER_REPLACEMENT_YEAR, a real cost lands inside that payback window
-  // that the naive number ignores: a replacement inverter. Re-solving for
-  // when cumulative savings actually clears (systemCost + inverterCost),
-  // not just systemCost, pushes payback out further — a materially more
-  // honest number for any result already running into double digits.
-  // Deliberately only ever adds one replacement cycle: if payback still
-  // exceeds two replacement cycles (24yr+) even after this adjustment, that
-  // result is already deep in "red" territory regardless of the exact
-  // figure, so a second cycle's precision wouldn't change what the number
-  // tells the user. See INVERTER_REPLACEMENT_COST_GBP/_YEAR's comment for
-  // sourcing.
-  const naivePaybackYears = systemCostGbp / annualSavingsGbp;
-  const paybackAssumesInverterReplacement = naivePaybackYears > INVERTER_REPLACEMENT_YEAR;
-  const paybackYears = paybackAssumesInverterReplacement
-    ? (systemCostGbp + INVERTER_REPLACEMENT_COST_GBP) / annualSavingsGbp
-    : naivePaybackYears;
+  // Payback simulated year-by-year (degradation, price escalation, and
+  // recurring inverter replacement cost) rather than a flat
+  // systemCost/annualSavings division that implicitly assumed generation
+  // and price both stay constant forever. See simulatePaybackYears' own
+  // comment and ELECTRICITY_PRICE_ANNUAL_ESCALATION_RATE/
+  // PANEL_DEGRADATION_ANNUAL_RATE's sourcing notes above.
+  const paybackSimulation = simulatePaybackYears({
+    systemCostGbp,
+    baseSelfConsumedKwh: selfConsumedKwh,
+    baseSecondaryKwh: exportedKwh,
+    secondaryRatePencePerKwh: usedSegRate,
+    electricityPricePencePerKwh: usedElectricityPrice,
+    inverterReplacementCostGbp: INVERTER_REPLACEMENT_COST_GBP,
+    inverterReplacementEveryYears: INVERTER_REPLACEMENT_YEAR,
+  });
+  const paybackYears = paybackSimulation.paybackYears;
   const status = scoreStatus(paybackYears, ROOFTOP_PAYBACK_THRESHOLDS);
 
   const result = {
     segment: 'rooftop',
     status,
-    paybackYears: Math.round(paybackYears * 10) / 10,
+    paybackYears: Number.isFinite(paybackYears) ? Math.round(paybackYears * 10) / 10 : null,
     annualSavingsGbp: Math.round(annualSavingsGbp),
     systemCostGbp,
     systemSizeKwp,
@@ -772,9 +881,9 @@ function calculateRooftopViability({
         note: `Computed from the ratio of your annual generation (${generation}kWh) to your annual consumption (${annualConsumptionKwh}kWh) via DESNZ's own Home Energy Model self-consumption formula (HEM-TP-18), not from occupancy pattern directly. Applying a formula designed for sub-hourly timesteps to annual totals is a coarser approximation — it can't distinguish a household whose consumption is concentrated in daylight hours (higher real self-consumption) from one whose same annual total is mostly evening (lower real self-consumption).`,
       },
       paybackYears: {
-        value: Math.round(paybackYears * 10) / 10,
-        tier: 'Design judgment (color thresholds)' + (paybackAssumesInverterReplacement ? ' + Inference (inverter replacement cost)' : ''),
-        note: `The green/amber/red cutoffs (≤${ROOFTOP_PAYBACK_THRESHOLDS.green}yr / ≤${ROOFTOP_PAYBACK_THRESHOLDS.amber}yr / longer) are this calculator's own design judgment, loosely anchored to a researched 6-14yr range, not a personalized recommendation — how long you plan to own the property and how you weigh upfront cost against long-term saving both change what counts as a good payback for you specifically. Weigh the raw number above against your own plans rather than the color alone.${paybackAssumesInverterReplacement ? ` This figure also assumes one inverter replacement (£${INVERTER_REPLACEMENT_COST_GBP}, around year ${INVERTER_REPLACEMENT_YEAR}) partway through the payback period, since the unadjusted payback (${Math.round(naivePaybackYears * 10) / 10}yr) ran past a typical string inverter's working life — see the inverterReplacementFactored flag.` : ''}`,
+        value: Number.isFinite(paybackYears) ? Math.round(paybackYears * 10) / 10 : null,
+        tier: 'Design judgment (color thresholds) + Inference (price escalation, degradation, inverter replacement)',
+        note: `The green/amber/red cutoffs (≤${ROOFTOP_PAYBACK_THRESHOLDS.green}yr / ≤${ROOFTOP_PAYBACK_THRESHOLDS.amber}yr / longer) are this calculator's own design judgment, loosely anchored to a researched 6-14yr range, not a personalized recommendation — how long you plan to own the property and how you weigh upfront cost against long-term saving both change what counts as a good payback for you specifically. Weigh the raw number above against your own plans rather than the color alone. This figure is simulated year-by-year rather than a flat cost÷savings division: it assumes ${Math.round(ELECTRICITY_PRICE_ANNUAL_ESCALATION_RATE * 100)}%/yr electricity price escalation (consumer-guide convergence, no official DESNZ/Ofgem figure found for this specifically) and ${(PANEL_DEGRADATION_ANNUAL_RATE * 100).toFixed(1)}%/yr panel output degradation (manufacturer-warranty convergence), and includes an inverter replacement every ${INVERTER_REPLACEMENT_YEAR} years if the payback period runs that long (£${INVERTER_REPLACEMENT_COST_GBP} each, ${paybackSimulation.inverterReplacementsFactored} included in this result). A flat calculation ignoring all three (today's price and generation held constant forever, no replacement) would give ${Number.isFinite(paybackSimulation.flatPaybackYears) ? `${Math.round(paybackSimulation.flatPaybackYears * 10) / 10}yr` : 'no payback within the simulated horizon'} — price escalation and degradation partly offset each other, but escalation is assumed larger, so this simulated figure is usually shorter than the flat one despite now including the inverter cost the flat figure ignores.`,
       },
     },
   };
@@ -865,12 +974,21 @@ function calculateRooftopViability({
     });
   }
 
-  if (paybackAssumesInverterReplacement) {
+  if (paybackSimulation.inverterReplacementsFactored > 0) {
     flags.push({
       id: 'inverterReplacementFactored',
       tier: 'Inference',
-      title: 'This payback figure includes one inverter replacement',
-      note: `Your unadjusted payback (${Math.round(naivePaybackYears * 10) / 10}yr) ran past a typical string inverter's working life, so this result adds one replacement (£${INVERTER_REPLACEMENT_COST_GBP}, around year ${INVERTER_REPLACEMENT_YEAR} — a consumer-guide-sourced estimate, no MCS/government figure found) to the payback math. Panels themselves are commonly warrantied well beyond this; the inverter is the part that typically needs mid-life replacement.`,
+      title: `This payback figure includes ${paybackSimulation.inverterReplacementsFactored === 1 ? 'one inverter replacement' : `${paybackSimulation.inverterReplacementsFactored} inverter replacements`}`,
+      note: `Your payback period runs past a typical string inverter's working life, so this result adds ${paybackSimulation.inverterReplacementsFactored === 1 ? 'one replacement' : `${paybackSimulation.inverterReplacementsFactored} replacements`} (£${INVERTER_REPLACEMENT_COST_GBP} each, around every ${INVERTER_REPLACEMENT_YEAR} years — a consumer-guide-sourced estimate, no MCS/government figure found) to the payback math. Panels themselves are commonly warrantied well beyond this; the inverter is the part that typically needs mid-life replacement. A flat calculation ignoring this (and price escalation and degradation — see assumptions.paybackYears) would give ${Number.isFinite(paybackSimulation.flatPaybackYears) ? `${Math.round(paybackSimulation.flatPaybackYears * 10) / 10}yr` : 'no payback within the simulated horizon'}.`,
+    });
+  }
+
+  if (!Number.isFinite(paybackYears)) {
+    flags.push({
+      id: 'paybackNotReachedWithinSimulation',
+      tier: 'Inference',
+      title: `This result doesn't pay back within ${PAYBACK_SIMULATION_MAX_YEARS} years`,
+      note: `Simulated cumulative savings (accounting for price escalation, panel degradation, and recurring inverter replacement) never clear the total cost within a ${PAYBACK_SIMULATION_MAX_YEARS}-year horizon, roughly matching a panel's commonly-cited working life. This result is a clear red regardless of the exact figure.`,
     });
   }
 
@@ -1374,8 +1492,19 @@ function calculatePluginViability({ occupancy, orientation, electricityPricePenc
   const selfConsumedKwh = hasConsumptionInput ? Math.min(generation * selfConsumptionRate, annualConsumptionKwh) : generation;
   const unselfConsumedKwh = generation - selfConsumedKwh;
 
+  // Year-1 snapshot, still the headline "annual savings" figure. Payback
+  // below is simulated year-by-year (degradation + price escalation, no
+  // inverter replacement modeled — see PLUGIN_VERTICAL_ORIENTATION_MULTIPLIER's
+  // sourcing note for why not), same ADDED 1 Aug 2026 fix as rooftop's.
   const annualSavingsGbp = (selfConsumedKwh * usedElectricityPrice) / 100;
-  const paybackYears = PLUGIN_KIT_COST_GBP / annualSavingsGbp;
+  const paybackSimulation = simulatePaybackYears({
+    systemCostGbp: PLUGIN_KIT_COST_GBP,
+    baseSelfConsumedKwh: selfConsumedKwh,
+    baseSecondaryKwh: unselfConsumedKwh,
+    secondaryRatePencePerKwh: 0,
+    electricityPricePencePerKwh: usedElectricityPrice,
+  });
+  const paybackYears = paybackSimulation.paybackYears;
   const status = scoreStatus(paybackYears, PLUGIN_PAYBACK_THRESHOLDS);
 
   const flags = [];
@@ -1395,10 +1524,19 @@ function calculatePluginViability({ occupancy, orientation, electricityPricePenc
     });
   }
 
+  if (!Number.isFinite(paybackYears)) {
+    flags.push({
+      id: 'paybackNotReachedWithinSimulation',
+      tier: 'Inference',
+      title: `This result doesn't pay back within ${PAYBACK_SIMULATION_MAX_YEARS} years`,
+      note: `Simulated cumulative savings (accounting for price escalation and panel degradation) never clear the kit cost within a ${PAYBACK_SIMULATION_MAX_YEARS}-year horizon. This result is a clear red regardless of the exact figure.`,
+    });
+  }
+
   return {
     segment: 'plugin',
     status,
-    paybackYears: Math.round(paybackYears * 10) / 10,
+    paybackYears: Number.isFinite(paybackYears) ? Math.round(paybackYears * 10) / 10 : null,
     annualSavingsGbp: Math.round(annualSavingsGbp),
     kitCostGbp: PLUGIN_KIT_COST_GBP,
     generationKwh: generation,
@@ -1431,9 +1569,9 @@ function calculatePluginViability({ occupancy, orientation, electricityPricePenc
             note: "No household consumption figure was given, so this defaults to assuming full self-consumption — the weakest assumption in this calculator's plug-in segment. See the pluginSelfConsumptionUnverified flag.",
           },
       paybackYears: {
-        value: Math.round(paybackYears * 10) / 10,
-        tier: 'Design judgment',
-        note: `The green/amber/red cutoffs (≤${PLUGIN_PAYBACK_THRESHOLDS.green}yr / ≤${PLUGIN_PAYBACK_THRESHOLDS.amber}yr / longer) are this calculator's own design judgment, not a personalized recommendation — how long you plan to keep the kit and how you weigh upfront cost against long-term saving both change what counts as a good payback for you specifically. Weigh the raw number above against your own plans rather than the color alone. (No inverter-replacement adjustment is modeled here, unlike rooftop's payback figure — no cost research exists at plug-in's much smaller scale.)`,
+        value: Number.isFinite(paybackYears) ? Math.round(paybackYears * 10) / 10 : null,
+        tier: 'Design judgment (color thresholds) + Inference (price escalation, degradation)',
+        note: `The green/amber/red cutoffs (≤${PLUGIN_PAYBACK_THRESHOLDS.green}yr / ≤${PLUGIN_PAYBACK_THRESHOLDS.amber}yr / longer) are this calculator's own design judgment, not a personalized recommendation — how long you plan to keep the kit and how you weigh upfront cost against long-term saving both change what counts as a good payback for you specifically. Weigh the raw number above against your own plans rather than the color alone. This figure is simulated year-by-year (${Math.round(ELECTRICITY_PRICE_ANNUAL_ESCALATION_RATE * 100)}%/yr price escalation, ${(PANEL_DEGRADATION_ANNUAL_RATE * 100).toFixed(1)}%/yr panel degradation — same assumptions and sourcing as rooftop's payback figure) rather than a flat cost÷savings division. No inverter-replacement adjustment is modeled here, unlike rooftop's payback figure — no cost research exists at plug-in's much smaller scale. A flat calculation ignoring escalation/degradation would give ${Number.isFinite(paybackSimulation.flatPaybackYears) ? `${Math.round(paybackSimulation.flatPaybackYears * 10) / 10}yr` : 'no payback within the simulated horizon'}.`,
       },
     },
   };
@@ -1457,6 +1595,7 @@ const SunnySideUpCalculator = {
   estimateAnnualConsumptionKwh,
   estimateSystemSizeFromRoofArea,
   selfConsumptionFactorFromDemandRatio,
+  simulatePaybackYears,
   constants: {
     ELECTRICITY_PRICE_PENCE_PER_KWH_DEFAULT,
     SEG_RATE_PENCE_PER_KWH_DEFAULT,
@@ -1484,6 +1623,9 @@ const SunnySideUpCalculator = {
     PLUGIN_PAYBACK_THRESHOLDS,
     INVERTER_REPLACEMENT_COST_GBP,
     INVERTER_REPLACEMENT_YEAR,
+    ELECTRICITY_PRICE_ANNUAL_ESCALATION_RATE,
+    PANEL_DEGRADATION_ANNUAL_RATE,
+    PAYBACK_SIMULATION_MAX_YEARS,
     PLUGIN_LEGAL_STATUS,
   },
 };

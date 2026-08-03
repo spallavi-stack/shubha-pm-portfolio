@@ -5,7 +5,7 @@
  * the calculator's output lands in the ranges grounding-research.md actually
  * reports, run before any UI is built on top of this logic.
  */
-const { calculateRooftopViability, calculateRooftopViabilityByPostcode, calculatePluginViability, findSegTariff, findSegTariffsBySupplier, estimateAnnualConsumptionKwh, estimateSystemSizeFromRoofArea, constants } = require('./calculator.js');
+const { calculateRooftopViability, calculateRooftopViabilityByPostcode, calculatePluginViability, findSegTariff, findSegTariffsBySupplier, estimateAnnualConsumptionKwh, estimateSystemSizeFromRoofArea, simulatePaybackYears, constants } = require('./calculator.js');
 
 function printResult(label, result) {
   console.log(`\n--- ${label} ---`);
@@ -35,27 +35,34 @@ printResult(
   calculateRooftopViability({ orientation: 'southFacing', occupancy: 'usuallyOut', annualConsumptionKwh: 4000 })
 );
 
-// Rooftop, north-facing (worst case). Expect: red, long payback. Also the
-// first scenario in this file where the naive payback (cost/savings) runs
-// past INVERTER_REPLACEMENT_YEAR (12), so this should exercise the 1 Aug
-// 2026 inverter-replacement adjustment: paybackYears should be LONGER than
-// systemCostGbp/annualSavingsGbp alone would give, flags should include
-// "inverterReplacementFactored" naming the naive (unadjusted) figure, and
-// assumptions.paybackYears.tier should mention "Inference (inverter
-// replacement cost)" in addition to "Design judgment (color thresholds)".
+// Rooftop, north-facing (worst case). Expect: red. Also the first scenario
+// in this file where the flat payback (systemCost/annualSavings, ~14.1yr)
+// runs past INVERTER_REPLACEMENT_YEAR (12), so the 1 Aug 2026 payback
+// simulation (ADDED, on top of the earlier inverter-replacement fix) should
+// engage: flags should include "inverterReplacementFactored" (1 replacement
+// included), and assumptions.paybackYears.tier should read "Design judgment
+// (color thresholds) + Inference (price escalation, degradation, inverter
+// replacement)". Note the simulated paybackYears can come out SHORTER than
+// the flat figure even with an inverter replacement folded in (price
+// escalation compounding over 13+ years can outweigh both degradation and
+// the added inverter cost) — not a bug, and the assumptions/flag notes name
+// the flat comparison figure explicitly so this isn't a silent surprise.
 printResult(
   'Rooftop — north-facing, usually home, 4,000kWh/yr household use',
   calculateRooftopViability({ orientation: 'northFacing', occupancy: 'usuallyHome', annualConsumptionKwh: 4000 })
 );
 
-// Rooftop, same as the very first scenario (south-facing, amber, ~9.6yr
-// naive payback) — confirms the inverter adjustment does NOT engage when
-// naive payback is under INVERTER_REPLACEMENT_YEAR: no
-// "inverterReplacementFactored" flag, and assumptions.paybackYears.tier
-// should read only "Design judgment (color thresholds)", no inverter
-// mention. (Re-run here explicitly rather than just inferring it from the
-// first case, since this is the behavior actually being checked by this
-// addition.)
+// Rooftop, same as the very first scenario (south-facing, amber, ~9.6yr flat
+// payback) — confirms the inverter-replacement addition does NOT engage
+// when the flat payback is under INVERTER_REPLACEMENT_YEAR: no
+// "inverterReplacementFactored" flag, and the flags array should have no
+// "paybackNotReachedWithinSimulation" entry either. The paybackYears.tier
+// string is unconditional now (always mentions price escalation/degradation/
+// inverter replacement, since the simulation always runs), so this case is
+// distinguished by the ABSENCE of the inverterReplacementFactored flag and
+// "0 included in this result" in the note, not by a different tier string.
+// (Re-run here explicitly rather than just inferring it from the first
+// case, since this is the behavior actually being checked by this addition.)
 printResult(
   'Rooftop — south-facing, usually home, 4,000kWh/yr (re-run: confirms no inverter adjustment below the 12yr threshold)',
   calculateRooftopViability({ orientation: 'southFacing', occupancy: 'usuallyHome', annualConsumptionKwh: 4000 })
@@ -73,7 +80,7 @@ printResult(
 // flagged fallback, not a silent default) — payback should still land near
 // the weak source's claimed 3-4yr figure.
 printResult('Plug-in — standard case (defaults, no consumption given)', calculatePluginViability({ occupancy: 'usuallyHome' }));
-console.log('- selfConsumedKwh should equal generationKwh (770), unselfConsumedKwh 0, flags should include "pluginSelfConsumptionUnverified" warning this may overstate savings, and assumptions.paybackYears (added 1 Aug 2026) should explain the green/amber/red cutoffs are a design judgment, with no inverter-replacement mention (not modeled for plug-in scale).');
+console.log('- selfConsumedKwh should equal generationKwh (770), unselfConsumedKwh 0, flags should include "pluginSelfConsumptionUnverified" warning this may overstate savings, and assumptions.paybackYears (added 1 Aug 2026) should explain the green/amber/red cutoffs are a design judgment, with no inverter-replacement mention (not modeled for plug-in scale), but SHOULD mention price escalation and degradation now (same fix as rooftop, applied at plug-in\'s much shorter horizon, where the effect is real but small), and name a flat-comparison figure.');
 
 // Plug-in, no consumption figure given (unusual placement, but keeping this
 // scenario for orientation coverage): north should score meaningfully worse
@@ -259,6 +266,46 @@ printResult(
     regionalGeneration: constants.REGIONAL_GENERATION_MULTIPLIER.Scotland,
   })
 );
+
+// Direct unit checks on simulatePaybackYears (ADDED 1 Aug 2026), isolating
+// the escalation/degradation/inverter-replacement math from the rest of
+// calculateRooftopViability's assumptions/flags plumbing.
+console.log('\n--- simulatePaybackYears: zero-degradation, zero-escalation should reduce to flat division ---');
+const zeroEffectSim = simulatePaybackYears({
+  systemCostGbp: 1000,
+  baseSelfConsumedKwh: 1000,
+  baseSecondaryKwh: 0,
+  secondaryRatePencePerKwh: 0,
+  electricityPricePencePerKwh: 20,
+  // No inverter params: this path should also confirm the "no inverter
+  // modeled" case (undefined cost/interval) never throws or divides by
+  // undefined, since the function guards inverterReplacementCostGbp being
+  // falsy before touching inverterReplacementEveryYears.
+});
+console.log(JSON.stringify(zeroEffectSim, null, 2));
+console.log('- With escalation/degradation constants nonzero but a trivial 5-year case (1000/(1000*20/100)=5yr flat), paybackYears and flatPaybackYears should be close but not identical (escalation still applies from year 2), and inverterReplacementsFactored should be 0 (no inverter params passed).');
+
+console.log('\n--- simulatePaybackYears: a case that never recovers within PAYBACK_SIMULATION_MAX_YEARS ---');
+const neverRecoversSim = simulatePaybackYears({
+  systemCostGbp: 100000,
+  baseSelfConsumedKwh: 100,
+  baseSecondaryKwh: 0,
+  secondaryRatePencePerKwh: 0,
+  electricityPricePencePerKwh: 20,
+});
+console.log(JSON.stringify(neverRecoversSim, null, 2));
+console.log(`- simulatePaybackYears itself returns a raw Infinity here (£100,000 system, £20/yr savings, never recovers within ${constants.PAYBACK_SIMULATION_MAX_YEARS} years even with escalation) — printResult's JSON.stringify auto-converts that to the "null" shown above, which is JSON.stringify's own standard behavior for Infinity, not something this function does. Confirms the loop's cap terminates cleanly rather than running away. calculateRooftopViability/calculatePluginViability handle this explicitly with Number.isFinite() before returning, rather than relying on that implicit conversion — see the next case.`);
+
+// Same never-recovers scenario, but through calculateRooftopViability's full
+// public interface — confirms Infinity gets converted to null (not NaN, not
+// a literal Infinity that JSON.stringify would silently drop) in both the
+// top-level paybackYears and assumptions.paybackYears.value, and that the
+// paybackNotReachedWithinSimulation flag fires.
+printResult(
+  'Rooftop — a scenario engineered to never pay back within the simulation horizon (£50,000 system cost)',
+  { ...calculateRooftopViability({ orientation: 'northFacing', occupancy: 'usuallyHome', annualConsumptionKwh: 100, roofAreaM2: 1000 }), systemCostGbpNote: 'roofAreaM2:1000 pushes systemCostGbp well past what a 100kWh/yr household could ever recover' }
+);
+console.log('- If this scenario\'s systemCostGbp/annualSavingsGbp ratio is large enough to exceed the simulation horizon: paybackYears should be null (not a raw Infinity, which JSON.stringify would otherwise silently turn into a bare null anyway, but explicitly handled here rather than accidentally), status should be "red", and flags should include "paybackNotReachedWithinSimulation".');
 
 (async () => {
   // calculateRooftopViabilityByPostcode is async and calls postcodes.io over
