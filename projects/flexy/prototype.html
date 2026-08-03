@@ -320,6 +320,23 @@
   }
   .tou-toggle .lab{font-size:13px;font-weight:700;color:var(--flexy-ink);}
   .tou-toggle .sub{font-size:11px;color:var(--gray);margin-top:1px;}
+  .tou-info-wrap{position:relative;display:inline-flex;align-items:center;margin-left:6px;}
+  .tou-info-btn{
+    width:16px;height:16px;border-radius:50%;border:1.5px solid var(--gray);color:var(--gray);
+    background:none;font-size:10px;font-weight:700;line-height:1;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;padding:0;
+  }
+  .tou-info-pop{
+    display:none;position:absolute;top:22px;left:-14px;width:220px;z-index:5;
+    background:#fff;border-radius:10px;padding:12px;box-shadow:0 8px 24px rgba(20,30,40,.18);
+    font-size:11.5px;line-height:1.5;color:var(--flexy-ink);font-weight:400;
+  }
+  .tou-info-pop.open{display:block;}
+  .bill-row{display:flex;justify-content:space-between;gap:10px;font-size:12.5px;color:var(--flexy-ink);padding:7px 0;border-bottom:1px solid var(--line);}
+  .bill-row:last-of-type{border-bottom:none;}
+  .bill-row.bill-total{font-weight:800;padding-top:9px;}
+  .bill-row span:first-child{color:var(--gray);}
+  .bill-row.bill-total span:first-child{color:var(--flexy-ink);}
   .switch{position:relative;width:44px;height:26px;flex-shrink:0;}
   .switch input{opacity:0;width:0;height:0;}
   .slider-toggle{
@@ -351,7 +368,7 @@
   .data-footnote .data-badge.live{color:#1F7A3F;}
   .data-footnote .data-badge.fallback{color:#8A5A0A;}
   .data-footnote .data-badge.modeled{color:var(--gray);}
-  .data-footnote .verify-link{font-size:10px;margin-bottom:0;}
+  .consumption-note{font-size:10px;color:var(--gray);margin-top:5px;line-height:1.4;}
 
   .bottomnav{
     position:absolute;bottom:0;left:0;right:0;height:78px;
@@ -391,16 +408,13 @@
     display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:700;
     padding:4px 10px;border-radius:20px;margin-bottom:4px;
     background:#F7F4EC;color:#5C5445;border:1px solid #E5DFD2;
+    text-decoration:none;cursor:pointer;
   }
   .data-badge.live{background:#E9F7EE;color:#1F7A3F;border-color:#BCE6CA;}
   .data-badge.live::before{content:"●";color:#2FBE5E;}
   .data-badge.fallback{background:#FBF0DC;color:#8A5A0A;border-color:#F0DFB8;}
   .data-badge.fallback::before{content:"●";color:#B45309;}
   .data-badge.modeled{background:#F7F4EC;color:#5C5445;border-color:#E5DFD2;}
-  .verify-link{
-    display:block;font-size:11px;font-weight:600;color:var(--flexy-teal-dark);
-    text-decoration:underline;margin-bottom:10px;
-  }
   .chart-note{font-size:10.5px;color:#8A8272;margin:6px 2px 0;line-height:1.4;}
 
   .scroll-hint{
@@ -882,11 +896,11 @@
 
         <div class="stat-row" style="margin:0;">
           <div class="stat" style="box-shadow:none;background:var(--flexy-bg);padding:18px 14px;">
-            <div class="val" style="font-size:26px;">$2.64</div>
+            <div class="val" style="font-size:26px;" id="homeCostVal">$2.64</div>
             <div class="lbl" style="font-size:12px;margin-top:5px;">Cost today</div>
           </div>
           <div class="stat" style="box-shadow:none;background:var(--flexy-bg);padding:18px 14px;">
-            <div class="val" style="font-size:26px;">21.4&cent;</div>
+            <div class="val" style="font-size:26px;" id="homeAvgVal">21.4&cent;</div>
             <div class="lbl" style="font-size:12px;margin-top:5px;">Avg price paid / kWh</div>
           </div>
         </div>
@@ -1122,20 +1136,31 @@
         <div class="stat"><div class="val" id="extraVal">&#8211;</div><div class="lbl" id="extraLbl">Cheapest hour today</div></div>
       </div>
 
+      <div onclick="toggleCostBreakdown()" style="cursor:pointer;font-size:12px;font-weight:700;color:var(--flexy-teal-dark);margin:-6px 0 12px 2px;">
+        <span id="costBreakdownToggleLbl">See what's in this cost &darr;</span>
+      </div>
+      <div class="card" id="costBreakdown" style="display:none;">
+        <div class="bill-row"><span>Supply (real-time price, chart below)</span><span id="billSupplyVal">$0.00</span></div>
+        <div class="bill-row"><span id="billDeliveryLbl">Delivery (ComEd per-kWh charge)</span><span id="billDeliveryVal">$0.00</span></div>
+        <div class="bill-row"><span id="billFixedLbl">Fixed customer + metering charge</span><span id="billFixedVal">$0.00</span></div>
+        <div class="bill-row bill-total"><span>Total</span><span id="billTotalVal">$0.00</span></div>
+        <p class="chart-footnote" style="margin-top:8px;">The price chart below shows ComEd's real-time supply price only. Delivery and fixed charges are ComEd's own tariff, they don't change with what you use or when, and they're why this total is higher than price &times; usage alone.</p>
+      </div>
+
       <div class="tou-toggle">
-        <div><div class="lab">Time of Use</div></div>
+        <div style="display:flex;align-items:center;">
+          <div class="lab">Time of Use</div>
+          <span class="tou-info-wrap">
+            <button type="button" class="tou-info-btn" aria-label="What is Time of Use?" onclick="event.stopPropagation();toggleTouInfo();">i</button>
+            <span class="tou-info-pop" id="touInfoPop">Time of Use pricing charges more for delivery during peak demand hours. For ComEd, peak hours are 1&#8211;7pm daily, at 10.7&#162;/kWh delivery versus 5.9&#162;/kWh standard.</span>
+          </span>
+        </div>
         <label class="switch">
           <input type="checkbox" id="touSwitch" onchange="toggleTOU()">
           <span class="slider-toggle"></span>
         </label>
       </div>
 
-      <div class="legend" id="priceLegend">
-        <span><span class="dot" id="legDot0" style="background:var(--cheap)"></span><span id="legLbl0">Cheap</span></span>
-        <span><span class="dot" id="legDot1" style="background:var(--moderate)"></span><span id="legLbl1">Moderate</span></span>
-        <span><span class="dot" id="legDot2" style="background:var(--expensive)"></span><span id="legLbl2">Expensive</span></span>
-        <span id="legTou" style="display:none;"><span class="dot" style="background:var(--tou-expensive);border-radius:2px;"></span>+TOU delivery (1-7pm)</span>
-      </div>
 
       <div class="card chart-card">
         <div class="chart-title"><span id="priceChartTitle">Price by hour (real)</span><span class="axis-tag">&#162;/kWh</span></div>
@@ -1150,11 +1175,12 @@
       <div class="card chart-card">
         <div class="chart-title"><span>Estimated cost by hour</span><span class="axis-tag" id="costTotalTag">$</span></div>
         <svg id="costChart" viewBox="0 0 320 112" width="100%" height="112"></svg>
+        <p class="chart-footnote">Supply + TOU delivery premium only, the part that actually varies by hour. Flat delivery and fixed charges are in the total Cost above, see the breakdown.</p>
       </div>
 
       <div class="data-footnote">
-        <div id="dataBadge" class="data-badge">Loading real ComEd pricing&#8230;</div>
-        <a id="verifyLink" class="verify-link" href="#" target="_blank" rel="noopener">Verify against ComEd's public feed →</a>
+        <a id="dataBadge" class="data-badge" href="#" target="_blank" rel="noopener">Loading real ComEd pricing&#8230;</a>
+        <div id="consumptionNote" class="consumption-note"></div>
       </div>
     </div>
 
@@ -1526,7 +1552,15 @@ function updateHomeChargingCard(){
 }
 
 // ---- Price & Cost chart: real ComEd data, honestly labeled ----
-const consumption = [0.3,0.2,0.2,0.2,0.3,0.4,0.9,1.1,0.6,0.4,0.3,0.3,0.4,0.5,0.4,0.3,0.9,1.6,1.8,1.2,0.8,0.5,0.4,0.3];
+// Household base load is scaled to EIA's 2024 Illinois residential average (693 kWh/month,
+// https://www.eia.gov/electricity/sales_revenue_price/pdf/table_5A.pdf), then an overnight
+// EV charging bump (11pm-6am, ~7.8 kWh/night, matching the session sizes already shown in
+// Charging history below) is added on top, since a home with an EV should use more than the
+// state average, not less. Total lands near 920 kWh/month, consistent with the full-bill
+// estimate this feeds (see COMED_FIXED_MONTHLY below) tracking close to EIA's $109.99/month
+// average IL bill despite the extra EV load.
+const consumption = [1.6,1.4,1.4,1.4,1.6,1.7,1.5,1.8,1.0,0.6,0.5,0.5,0.6,0.8,0.6,0.5,1.5,2.6,2.9,1.9,1.3,0.8,0.6,1.6];
+const CONSUMPTION_SOURCE_NOTE = "Consumption modeled on EIA's Illinois residential average (693 kWh/month) plus overnight EV charging, not your actual usage. Real usage needs Green Button Connect.";
 
 // Real ComEd Hourly Pricing data (cents/kWh), last refreshed by scripts/refresh_comed_prices.py.
 // Used as a last-resort fallback when the live fetch below can't reach ComEd at all (network down, etc.)
@@ -1541,6 +1575,14 @@ const RTP_COLORS = {0:'#34C759',1:'#F5A623',2:'#FF6B6B'};
 // peak hours, not a multiplier on the whole price, since that's how the actual filing works.
 const TOU_PEAK_DELTA_CENTS = 4.8;
 const TOU_PREMIUM_COLOR = '#33267A';
+// ComEd's standard (non-TOU) delivery charge, same 5.9¢/kWh baseline the TOU premium above
+// stacks on top of. Fixed charge is ComEd's Jan 2026 single-family, non-electric-heat tariff:
+// $15.26/month Customer Charge + $3.81/month Standard Metering Charge, via Citizens Utility
+// Board's 2026 rate report (citizensutilityboard.org/blog/2026/01/19/cubs-report-on-2026-electric-rates).
+// These apply regardless of usage or time of day, on top of the real-time supply price shown
+// in the chart, which is why "Cost" below is higher than price × usage alone.
+const COMED_STANDARD_DELIVERY_CENTS = 5.9;
+const COMED_FIXED_MONTHLY = 19.07;
 
 const FALLBACK_DATE_STR = '20260731';
 let priceState = { hours: FALLBACK_COMED_PRICES, source: 'fallback', isToday: false, label: FALLBACK_LABEL, dateStr: FALLBACK_DATE_STR, touMode: false };
@@ -1574,6 +1616,42 @@ function getRangeCurves(range){
 function touDeltaCents(hour){
   return (hour >= 13 && hour < 19) ? TOU_PEAK_DELTA_CENTS : 0;
 }
+function fullDeliveryCents(hour){
+  return COMED_STANDARD_DELIVERY_CENTS + (priceState.touMode ? touDeltaCents(hour) : 0);
+}
+function billFixedFor(range){
+  if (range === 'today') return COMED_FIXED_MONTHLY / 30;
+  if (range === 'year') return COMED_FIXED_MONTHLY * 12;
+  return COMED_FIXED_MONTHLY * (RANGE_DAYS[range] / 30); // week
+}
+// Full-bill estimate: supply is the real-time price shown in the chart (unaffected by TOU
+// unless TOU adds its delivery premium), delivery is ComEd's per-kWh charge (flat, or peak-
+// premium when TOU is on), fixed is the prorated monthly customer/metering charge. basePrices
+// may be a partial day (fewer than 24 entries) for 'today' when the day isn't over yet.
+function computeBill(basePrices, load, range){
+  const days = range === 'today' ? 1 : RANGE_DAYS[range];
+  const supply = basePrices.reduce((sum,p,i)=> sum + (p/100) * (load[i]||0), 0) * days;
+  const delivery = basePrices.reduce((sum,p,i)=> sum + (fullDeliveryCents(i)/100) * (load[i]||0), 0) * days;
+  const fixed = billFixedFor(range);
+  return { supply, delivery, fixed, total: supply + delivery + fixed };
+}
+let costBreakdownOpen = false;
+function toggleCostBreakdown(){
+  costBreakdownOpen = !costBreakdownOpen;
+  document.getElementById('costBreakdown').style.display = costBreakdownOpen ? 'block' : 'none';
+  document.getElementById('costBreakdownToggleLbl').innerHTML = costBreakdownOpen ? "Hide what's in this cost &uarr;" : "See what's in this cost &darr;";
+}
+function renderCostBreakdown(bill){
+  document.getElementById('billSupplyVal').textContent = '$' + bill.supply.toFixed(2);
+  document.getElementById('billDeliveryVal').textContent = '$' + bill.delivery.toFixed(2);
+  document.getElementById('billFixedVal').textContent = '$' + bill.fixed.toFixed(2);
+  document.getElementById('billTotalVal').textContent = '$' + bill.total.toFixed(2);
+  document.getElementById('billDeliveryLbl').textContent = priceState.touMode
+    ? 'Delivery (ComEd per-kWh charge, incl. TOU peak premium)'
+    : 'Delivery (ComEd per-kWh charge)';
+  document.getElementById('billFixedLbl').textContent = 'Fixed customer + metering charge (' + RANGE_LABEL_SHORT[currentRange] + ')';
+}
+const RANGE_LABEL_SHORT = { today: 'prorated daily', week: 'prorated weekly', month: 'monthly', year: 'annual' };
 function priceTier(price, sorted){
   const p33 = sorted[Math.floor(sorted.length*0.33)];
   const p66 = sorted[Math.floor(sorted.length*0.66)];
@@ -1583,12 +1661,16 @@ function priceTier(price, sorted){
 }
 function hourLabel(h){ const hr=h%12===0?12:h%12; return hr+(h<12?'AM':'PM'); }
 
+function chartTitleFor(){
+  if (currentRange === 'today'){
+    return priceState.touMode ? 'Price by hour (real supply + TOU delivery)' : 'Price by hour (real)';
+  }
+  const rangeLabel = RANGE_LABEL[currentRange] + ' real avg';
+  return priceState.touMode ? 'Price by hour (' + rangeLabel + ' + TOU delivery)' : 'Price by hour (' + rangeLabel + ')';
+}
 function updateLegend(){
-  document.getElementById('legTou').style.display = priceState.touMode ? 'flex' : 'none';
   document.getElementById('touFootnote').style.display = priceState.touMode ? 'block' : 'none';
-  document.getElementById('priceChartTitle').textContent = priceState.touMode
-    ? 'Price by hour (real supply + TOU delivery)'
-    : 'Price by hour (real)';
+  document.getElementById('priceChartTitle').textContent = chartTitleFor();
 }
 
 // Dual-axis, stacked-when-TOU chart. Bars read off the left axis (¢/kWh) at true proportional
@@ -1697,39 +1779,46 @@ function renderTodayStats(){
   drawCostChart(base);
 
   const avgPrice = totals.reduce((a,b)=>a+b,0)/totals.length;
-  const cost = totals.reduce((sum,p,i)=> sum + (p/100) * (consumption[i]||0), 0);
+  const bill = computeBill(base, consumption, 'today');
+  renderCostBreakdown(bill);
   let cheapestIdx = 0;
   totals.forEach((p,i)=>{ if (p < totals[cheapestIdx]) cheapestIdx = i; });
 
-  document.getElementById('costVal').textContent = '$' + cost.toFixed(2);
-  document.getElementById('costLbl').textContent = priceState.touMode
-    ? 'Cost so far (real supply + TOU delivery × modeled load)'
-    : 'Cost so far (real price × modeled load)';
+  document.getElementById('costVal').textContent = '$' + bill.total.toFixed(2);
+  document.getElementById('costLbl').textContent = 'Cost so far (est. bill: supply + delivery + fees)';
+  const homeCostVal = document.getElementById('homeCostVal');
+  const homeAvgVal = document.getElementById('homeAvgVal');
+  if (homeCostVal) homeCostVal.textContent = '$' + bill.total.toFixed(2);
+  if (homeAvgVal) homeAvgVal.textContent = avgPrice.toFixed(1) + '¢';
   document.getElementById('avgVal').textContent = avgPrice.toFixed(1) + '¢';
   document.getElementById('extraVal').textContent = hourLabel(cheapestIdx);
   document.getElementById('extraLbl').textContent = 'Cheapest hour today';
 
   const badge = document.getElementById('dataBadge');
+  badge.href = 'https://hourlypricing.comed.com/api?type=day&date=' + priceState.dateStr;
   if (priceState.source === 'live' && priceState.isToday){
     badge.className = 'data-badge live';
-    badge.textContent = 'Live ComEd pricing · updated just now';
+    badge.textContent = 'Live ComEd pricing · updated just now →';
   } else if (priceState.source === 'live'){
     badge.className = 'data-badge live';
-    badge.textContent = "Live ComEd pricing · today's hours not posted yet, showing " + priceState.label;
+    badge.textContent = "Live ComEd pricing · today's hours not posted yet, showing " + priceState.label + ' →';
   } else {
     badge.className = 'data-badge fallback';
-    badge.textContent = 'Real ComEd pricing, captured ' + priceState.label + ' (live fetch unavailable here)';
+    badge.textContent = 'Real ComEd pricing, captured ' + priceState.label + ' (live fetch unavailable here) →';
   }
-  const link = document.getElementById('verifyLink');
-  link.href = 'https://hourlypricing.comed.com/api?type=day&date=' + priceState.dateStr;
-  link.style.display = 'block';
-  link.textContent = priceState.source === 'live'
-    ? "Check ComEd's live feed for today →"
-    : "Check ComEd's public feed for " + priceState.label + " →";
+  document.getElementById('consumptionNote').textContent = CONSUMPTION_SOURCE_NOTE;
 }
+function toggleTouInfo(){
+  document.getElementById('touInfoPop').classList.toggle('open');
+}
+document.addEventListener('click', (e)=>{
+  const pop = document.getElementById('touInfoPop');
+  if (pop && pop.classList.contains('open') && !pop.contains(e.target)) pop.classList.remove('open');
+});
 function toggleTOU(){
   priceState.touMode = document.getElementById('touSwitch').checked;
-  renderTodayStats();
+  if (currentRange === 'today') renderTodayStats();
+  else renderRangeStats(currentRange);
 }
 
 // Parses ComEd's response (a JS array literal using Date.UTC(...), not valid JSON) with a
@@ -1788,32 +1877,31 @@ async function loadRealComedData(){
 function setRange(btn, range){
   document.querySelectorAll('#s8 .seg button').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
-  document.getElementById('touSwitch').checked = false;
-  priceState.touMode = false;
-  if (range === 'today'){ renderTodayStats(); return; }
+  document.getElementById('touSwitch').checked = priceState.touMode;
+  if (range === 'today'){ currentRange = 'today'; renderTodayStats(); return; }
   currentRange = range;
-
-  const { prices, load } = getRangeCurves(range);
+  renderRangeStats(range);
+}
+function renderRangeStats(range){
+  const { prices: basePrices, load } = getRangeCurves(range);
+  const prices = basePrices.map((p,i)=> p + (priceState.touMode ? touDeltaCents(i) : 0));
   const avgPrice = prices.reduce((a,b)=>a+b,0)/prices.length;
-  const dailyCost = prices.reduce((sum,p,i)=> sum + (p/100) * (load[i]||0), 0);
-  const periodCost = dailyCost * RANGE_DAYS[range];
+  const bill = computeBill(basePrices, load, range);
+  renderCostBreakdown(bill);
 
-  document.getElementById('costVal').textContent = '$' + periodCost.toFixed(2);
-  document.getElementById('costLbl').textContent = 'Cost this ' + range + ' (real avg price × modeled load)';
+  document.getElementById('costVal').textContent = '$' + bill.total.toFixed(2);
+  document.getElementById('costLbl').textContent = 'Cost this ' + range + ' (est. bill: supply + delivery + fees)';
   document.getElementById('avgVal').textContent = avgPrice.toFixed(1) + '¢';
   document.getElementById('extraVal').textContent = RANGE_SAVINGS_PCT[range] + '%';
   document.getElementById('extraLbl').textContent = 'vs. flat rate';
   updateLegend();
-  document.getElementById('priceChartTitle').textContent = 'Price by hour (' + RANGE_LABEL[range] + ' real avg)';
-  drawChart(prices, load);
-  drawCostChart(prices, load);
+  drawChart(basePrices, load);
+  drawCostChart(basePrices, load);
   const badge = document.getElementById('dataBadge');
   badge.className = 'data-badge fallback';
-  badge.textContent = RANGE_SOURCE_LABEL[range] + ' (load profile still modeled, real usage needs Green Button Connect)';
-  const link = document.getElementById('verifyLink');
-  link.href = 'https://hourlypricing.comed.com/api?type=day&date=' + RANGE_SPOT_CHECK_DATE[range];
-  link.textContent = 'Spot-check one of the real sampled days →';
-  link.style.display = 'block';
+  badge.href = 'https://hourlypricing.comed.com/api?type=day&date=' + RANGE_SPOT_CHECK_DATE[range];
+  badge.textContent = RANGE_SOURCE_LABEL[range] + ' →';
+  document.getElementById('consumptionNote').textContent = CONSUMPTION_SOURCE_NOTE;
 }
 // ---- Charging schedule dial (drag-to-set window) ----
 const dialState = { startAngle: 345, stopAngle: 90 }; // 11:00 PM -> 6:00 AM, 0deg=12am at top, clockwise
