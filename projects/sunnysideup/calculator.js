@@ -569,6 +569,8 @@ function simulatePaybackYears({
 
     if (cumulativeSavingsGbp >= cumulativeCostGbp) {
       const remainder = cumulativeCostGbp - savingsBeforeThisYear;
+      // yearSavingsGbp <= 0 here would require baseYearSavingsGbp <= 0 too (degradation/escalation only scale a positive base up or down, never flip its sign), which the early-return guard above already catches before the loop starts; unreachable given this function's real input domain.
+      /* c8 ignore next */
       const fraction = yearSavingsGbp > 0 ? remainder / yearSavingsGbp : 0;
       return { paybackYears: (year - 1) + fraction, flatPaybackYears, inverterReplacementsFactored };
     }
@@ -944,6 +946,8 @@ function calculateRooftopViability({
   // that range — so the more of the generated electricity a household
   // exports rather than uses itself, the more this result understates what
   // an actual, higher-paying tariff would be worth.
+  // generation is always > 0 for every valid orientation (ROOFTOP_ANNUAL_GENERATION_KWH has no zero entries) and roof-area path (a too-small roofAreaM2 falls back to that same flat baseline rather than to 0); unreachable given this function's real input domain.
+  /* c8 ignore next */
   const exportShareOfGeneration = generation > 0 ? exportedKwh / generation : 0;
   if (!segRateIsUserProvided && exportShareOfGeneration > 0.5) {
     const topSegRate = SEG_TARIFFS[0].ratePencePerKwh;
@@ -979,6 +983,8 @@ function calculateRooftopViability({
       id: 'inverterReplacementFactored',
       tier: 'Inference',
       title: `This payback figure includes ${paybackSimulation.inverterReplacementsFactored === 1 ? 'one inverter replacement' : `${paybackSimulation.inverterReplacementsFactored} inverter replacements`}`,
+      // This flag only fires when inverterReplacementsFactored > 0, which only happens after the simulation loop actually ran, which requires baseYearSavingsGbp > 0 — the same condition that makes flatPaybackYears (systemCost / that same base-year savings) finite; the Number.isFinite(...) false branch below is therefore unreachable whenever this flag fires.
+      /* c8 ignore next */
       note: `Your payback period runs past a typical string inverter's working life, so this result adds ${paybackSimulation.inverterReplacementsFactored === 1 ? 'one replacement' : `${paybackSimulation.inverterReplacementsFactored} replacements`} (£${INVERTER_REPLACEMENT_COST_GBP} each, around every ${INVERTER_REPLACEMENT_YEAR} years — a consumer-guide-sourced estimate, no MCS/government figure found) to the payback math. Panels themselves are commonly warrantied well beyond this; the inverter is the part that typically needs mid-life replacement. A flat calculation ignoring this (and price escalation and degradation — see assumptions.paybackYears) would give ${Number.isFinite(paybackSimulation.flatPaybackYears) ? `${Math.round(paybackSimulation.flatPaybackYears * 10) / 10}yr` : 'no payback within the simulated horizon'}.`,
     });
   }
@@ -1633,6 +1639,8 @@ const SunnySideUpCalculator = {
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = SunnySideUpCalculator;
 }
+/* c8 ignore start -- browser global export; unreachable under Node's test runner, which is this suite's only environment */
 if (typeof window !== 'undefined') {
   window.SunnySideUpCalculator = SunnySideUpCalculator;
 }
+/* c8 ignore stop */
