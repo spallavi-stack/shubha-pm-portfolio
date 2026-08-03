@@ -1130,9 +1130,6 @@
         </label>
       </div>
 
-      <div class="legend" id="priceLegend">
-        <span id="legTou" style="display:none;"><span class="dot" style="background:var(--tou-expensive);border-radius:2px;"></span>+TOU delivery (1-7pm)</span>
-      </div>
 
       <div class="card chart-card">
         <div class="chart-title"><span id="priceChartTitle">Price by hour (real)</span><span class="axis-tag">&#162;/kWh</span></div>
@@ -1588,7 +1585,6 @@ function chartTitleFor(){
   return priceState.touMode ? 'Price by hour (' + rangeLabel + ' + TOU delivery)' : 'Price by hour (' + rangeLabel + ')';
 }
 function updateLegend(){
-  document.getElementById('legTou').style.display = priceState.touMode ? 'flex' : 'none';
   document.getElementById('touFootnote').style.display = priceState.touMode ? 'block' : 'none';
   document.getElementById('priceChartTitle').textContent = chartTitleFor();
 }
