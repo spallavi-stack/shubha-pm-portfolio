@@ -4,10 +4,13 @@
  * Every constant below is commented with its confidence tier and source,
  * matching the Fact/Inference/Assumption discipline in grounding-research.md.
  * This is a simplified prototype model, not a certified solar-yield or
- * financial-advice calculation. Self-consumption in particular is modeled
- * from occupancy pattern as a rough two-tier proxy — that specific mapping
- * was not independently researched and is a prototype-only simplification,
- * flagged in the assumptions output rather than presented as researched.
+ * financial-advice calculation. Self-consumption (both segments) is modeled
+ * via DESNZ Home Energy Model's own formula (selfConsumptionFactorFromDemandRatio),
+ * applied to annual totals rather than the per-timestep basis it was designed
+ * for — a real approximation, flagged in each result's assumptions/flags
+ * rather than presented as more precise than it is. Plug-in falls back to a
+ * fully-self-consumed assumption when no consumption figure is given at all;
+ * see calculatePluginViability's own comment for why and how that's flagged.
  *
  * WHY EACH VALUE IS SOURCED THE WAY IT IS: every input in this file falls
  * into one of three sourcing strategies, chosen deliberately per input, not
@@ -1237,22 +1240,58 @@ async function calculateRooftopViabilityByPostcode(postcode, otherInputs) {
 
 /**
  * @param {Object} input
- * @param {'usuallyHome'|'usuallyOut'} input.occupancy - retained for interface symmetry; not used in this scoring pass, since plug-in generation is assumed fully self-consumed
+ * @param {'usuallyHome'|'usuallyOut'} input.occupancy - retained for interface symmetry; not used directly (mirrors calculateRooftopViability, where self-consumption is demand-ratio-driven, not occupancy-driven)
  * @param {'southFacing'|'eastWestFacing'|'northFacing'} [input.orientation] - defaults to southFacing (the figure PLUGIN_ANNUAL_GENERATION_KWH is itself calibrated to) if omitted
  * @param {number} [input.electricityPricePencePerKwh] - the user's own known rate; falls back to the Ofgem price-cap default if omitted
+ * @param {number} [input.annualConsumptionKwh] - household's own annual electricity use, e.g. from estimateAnnualConsumptionKwh() or a bill; if given, self-consumption is computed the same way as rooftop's (see selfConsumptionFactorFromDemandRatio) instead of assuming the full amount is self-consumed
  */
-function calculatePluginViability({ occupancy, orientation, electricityPricePencePerKwh }) {
+function calculatePluginViability({ occupancy, orientation, electricityPricePencePerKwh, annualConsumptionKwh }) {
   const usedOrientation = orientation ?? 'southFacing';
   const orientationMultiplier = pluginOrientationMultiplier(usedOrientation);
   const generation = Math.round(PLUGIN_ANNUAL_GENERATION_KWH * orientationMultiplier);
   const usedElectricityPrice = electricityPricePencePerKwh ?? ELECTRICITY_PRICE_PENCE_PER_KWH_DEFAULT;
   const electricityPriceIsUserProvided = electricityPricePencePerKwh != null;
-  // Plug-in units are treated as fully self-consumed at this scale, no export
-  // mechanism assumed. This mirrors how the source figures were reported,
-  // not an independently modeled export split.
-  const annualSavingsGbp = (generation * usedElectricityPrice) / 100;
+
+  // CORRECTED 1 Aug 2026: this function previously treated 100% of
+  // generation as self-consumed, with no export/unmet-demand concept at
+  // all — a real gap, not just an unresearched simplification like the
+  // constants below. Plug-in kits have no export meter or SEG tracking, so
+  // a household away during the day gets nothing for a midday generation
+  // spike that exceeds its baseload demand: that surplus is fed to the grid
+  // for free, not banked as savings, unlike rooftop's SEG-credited export.
+  // When annualConsumptionKwh is available, self-consumption is now modeled
+  // the same way as rooftop's (selfConsumptionFactorFromDemandRatio, DESNZ
+  // HEM's own formula) and any unconsumed generation earns nothing at all
+  // (no SEG-equivalent for plug-in). When it isn't available (this input is
+  // optional, since a plug-in kit's own onboarding may be lighter-weight
+  // than rooftop's), this falls back to the old fully-self-consumed
+  // assumption, but that fallback is now named as a real overstatement risk
+  // in the result's flags/assumptions, not silently presented as fine.
+  const hasConsumptionInput = annualConsumptionKwh != null && annualConsumptionKwh > 0;
+  const selfConsumptionRate = hasConsumptionInput ? selfConsumptionFactorFromDemandRatio(generation, annualConsumptionKwh) : 1;
+  const selfConsumedKwh = hasConsumptionInput ? Math.min(generation * selfConsumptionRate, annualConsumptionKwh) : generation;
+  const unselfConsumedKwh = generation - selfConsumedKwh;
+
+  const annualSavingsGbp = (selfConsumedKwh * usedElectricityPrice) / 100;
   const paybackYears = PLUGIN_KIT_COST_GBP / annualSavingsGbp;
   const status = scoreStatus(paybackYears, PLUGIN_PAYBACK_THRESHOLDS);
+
+  const flags = [];
+  if (!hasConsumptionInput) {
+    flags.push({
+      id: 'pluginSelfConsumptionUnverified',
+      tier: 'Assumption',
+      title: 'This result assumes every unit generated is used, which may overstate savings',
+      note: "No household consumption figure was given, so this result falls back to assuming 100% of the kit's generation is self-consumed. Plug-in kits have no export meter, so any generation your home isn't using at that moment is fed to the grid for free, not credited as savings. If you're often out during the day, or your generation regularly exceeds what a small appliance load draws at once, your real savings are likely lower than this. Give your annual electricity use for a more realistic estimate.",
+    });
+  } else if (unselfConsumedKwh / generation > 0.15) {
+    flags.push({
+      id: 'pluginUnselfConsumedShare',
+      tier: 'Inference',
+      title: 'A meaningful share of this kit\'s generation is projected to go unused',
+      note: `Based on your annual consumption, roughly ${Math.round((unselfConsumedKwh / generation) * 100)}% of this kit's generation (${Math.round(unselfConsumedKwh)}kWh/yr) is projected to exceed what your household draws at the time it's generated. Plug-in kits have no export meter, so that portion earns nothing — it isn't credited as savings, unlike rooftop's SEG-paid export.`,
+    });
+  }
 
   return {
     segment: 'plugin',
@@ -1261,7 +1300,10 @@ function calculatePluginViability({ occupancy, orientation, electricityPricePenc
     annualSavingsGbp: Math.round(annualSavingsGbp),
     kitCostGbp: PLUGIN_KIT_COST_GBP,
     generationKwh: generation,
+    selfConsumedKwh: Math.round(selfConsumedKwh),
+    unselfConsumedKwh: Math.round(unselfConsumedKwh),
     legalStatus: PLUGIN_LEGAL_STATUS,
+    flags,
     assumptions: {
       electricityPricePencePerKwh: electricityPriceIsUserProvided
         ? { value: usedElectricityPrice, tier: 'User-provided', note: 'Your own stated rate' }
@@ -1275,6 +1317,17 @@ function calculatePluginViability({ occupancy, orientation, electricityPricePenc
             ? 'Reported range 640-900kWh/yr, same sourcing caveat as kit cost. Treated as the south-facing baseline (the range itself does not specify an assumed orientation).'
             : `${PLUGIN_ANNUAL_GENERATION_KWH}kWh/yr south-facing baseline (reported range 640-900kWh/yr, same sourcing caveat as kit cost) adjusted by rooftop's own ${usedOrientation === 'eastWestFacing' ? 'east/west' : 'north-facing'} ratio (${Math.round(orientationMultiplier * 100)}% of south) — no orientation-specific plug-in data exists, so this borrows rooftop's proportional estimate rather than presenting plug-in as orientation-agnostic.`,
       },
+      selfConsumptionRate: hasConsumptionInput
+        ? {
+            value: Math.round(selfConsumptionRate * 1000) / 1000,
+            tier: 'Inference — DESNZ Home Energy Model formula, applied annually rather than per-timestep',
+            note: `Computed from the ratio of this kit's generation (${generation}kWh) to your annual consumption (${annualConsumptionKwh}kWh), same formula and same annual-approximation caveat as the rooftop calculator (see calculateRooftopViability). Any generation beyond this rate is assumed to earn nothing, since plug-in kits have no export meter.`,
+          }
+        : {
+            value: 1,
+            tier: 'Assumption, not verified for this result',
+            note: "No household consumption figure was given, so this defaults to assuming full self-consumption — the weakest assumption in this calculator's plug-in segment. See the pluginSelfConsumptionUnverified flag.",
+          },
     },
   };
 }

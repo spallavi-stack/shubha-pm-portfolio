@@ -124,15 +124,22 @@ changing <em>what the fallback value is</em> is a <code>calculator.js</code> cha
 <p>Each stage is detailed in the matching section below: §3 for plug-in, §4a-4e for rooftop.</p>
 <hr />
 <h2>3. Plug-in / balcony solar</h2>
-<p>The simpler of the two segments: no postcode dependency, no export mechanism (all generation
-is treated as self-consumed, matching how the underlying source figures were reported), no
-roof-area sizing (it's a fixed small kit).</p>
+<p>The simpler of the two segments: no postcode dependency, no roof-area sizing (it's a fixed
+small kit). No export mechanism still, but as of 1 Aug 2026, generation beyond what the household
+self-consumes is no longer credited as savings — see the correction note below.</p>
 <pre class="mermaid">flowchart TD
   A["Orientation<br/>(default: south)"] --> B["Multiplier =<br/>rooftop's own<br/>E/W 79% / N 50%<br/>ratio"]
   B --> C["Generation =<br/>770kWh x<br/>multiplier"]
   D{"User typed<br/>a price?"} -->|Yes| E["Use as-is"]
   D -->|No| F["Default:<br/>26.11p"]
-  C --> G["Savings =<br/>generation x<br/>price / 100"]
+  K{"Consumption<br/>figure given?"}
+  L["selfConsumed =<br/>demand-ratio<br/>formula (same as<br/>rooftop, §4e)"]
+  M["selfConsumed =<br/>generation<br/>(unverified<br/>fallback)"]
+  C --> K
+  K -->|Yes| L
+  K -->|No| M
+  L --> G["Savings =<br/>selfConsumed x<br/>price / 100"]
+  M --> G
   E --> G
   F --> G
   G --> H["Payback =<br/>650 / savings"]
@@ -142,7 +149,7 @@ roof-area sizing (it's a fixed small kit).</p>
   J -->|Yes| Amber(["amber"])
   J -->|No| Red(["red"])
 </pre>
-<p><strong>Key constants</strong> (<code>calculator.js</code> L311-345, L349-361):</p>
+<p><strong>Key constants</strong> (<code>calculator.js</code>, plug-in constants + <code>calculatePluginViability</code>):</p>
 <table>
 <thead>
 <tr>
@@ -172,6 +179,12 @@ roof-area sizing (it's a fixed small kit).</p>
 <td>Borrowed from rooftop's own orientation ratios; no plug-in-specific orientation data exists</td>
 </tr>
 <tr>
+<td>self-consumption rate</td>
+<td>Demand-ratio formula (if consumption given) / 100% (fallback)</td>
+<td>Inference / Assumption</td>
+<td>Same <code>selfConsumptionFactorFromDemandRatio</code> as rooftop §4e when <code>annualConsumptionKwh</code> is provided; falls back to the old fully-self-consumed assumption otherwise, now explicitly flagged rather than silent</td>
+</tr>
+<tr>
 <td><code>PLUGIN_PAYBACK_THRESHOLDS</code></td>
 <td>green ≤5yr, amber ≤8yr</td>
 <td>Design judgment, not cited</td>
@@ -179,6 +192,7 @@ roof-area sizing (it's a fixed small kit).</p>
 </tr>
 </tbody>
 </table>
+<blockquote>Corrected 1 Aug 2026: this segment previously treated 100% of generation as self-consumed unconditionally, with no export/unmet-demand concept at all — not a sourcing gap like the constants above, but a real modeling gap. Plug-in kits have no export meter or SEG tracking, so a household away during the day got nothing for a midday generation spike exceeding its baseload demand: that surplus is fed to the grid for free, not banked as savings, yet the old model counted it as if it were. <code>calculatePluginViability</code> now accepts an optional <code>annualConsumptionKwh</code> (threaded through from the same consumption resolution the UI already does for rooftop, in <code>prototype.html</code>'s <code>runCalculation()</code>); when given, self-consumption is computed the same way as rooftop's demand-ratio formula, and any generation beyond that rate earns nothing. When <code>annualConsumptionKwh</code> isn't given, the function still falls back to the old fully-self-consumed assumption (a plug-in kit's onboarding may be lighter-weight than rooftop's, so this input stays optional) — but that fallback is now a <code>pluginSelfConsumptionUnverified</code> flag on the result, not a silent default. If consumption is given and a meaningful share (&gt;15%) of generation is still projected to go unused, a separate <code>pluginUnselfConsumedShare</code> flag names the real amount involved.</blockquote>
 <p>Output also carries a static <code>PLUGIN_LEGAL_STATUS</code> block (electrician install legal since
 2026-04-15 under BS 7671 Amendment 4 [Fact]; DIY self-install not legal until 2026-08-27 under
 SI 2026/848 [Fact]; tenancy consent status unresolved, no relevant provision either way). This
@@ -632,10 +646,14 @@ the next review pass to weigh in on:</p>
   daytime-concentrated consumption from evening-concentrated consumption at the same annual
   total. Flagged to the user via <code>occupancyMayLowerRealSelfConsumption</code> for
   <code>usuallyOut</code> households specifically.</li>
-<li><strong>Plug-in's self-consumption is still assumed 100%</strong> (see §3): the fix above only
-  applies to rooftop. Plug-in kits have no export mechanism modeled at all yet, so an unoccupied
-  home with a midday generation spike is still credited with the full amount as if
-  self-consumed — a real gap, not yet addressed.</li>
+<li><strong>Plug-in's self-consumption</strong> (corrected 1 Aug 2026, see §3) now uses the same
+  demand-ratio formula as rooftop when a consumption figure is given, and any generation beyond
+  that rate earns nothing rather than being counted as savings. Without a consumption figure, it
+  still falls back to assuming 100% self-consumption — now an explicitly flagged
+  (<code>pluginSelfConsumptionUnverified</code>) fallback rather than a silent default, but still
+  the weakest part of this segment's math when it fires. Plug-in kits genuinely have no export
+  meter, so this fallback's overstatement risk is real whenever a user skips the consumption
+  question.</li>
 <li><strong>Plug-in generation and kit cost</strong> are the weakest-sourced figures in the calculator. No
   government, MCS, or established consumer-body source for either.</li>
 <li><strong>Plug-in orientation multiplier</strong> stacks one Assumption on another: it borrows rooftop's

@@ -698,15 +698,44 @@ function calculateRooftopViability({ orientation, occupancy, annualConsumptionKw
   return result;
 }
 
-function calculatePluginViability({ occupancy, orientation, electricityPricePencePerKwh }) {
+// CORRECTED 1 Aug 2026: previously treated 100% of plug-in generation as
+// self-consumed unconditionally. Plug-in kits have no export meter, so a
+// household away during the day got nothing for a midday spike exceeding
+// baseload — that surplus is fed to the grid for free, not banked as
+// savings. See calculator.js's fuller correction comment above this same
+// function.
+function calculatePluginViability({ occupancy, orientation, electricityPricePencePerKwh, annualConsumptionKwh }) {
   const usedOrientation = orientation ?? 'southFacing';
   const orientationMultiplier = pluginOrientationMultiplier(usedOrientation);
   const generation = Math.round(PLUGIN_ANNUAL_GENERATION_KWH * orientationMultiplier);
   const usedElectricityPrice = electricityPricePencePerKwh ?? ELECTRICITY_PRICE_PENCE_PER_KWH_DEFAULT;
   const electricityPriceIsUserProvided = electricityPricePencePerKwh != null;
-  const annualSavingsGbp = (generation * usedElectricityPrice) / 100;
+
+  const hasConsumptionInput = annualConsumptionKwh != null && annualConsumptionKwh > 0;
+  const selfConsumptionRate = hasConsumptionInput ? selfConsumptionFactorFromDemandRatio(generation, annualConsumptionKwh) : 1;
+  const selfConsumedKwh = hasConsumptionInput ? Math.min(generation * selfConsumptionRate, annualConsumptionKwh) : generation;
+  const unselfConsumedKwh = generation - selfConsumedKwh;
+
+  const annualSavingsGbp = (selfConsumedKwh * usedElectricityPrice) / 100;
   const paybackYears = PLUGIN_KIT_COST_GBP / annualSavingsGbp;
   const status = scoreStatus(paybackYears, PLUGIN_PAYBACK_THRESHOLDS);
+
+  const flags = [];
+  if (!hasConsumptionInput) {
+    flags.push({
+      id: 'pluginSelfConsumptionUnverified',
+      tier: 'Assumption',
+      title: 'This result assumes every unit generated is used, which may overstate savings',
+      note: "No household consumption figure was given, so this result falls back to assuming 100% of the kit's generation is self-consumed. Plug-in kits have no export meter, so any generation your home isn't using at that moment is fed to the grid for free, not credited as savings.",
+    });
+  } else if (unselfConsumedKwh / generation > 0.15) {
+    flags.push({
+      id: 'pluginUnselfConsumedShare',
+      tier: 'Inference',
+      title: "A meaningful share of this kit's generation is projected to go unused",
+      note: `Based on your annual consumption, roughly ${Math.round((unselfConsumedKwh / generation) * 100)}% of this kit's generation is projected to exceed what your household draws at the time it's generated, and earns nothing (no export meter).`,
+    });
+  }
 
   return {
     segment: 'plugin',
@@ -715,7 +744,10 @@ function calculatePluginViability({ occupancy, orientation, electricityPricePenc
     annualSavingsGbp: Math.round(annualSavingsGbp),
     kitCostGbp: PLUGIN_KIT_COST_GBP,
     generationKwh: generation,
+    selfConsumedKwh: Math.round(selfConsumedKwh),
+    unselfConsumedKwh: Math.round(unselfConsumedKwh),
     legalStatus: PLUGIN_LEGAL_STATUS,
+    flags,
     assumptions: {
       electricityPricePencePerKwh: electricityPriceIsUserProvided
         ? { value: usedElectricityPrice, tier: 'User-provided', note: 'Your own stated rate' }
@@ -729,6 +761,17 @@ function calculatePluginViability({ occupancy, orientation, electricityPricePenc
             ? 'Reported range 640-900kWh/yr, same sourcing caveat as kit cost. Treated as the south-facing baseline (the range itself does not specify an assumed orientation).'
             : `${PLUGIN_ANNUAL_GENERATION_KWH}kWh/yr south-facing baseline (reported range 640-900kWh/yr, same sourcing caveat as kit cost) adjusted by rooftop's own ${usedOrientation === 'eastWestFacing' ? 'east/west' : 'north-facing'} ratio (${Math.round(orientationMultiplier * 100)}% of south) — no orientation-specific plug-in data exists, so this borrows rooftop's proportional estimate rather than presenting plug-in as orientation-agnostic.`,
       },
+      selfConsumptionRate: hasConsumptionInput
+        ? {
+            value: Math.round(selfConsumptionRate * 1000) / 1000,
+            tier: 'Inference — DESNZ Home Energy Model formula, applied annually rather than per-timestep',
+            note: `Computed from the ratio of this kit's generation (${generation}kWh) to your annual consumption (${annualConsumptionKwh}kWh). Any generation beyond this rate is assumed to earn nothing, since plug-in kits have no export meter.`,
+          }
+        : {
+            value: 1,
+            tier: 'Assumption, not verified for this result',
+            note: 'No household consumption figure was given, so this defaults to assuming full self-consumption — the weakest assumption in this segment.',
+          },
     },
   };
 }
@@ -801,7 +844,9 @@ function updateSegmentVisibility() {
   // orientation the same way rooftop does — see pluginOrientationMultiplier)
   // — the export/SEG tariff and roof-area sizing are rooftop-specific
   // (plug-in units are a fixed small kit, not sized against roof area, and
-  // are modeled as fully self-consumed with no export mechanism assumed).
+  // have no export meter or SEG mechanism at all — unlike rooftop, any
+  // generation beyond self-consumption just earns nothing, it doesn't get
+  // sold at a SEG rate; see calculatePluginViability's correction comment).
   const isRooftop = document.getElementById('segment').value === 'rooftop';
   document.getElementById('segField').style.display = isRooftop ? '' : 'none';
   document.getElementById('roofAreaField').style.display = isRooftop ? '' : 'none';
@@ -893,7 +938,7 @@ async function runCalculation() {
 
   let result;
   if (segment === 'plugin') {
-    result = calculatePluginViability({ occupancy, orientation, electricityPricePencePerKwh });
+    result = calculatePluginViability({ occupancy, orientation, electricityPricePencePerKwh, annualConsumptionKwh: consumption.annualConsumptionKwh });
   } else {
     const inputs = {
       orientation,

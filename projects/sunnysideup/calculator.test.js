@@ -48,15 +48,41 @@ printResult(
   calculateRooftopViability({ orientation: 'southFacing', occupancy: 'usuallyHome', annualConsumptionKwh: 1000 })
 );
 
-// Plug-in. Expect: payback near the weak source's claimed 3-4yr figure,
-// since the constants are drawn from the midpoint of the same range.
-printResult('Plug-in — standard case (defaults)', calculatePluginViability({ occupancy: 'usuallyHome' }));
+// Plug-in, no consumption figure given: falls back to the old
+// fully-self-consumed assumption (corrected 1 Aug 2026 to be an explicitly
+// flagged fallback, not a silent default) — payback should still land near
+// the weak source's claimed 3-4yr figure.
+printResult('Plug-in — standard case (defaults, no consumption given)', calculatePluginViability({ occupancy: 'usuallyHome' }));
+console.log('- selfConsumedKwh should equal generationKwh (770), unselfConsumedKwh 0, and flags should include "pluginSelfConsumptionUnverified" warning this may overstate savings.');
 
-// Plug-in now varies by orientation too (borrows rooftop's own multipliers,
-// see calculator.js's comment above pluginOrientationMultiplier). North
-// should score meaningfully worse than the south-facing default above.
-printResult('Plug-in — north-facing', calculatePluginViability({ occupancy: 'usuallyHome', orientation: 'northFacing' }));
+// Plug-in, no consumption figure given (unusual placement, but keeping this
+// scenario for orientation coverage): north should score meaningfully worse
+// than the south-facing default above (borrows rooftop's own multipliers,
+// see calculator.js's comment above pluginOrientationMultiplier).
+printResult('Plug-in — north-facing, no consumption given', calculatePluginViability({ occupancy: 'usuallyHome', orientation: 'northFacing' }));
 console.log('- generationKwh should be 385 (770 x 50%, rooftop\'s own north ratio), payback should be noticeably longer than the south-facing default case above, and assumptions.generationKwh.note should explain the borrowed-ratio reasoning rather than presenting 385 as independently researched.');
+
+// Plug-in WITH a consumption figure large enough that the kit's small output
+// should be almost entirely self-consumed (770kWh generation vs 4,000kWh
+// consumption) — expect selfConsumedKwh close to (not necessarily exactly)
+// generationKwh, and no "meaningful unused share" flag.
+printResult(
+  'Plug-in — south-facing, 4,000kWh/yr household consumption (generation small relative to demand)',
+  calculatePluginViability({ occupancy: 'usuallyHome', annualConsumptionKwh: 4000 })
+);
+console.log('- selfConsumptionRate should be at or near 1 (demand ratio 770/4000 is low, so the DESNZ formula predicts near-full self-consumption), no "pluginUnselfConsumedShare" or "pluginSelfConsumptionUnverified" flag, and assumptions.selfConsumptionRate.tier should cite the DESNZ formula, not the old fallback.');
+
+// Plug-in WITH a consumption figure small enough (or generation high enough
+// via orientation) that a meaningful share of generation is projected to go
+// unused, at the actual scale plug-in kits generate. A very small household
+// consumption relative to the kit's own generation is the honest way to
+// trigger this — checks the fix actually engages the "unused generation
+// earns nothing" path, not just accepts a consumption input cosmetically.
+printResult(
+  'Plug-in — south-facing, 500kWh/yr household consumption (generation exceeds a chunk of demand)',
+  calculatePluginViability({ occupancy: 'usuallyOut', annualConsumptionKwh: 500 })
+);
+console.log('- unselfConsumedKwh should be a meaningful share of generationKwh here (low consumption relative to a 770kWh kit), flags should include "pluginUnselfConsumedShare", and annualSavingsGbp should be based on selfConsumedKwh only (NOT the full 770kWh) — confirms unused generation is no longer silently credited as savings.');
 
 // Same rooftop scenario as the first case, but with a user-provided fixed-deal
 // electricity price (higher than the price-cap default) and a user-provided
