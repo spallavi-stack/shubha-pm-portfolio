@@ -368,7 +368,7 @@
   .data-footnote .data-badge.live{color:#1F7A3F;}
   .data-footnote .data-badge.fallback{color:#8A5A0A;}
   .data-footnote .data-badge.modeled{color:var(--gray);}
-  .data-footnote .verify-link{font-size:10px;margin-bottom:0;}
+  .consumption-note{font-size:10px;color:var(--gray);margin-top:5px;line-height:1.4;}
 
   .bottomnav{
     position:absolute;bottom:0;left:0;right:0;height:78px;
@@ -408,16 +408,13 @@
     display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:700;
     padding:4px 10px;border-radius:20px;margin-bottom:4px;
     background:#F7F4EC;color:#5C5445;border:1px solid #E5DFD2;
+    text-decoration:none;cursor:pointer;
   }
   .data-badge.live{background:#E9F7EE;color:#1F7A3F;border-color:#BCE6CA;}
   .data-badge.live::before{content:"●";color:#2FBE5E;}
   .data-badge.fallback{background:#FBF0DC;color:#8A5A0A;border-color:#F0DFB8;}
   .data-badge.fallback::before{content:"●";color:#B45309;}
   .data-badge.modeled{background:#F7F4EC;color:#5C5445;border-color:#E5DFD2;}
-  .verify-link{
-    display:block;font-size:11px;font-weight:600;color:var(--flexy-teal-dark);
-    text-decoration:underline;margin-bottom:10px;
-  }
   .chart-note{font-size:10.5px;color:#8A8272;margin:6px 2px 0;line-height:1.4;}
 
   .scroll-hint{
@@ -1182,8 +1179,8 @@
       </div>
 
       <div class="data-footnote">
-        <div id="dataBadge" class="data-badge">Loading real ComEd pricing&#8230;</div>
-        <a id="verifyLink" class="verify-link" href="#" target="_blank" rel="noopener">Verify against ComEd's public feed →</a>
+        <a id="dataBadge" class="data-badge" href="#" target="_blank" rel="noopener">Loading real ComEd pricing&#8230;</a>
+        <div id="consumptionNote" class="consumption-note"></div>
       </div>
     </div>
 
@@ -1563,6 +1560,7 @@ function updateHomeChargingCard(){
 // estimate this feeds (see COMED_FIXED_MONTHLY below) tracking close to EIA's $109.99/month
 // average IL bill despite the extra EV load.
 const consumption = [1.6,1.4,1.4,1.4,1.6,1.7,1.5,1.8,1.0,0.6,0.5,0.5,0.6,0.8,0.6,0.5,1.5,2.6,2.9,1.9,1.3,0.8,0.6,1.6];
+const CONSUMPTION_SOURCE_NOTE = "Consumption modeled on EIA's Illinois residential average (693 kWh/month) plus overnight EV charging, not your actual usage. Real usage needs Green Button Connect.";
 
 // Real ComEd Hourly Pricing data (cents/kWh), last refreshed by scripts/refresh_comed_prices.py.
 // Used as a last-resort fallback when the live fetch below can't reach ComEd at all (network down, etc.)
@@ -1797,22 +1795,18 @@ function renderTodayStats(){
   document.getElementById('extraLbl').textContent = 'Cheapest hour today';
 
   const badge = document.getElementById('dataBadge');
+  badge.href = 'https://hourlypricing.comed.com/api?type=day&date=' + priceState.dateStr;
   if (priceState.source === 'live' && priceState.isToday){
     badge.className = 'data-badge live';
-    badge.textContent = 'Live ComEd pricing · updated just now';
+    badge.textContent = 'Live ComEd pricing · updated just now →';
   } else if (priceState.source === 'live'){
     badge.className = 'data-badge live';
-    badge.textContent = "Live ComEd pricing · today's hours not posted yet, showing " + priceState.label;
+    badge.textContent = "Live ComEd pricing · today's hours not posted yet, showing " + priceState.label + ' →';
   } else {
     badge.className = 'data-badge fallback';
-    badge.textContent = 'Real ComEd pricing, captured ' + priceState.label + ' (live fetch unavailable here)';
+    badge.textContent = 'Real ComEd pricing, captured ' + priceState.label + ' (live fetch unavailable here) →';
   }
-  const link = document.getElementById('verifyLink');
-  link.href = 'https://hourlypricing.comed.com/api?type=day&date=' + priceState.dateStr;
-  link.style.display = 'block';
-  link.textContent = priceState.source === 'live'
-    ? "Check ComEd's live feed for today →"
-    : "Check ComEd's public feed for " + priceState.label + " →";
+  document.getElementById('consumptionNote').textContent = CONSUMPTION_SOURCE_NOTE;
 }
 function toggleTouInfo(){
   document.getElementById('touInfoPop').classList.toggle('open');
@@ -1905,11 +1899,9 @@ function renderRangeStats(range){
   drawCostChart(basePrices, load);
   const badge = document.getElementById('dataBadge');
   badge.className = 'data-badge fallback';
-  badge.textContent = RANGE_SOURCE_LABEL[range] + ' (load profile still modeled, real usage needs Green Button Connect)';
-  const link = document.getElementById('verifyLink');
-  link.href = 'https://hourlypricing.comed.com/api?type=day&date=' + RANGE_SPOT_CHECK_DATE[range];
-  link.textContent = 'Spot-check one of the real sampled days →';
-  link.style.display = 'block';
+  badge.href = 'https://hourlypricing.comed.com/api?type=day&date=' + RANGE_SPOT_CHECK_DATE[range];
+  badge.textContent = RANGE_SOURCE_LABEL[range] + ' →';
+  document.getElementById('consumptionNote').textContent = CONSUMPTION_SOURCE_NOTE;
 }
 // ---- Charging schedule dial (drag-to-set window) ----
 const dialState = { startAngle: 345, stopAngle: 90 }; // 11:00 PM -> 6:00 AM, 0deg=12am at top, clockwise
