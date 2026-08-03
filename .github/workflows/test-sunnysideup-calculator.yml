@@ -1,0 +1,31 @@
+name: SunnySideUp calculator tests
+
+on:
+  push:
+    paths:
+      - "projects/sunnysideup/calculator.js"
+      - "projects/sunnysideup/test/**"
+      - "projects/sunnysideup/package.json"
+      - ".github/workflows/test-sunnysideup-calculator.yml"
+  pull_request:
+    paths:
+      - "projects/sunnysideup/calculator.js"
+      - "projects/sunnysideup/test/**"
+      - "projects/sunnysideup/package.json"
+      - ".github/workflows/test-sunnysideup-calculator.yml"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: projects/sunnysideup
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Install dev dependencies
+        run: npm install --no-save
+      - name: Run unit tests with coverage
+        run: npm run test:coverage
