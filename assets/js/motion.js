@@ -198,25 +198,25 @@
       if(paused) return;
       timer = setTimeout(function(){
         show((current + 1) % stakes.length);
-        scheduleNext(3000);
+        scheduleNext(5000);
       }, delay);
     }
 
     dots.forEach(function(dot, i){
       dot.addEventListener('click', function(){
         show(i);
-        scheduleNext(3000);
+        scheduleNext(5000);
       });
     });
     container.addEventListener('focusin', function(){ paused = true; clearTimeout(timer); });
-    container.addEventListener('focusout', function(){ paused = false; scheduleNext(3000); });
+    container.addEventListener('focusout', function(){ paused = false; scheduleNext(5000); });
 
     var started = false;
     function start(){
       if(started) return;
       started = true;
       show(0);
-      scheduleNext(3000);
+      scheduleNext(5000);
     }
     if(window.ScrollTrigger){
       ScrollTrigger.create({ trigger: container, start:'top 85%', once:true, onEnter: start });
