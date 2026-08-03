@@ -192,10 +192,16 @@
   .footnotes li{margin-bottom:6px;}
   .footnotes a{color:var(--teal-dark);}
 
-  .limitation-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px;}
+  .limitation-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px;}
   @media(max-width:720px){.limitation-grid{grid-template-columns:1fr;}}
-  .limitation-card{background:#fff;border:1px solid var(--border);border-radius:10px;padding:20px;}
-  .limitation-card h4{margin:0 0 8px;font-size:14.5px;}
+  .limitation-card{background:#fff;border:1px solid var(--border);border-radius:10px;padding:16px 20px;}
+  .limitation-card summary{cursor:pointer;list-style:none;display:flex;align-items:baseline;justify-content:space-between;gap:10px;}
+  .limitation-card summary::-webkit-details-marker{display:none;}
+  .limitation-card summary h4{margin:0;font-size:14.5px;}
+  .limitation-card summary .toggle-ic{font-size:12px;color:var(--teal-dark);font-weight:600;white-space:nowrap;flex-shrink:0;padding-top:2px;}
+  .limitation-card[open] summary .toggle-ic::before{content:"Hide ▾";}
+  .limitation-card:not([open]) summary .toggle-ic::before{content:"Show ▸";}
+  .limitation-card[open] summary{margin-bottom:10px;}
   .limitation-card p{font-size:13.5px;color:var(--ink-soft);margin:0 0 8px;}
   .limitation-card ul{margin:0 0 10px;padding-left:18px;}
   .limitation-card li{font-size:13.5px;color:var(--ink-soft);margin-bottom:5px;}
@@ -556,45 +562,53 @@
     <div class="section-kicker">Limitations</div>
     <p class="lede">A polished demo and a shippable product are different things. A few gaps commonly named by AI-prototyping practitioners, applied honestly to Flexy:</p>
     <div class="limitation-grid" data-reveal-stagger>
-      <div class="limitation-card aud-homeowner">
-        <h4>A working demo isn't 10% of the way to done</h4>
+      <details class="limitation-card aud-homeowner">
+        <summary><h4>A working demo isn't 10% of the way to done</h4><span class="toggle-ic"></span></summary>
         <ul>
           <li>Stakeholders often see a polished AI-built demo and assume it's nearly finished, when the actual engineering (backend, auth, data persistence, real integrations) hasn't started.</li>
           <li>The Price &amp; Cost screen's pricing is real - it pulls live prices from ComEd's public Hourly Pricing API. Everything else isn't: no backend, no ComEd account login, no live Smartcar/EV API, and the consumption line is an illustrative shape, not metered usage.</li>
         </ul>
         <span class="src">Source: <a href="https://usekyros.ai/blog/from-prototype-to-production-ai-apps-never-ship" target="_blank" rel="noopener">Kyros, "From Prototype to Production"</a></span>
-      </div>
-      <div class="limitation-card aud-homeowner">
-        <h4>Automated design still needs real users</h4>
+      </details>
+      <details class="limitation-card aud-homeowner">
+        <summary><h4>Automated design still needs real users</h4><span class="toggle-ic"></span></summary>
         <ul>
           <li>AI-generated screens can miss hierarchy, spacing, and comprehension issues that only real usability testing surfaces.</li>
           <li>Flexy's personas and interviews are synthetic and internally consistent, but untested against an actual person clicking through the flow.</li>
         </ul>
         <span class="src">Source: <a href="https://www.parallelhq.com/blog/ai-powered-prototyping-tools" target="_blank" rel="noopener">Parallel, "AI-Powered Prototyping for UI/UX Design"</a></span>
-      </div>
-      <div class="limitation-card aud-homeowner">
-        <h4>Happy-path only, no edge cases</h4>
+      </details>
+      <details class="limitation-card aud-homeowner">
+        <summary><h4>Happy-path only, no edge cases</h4><span class="toggle-ic"></span></summary>
         <ul>
           <li>AI-built prototypes handle the intended flow well but typically skip error states.</li>
           <li>Flexy's click-dummy shows the ideal path only - no failed ComEd login, stale price feed, or EV dropping connection mid-session.</li>
         </ul>
         <span class="src">Source: <a href="https://codeconductor.ai/blog/vibe-coding-for-product-managers/" target="_blank" rel="noopener">CodeConductor, "Vibe Coding for PMs"</a></span>
-      </div>
-      <div class="limitation-card">
-        <h4>Prototype code isn't production code</h4>
+      </details>
+      <details class="limitation-card">
+        <summary><h4>Prototype code isn't production code</h4><span class="toggle-ic"></span></summary>
         <ul>
           <li>AI-generated prototypes sit outside any real codebase and need re-implementation by an engineering team to actually ship.</li>
           <li>Both of Flexy's click-dummies are static HTML/CSS/JS - no data layer, security review, or compliance pass, relevant since a real version would handle utility account data and OAuth tokens to EV manufacturer APIs.</li>
         </ul>
         <span class="src">Source: <a href="https://monday.com/blog/vibe-coding/vibe-coding-product-managers/" target="_blank" rel="noopener">monday.com, "Vibe coding for product managers"</a></span>
-      </div>
-      <div class="limitation-card aud-utility">
-        <h4>The operator dashboard's data is illustrative, not live</h4>
+      </details>
+      <details class="limitation-card">
+        <summary><h4>Iteration accumulates debt a screenshot can't show</h4><span class="toggle-ic"></span></summary>
+        <ul>
+          <li>Multiple rounds of AI-assisted fixes and rewrites (a state-management bug fix, a full cost-model rewrite, tooltip additions) went into this prototype without an independent review pass checking for accumulated inconsistency or dead code across screens.</li>
+          <li><code>prototype.html</code> is over 2,000 lines in a single file; a team inheriting it would need to budget time to untangle accumulated one-off patches, not just to rewrite it for production.</li>
+        </ul>
+        <span class="src">Source: <a href="https://www.youtube.com/watch?v=dduQeaqmpnI" target="_blank" rel="noopener">Edwin Chen (Surge AI), on Lenny's Podcast</a></span>
+      </details>
+      <details class="limitation-card aud-utility">
+        <summary><h4>The operator dashboard's data is illustrative, not live</h4><span class="toggle-ic"></span></summary>
         <ul>
           <li>Every KPI - enrollment, flexible capacity, dispatch reliability, consumer savings - runs on mocked sample data, not real enrollment records or a live grid-event feed.</li>
           <li>Compliance &amp; Reporting is an explicit placeholder: its field list depends on a real conversation with a utility partner, not something guessable from outside.</li>
         </ul>
-      </div>
+      </details>
     </div>
   </div>
 </section>
