@@ -1583,12 +1583,17 @@ function priceTier(price, sorted){
 }
 function hourLabel(h){ const hr=h%12===0?12:h%12; return hr+(h<12?'AM':'PM'); }
 
+function chartTitleFor(){
+  if (currentRange === 'today'){
+    return priceState.touMode ? 'Price by hour (real supply + TOU delivery)' : 'Price by hour (real)';
+  }
+  const rangeLabel = RANGE_LABEL[currentRange] + ' real avg';
+  return priceState.touMode ? 'Price by hour (' + rangeLabel + ' + TOU delivery)' : 'Price by hour (' + rangeLabel + ')';
+}
 function updateLegend(){
   document.getElementById('legTou').style.display = priceState.touMode ? 'flex' : 'none';
   document.getElementById('touFootnote').style.display = priceState.touMode ? 'block' : 'none';
-  document.getElementById('priceChartTitle').textContent = priceState.touMode
-    ? 'Price by hour (real supply + TOU delivery)'
-    : 'Price by hour (real)';
+  document.getElementById('priceChartTitle').textContent = chartTitleFor();
 }
 
 // Dual-axis, stacked-when-TOU chart. Bars read off the left axis (¢/kWh) at true proportional
@@ -1729,7 +1734,8 @@ function renderTodayStats(){
 }
 function toggleTOU(){
   priceState.touMode = document.getElementById('touSwitch').checked;
-  renderTodayStats();
+  if (currentRange === 'today') renderTodayStats();
+  else renderRangeStats(currentRange);
 }
 
 // Parses ComEd's response (a JS array literal using Date.UTC(...), not valid JSON) with a
@@ -1788,25 +1794,28 @@ async function loadRealComedData(){
 function setRange(btn, range){
   document.querySelectorAll('#s8 .seg button').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
-  document.getElementById('touSwitch').checked = false;
-  priceState.touMode = false;
-  if (range === 'today'){ renderTodayStats(); return; }
+  document.getElementById('touSwitch').checked = priceState.touMode;
+  if (range === 'today'){ currentRange = 'today'; renderTodayStats(); return; }
   currentRange = range;
-
-  const { prices, load } = getRangeCurves(range);
+  renderRangeStats(range);
+}
+function renderRangeStats(range){
+  const { prices: basePrices, load } = getRangeCurves(range);
+  const prices = basePrices.map((p,i)=> p + (priceState.touMode ? touDeltaCents(i) : 0));
   const avgPrice = prices.reduce((a,b)=>a+b,0)/prices.length;
   const dailyCost = prices.reduce((sum,p,i)=> sum + (p/100) * (load[i]||0), 0);
   const periodCost = dailyCost * RANGE_DAYS[range];
 
   document.getElementById('costVal').textContent = '$' + periodCost.toFixed(2);
-  document.getElementById('costLbl').textContent = 'Cost this ' + range + ' (real avg price × modeled load)';
+  document.getElementById('costLbl').textContent = priceState.touMode
+    ? 'Cost this ' + range + ' (real avg price + TOU delivery × modeled load)'
+    : 'Cost this ' + range + ' (real avg price × modeled load)';
   document.getElementById('avgVal').textContent = avgPrice.toFixed(1) + '¢';
   document.getElementById('extraVal').textContent = RANGE_SAVINGS_PCT[range] + '%';
   document.getElementById('extraLbl').textContent = 'vs. flat rate';
   updateLegend();
-  document.getElementById('priceChartTitle').textContent = 'Price by hour (' + RANGE_LABEL[range] + ' real avg)';
-  drawChart(prices, load);
-  drawCostChart(prices, load);
+  drawChart(basePrices, load);
+  drawCostChart(basePrices, load);
   const badge = document.getElementById('dataBadge');
   badge.className = 'data-badge fallback';
   badge.textContent = RANGE_SOURCE_LABEL[range] + ' (load profile still modeled, real usage needs Green Button Connect)';
