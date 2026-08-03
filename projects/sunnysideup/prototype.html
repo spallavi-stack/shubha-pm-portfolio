@@ -718,7 +718,12 @@ function revealStatsSequentially(statEls) {
 function collectFlags(result, segment) {
   if (segment === 'plugin') {
     const ls = result.legalStatus;
+    // (result.flags || []) first: the self-consumption caveat (unverified
+    // fallback, or a meaningful unused-generation share) is a bigger driver
+    // of whether this result is trustworthy than the legal-status items
+    // below, added 1 Aug 2026 alongside the plug-in self-consumption fix.
     return [
+      ...(result.flags || []),
       { title: 'Electrician install: legal', note: `Legal since ${ls.electricianInstall.since} under ${ls.electricianInstall.basis}.`, tier: 'Fact' },
       { title: ls.diySelfInstall.legal ? 'DIY self-install: legal' : 'DIY self-install: not yet legal', note: `${ls.diySelfInstall.note} (${ls.diySelfInstall.basis}, ${ls.diySelfInstall.becomesLegal})`, tier: 'Fact' },
       { title: 'Leasehold or renting?', note: ls.tenancyConsent.note, tier: 'Fact' },
@@ -776,6 +781,7 @@ function fillAssumptions(result, segment) {
   body.appendChild(renderAssumptionRow(segment === 'plugin' ? 'Kit cost' : 'System cost', gbp(segment === 'plugin' ? result.kitCostGbp : result.systemCostGbp), a.systemCostGbp ? a.systemCostGbp.tier : a.kitCostGbp.tier, a.systemCostGbp ? a.systemCostGbp.note : a.kitCostGbp.note));
   body.appendChild(renderAssumptionRow('Annual generation', `${result.generationKwh.toLocaleString()} kWh`, a.generationKwh.tier, a.generationKwh.note));
   if (a.selfConsumptionRate) body.appendChild(renderAssumptionRow('Self-consumption rate', `${Math.round(a.selfConsumptionRate.value * 100)}%`, a.selfConsumptionRate.tier, a.selfConsumptionRate.note));
+  if (a.paybackYears) body.appendChild(renderAssumptionRow('Payback color thresholds', `${result.paybackYears}yr`, a.paybackYears.tier, a.paybackYears.note));
 
   if (result.consumptionEstimate) {
     const ce = result.consumptionEstimate;
@@ -836,7 +842,7 @@ async function runCalculation() {
 
   const calcPromise = (async () => {
     if (segment === 'plugin') {
-      return SSU.calculatePluginViability({ occupancy, orientation, electricityPricePencePerKwh });
+      return SSU.calculatePluginViability({ occupancy, orientation, electricityPricePencePerKwh, annualConsumptionKwh: consumption.annualConsumptionKwh });
     }
     const inputs = {
       orientation,

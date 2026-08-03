@@ -4,10 +4,13 @@
  * Every constant below is commented with its confidence tier and source,
  * matching the Fact/Inference/Assumption discipline in grounding-research.md.
  * This is a simplified prototype model, not a certified solar-yield or
- * financial-advice calculation. Self-consumption in particular is modeled
- * from occupancy pattern as a rough two-tier proxy — that specific mapping
- * was not independently researched and is a prototype-only simplification,
- * flagged in the assumptions output rather than presented as researched.
+ * financial-advice calculation. Self-consumption (both segments) is modeled
+ * via DESNZ Home Energy Model's own formula (selfConsumptionFactorFromDemandRatio),
+ * applied to annual totals rather than the per-timestep basis it was designed
+ * for — a real approximation, flagged in each result's assumptions/flags
+ * rather than presented as more precise than it is. Plug-in falls back to a
+ * fully-self-consumed assumption when no consumption figure is given at all;
+ * see calculatePluginViability's own comment for why and how that's flagged.
  *
  * WHY EACH VALUE IS SOURCED THE WAY IT IS: every input in this file falls
  * into one of three sourcing strategies, chosen deliberately per input, not
@@ -234,15 +237,27 @@ const PANEL_WATTAGE_KWP = 0.43;
 // costing tool.
 const COST_PER_KWP_GBP_BY_TIER = { smallSystemThresholdKwp: 3, smallSystemCostPerKwp: 1800, standardCostPerKwp: 1625 };
 
-// [Fact, checked 24 July 2026] 4kWp is the largest system size covered by
-// Permitted Development Rights in England — a system sized larger than
-// this may need planning permission, a real installability constraint
-// independent of financial viability. England-specific: Scotland and Wales
-// have their own separate permitted-development regimes, not researched in
-// depth here (see REGIONS_WITH_UNRESEARCHED_REGULATORY_REGIME above) — this
-// flag doesn't claim to know their equivalent threshold, and isn't shown
-// for Scotland/Wales addresses for that reason.
-const PERMITTED_DEVELOPMENT_KWP_CEILING_ENGLAND = 4;
+// CORRECTED 1 Aug 2026: this file previously had a PERMITTED_DEVELOPMENT_KWP_CEILING_ENGLAND
+// = 4 constant, tagged [Fact], claiming 4kWp was "the largest system size
+// covered by Permitted Development Rights in England." That was wrong, and
+// contradicted this project's own grounding-research.md (§Permitted
+// development, sourced to Historic England and the GPDO 2015 Schedule 2
+// Part 14 Class J), which documents the real test as physical, not
+// electrical: panels not protruding more than 200mm from the roof
+// slope/wall, not projecting above the roof's highest point (excluding
+// chimney), not more than 1m above a flat roof's highest point, and not on
+// a listed building. No kWp figure appears anywhere in that section. The
+// 4kWp number most likely got carried over from a different, unrelated
+// threshold this same research documents separately (§G98 vs G99): G98 is
+// the DNO's fast-track *grid-connection notification* route for
+// single-phase systems up to ~3.68kW, a distribution-network concept with
+// no bearing on planning law. Removed rather than corrected to a "right"
+// kWp number, because there isn't one — Permitted Development eligibility
+// depends on roof pitch, ridge height, and panel protrusion, none of which
+// this calculator collects. See the unconditional `permittedDevelopment`
+// flag below (same treatment as tenancyConsent/listedBuilding/
+// conservationArea): states the real physical criteria and says this tool
+// can't evaluate them, instead of a false size-based determination.
 
 /**
  * Converts a usable roof area (m²) into an estimated system: panel count,
@@ -269,7 +284,6 @@ function estimateSystemSizeFromRoofArea(roofAreaM2) {
     systemSizeKwp,
     costPerKwpGbp,
     systemCostGbp: Math.round(systemSizeKwp * costPerKwpGbp),
-    exceedsPermittedDevelopmentEngland: systemSizeKwp > PERMITTED_DEVELOPMENT_KWP_CEILING_ENGLAND,
   };
 }
 
@@ -311,38 +325,257 @@ const REGIONS_WITH_UNRESEARCHED_REGULATORY_REGIME = {
 const PLUGIN_KIT_COST_GBP = 650;
 const PLUGIN_ANNUAL_GENERATION_KWH = 770;
 
-// [Assumption, deliberately stacked on another Assumption — a product
-// decision, not a research finding] Plug-in generation should vary by
-// orientation the same way rooftop does — same underlying physics — but no
-// orientation-specific plug-in data was ever found (unsurprising, given the
-// base figure above is already the weakest-sourced number in this
-// calculator). Rather than presenting plug-in as orientation-agnostic
-// (which is more a gap than a real property of plug-in solar) or inventing
-// new plug-in-specific ratios with no basis, this reuses rooftop's own
-// east/west ≈ 79% and north ≈ 50% ratios (ROOFTOP_ANNUAL_GENERATION_KWH
-// above), computed from that same object at call time rather than
-// hardcoded here, so the two stay in sync if rooftop's figures ever change.
-// Flagged in the assumptions output as two stacked Assumption-tier figures,
-// not hidden behind a single confident number.
+// CORRECTED 1 Aug 2026: this function previously reused rooftop's own
+// east/west ≈79% and north ≈50% orientation ratios for plug-in kits — ratios
+// that reflect losses at rooftop's own ~35° tilt (see
+// OPEN_METEO_TILT_ANGLE_DEGREES), not the mounting angle a plug-in/balcony
+// kit actually uses. Real plug-in kits are typically mounted near-vertical
+// (balcony rail, wall bracket), and vertical mounts have a genuinely
+// different azimuth-sensitivity curve than a ~35°-tilt rooftop, not just a
+// uniform "everything is worse" scaling — checked directly rather than left
+// as a flagged-but-uncorrected gap, prompted by a review naming this
+// specific mismatch.
+//
+// [Inference — two independent UK-specific secondary sources, each citing
+// PVGIS modeling, checked 1 Aug 2026, not independently re-run against
+// PVGIS] Vertical (90°) mounting loses roughly 26-30% of annual output
+// versus an optimally-tilted (30-40°) rooftop panel of the same size and
+// south orientation (one source: a 400W panel produces ~290kWh/yr vertical
+// vs ~400-420kWh/yr at 35-40° tilt, ~70% ratio; another: a 4kWp array
+// produces ~2,800kWh/yr vertical vs ~3,800kWh/yr pitched — the same 3,800
+// figure this file's own ROOFTOP_ANNUAL_GENERATION_KWH.southFacing uses,
+// a real cross-check — ~74% ratio). This ~70-74% range describes the
+// overall tilt-mismatch risk in PLUGIN_ANNUAL_GENERATION_KWH's own south-
+// facing baseline (deliberately NOT applied to silently discount that
+// number below — the weak original sources for 640-900kWh/yr never stated
+// a mounting angle either, so it's unclear whether they already reflect
+// real vertical-mount output or an idealized tilt; surfaced instead as a
+// flag/assumption note so the risk is visible without risking double-
+// counting an unclear baseline).
+//
+// [Assumption — UK consumer-guide content, weaker sourcing than the tilt-
+// loss figure above (no explicit PVGIS citation for these specific figures,
+// and the east/west and north figures recur near-identically across
+// multiple similar sites in a way that suggests shared/derivative sourcing,
+// not independent confirmation), checked 1 Aug 2026] What the tilt-loss
+// figure above doesn't give is orientation-specific vertical-mount ratios —
+// this is the actual gap the borrowed rooftop ratios were filling. Vertical
+// east/west walls are commonly cited around 15-20% less output than a
+// vertical south wall (≈80-85% of south) — direction-sensitivity that, per
+// this data, is actually LESS pronounced than rooftop's own 79% east/west
+// ratio, not more; a genuinely different, non-uniform relationship, not
+// just "vertical always loses more." Vertical north walls are commonly
+// cited as generating well under half of vertical south (one source: under
+// 1,000kWh/yr against a ~2,300kWh/yr vertical-south figure at a larger
+// system scale, ≈43% ratio or lower) — here the loss genuinely is steeper
+// than rooftop's own 50% north ratio, consistent with the original
+// critique's directional claim, at least for north specifically.
+const PLUGIN_VERTICAL_ORIENTATION_MULTIPLIER = {
+  eastWestFacing: 0.85,
+  northFacing: 0.4,
+};
+
 function pluginOrientationMultiplier(orientation) {
-  return ROOFTOP_ANNUAL_GENERATION_KWH[orientation] / ROOFTOP_ANNUAL_GENERATION_KWH.southFacing;
+  return orientation === 'southFacing' ? 1 : PLUGIN_VERTICAL_ORIENTATION_MULTIPLIER[orientation];
 }
 
-// Prototype-only simplification, not independently researched: self-consumption
-// rate modeled from occupancy as a rough two-tier proxy. grounding-research.md's
-// Payback period section names self-consumption rate as a real sensitivity
-// factor but does not supply a specific researched percentage.
-const SELF_CONSUMPTION_RATE = {
-  usuallyHome: 0.55,
-  usuallyOut: 0.30,
-};
+// CORRECTED 1 Aug 2026: this file previously modeled self-consumption as a
+// hardcoded two-tier occupancy proxy (usuallyHome 0.55 / usuallyOut 0.30),
+// with no basis beyond "home vs out" and no way to reflect that a household
+// with, say, an EV or heat pump timed to run during daylight hours would
+// self-consume a materially higher share than one without, at the same
+// occupancy pattern. Replaced with a formula from DESNZ's own Home Energy
+// Model technical documentation (HEM-TP-18 "PV generation and
+// self-consumption", gov.uk, fetched and pdftotext-extracted directly 1 Aug
+// 2026): [Fact, primary UK government source] HEM computes an instantaneous
+// self-consumption factor as a function of the "demand ratio" (PV energy
+// supply ÷ electricity demand) in each timestep: factor = min(0.6748 x
+// demandRatio^-0.703, 1), derived from field data across a small sample of
+// UK dwellings (hourly data from 4, monthly data from 15, used to check the
+// formula against typical generation/demand profiles), cross-checked by HEM's
+// own literature review against similar relationships in other datasets.
+// [Inference, this calculator's own adaptation] HEM applies this formula per
+// timestep (sub-hourly); this calculator only has annual totals, so it's
+// applied once to the annual demand ratio as a coarser approximation — this
+// loses the within-day timing HEM's own per-timestep design captures (e.g.
+// a household whose high annual consumption is mostly evening-only vs one
+// whose EV/heat pump load is scheduled into daylight hours would get the
+// same result here, despite very different real self-consumption), which is
+// exactly why the flag below still surfaces occupancy pattern as a caveat
+// rather than treating this number as final. The real advantage over the
+// old occupancy binary: annual consumption already reflects heat pump/EV
+// additions (estimateAnnualConsumptionKwh above), so a household with either
+// now gets a demand-ratio-driven, not occupancy-driven, self-consumption
+// estimate — mechanically capturing what the occupancy proxy could not,
+// without inventing a new unresearched per-appliance modifier.
+const SELF_CONSUMPTION_DEMAND_RATIO_COEFFICIENT = 0.6748;
+const SELF_CONSUMPTION_DEMAND_RATIO_EXPONENT = -0.703;
+
+/**
+ * DESNZ HEM-TP-18's self-consumption factor formula, applied to an annual
+ * demand ratio as a single-figure approximation of what HEM computes per
+ * timestep. See the constants above for the full sourcing note.
+ * @param {number} generationKwh
+ * @param {number} consumptionKwh
+ */
+function selfConsumptionFactorFromDemandRatio(generationKwh, consumptionKwh) {
+  if (generationKwh <= 0 || consumptionKwh <= 0) {
+    return 0;
+  }
+  const demandRatio = generationKwh / consumptionKwh;
+  const rawFactor = SELF_CONSUMPTION_DEMAND_RATIO_COEFFICIENT * Math.pow(demandRatio, SELF_CONSUMPTION_DEMAND_RATIO_EXPONENT);
+  // HEM's own stated limit: the factor should never exceed 1/demandRatio,
+  // otherwise self-consumption could be predicted higher than total demand.
+  return Math.min(rawFactor, 1, 1 / demandRatio);
+}
 
 // Payback thresholds for green/amber/red. Not a cited figure — a design
 // judgment loosely anchored to grounding-research.md's own reported payback
 // range ("roughly 6-14 years across sources" for rooftop), not a regulator
 // or industry-body standard.
+//
+// ADDRESSED 1 Aug 2026 (without inventing new precision): these cutoffs were
+// criticized on two distinct grounds. (1) Payback tolerance is genuinely
+// subjective — how long someone plans to own the property, and how much
+// they weight upfront cost vs. long-term saving, both change what "good"
+// means, and no single cutoff can be right for everyone. This calculator
+// doesn't try to personalize the thresholds (that would mean asking for a
+// planned ownership horizon and inventing an unresearched mapping from
+// horizon to acceptable payback — a worse kind of false precision than the
+// fixed cutoffs it would replace). Instead, both results now carry an
+// explicit `paybackYears` entry in `assumptions` naming the thresholds as a
+// design judgment and pointing back to the raw number, which was already
+// shown as the headline figure, not hidden behind the color. (2) The
+// payback model previously ignored a real, quantifiable mid-life cost:
+// inverter replacement. See INVERTER_REPLACEMENT_COST_GBP /
+// _YEAR below and calculateRooftopViability's own comment for how that's
+// now factored in for rooftop specifically (not plug-in — no comparable
+// cost research exists at plug-in's much smaller scale, and reusing the
+// rooftop figure would repeat the same rooftop-borrowed-for-plugin mismatch
+// already flagged elsewhere in this file for orientation ratios).
 const ROOFTOP_PAYBACK_THRESHOLDS = { green: 8, amber: 13 };
 const PLUGIN_PAYBACK_THRESHOLDS = { green: 5, amber: 8 };
+
+// [Assumption — consumer-guide convergence, no MCS/government primary
+// source found, checked 1 Aug 2026] A like-for-like string inverter
+// replacement for a residential 3-4kWp system is commonly cited around
+// £700-1,200 including labour (equipment £600-1,200 + labour £200-400);
+// £950 is a midpoint. Standard string inverters are commonly cited as
+// lasting 10-15 years, materially shorter than a panel's own ~25-year
+// lifespan; 12 is a midpoint, consistent with the "around year 10-12"
+// figure this constant addresses. Micro-inverters (e.g. Enphase) carry
+// 25-year warranties and aren't expected to need this at all, so this is
+// itself a simplification (assumes a string inverter, the more common UK
+// residential setup, not a system-specific inverter type input this
+// calculator doesn't collect).
+const INVERTER_REPLACEMENT_COST_GBP = 950;
+const INVERTER_REPLACEMENT_YEAR = 12;
+
+// ADDED 1 Aug 2026: both segments' payback previously used a single-year
+// snapshot (this year's price, this year's generation) linearly annualized
+// across a 10-25 year horizon — no price escalation, no panel degradation.
+// A static rate isn't itself wrong for a same-year comparison, but
+// stretching it across decades understates how solar's own value tends to
+// compound: UK electricity prices have historically trended upward, so a
+// flat-rate payback is, if anything, conservative on that front, the
+// opposite of "inflating savings." Degradation cuts the other way. Real
+// long-horizon payback should net both effects, not silently assume they're
+// zero.
+//
+// [Assumption — consumer-guide convergence on a commonly-used industry
+// modeling figure; checked 1 Aug 2026, no official DESNZ/Ofgem figure found
+// specifically for this purpose. A primary DESNZ appraisal document
+// ("Valuation of energy use and greenhouse gas emissions for appraisal,"
+// Nov 2023, gov.uk, fetched and pdftotext-extracted directly) was checked
+// and does reference long-run energy price projections, but only via an
+// accompanying data spreadsheet not accessible from this session — no
+// single quotable %/year figure appears in the document's own text, so this
+// falls back to industry-convergence sourcing rather than a primary figure]
+// Solar payback calculators commonly assume ~3% annual electricity price
+// inflation (real terms) when projecting long-horizon savings; a 3-5% range
+// is cited across sources. Applied only to the import electricity price
+// (the self-consumed portion's value); no comparable escalation assumption
+// exists for SEG export rates, so those are left flat — a real, named
+// simplification, not an oversight.
+const ELECTRICITY_PRICE_ANNUAL_ESCALATION_RATE = 0.03;
+
+// [Assumption — consumer-guide/manufacturer-warranty convergence, checked 1
+// Aug 2026] Modern panels are commonly cited as degrading 0.3-0.8%/year,
+// retaining roughly 85-90% of original output after 25 years — (1-0.005)^25
+// ≈ 88%, inside that range. 0.5%/year used as a flat, simplified midpoint;
+// not modeling the separate, slightly higher first-year drop some sources
+// cite, a level of precision this calculator can't actually verify.
+const PANEL_DEGRADATION_ANNUAL_RATE = 0.005;
+
+// Safety cap matching commonly-cited panel working life. If simulated
+// cumulative savings never clear cumulative cost within this many years,
+// treated as not recovered within the panel's working life rather than
+// simulated indefinitely.
+const PAYBACK_SIMULATION_MAX_YEARS = 30;
+
+/**
+ * Simulates year-by-year cumulative savings against cumulative cost to find
+ * a realistic payback point, replacing a flat-annuity division
+ * (systemCost / annualSavings) that implicitly assumed generation and
+ * price both stay constant forever. Accounts for panel output degradation
+ * (compounding every year, including the inverter-replacement year) and
+ * electricity price escalation (import price only — see
+ * ELECTRICITY_PRICE_ANNUAL_ESCALATION_RATE's sourcing note for why SEG
+ * export rate is left flat). Optionally accounts for recurring inverter
+ * replacement cost, added to cumulative cost every `inverterReplacementEveryYears`
+ * (omit both inverter params for a segment with no such cost modeled, e.g.
+ * plug-in — see PLUGIN_VERTICAL_ORIENTATION_MULTIPLIER's sourcing note for
+ * why that cost isn't modeled at plug-in's scale).
+ * @param {Object} input
+ * @param {number} input.systemCostGbp
+ * @param {number} input.baseSelfConsumedKwh - year-1 self-consumed kWh, before degradation
+ * @param {number} input.baseSecondaryKwh - year-1 kWh in the second bucket (rooftop's exported kWh, or plug-in's unselfConsumedKwh)
+ * @param {number} input.secondaryRatePencePerKwh - rate applied to baseSecondaryKwh (SEG rate for rooftop, 0 for plug-in — that bucket earns nothing)
+ * @param {number} input.electricityPricePencePerKwh - year-1 import price, escalated in later years
+ * @param {number} [input.inverterReplacementCostGbp]
+ * @param {number} [input.inverterReplacementEveryYears]
+ */
+function simulatePaybackYears({
+  systemCostGbp,
+  baseSelfConsumedKwh,
+  baseSecondaryKwh,
+  secondaryRatePencePerKwh,
+  electricityPricePencePerKwh,
+  inverterReplacementCostGbp,
+  inverterReplacementEveryYears,
+}) {
+  const baseYearSavingsGbp = (baseSelfConsumedKwh * electricityPricePencePerKwh + baseSecondaryKwh * secondaryRatePencePerKwh) / 100;
+  const flatPaybackYears = baseYearSavingsGbp > 0 ? systemCostGbp / baseYearSavingsGbp : Infinity;
+  if (baseYearSavingsGbp <= 0) {
+    return { paybackYears: Infinity, flatPaybackYears, inverterReplacementsFactored: 0 };
+  }
+
+  let cumulativeSavingsGbp = 0;
+  let cumulativeCostGbp = systemCostGbp;
+  let inverterReplacementsFactored = 0;
+
+  for (let year = 1; year <= PAYBACK_SIMULATION_MAX_YEARS; year += 1) {
+    if (inverterReplacementCostGbp && year > 1 && (year - 1) % inverterReplacementEveryYears === 0) {
+      cumulativeCostGbp += inverterReplacementCostGbp;
+      inverterReplacementsFactored += 1;
+    }
+
+    const degradationFactor = (1 - PANEL_DEGRADATION_ANNUAL_RATE) ** (year - 1);
+    const escalatedPrice = electricityPricePencePerKwh * (1 + ELECTRICITY_PRICE_ANNUAL_ESCALATION_RATE) ** (year - 1);
+    const yearSavingsGbp = (baseSelfConsumedKwh * degradationFactor * escalatedPrice + baseSecondaryKwh * degradationFactor * secondaryRatePencePerKwh) / 100;
+
+    const savingsBeforeThisYear = cumulativeSavingsGbp;
+    cumulativeSavingsGbp += yearSavingsGbp;
+
+    if (cumulativeSavingsGbp >= cumulativeCostGbp) {
+      const remainder = cumulativeCostGbp - savingsBeforeThisYear;
+      const fraction = yearSavingsGbp > 0 ? remainder / yearSavingsGbp : 0;
+      return { paybackYears: (year - 1) + fraction, flatPaybackYears, inverterReplacementsFactored };
+    }
+  }
+
+  return { paybackYears: Infinity, flatPaybackYears, inverterReplacementsFactored };
+}
 
 // [Fact] SI 2026/848 legal status, verified directly against legislation.gov.uk.
 // grounding-research.md §Plug-in / balcony solar.
@@ -521,7 +754,7 @@ function estimateAnnualConsumptionKwh({ householdSize, hasHeatPump, hasEv, evCou
 /**
  * @param {Object} input
  * @param {'southFacing'|'eastWestFacing'|'northFacing'} input.orientation
- * @param {'usuallyHome'|'usuallyOut'} input.occupancy
+ * @param {'usuallyHome'|'usuallyOut'} input.occupancy - no longer drives the self-consumption number itself (see selfConsumptionFactorFromDemandRatio's sourcing note); used only to decide whether the lowConfidenceOccupancyMismatch flag below is worth surfacing
  * @param {number} input.annualConsumptionKwh - household's own annual electricity use
  * @param {number} [input.electricityPricePencePerKwh] - the user's own known rate; takes precedence over electricityPriceOverride and the static default
  * @param {Object} [input.electricityPriceOverride] - a specific { value, tier, note } to use for the electricity price outright (e.g. a live-fetched current regional rate), used only if electricityPricePencePerKwh is omitted; falls back to the static Ofgem default if this is also omitted
@@ -560,7 +793,7 @@ function calculateRooftopViability({
   const generation = Math.round(preRoofAreaGeneration * roofAreaMultiplier);
   const systemCostGbp = roofAreaSizing ? roofAreaSizing.systemCostGbp : ROOFTOP_SYSTEM_COST_GBP;
 
-  const selfConsumptionRate = SELF_CONSUMPTION_RATE[occupancy];
+  const selfConsumptionRate = selfConsumptionFactorFromDemandRatio(generation, annualConsumptionKwh);
   const selfConsumedKwh = Math.min(generation * selfConsumptionRate, annualConsumptionKwh);
   const exportedKwh = generation - selfConsumedKwh;
 
@@ -573,15 +806,34 @@ function calculateRooftopViability({
   const usedSegRate = segRatePencePerKwh ?? SEG_RATE_PENCE_PER_KWH_DEFAULT;
   const segRateIsUserProvided = segRatePencePerKwh != null;
 
+  // Year-1 snapshot, still the headline "annual savings" figure shown to
+  // the user (what this system would save at today's price and today's
+  // generation) — not the same as the payback calculation below, which
+  // simulates how both change over the panels' working life.
   const annualSavingsGbp = (selfConsumedKwh * usedElectricityPrice + exportedKwh * usedSegRate) / 100;
 
-  const paybackYears = systemCostGbp / annualSavingsGbp;
+  // Payback simulated year-by-year (degradation, price escalation, and
+  // recurring inverter replacement cost) rather than a flat
+  // systemCost/annualSavings division that implicitly assumed generation
+  // and price both stay constant forever. See simulatePaybackYears' own
+  // comment and ELECTRICITY_PRICE_ANNUAL_ESCALATION_RATE/
+  // PANEL_DEGRADATION_ANNUAL_RATE's sourcing notes above.
+  const paybackSimulation = simulatePaybackYears({
+    systemCostGbp,
+    baseSelfConsumedKwh: selfConsumedKwh,
+    baseSecondaryKwh: exportedKwh,
+    secondaryRatePencePerKwh: usedSegRate,
+    electricityPricePencePerKwh: usedElectricityPrice,
+    inverterReplacementCostGbp: INVERTER_REPLACEMENT_COST_GBP,
+    inverterReplacementEveryYears: INVERTER_REPLACEMENT_YEAR,
+  });
+  const paybackYears = paybackSimulation.paybackYears;
   const status = scoreStatus(paybackYears, ROOFTOP_PAYBACK_THRESHOLDS);
 
   const result = {
     segment: 'rooftop',
     status,
-    paybackYears: Math.round(paybackYears * 10) / 10,
+    paybackYears: Number.isFinite(paybackYears) ? Math.round(paybackYears * 10) / 10 : null,
     annualSavingsGbp: Math.round(annualSavingsGbp),
     systemCostGbp,
     systemSizeKwp,
@@ -623,7 +875,16 @@ function calculateRooftopViability({
               tier: orientation === 'southFacing' ? 'Assumption' : 'Prototype estimate, not independently researched',
               note: `Researched range is 3,400-4,200kWh/yr for a south-facing ${REFERENCE_SYSTEM_SIZE_KWP}kWp system, England-calibrated. No postcode given, so no regional adjustment applied.${roofAreaSizing ? ` Scaled to your roof-area-derived ${systemSizeKwp}kWp system size.` : ''}`,
             },
-      selfConsumptionRate: { value: selfConsumptionRate, tier: 'Prototype simplification', note: 'Modeled from occupancy as a rough proxy, not an independently researched figure' },
+      selfConsumptionRate: {
+        value: Math.round(selfConsumptionRate * 1000) / 1000,
+        tier: 'Inference — DESNZ Home Energy Model formula, applied annually rather than per-timestep',
+        note: `Computed from the ratio of your annual generation (${generation}kWh) to your annual consumption (${annualConsumptionKwh}kWh) via DESNZ's own Home Energy Model self-consumption formula (HEM-TP-18), not from occupancy pattern directly. Applying a formula designed for sub-hourly timesteps to annual totals is a coarser approximation — it can't distinguish a household whose consumption is concentrated in daylight hours (higher real self-consumption) from one whose same annual total is mostly evening (lower real self-consumption).`,
+      },
+      paybackYears: {
+        value: Number.isFinite(paybackYears) ? Math.round(paybackYears * 10) / 10 : null,
+        tier: 'Design judgment (color thresholds) + Inference (price escalation, degradation, inverter replacement)',
+        note: `The green/amber/red cutoffs (≤${ROOFTOP_PAYBACK_THRESHOLDS.green}yr / ≤${ROOFTOP_PAYBACK_THRESHOLDS.amber}yr / longer) are this calculator's own design judgment, loosely anchored to a researched 6-14yr range, not a personalized recommendation — how long you plan to own the property and how you weigh upfront cost against long-term saving both change what counts as a good payback for you specifically. Weigh the raw number above against your own plans rather than the color alone. This figure is simulated year-by-year rather than a flat cost÷savings division: it assumes ${Math.round(ELECTRICITY_PRICE_ANNUAL_ESCALATION_RATE * 100)}%/yr electricity price escalation (consumer-guide convergence, no official DESNZ/Ofgem figure found for this specifically) and ${(PANEL_DEGRADATION_ANNUAL_RATE * 100).toFixed(1)}%/yr panel output degradation (manufacturer-warranty convergence), and includes an inverter replacement every ${INVERTER_REPLACEMENT_YEAR} years if the payback period runs that long (£${INVERTER_REPLACEMENT_COST_GBP} each, ${paybackSimulation.inverterReplacementsFactored} included in this result). A flat calculation ignoring all three (today's price and generation held constant forever, no replacement) would give ${Number.isFinite(paybackSimulation.flatPaybackYears) ? `${Math.round(paybackSimulation.flatPaybackYears * 10) / 10}yr` : 'no payback within the simulated horizon'} — price escalation and degradation partly offset each other, but escalation is assumed larger, so this simulated figure is usually shorter than the flat one despite now including the inverter cost the flat figure ignores.`,
+      },
     },
   };
 
@@ -647,14 +908,12 @@ function calculateRooftopViability({
   // conservation area.
   const flags = [];
 
-  if (roofAreaSizing && roofAreaSizing.exceedsPermittedDevelopmentEngland) {
-    flags.push({
-      id: 'permittedDevelopment',
-      tier: 'Fact',
-      title: 'May need planning permission',
-      note: `Your roof-area-derived system (${roofAreaSizing.systemSizeKwp}kWp) is larger than the ${PERMITTED_DEVELOPMENT_KWP_CEILING_ENGLAND}kWp ceiling covered by Permitted Development Rights in England — you may need planning permission for a system this size. Scotland and Wales have their own separate thresholds, not researched here.`,
-    });
-  }
+  flags.push({
+    id: 'permittedDevelopment',
+    tier: 'Fact',
+    title: 'Check Permitted Development criteria before installing',
+    note: 'Roof-mounted domestic solar in England is normally Permitted Development (no planning application) only if it does not protrude more than 200mm from the roof slope or wall, does not project above the roof\'s highest point (excluding chimney), and is no more than 1m above a flat roof\'s highest point. These are physical constraints this calculator cannot check (it has no roof pitch, ridge height, or protrusion inputs) — system size in kWp is not itself part of the test. Scotland and Wales have their own separate regimes, not researched here.',
+  });
 
   flags.push({
     id: 'tenancyConsent',
@@ -667,7 +926,7 @@ function calculateRooftopViability({
     id: 'listedBuilding',
     tier: 'Fact',
     title: 'Listed building? No permitted development rights apply',
-    note: 'This result only checks the size-based Permitted Development ceiling above. Listed buildings have no permitted development rights for solar at all, regardless of system size — not checked by this tool.',
+    note: 'Listed buildings have no permitted development rights for solar at all, regardless of system size — not checked by this tool.',
   });
 
   flags.push({
@@ -693,6 +952,43 @@ function calculateRooftopViability({
       tier: 'Inference',
       title: 'High-export household: this result is unusually sensitive to your SEG rate',
       note: `You're projected to export ${Math.round(exportShareOfGeneration * 100)}% of what you generate, more than most households. This result uses the no-switch-needed baseline SEG rate (${SEG_RATE_PENCE_PER_KWH_DEFAULT}p/kWh) since no specific tariff was picked, but real SEG rates researched here range up to ${topSegRate}p/kWh. For a high-export household like this one, picking your actual tariff will move this result more than it would for most, not just the import price. Use the SEG tariff picker for an accurate result.`,
+    });
+  }
+
+  // The self-consumption formula above is annual-average, so it can't see
+  // *when* within the day a household's consumption happens — only its
+  // total relative to generation. Occupancy pattern is a reasonable signal
+  // for whether that blind spot cuts in a particular direction: a household
+  // that's usually out on weekdays is more likely to have its consumption
+  // concentrated outside midday solar hours than the annual total alone
+  // would suggest, which would make real self-consumption lower than this
+  // result's formula-driven estimate, not higher. Not shown for
+  // 'usuallyHome' households, since there's no comparably clear directional
+  // case that the annual approximation is biased for them specifically.
+  if (occupancy === 'usuallyOut') {
+    flags.push({
+      id: 'occupancyMayLowerRealSelfConsumption',
+      tier: 'Inference',
+      title: "Usually out during the day? Your real self-consumption may be lower than this",
+      note: "This result's self-consumption figure comes from your annual generation-to-consumption ratio (DESNZ's Home Energy Model formula), not from your occupancy pattern directly — it assumes your consumption is reasonably well spread across the day. If you're usually out on weekdays, your actual consumption is more likely concentrated in the morning/evening, outside peak solar hours, which would make your real self-consumption (and savings) lower than this estimate. A battery or a smart diverter for a timed load (immersion heater, EV charger) can close some of that gap.",
+    });
+  }
+
+  if (paybackSimulation.inverterReplacementsFactored > 0) {
+    flags.push({
+      id: 'inverterReplacementFactored',
+      tier: 'Inference',
+      title: `This payback figure includes ${paybackSimulation.inverterReplacementsFactored === 1 ? 'one inverter replacement' : `${paybackSimulation.inverterReplacementsFactored} inverter replacements`}`,
+      note: `Your payback period runs past a typical string inverter's working life, so this result adds ${paybackSimulation.inverterReplacementsFactored === 1 ? 'one replacement' : `${paybackSimulation.inverterReplacementsFactored} replacements`} (£${INVERTER_REPLACEMENT_COST_GBP} each, around every ${INVERTER_REPLACEMENT_YEAR} years — a consumer-guide-sourced estimate, no MCS/government figure found) to the payback math. Panels themselves are commonly warrantied well beyond this; the inverter is the part that typically needs mid-life replacement. A flat calculation ignoring this (and price escalation and degradation — see assumptions.paybackYears) would give ${Number.isFinite(paybackSimulation.flatPaybackYears) ? `${Math.round(paybackSimulation.flatPaybackYears * 10) / 10}yr` : 'no payback within the simulated horizon'}.`,
+    });
+  }
+
+  if (!Number.isFinite(paybackYears)) {
+    flags.push({
+      id: 'paybackNotReachedWithinSimulation',
+      tier: 'Inference',
+      title: `This result doesn't pay back within ${PAYBACK_SIMULATION_MAX_YEARS} years`,
+      note: `Simulated cumulative savings (accounting for price escalation, panel degradation, and recurring inverter replacement) never clear the total cost within a ${PAYBACK_SIMULATION_MAX_YEARS}-year horizon, roughly matching a panel's commonly-cited working life. This result is a clear red regardless of the exact figure.`,
     });
   }
 
@@ -1164,31 +1460,90 @@ async function calculateRooftopViabilityByPostcode(postcode, otherInputs) {
 
 /**
  * @param {Object} input
- * @param {'usuallyHome'|'usuallyOut'} input.occupancy - retained for interface symmetry; not used in this scoring pass, since plug-in generation is assumed fully self-consumed
+ * @param {'usuallyHome'|'usuallyOut'} input.occupancy - retained for interface symmetry; not used directly (mirrors calculateRooftopViability, where self-consumption is demand-ratio-driven, not occupancy-driven)
  * @param {'southFacing'|'eastWestFacing'|'northFacing'} [input.orientation] - defaults to southFacing (the figure PLUGIN_ANNUAL_GENERATION_KWH is itself calibrated to) if omitted
  * @param {number} [input.electricityPricePencePerKwh] - the user's own known rate; falls back to the Ofgem price-cap default if omitted
+ * @param {number} [input.annualConsumptionKwh] - household's own annual electricity use, e.g. from estimateAnnualConsumptionKwh() or a bill; if given, self-consumption is computed the same way as rooftop's (see selfConsumptionFactorFromDemandRatio) instead of assuming the full amount is self-consumed
  */
-function calculatePluginViability({ occupancy, orientation, electricityPricePencePerKwh }) {
+function calculatePluginViability({ occupancy, orientation, electricityPricePencePerKwh, annualConsumptionKwh }) {
   const usedOrientation = orientation ?? 'southFacing';
   const orientationMultiplier = pluginOrientationMultiplier(usedOrientation);
   const generation = Math.round(PLUGIN_ANNUAL_GENERATION_KWH * orientationMultiplier);
   const usedElectricityPrice = electricityPricePencePerKwh ?? ELECTRICITY_PRICE_PENCE_PER_KWH_DEFAULT;
   const electricityPriceIsUserProvided = electricityPricePencePerKwh != null;
-  // Plug-in units are treated as fully self-consumed at this scale, no export
-  // mechanism assumed. This mirrors how the source figures were reported,
-  // not an independently modeled export split.
-  const annualSavingsGbp = (generation * usedElectricityPrice) / 100;
-  const paybackYears = PLUGIN_KIT_COST_GBP / annualSavingsGbp;
+
+  // CORRECTED 1 Aug 2026: this function previously treated 100% of
+  // generation as self-consumed, with no export/unmet-demand concept at
+  // all — a real gap, not just an unresearched simplification like the
+  // constants below. Plug-in kits have no export meter or SEG tracking, so
+  // a household away during the day gets nothing for a midday generation
+  // spike that exceeds its baseload demand: that surplus is fed to the grid
+  // for free, not banked as savings, unlike rooftop's SEG-credited export.
+  // When annualConsumptionKwh is available, self-consumption is now modeled
+  // the same way as rooftop's (selfConsumptionFactorFromDemandRatio, DESNZ
+  // HEM's own formula) and any unconsumed generation earns nothing at all
+  // (no SEG-equivalent for plug-in). When it isn't available (this input is
+  // optional, since a plug-in kit's own onboarding may be lighter-weight
+  // than rooftop's), this falls back to the old fully-self-consumed
+  // assumption, but that fallback is now named as a real overstatement risk
+  // in the result's flags/assumptions, not silently presented as fine.
+  const hasConsumptionInput = annualConsumptionKwh != null && annualConsumptionKwh > 0;
+  const selfConsumptionRate = hasConsumptionInput ? selfConsumptionFactorFromDemandRatio(generation, annualConsumptionKwh) : 1;
+  const selfConsumedKwh = hasConsumptionInput ? Math.min(generation * selfConsumptionRate, annualConsumptionKwh) : generation;
+  const unselfConsumedKwh = generation - selfConsumedKwh;
+
+  // Year-1 snapshot, still the headline "annual savings" figure. Payback
+  // below is simulated year-by-year (degradation + price escalation, no
+  // inverter replacement modeled — see PLUGIN_VERTICAL_ORIENTATION_MULTIPLIER's
+  // sourcing note for why not), same ADDED 1 Aug 2026 fix as rooftop's.
+  const annualSavingsGbp = (selfConsumedKwh * usedElectricityPrice) / 100;
+  const paybackSimulation = simulatePaybackYears({
+    systemCostGbp: PLUGIN_KIT_COST_GBP,
+    baseSelfConsumedKwh: selfConsumedKwh,
+    baseSecondaryKwh: unselfConsumedKwh,
+    secondaryRatePencePerKwh: 0,
+    electricityPricePencePerKwh: usedElectricityPrice,
+  });
+  const paybackYears = paybackSimulation.paybackYears;
   const status = scoreStatus(paybackYears, PLUGIN_PAYBACK_THRESHOLDS);
+
+  const flags = [];
+  if (!hasConsumptionInput) {
+    flags.push({
+      id: 'pluginSelfConsumptionUnverified',
+      tier: 'Assumption',
+      title: 'This result assumes every unit generated is used, which may overstate savings',
+      note: "No household consumption figure was given, so this result falls back to assuming 100% of the kit's generation is self-consumed. Plug-in kits have no export meter, so any generation your home isn't using at that moment is fed to the grid for free, not credited as savings. If you're often out during the day, or your generation regularly exceeds what a small appliance load draws at once, your real savings are likely lower than this. Give your annual electricity use for a more realistic estimate.",
+    });
+  } else if (unselfConsumedKwh / generation > 0.15) {
+    flags.push({
+      id: 'pluginUnselfConsumedShare',
+      tier: 'Inference',
+      title: 'A meaningful share of this kit\'s generation is projected to go unused',
+      note: `Based on your annual consumption, roughly ${Math.round((unselfConsumedKwh / generation) * 100)}% of this kit's generation (${Math.round(unselfConsumedKwh)}kWh/yr) is projected to exceed what your household draws at the time it's generated. Plug-in kits have no export meter, so that portion earns nothing — it isn't credited as savings, unlike rooftop's SEG-paid export.`,
+    });
+  }
+
+  if (!Number.isFinite(paybackYears)) {
+    flags.push({
+      id: 'paybackNotReachedWithinSimulation',
+      tier: 'Inference',
+      title: `This result doesn't pay back within ${PAYBACK_SIMULATION_MAX_YEARS} years`,
+      note: `Simulated cumulative savings (accounting for price escalation and panel degradation) never clear the kit cost within a ${PAYBACK_SIMULATION_MAX_YEARS}-year horizon. This result is a clear red regardless of the exact figure.`,
+    });
+  }
 
   return {
     segment: 'plugin',
     status,
-    paybackYears: Math.round(paybackYears * 10) / 10,
+    paybackYears: Number.isFinite(paybackYears) ? Math.round(paybackYears * 10) / 10 : null,
     annualSavingsGbp: Math.round(annualSavingsGbp),
     kitCostGbp: PLUGIN_KIT_COST_GBP,
     generationKwh: generation,
+    selfConsumedKwh: Math.round(selfConsumedKwh),
+    unselfConsumedKwh: Math.round(unselfConsumedKwh),
     legalStatus: PLUGIN_LEGAL_STATUS,
+    flags,
     assumptions: {
       electricityPricePencePerKwh: electricityPriceIsUserProvided
         ? { value: usedElectricityPrice, tier: 'User-provided', note: 'Your own stated rate' }
@@ -1196,11 +1551,27 @@ function calculatePluginViability({ occupancy, orientation, electricityPricePenc
       kitCostGbp: { value: PLUGIN_KIT_COST_GBP, tier: 'Assumption — weakest-sourced figure in this calculator', note: 'Reported range £400-900; none of these figures trace to a government, MCS, or established consumer body' },
       generationKwh: {
         value: generation,
-        tier: 'Assumption, stacked on another Assumption — weakest-sourced figure in this calculator',
+        tier: usedOrientation === 'southFacing' ? 'Assumption — weakest-sourced figure in this calculator' : 'Inference (orientation ratio) applied to an Assumption (south-facing baseline)',
         note:
           usedOrientation === 'southFacing'
-            ? 'Reported range 640-900kWh/yr, same sourcing caveat as kit cost. Treated as the south-facing baseline (the range itself does not specify an assumed orientation).'
-            : `${PLUGIN_ANNUAL_GENERATION_KWH}kWh/yr south-facing baseline (reported range 640-900kWh/yr, same sourcing caveat as kit cost) adjusted by rooftop's own ${usedOrientation === 'eastWestFacing' ? 'east/west' : 'north-facing'} ratio (${Math.round(orientationMultiplier * 100)}% of south) — no orientation-specific plug-in data exists, so this borrows rooftop's proportional estimate rather than presenting plug-in as orientation-agnostic.`,
+            ? `Reported range 640-900kWh/yr, same sourcing caveat as kit cost. Treated as the south-facing baseline (the range itself does not specify an assumed orientation) — nor does it state a mounting tilt. Real plug-in kits are typically mounted near-vertical, and two independent UK PVGIS-modeled sources put vertical mounting at roughly 70-74% of an optimally-tilted rooftop panel's output for the same orientation; this baseline is NOT discounted by that figure, since it's unclear whether the original 640-900kWh/yr range already reflects real vertical-mount output or an idealized tilt — flagged as a real possibility this figure runs high, not silently corrected.`
+            : `${PLUGIN_ANNUAL_GENERATION_KWH}kWh/yr south-facing baseline (reported range 640-900kWh/yr, same sourcing caveat as kit cost) adjusted by a vertical-mount-specific ${usedOrientation === 'eastWestFacing' ? 'east/west' : 'north-facing'} ratio (${Math.round(orientationMultiplier * 100)}% of south), corrected 1 Aug 2026 from rooftop's own ${usedOrientation === 'eastWestFacing' ? '79%' : '50%'} ratio (calibrated to rooftop's ~35° tilt, not a vertical mount) to a vertical-specific figure from UK consumer-guide sources — still the weaker-sourced half of this number, and the south-facing baseline itself carries its own unverified tilt risk (see the southFacing case's note).`,
+      },
+      selfConsumptionRate: hasConsumptionInput
+        ? {
+            value: Math.round(selfConsumptionRate * 1000) / 1000,
+            tier: 'Inference — DESNZ Home Energy Model formula, applied annually rather than per-timestep',
+            note: `Computed from the ratio of this kit's generation (${generation}kWh) to your annual consumption (${annualConsumptionKwh}kWh), same formula and same annual-approximation caveat as the rooftop calculator (see calculateRooftopViability). Any generation beyond this rate is assumed to earn nothing, since plug-in kits have no export meter.`,
+          }
+        : {
+            value: 1,
+            tier: 'Assumption, not verified for this result',
+            note: "No household consumption figure was given, so this defaults to assuming full self-consumption — the weakest assumption in this calculator's plug-in segment. See the pluginSelfConsumptionUnverified flag.",
+          },
+      paybackYears: {
+        value: Number.isFinite(paybackYears) ? Math.round(paybackYears * 10) / 10 : null,
+        tier: 'Design judgment (color thresholds) + Inference (price escalation, degradation)',
+        note: `The green/amber/red cutoffs (≤${PLUGIN_PAYBACK_THRESHOLDS.green}yr / ≤${PLUGIN_PAYBACK_THRESHOLDS.amber}yr / longer) are this calculator's own design judgment, not a personalized recommendation — how long you plan to keep the kit and how you weigh upfront cost against long-term saving both change what counts as a good payback for you specifically. Weigh the raw number above against your own plans rather than the color alone. This figure is simulated year-by-year (${Math.round(ELECTRICITY_PRICE_ANNUAL_ESCALATION_RATE * 100)}%/yr price escalation, ${(PANEL_DEGRADATION_ANNUAL_RATE * 100).toFixed(1)}%/yr panel degradation — same assumptions and sourcing as rooftop's payback figure) rather than a flat cost÷savings division. No inverter-replacement adjustment is modeled here, unlike rooftop's payback figure — no cost research exists at plug-in's much smaller scale. A flat calculation ignoring escalation/degradation would give ${Number.isFinite(paybackSimulation.flatPaybackYears) ? `${Math.round(paybackSimulation.flatPaybackYears * 10) / 10}yr` : 'no payback within the simulated horizon'}.`,
       },
     },
   };
@@ -1223,6 +1594,8 @@ const SunnySideUpCalculator = {
   findSegTariffsBySupplier,
   estimateAnnualConsumptionKwh,
   estimateSystemSizeFromRoofArea,
+  selfConsumptionFactorFromDemandRatio,
+  simulatePaybackYears,
   constants: {
     ELECTRICITY_PRICE_PENCE_PER_KWH_DEFAULT,
     SEG_RATE_PENCE_PER_KWH_DEFAULT,
@@ -1233,7 +1606,6 @@ const SunnySideUpCalculator = {
     ROOF_AREA_PER_PANEL_M2,
     PANEL_WATTAGE_KWP,
     COST_PER_KWP_GBP_BY_TIER,
-    PERMITTED_DEVELOPMENT_KWP_CEILING_ENGLAND,
     REGIONAL_GENERATION_MULTIPLIER,
     REGIONS_WITH_UNRESEARCHED_REGULATORY_REGIME,
     OPEN_METEO_ASSUMED_PEAK_POWER_KWP,
@@ -1244,9 +1616,16 @@ const SunnySideUpCalculator = {
     EV_ANNUAL_HOME_CHARGING_KWH_ESTIMATE,
     PLUGIN_KIT_COST_GBP,
     PLUGIN_ANNUAL_GENERATION_KWH,
-    SELF_CONSUMPTION_RATE,
+    PLUGIN_VERTICAL_ORIENTATION_MULTIPLIER,
+    SELF_CONSUMPTION_DEMAND_RATIO_COEFFICIENT,
+    SELF_CONSUMPTION_DEMAND_RATIO_EXPONENT,
     ROOFTOP_PAYBACK_THRESHOLDS,
     PLUGIN_PAYBACK_THRESHOLDS,
+    INVERTER_REPLACEMENT_COST_GBP,
+    INVERTER_REPLACEMENT_YEAR,
+    ELECTRICITY_PRICE_ANNUAL_ESCALATION_RATE,
+    PANEL_DEGRADATION_ANNUAL_RATE,
+    PAYBACK_SIMULATION_MAX_YEARS,
     PLUGIN_LEGAL_STATUS,
   },
 };

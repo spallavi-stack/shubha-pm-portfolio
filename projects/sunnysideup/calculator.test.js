@@ -5,49 +5,121 @@
  * the calculator's output lands in the ranges grounding-research.md actually
  * reports, run before any UI is built on top of this logic.
  */
-const { calculateRooftopViability, calculateRooftopViabilityByPostcode, calculatePluginViability, findSegTariff, findSegTariffsBySupplier, estimateAnnualConsumptionKwh, estimateSystemSizeFromRoofArea, constants } = require('./calculator.js');
+const { calculateRooftopViability, calculateRooftopViabilityByPostcode, calculatePluginViability, findSegTariff, findSegTariffsBySupplier, estimateAnnualConsumptionKwh, estimateSystemSizeFromRoofArea, simulatePaybackYears, constants } = require('./calculator.js');
 
 function printResult(label, result) {
   console.log(`\n--- ${label} ---`);
   console.log(JSON.stringify(result, null, 2));
 }
 
-// Rooftop, south-facing, occupier usually home, consumption high enough not
-// to cap self-consumption. Expect: payback in the researched 6-14yr range.
+// Rooftop, south-facing, consumption high enough not to cap self-consumption.
+// Self-consumption now comes from DESNZ HEM's demand-ratio formula
+// (generation/consumption), not occupancy — see selfConsumptionFactorFromDemandRatio's
+// sourcing note in calculator.js. Expect: payback in the researched 6-14yr range.
 printResult(
   'Rooftop — south-facing, usually home, 4,000kWh/yr household use',
   calculateRooftopViability({ orientation: 'southFacing', occupancy: 'usuallyHome', annualConsumptionKwh: 4000 })
 );
 
-// Rooftop, south-facing, occupier usually out (lower self-consumption, more
-// exported at the lower SEG rate). Expect: longer payback than the above.
+// Same generation/consumption, occupancy 'usuallyOut' instead of 'usuallyHome'.
+// occupancy no longer changes any number in the result (self-consumption is
+// demand-ratio-driven now, corrected 1 Aug 2026 — the old occupancy binary
+// couldn't reflect e.g. an EV/heat pump timed into daylight hours changing
+// real self-consumption at a fixed occupancy pattern). Expect: numerically
+// IDENTICAL to the 'usuallyHome' case above, but with an extra
+// "occupancyMayLowerRealSelfConsumption" flag this one doesn't get, since an
+// annual-average formula can't see whether a usually-out household's
+// consumption clusters outside solar hours.
 printResult(
   'Rooftop — south-facing, usually out, 4,000kWh/yr household use',
   calculateRooftopViability({ orientation: 'southFacing', occupancy: 'usuallyOut', annualConsumptionKwh: 4000 })
 );
 
-// Rooftop, north-facing (worst case). Expect: red, long payback.
+// Rooftop, north-facing (worst case). Expect: red. Also the first scenario
+// in this file where the flat payback (systemCost/annualSavings, ~14.1yr)
+// runs past INVERTER_REPLACEMENT_YEAR (12), so the 1 Aug 2026 payback
+// simulation (ADDED, on top of the earlier inverter-replacement fix) should
+// engage: flags should include "inverterReplacementFactored" (1 replacement
+// included), and assumptions.paybackYears.tier should read "Design judgment
+// (color thresholds) + Inference (price escalation, degradation, inverter
+// replacement)". Note the simulated paybackYears can come out SHORTER than
+// the flat figure even with an inverter replacement folded in (price
+// escalation compounding over 13+ years can outweigh both degradation and
+// the added inverter cost) — not a bug, and the assumptions/flag notes name
+// the flat comparison figure explicitly so this isn't a silent surprise.
 printResult(
   'Rooftop — north-facing, usually home, 4,000kWh/yr household use',
   calculateRooftopViability({ orientation: 'northFacing', occupancy: 'usuallyHome', annualConsumptionKwh: 4000 })
 );
 
+// Rooftop, same as the very first scenario (south-facing, amber, ~9.6yr flat
+// payback) — confirms the inverter-replacement addition does NOT engage
+// when the flat payback is under INVERTER_REPLACEMENT_YEAR: no
+// "inverterReplacementFactored" flag, and the flags array should have no
+// "paybackNotReachedWithinSimulation" entry either. The paybackYears.tier
+// string is unconditional now (always mentions price escalation/degradation/
+// inverter replacement, since the simulation always runs), so this case is
+// distinguished by the ABSENCE of the inverterReplacementFactored flag and
+// "0 included in this result" in the note, not by a different tier string.
+// (Re-run here explicitly rather than just inferring it from the first
+// case, since this is the behavior actually being checked by this addition.)
+printResult(
+  'Rooftop — south-facing, usually home, 4,000kWh/yr (re-run: confirms no inverter adjustment below the 12yr threshold)',
+  calculateRooftopViability({ orientation: 'southFacing', occupancy: 'usuallyHome', annualConsumptionKwh: 4000 })
+);
+
 // Rooftop, low household consumption caps self-consumption below the
-// occupancy-implied rate — checks the Math.min() ceiling actually engages.
+// demand-ratio-computed rate — checks the Math.min() ceiling actually engages.
 printResult(
   'Rooftop — south-facing, usually home, but only 1,000kWh/yr household use (low-consumption household)',
   calculateRooftopViability({ orientation: 'southFacing', occupancy: 'usuallyHome', annualConsumptionKwh: 1000 })
 );
 
-// Plug-in. Expect: payback near the weak source's claimed 3-4yr figure,
-// since the constants are drawn from the midpoint of the same range.
-printResult('Plug-in — standard case (defaults)', calculatePluginViability({ occupancy: 'usuallyHome' }));
+// Plug-in, no consumption figure given: falls back to the old
+// fully-self-consumed assumption (corrected 1 Aug 2026 to be an explicitly
+// flagged fallback, not a silent default) — payback should still land near
+// the weak source's claimed 3-4yr figure.
+printResult('Plug-in — standard case (defaults, no consumption given)', calculatePluginViability({ occupancy: 'usuallyHome' }));
+console.log('- selfConsumedKwh should equal generationKwh (770), unselfConsumedKwh 0, flags should include "pluginSelfConsumptionUnverified" warning this may overstate savings, and assumptions.paybackYears (added 1 Aug 2026) should explain the green/amber/red cutoffs are a design judgment, with no inverter-replacement mention (not modeled for plug-in scale), but SHOULD mention price escalation and degradation now (same fix as rooftop, applied at plug-in\'s much shorter horizon, where the effect is real but small), and name a flat-comparison figure.');
 
-// Plug-in now varies by orientation too (borrows rooftop's own multipliers,
-// see calculator.js's comment above pluginOrientationMultiplier). North
-// should score meaningfully worse than the south-facing default above.
-printResult('Plug-in — north-facing', calculatePluginViability({ occupancy: 'usuallyHome', orientation: 'northFacing' }));
-console.log('- generationKwh should be 385 (770 x 50%, rooftop\'s own north ratio), payback should be noticeably longer than the south-facing default case above, and assumptions.generationKwh.note should explain the borrowed-ratio reasoning rather than presenting 385 as independently researched.');
+// Plug-in, no consumption figure given (unusual placement, but keeping this
+// scenario for orientation coverage): north should score meaningfully worse
+// than the south-facing default above. Uses PLUGIN_VERTICAL_ORIENTATION_MULTIPLIER
+// (corrected 1 Aug 2026 from rooftop's own 35°-tilt-calibrated ratios to
+// vertical-mount-specific ones — see calculator.js's comment above
+// pluginOrientationMultiplier for the two independent sources behind this).
+printResult('Plug-in — north-facing, no consumption given', calculatePluginViability({ occupancy: 'usuallyHome', orientation: 'northFacing' }));
+console.log('- generationKwh should be 308 (770 x 40%, the new vertical-mount-specific north ratio, not rooftop\'s old 50%), payback should be noticeably longer than the south-facing default case above, and assumptions.generationKwh.note should explain this is a corrected vertical-specific ratio, not rooftop\'s borrowed one.');
+
+// Plug-in, east/west — the other half of the 1 Aug 2026 correction. Notably
+// the new vertical-specific east/west ratio (85%) is actually HIGHER (less
+// loss) than rooftop's old borrowed ratio (79%) was — real vertical mounts
+// are, per the researched sources, less azimuth-sensitive east/west than a
+// rooftop at ~35° tilt, the opposite direction from north's correction.
+printResult('Plug-in — east/west-facing, no consumption given', calculatePluginViability({ occupancy: 'usuallyHome', orientation: 'eastWestFacing' }));
+console.log('- generationKwh should be 655 (770 x 85%, the new vertical-mount-specific east/west ratio) — HIGHER than the old rooftop-borrowed 79% (608) would have given, confirming this correction is not just "make everything worse."');
+
+// Plug-in WITH a consumption figure large enough that the kit's small output
+// should be almost entirely self-consumed (770kWh generation vs 4,000kWh
+// consumption) — expect selfConsumedKwh close to (not necessarily exactly)
+// generationKwh, and no "meaningful unused share" flag.
+printResult(
+  'Plug-in — south-facing, 4,000kWh/yr household consumption (generation small relative to demand)',
+  calculatePluginViability({ occupancy: 'usuallyHome', annualConsumptionKwh: 4000 })
+);
+console.log('- selfConsumptionRate should be at or near 1 (demand ratio 770/4000 is low, so the DESNZ formula predicts near-full self-consumption), no "pluginUnselfConsumedShare" or "pluginSelfConsumptionUnverified" flag, and assumptions.selfConsumptionRate.tier should cite the DESNZ formula, not the old fallback.');
+
+// Plug-in WITH a consumption figure small enough (or generation high enough
+// via orientation) that a meaningful share of generation is projected to go
+// unused, at the actual scale plug-in kits generate. A very small household
+// consumption relative to the kit's own generation is the honest way to
+// trigger this — checks the fix actually engages the "unused generation
+// earns nothing" path, not just accepts a consumption input cosmetically.
+printResult(
+  'Plug-in — south-facing, 500kWh/yr household consumption (generation exceeds a chunk of demand)',
+  calculatePluginViability({ occupancy: 'usuallyOut', annualConsumptionKwh: 500 })
+);
+console.log('- unselfConsumedKwh should be a meaningful share of generationKwh here (low consumption relative to a 770kWh kit), flags should include "pluginUnselfConsumedShare", and annualSavingsGbp should be based on selfConsumedKwh only (NOT the full 770kWh) — confirms unused generation is no longer silently credited as savings.');
 
 // Same rooftop scenario as the first case, but with a user-provided fixed-deal
 // electricity price (higher than the price-cap default) and a user-provided
@@ -133,26 +205,29 @@ console.log('\n--- estimateSystemSizeFromRoofArea(1) (too small for one panel) -
 console.log(estimateSystemSizeFromRoofArea(1));
 console.log('- Should be null.');
 
-// A roof large enough to exceed the small-system cost tier (>3kWp) and the
-// Permitted Development ceiling (>4kWp) in the same call.
+// A roof large enough to exceed the small-system cost tier (>3kWp).
+// (No more "Permitted Development ceiling" here — that was a false size-based
+// threshold removed 1 Aug 2026; see calculator.js's correction note. Permitted
+// Development eligibility is now surfaced as an unconditional flag instead,
+// since it depends on roof pitch/ridge height/protrusion, not kWp.)
 console.log('\n--- estimateSystemSizeFromRoofArea(60) ---');
 console.log(JSON.stringify(estimateSystemSizeFromRoofArea(60), null, 2));
-console.log('- panelCount 24 (floor(60/2.45)), systemSizeKwp 10.32 (24 x 0.43), costPerKwpGbp 1625 (standard tier, >3kWp), exceedsPermittedDevelopmentEngland true (>4kWp).');
+console.log('- panelCount 24 (floor(60/2.45)), systemSizeKwp 10.32 (24 x 0.43), costPerKwpGbp 1625 (standard tier, >3kWp). No exceedsPermittedDevelopmentEngland field (removed).');
 
 // A small roof that stays within the small-system cost tier (<=3kWp).
 console.log('\n--- estimateSystemSizeFromRoofArea(12) ---');
 console.log(JSON.stringify(estimateSystemSizeFromRoofArea(12), null, 2));
-console.log('- panelCount 4 (floor(12/2.45)), systemSizeKwp 1.72, costPerKwpGbp 1800 (small-system tier, <=3kWp), exceedsPermittedDevelopmentEngland false.');
+console.log('- panelCount 4 (floor(12/2.45)), systemSizeKwp 1.72, costPerKwpGbp 1800 (small-system tier, <=3kWp). No exceedsPermittedDevelopmentEngland field (removed).');
 
 // calculateRooftopViability with roofAreaM2: should override the flat
 // REFERENCE_SYSTEM_SIZE_KWP default entirely (systemCostGbp, systemSizeKwp,
-// generationKwh all scaled), attach roofAreaSizing, and lead the flags array
-// with a "permittedDevelopment" entry since 60m2 produces >4kWp.
+// generationKwh all scaled) and attach roofAreaSizing. flags[0] is always
+// "permittedDevelopment" now (unconditional, not size-triggered).
 printResult(
-  'Rooftop — south-facing, usually home, 4,000kWh/yr, 60m² roof area (exceeds Permitted Development ceiling)',
+  'Rooftop — south-facing, usually home, 4,000kWh/yr, 60m² roof area',
   calculateRooftopViability({ orientation: 'southFacing', occupancy: 'usuallyHome', annualConsumptionKwh: 4000, roofAreaM2: 60 })
 );
-console.log('- systemSizeKwp should be 10.32, systemCostGbp should be 16,770 (10.32 x £1,625/kWp), generationKwh should be scaled up from the flat 3,800kWh baseline (10.32/4 x 3,800 = 9,804), and flags[0].id should be "permittedDevelopment" (followed by the always-present tenancyConsent/listedBuilding/conservationArea flags).');
+console.log('- systemSizeKwp should be 10.32, systemCostGbp should be 16,770 (10.32 x £1,625/kWp), generationKwh should be scaled up from the flat 3,800kWh baseline (10.32/4 x 3,800 = 9,804), and flags[0].id should be "permittedDevelopment" (followed by tenancyConsent/listedBuilding/conservationArea).');
 
 // Roof area interacting with an existing generation adjustment (regional
 // multiplier here, standing in for what a real postcode call would also
@@ -176,7 +251,7 @@ printResult(
   'Rooftop — south-facing, usually home, 4,000kWh/yr, 1m² roof area (too small to fit a panel)',
   calculateRooftopViability({ orientation: 'southFacing', occupancy: 'usuallyHome', annualConsumptionKwh: 4000, roofAreaM2: 1 })
 );
-console.log('- Should fall back to the flat default entirely: systemSizeKwp 4, systemCostGbp 7,000, generationKwh 3,800, no roofAreaSizing field and no "permittedDevelopment" entry in flags (the always-present tenancyConsent/listedBuilding/conservationArea flags should still be there), no NaN/Infinity anywhere.');
+console.log('- Should fall back to the flat default entirely: systemSizeKwp 4, systemCostGbp 7,000, generationKwh 3,800, no roofAreaSizing field. flags should still include "permittedDevelopment" (unconditional now, not size-triggered) plus tenancyConsent/listedBuilding/conservationArea, no NaN/Infinity anywhere.');
 
 // Regional generation multiplier applied manually (regionalGeneration is the
 // public shape returned by REGIONAL_GENERATION_MULTIPLIER[country], not a
@@ -191,6 +266,46 @@ printResult(
     regionalGeneration: constants.REGIONAL_GENERATION_MULTIPLIER.Scotland,
   })
 );
+
+// Direct unit checks on simulatePaybackYears (ADDED 1 Aug 2026), isolating
+// the escalation/degradation/inverter-replacement math from the rest of
+// calculateRooftopViability's assumptions/flags plumbing.
+console.log('\n--- simulatePaybackYears: zero-degradation, zero-escalation should reduce to flat division ---');
+const zeroEffectSim = simulatePaybackYears({
+  systemCostGbp: 1000,
+  baseSelfConsumedKwh: 1000,
+  baseSecondaryKwh: 0,
+  secondaryRatePencePerKwh: 0,
+  electricityPricePencePerKwh: 20,
+  // No inverter params: this path should also confirm the "no inverter
+  // modeled" case (undefined cost/interval) never throws or divides by
+  // undefined, since the function guards inverterReplacementCostGbp being
+  // falsy before touching inverterReplacementEveryYears.
+});
+console.log(JSON.stringify(zeroEffectSim, null, 2));
+console.log('- With escalation/degradation constants nonzero but a trivial 5-year case (1000/(1000*20/100)=5yr flat), paybackYears and flatPaybackYears should be close but not identical (escalation still applies from year 2), and inverterReplacementsFactored should be 0 (no inverter params passed).');
+
+console.log('\n--- simulatePaybackYears: a case that never recovers within PAYBACK_SIMULATION_MAX_YEARS ---');
+const neverRecoversSim = simulatePaybackYears({
+  systemCostGbp: 100000,
+  baseSelfConsumedKwh: 100,
+  baseSecondaryKwh: 0,
+  secondaryRatePencePerKwh: 0,
+  electricityPricePencePerKwh: 20,
+});
+console.log(JSON.stringify(neverRecoversSim, null, 2));
+console.log(`- simulatePaybackYears itself returns a raw Infinity here (£100,000 system, £20/yr savings, never recovers within ${constants.PAYBACK_SIMULATION_MAX_YEARS} years even with escalation) — printResult's JSON.stringify auto-converts that to the "null" shown above, which is JSON.stringify's own standard behavior for Infinity, not something this function does. Confirms the loop's cap terminates cleanly rather than running away. calculateRooftopViability/calculatePluginViability handle this explicitly with Number.isFinite() before returning, rather than relying on that implicit conversion — see the next case.`);
+
+// Same never-recovers scenario, but through calculateRooftopViability's full
+// public interface — confirms Infinity gets converted to null (not NaN, not
+// a literal Infinity that JSON.stringify would silently drop) in both the
+// top-level paybackYears and assumptions.paybackYears.value, and that the
+// paybackNotReachedWithinSimulation flag fires.
+printResult(
+  'Rooftop — a scenario engineered to never pay back within the simulation horizon (£50,000 system cost)',
+  { ...calculateRooftopViability({ orientation: 'northFacing', occupancy: 'usuallyHome', annualConsumptionKwh: 100, roofAreaM2: 1000 }), systemCostGbpNote: 'roofAreaM2:1000 pushes systemCostGbp well past what a 100kWh/yr household could ever recover' }
+);
+console.log('- If this scenario\'s systemCostGbp/annualSavingsGbp ratio is large enough to exceed the simulation horizon: paybackYears should be null (not a raw Infinity, which JSON.stringify would otherwise silently turn into a bare null anyway, but explicitly handled here rather than accidentally), status should be "red", and flags should include "paybackNotReachedWithinSimulation".');
 
 (async () => {
   // calculateRooftopViabilityByPostcode is async and calls postcodes.io over
@@ -327,7 +442,7 @@ printResult(
   console.log('\nSanity checks:');
   console.log('- Rooftop south-facing/usually-home payback (default SEG rate) should now be longer than before the tariff-table update, since the no-switch-needed baseline dropped from 15p to 3.01p.');
   console.log('- Rooftop north-facing should score red (worst case).');
-  console.log('- Low-consumption household result should show selfConsumedKwh capped near annualConsumptionKwh, not the full occupancy-implied share.');
+  console.log('- Low-consumption household result should show selfConsumedKwh capped near annualConsumptionKwh, not the full demand-ratio-computed share.');
   console.log('- Plug-in payback should land near 3-4yr, consistent with (though not independently verifying) the one weak source that claims that figure.');
   console.log('- The user-provided-rates case should show a SHORTER payback than the same scenario with defaults (higher electricity price benefits self-consumption more than the lower SEG rate costs on export, for this self-consumption-heavy household), and assumptions should mark both rates "User-provided" not "Fact (default)"/"Assumption (default)".');
   console.log('- The named-tariff case should show a materially shorter payback than the default-rate case (12p vs 3.01p on the exported portion), and the assumptions note should name "Octopus Energy — Outgoing Octopus" rather than saying "Your own stated rate".');

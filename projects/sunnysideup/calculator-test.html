@@ -58,6 +58,9 @@
     <option value="usuallyOut">Usually out during the day</option>
   </select>
 
+  <label for="consumptionPlugin">Annual household electricity use, kWh/year (leave blank to fall back to the unverified 100%-self-consumed assumption)</label>
+  <input id="consumptionPlugin" type="number" placeholder="e.g. 3500 — added 1 Aug 2026 alongside the self-consumption fix">
+
   <button onclick="runPlugin()">Calculate plug-in viability</button>
   <pre id="pluginResult">(results will appear here)</pre>
 </fieldset>
@@ -141,6 +144,7 @@
   function runPlugin() {
     const result = SunnySideUpCalculator.calculatePluginViability({
       occupancy: document.getElementById('occupancyPlugin').value,
+      annualConsumptionKwh: parseLocaleNumber(document.getElementById('consumptionPlugin').value),
     });
     document.getElementById('pluginResult').textContent = JSON.stringify(result, null, 2);
   }
