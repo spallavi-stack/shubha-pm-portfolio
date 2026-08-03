@@ -1018,7 +1018,7 @@
     <div class="flexy-header"><div class="flexy-logo">flexy</div></div>
     <div class="center-flow" style="padding-bottom:78px;">
       <div class="check-badge">✓</div>
-      <div class="h1">2023 Chevrolet Bolt EUV connected</div>
+      <div class="h1" id="s6VehicleName">2023 Chevrolet Bolt EUV connected</div>
       <div class="p-muted">Current charge: 45%<br>Now let's set up how you want it charged.</div>
       <button class="btn-primary" onclick="go('s7')">Set up charging preferences</button>
     </div>
@@ -1195,7 +1195,7 @@
   <div class="screen flexy-bg" id="s9">
     <div class="statusbar"><span>9:41</span><span>●●●● 🔋</span></div>
     <div class="app-header">
-      <div><div class="greet">Smart Charging</div><div class="loc">2023 Chevrolet Bolt EUV</div></div>
+      <div><div class="greet">Smart Charging</div><div class="loc" id="s9VehicleLoc">2023 Chevrolet Bolt EUV</div></div>
       <div class="avatar">MW</div>
     </div>
     <div class="content" style="padding-top:8px;">
@@ -1221,7 +1221,7 @@
           <div class="settings-row"><span class="k">Weekend schedule</span><span class="v">Same as weekdays</span></div>
           <div class="settings-row"><span class="k">Charging speed</span><span class="v">48A (full speed)</span></div>
           <div class="settings-row"><span class="k">Home-only automation</span><span class="v">On</span></div>
-          <div class="settings-row"><span class="k">Vehicle</span><span class="v">Chevrolet Bolt EUV</span></div>
+          <div class="settings-row"><span class="k">Vehicle</span><span class="v" id="s9VehicleRowCustom">Chevrolet Bolt EUV</span></div>
         </div>
         <button class="override-btn" onclick="alert('Charging started now, overriding price optimization.')">⚡ Charge now (override)</button>
       </div>
@@ -1246,7 +1246,7 @@
           <div class="settings-row"><span class="k">Target charge</span><span class="v">Flexy decides</span></div>
           <div class="settings-row"><span class="k">Weekend schedule</span><span class="v">Same as weekdays</span></div>
           <div class="settings-row"><span class="k">Home-only automation</span><span class="v">On</span></div>
-          <div class="settings-row"><span class="k">Vehicle</span><span class="v">Chevrolet Bolt EUV</span></div>
+          <div class="settings-row"><span class="k">Vehicle</span><span class="v" id="s9VehicleRowSavings">Chevrolet Bolt EUV</span></div>
         </div>
         <button class="override-btn" onclick="alert('Charging started now, overriding price optimization.')">⚡ Charge now (override)</button>
       </div>
@@ -1457,12 +1457,27 @@ function selectBrand(brand){
   });
   go('s5b');
 }
+const evModelByBrand = {
+  'Chevrolet': '2023 Chevrolet Bolt EUV',
+  'Tesla': '2023 Tesla Model Y',
+  'Ford': '2023 Ford Mustang Mach-E',
+  'BMW': '2023 BMW i4',
+  'Rivian': '2023 Rivian R1S'
+};
 let carConnectTimer = null;
 function carConnect(){
   const brand = document.getElementById('carAuthBrand').textContent;
   document.getElementById('carAuthConnecting').textContent = 'Connecting to ' + brand + '…';
   go('s5d');
-  carConnectTimer = setTimeout(()=>go('s6'), 1600);
+  carConnectTimer = setTimeout(()=>{
+    const model = evModelByBrand[brand] || 'your vehicle';
+    const modelNoYear = model.replace(/^\d{4}\s/, '');
+    document.getElementById('s6VehicleName').textContent = model + ' connected';
+    document.getElementById('s9VehicleLoc').textContent = model;
+    document.getElementById('s9VehicleRowCustom').textContent = modelNoYear;
+    document.getElementById('s9VehicleRowSavings').textContent = modelNoYear;
+    go('s6');
+  }, 1600);
 }
 function restart(){ evConnected = false; go('s0'); }
 function hideScrollHint(){
