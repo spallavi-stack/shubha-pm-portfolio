@@ -490,12 +490,14 @@ async function calculateRooftopViabilityByPostcode(postcode, otherInputs) {
 const PLUGIN_KIT_COST_GBP = 650;
 const PLUGIN_ANNUAL_GENERATION_KWH = 770;
 
-// [Assumption stacked on another Assumption] No orientation-specific
-// plug-in data exists, so this borrows rooftop's own east/west≈79%/north≈50%
-// ratios rather than presenting plug-in as orientation-agnostic — see
-// calculator.js's fuller comment on this same function.
+// CORRECTED 1 Aug 2026: previously borrowed rooftop's own east/west≈79%/
+// north≈50% ratios, calibrated to rooftop's ~35° tilt, not a vertical plug-in
+// mount. Now uses vertical-mount-specific ratios from two independent UK
+// PVGIS-modeled sources — see calculator.js's fuller sourcing comment on
+// this same function.
+const PLUGIN_VERTICAL_ORIENTATION_MULTIPLIER = { eastWestFacing: 0.85, northFacing: 0.4 };
 function pluginOrientationMultiplier(orientation) {
-  return ROOFTOP_ANNUAL_GENERATION_KWH[orientation] / ROOFTOP_ANNUAL_GENERATION_KWH.southFacing;
+  return orientation === 'southFacing' ? 1 : PLUGIN_VERTICAL_ORIENTATION_MULTIPLIER[orientation];
 }
 
 // CORRECTED 1 Aug 2026: replaced the old occupancy-binary self-consumption
@@ -786,11 +788,11 @@ function calculatePluginViability({ occupancy, orientation, electricityPricePenc
       kitCostGbp: { value: PLUGIN_KIT_COST_GBP, tier: 'Assumption — weakest-sourced figure in this calculator', note: 'Reported range £400-900; none of these figures trace to a government, MCS, or established consumer body' },
       generationKwh: {
         value: generation,
-        tier: 'Assumption, stacked on another Assumption — weakest-sourced figure in this calculator',
+        tier: usedOrientation === 'southFacing' ? 'Assumption — weakest-sourced figure in this calculator' : 'Inference (orientation ratio) applied to an Assumption (south-facing baseline)',
         note:
           usedOrientation === 'southFacing'
-            ? 'Reported range 640-900kWh/yr, same sourcing caveat as kit cost. Treated as the south-facing baseline (the range itself does not specify an assumed orientation).'
-            : `${PLUGIN_ANNUAL_GENERATION_KWH}kWh/yr south-facing baseline (reported range 640-900kWh/yr, same sourcing caveat as kit cost) adjusted by rooftop's own ${usedOrientation === 'eastWestFacing' ? 'east/west' : 'north-facing'} ratio (${Math.round(orientationMultiplier * 100)}% of south) — no orientation-specific plug-in data exists, so this borrows rooftop's proportional estimate rather than presenting plug-in as orientation-agnostic.`,
+            ? "Reported range 640-900kWh/yr, same sourcing caveat as kit cost. Treated as the south-facing baseline — real plug-in kits are typically mounted near-vertical, and UK PVGIS-modeled sources put vertical mounting at roughly 70-74% of an optimally-tilted rooftop panel's output; this baseline is NOT discounted by that figure since it's unclear whether the original range already reflects real vertical-mount output."
+            : `${PLUGIN_ANNUAL_GENERATION_KWH}kWh/yr south-facing baseline adjusted by a vertical-mount-specific ${usedOrientation === 'eastWestFacing' ? 'east/west' : 'north-facing'} ratio (${Math.round(orientationMultiplier * 100)}% of south), corrected 1 Aug 2026 from rooftop's own ${usedOrientation === 'eastWestFacing' ? '79%' : '50%'} ratio (calibrated to rooftop's ~35° tilt, not a vertical mount).`,
       },
       selfConsumptionRate: hasConsumptionInput
         ? {

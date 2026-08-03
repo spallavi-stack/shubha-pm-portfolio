@@ -128,7 +128,7 @@ changing <em>what the fallback value is</em> is a <code>calculator.js</code> cha
 small kit). No export mechanism still, but as of 1 Aug 2026, generation beyond what the household
 self-consumes is no longer credited as savings — see the correction note below.</p>
 <pre class="mermaid">flowchart TD
-  A["Orientation<br/>(default: south)"] --> B["Multiplier =<br/>rooftop's own<br/>E/W 79% / N 50%<br/>ratio"]
+  A["Orientation<br/>(default: south)"] --> B["Multiplier =<br/>vertical-mount<br/>E/W 85% / N 40%<br/>ratio"]
   B --> C["Generation =<br/>770kWh x<br/>multiplier"]
   D{"User typed<br/>a price?"} -->|Yes| E["Use as-is"]
   D -->|No| F["Default:<br/>26.11p"]
@@ -170,13 +170,13 @@ self-consumes is no longer credited as savings — see the correction note below
 <td><code>PLUGIN_ANNUAL_GENERATION_KWH</code></td>
 <td>770kWh/yr</td>
 <td>Assumption, same caveat</td>
-<td>Midpoint of reported 640-900kWh/yr range; treated as the south-facing baseline</td>
+<td>Midpoint of reported 640-900kWh/yr range; treated as the south-facing baseline. Own mounting-tilt assumption unverified — see correction note below</td>
 </tr>
 <tr>
-<td>orientation multiplier</td>
-<td>79% (E/W) / 50% (N) of south</td>
-<td>Assumption stacked on Assumption</td>
-<td>Borrowed from rooftop's own orientation ratios; no plug-in-specific orientation data exists</td>
+<td><code>PLUGIN_VERTICAL_ORIENTATION_MULTIPLIER</code></td>
+<td>85% (E/W) / 40% (N) of south</td>
+<td>Inference (tilt-loss magnitude) / Assumption (orientation-specific ratios)</td>
+<td>Corrected 1 Aug 2026 from rooftop's borrowed 79%/50% ratios (calibrated to rooftop's ~35° tilt) to vertical-mount-specific figures — see correction note below</td>
 </tr>
 <tr>
 <td>self-consumption rate</td>
@@ -193,6 +193,7 @@ self-consumes is no longer credited as savings — see the correction note below
 </tbody>
 </table>
 <blockquote>Corrected 1 Aug 2026: this segment previously treated 100% of generation as self-consumed unconditionally, with no export/unmet-demand concept at all — not a sourcing gap like the constants above, but a real modeling gap. Plug-in kits have no export meter or SEG tracking, so a household away during the day got nothing for a midday generation spike exceeding its baseload demand: that surplus is fed to the grid for free, not banked as savings, yet the old model counted it as if it were. <code>calculatePluginViability</code> now accepts an optional <code>annualConsumptionKwh</code> (threaded through from the same consumption resolution the UI already does for rooftop, in <code>prototype.html</code>'s <code>runCalculation()</code>); when given, self-consumption is computed the same way as rooftop's demand-ratio formula, and any generation beyond that rate earns nothing. When <code>annualConsumptionKwh</code> isn't given, the function still falls back to the old fully-self-consumed assumption (a plug-in kit's onboarding may be lighter-weight than rooftop's, so this input stays optional) — but that fallback is now a <code>pluginSelfConsumptionUnverified</code> flag on the result, not a silent default. If consumption is given and a meaningful share (&gt;15%) of generation is still projected to go unused, a separate <code>pluginUnselfConsumedShare</code> flag names the real amount involved.</blockquote>
+<blockquote>Corrected 1 Aug 2026 (a second, separate fix in the same pass): the orientation multiplier previously reused rooftop's own east/west ≈79% and north ≈50% ratios, which reflect losses at rooftop's own ~35° tilt (see §4b's <code>OPEN_METEO_TILT_ANGLE_DEGREES</code>), not the mounting angle a plug-in kit actually uses — real plug-in kits are typically mounted near-vertical (balcony rail, wall bracket), and vertical mounts have a genuinely different azimuth-sensitivity curve than a ~35°-tilt rooftop. Checked directly: two independent UK sources, each citing PVGIS modeling, put vertical (90°) mounting at roughly 70-74% of an optimally-tilted rooftop panel's output for the same south orientation (one cross-checks almost exactly against this file's own <code>ROOFTOP_ANNUAL_GENERATION_KWH.southFacing</code> figure at rooftop scale — 3,800kWh pitched vs ~2,800kWh vertical, a genuine independent confirmation, not just a coincidence of rounding). That range describes the overall tilt-mismatch risk sitting inside <code>PLUGIN_ANNUAL_GENERATION_KWH</code>'s own south-facing baseline — deliberately <strong>not</strong> applied to discount that number, since the weak original 640-900kWh/yr sources never stated a mounting angle either, and there's no way to tell whether they already reflect real vertical-mount output or an idealized tilt. Silently applying a 70-74% haircut on top of an already-ambiguous number risks double-counting an effect that might already be baked in; surfaced instead as an explicit caveat in the south-facing case's <code>assumptions.generationKwh.note</code>, not a silent correction. What is now corrected with real numbers: <code>PLUGIN_VERTICAL_ORIENTATION_MULTIPLIER</code>, a vertical-mount-specific east/west and north ratio, replacing the borrowed rooftop figures. UK consumer-guide sources (weaker sourcing than the tilt-loss figure above) put vertical east/west walls around 15-20% below vertical south (≈80-85% of south) and vertical north walls well under half of vertical south (≈43% or lower). The east/west result is a genuine surprise worth naming directly: vertical mounting is <em>less</em> orientation-sensitive east/west than rooftop's own 79% ratio implied (85% vs 79%), not more — the original critique's "vertical mounts suffer steeper losses" framing holds for north specifically (40% vs rooftop's 50%), but not uniformly across every orientation.</blockquote>
 <p>Output also carries a static <code>PLUGIN_LEGAL_STATUS</code> block (electrician install legal since
 2026-04-15 under BS 7671 Amendment 4 [Fact]; DIY self-install not legal until 2026-08-27 under
 SI 2026/848 [Fact]; tenancy consent status unresolved, no relevant provision either way). This
@@ -676,8 +677,13 @@ the next review pass to weigh in on:</p>
   question.</li>
 <li><strong>Plug-in generation and kit cost</strong> are the weakest-sourced figures in the calculator. No
   government, MCS, or established consumer-body source for either.</li>
-<li><strong>Plug-in orientation multiplier</strong> stacks one Assumption on another: it borrows rooftop's
-  own east/west and north ratios because no plug-in-specific orientation data exists at all.</li>
+<li><strong>Plug-in orientation multiplier</strong> (corrected 1 Aug 2026, see §3) now uses
+  vertical-mount-specific ratios (85% E/W, 40% N of south) from two UK sources, rather than
+  rooftop's own 35°-tilt-calibrated ratios — still stacks an Inference/Assumption-tier ratio onto an
+  Assumption-tier south-facing baseline, and the south-facing baseline's own mounting-tilt
+  assumption remains unverified (research suggests real vertical mounting could plausibly run
+  70-74% of an idealized-tilt figure, deliberately not applied to avoid double-counting an
+  already-ambiguous number).</li>
 <li><strong>East/west and north-facing rooftop generation</strong> figures are a prototype-only proportional
   estimate, not independently researched the way the south-facing figure is.</li>
 <li><strong>Payback thresholds</strong> (both segments) are a design judgment loosely anchored to the

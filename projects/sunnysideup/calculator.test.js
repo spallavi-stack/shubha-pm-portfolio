@@ -77,10 +77,20 @@ console.log('- selfConsumedKwh should equal generationKwh (770), unselfConsumedK
 
 // Plug-in, no consumption figure given (unusual placement, but keeping this
 // scenario for orientation coverage): north should score meaningfully worse
-// than the south-facing default above (borrows rooftop's own multipliers,
-// see calculator.js's comment above pluginOrientationMultiplier).
+// than the south-facing default above. Uses PLUGIN_VERTICAL_ORIENTATION_MULTIPLIER
+// (corrected 1 Aug 2026 from rooftop's own 35°-tilt-calibrated ratios to
+// vertical-mount-specific ones — see calculator.js's comment above
+// pluginOrientationMultiplier for the two independent sources behind this).
 printResult('Plug-in — north-facing, no consumption given', calculatePluginViability({ occupancy: 'usuallyHome', orientation: 'northFacing' }));
-console.log('- generationKwh should be 385 (770 x 50%, rooftop\'s own north ratio), payback should be noticeably longer than the south-facing default case above, and assumptions.generationKwh.note should explain the borrowed-ratio reasoning rather than presenting 385 as independently researched.');
+console.log('- generationKwh should be 308 (770 x 40%, the new vertical-mount-specific north ratio, not rooftop\'s old 50%), payback should be noticeably longer than the south-facing default case above, and assumptions.generationKwh.note should explain this is a corrected vertical-specific ratio, not rooftop\'s borrowed one.');
+
+// Plug-in, east/west — the other half of the 1 Aug 2026 correction. Notably
+// the new vertical-specific east/west ratio (85%) is actually HIGHER (less
+// loss) than rooftop's old borrowed ratio (79%) was — real vertical mounts
+// are, per the researched sources, less azimuth-sensitive east/west than a
+// rooftop at ~35° tilt, the opposite direction from north's correction.
+printResult('Plug-in — east/west-facing, no consumption given', calculatePluginViability({ occupancy: 'usuallyHome', orientation: 'eastWestFacing' }));
+console.log('- generationKwh should be 655 (770 x 85%, the new vertical-mount-specific east/west ratio) — HIGHER than the old rooftop-borrowed 79% (608) would have given, confirming this correction is not just "make everything worse."');
 
 // Plug-in WITH a consumption figure large enough that the kit's small output
 // should be almost entirely self-consumed (770kWh generation vs 4,000kWh
