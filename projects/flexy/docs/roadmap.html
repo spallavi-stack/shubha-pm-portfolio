@@ -85,8 +85,25 @@
 <td>6</td>
 <td>8.0</td>
 </tr>
+<tr>
+<td>Account creation &amp; consent onboarding</td>
+<td>Required</td>
+<td>n/a</td>
+<td>n/a</td>
+<td>n/a</td>
+<td>n/a</td>
+</tr>
+<tr>
+<td>EV account connection (Smartcar)</td>
+<td>Required</td>
+<td>n/a</td>
+<td>n/a</td>
+<td>n/a</td>
+<td>n/a</td>
+</tr>
 </tbody>
 </table>
+<p>These last two rows aren't scored against ICE like the rows above them. ICE compares features against how much they move the needle on a persona's problem, and these don't move that needle at all on their own, they're what has to exist before any feature row can run: an account to link a ComEd meter to, and a connected EV for Smart EV charging to control. Scoring them against the same rubric as a feature would be comparing the wrong thing.</p>
 <h3>Price &amp; Cost view: what changed and why</h3>
 <p>We looked at a real Tibber + Home Assistant community dashboard for inspiration (dual-axis bars and line, four time-range tabs, a separate Aktuell/Statistik split). It's a genuinely useful data model, consumption and price on one timeline plus a derived cost figure, but it's a power-user pattern built by and for Home Assistant hobbyists. For personas like Bob or Priya, a dual-axis chart with multiple tabs would be a barrier.</p>
 <p>So instead of copying that layout, Flexy takes the underlying idea (show consumption and price together, and surface the actual cost) and presents it more simply:</p>

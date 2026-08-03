@@ -14,6 +14,10 @@ Using ICE (Impact, Confidence, Ease) rather than RICE. Reach isn't meaningfully 
 |---|---|---|---|---|---|
 | Price & Cost view (combined, redesigned) | Priya's and Marcus's JTBDs, Core Problem #1 (bill shock) | 9 | 8 | 7 | 8.0 |
 | Smart EV charging, two modes: Custom settings and Max-savings | Marcus, Devon, Jenna and Sam JTBDs; interview theme on readiness vs. savings trust | 9 | 9 | 6 | 8.0 |
+| Account creation & consent onboarding | Required | n/a | n/a | n/a | n/a |
+| EV account connection (Smartcar) | Required | n/a | n/a | n/a | n/a |
+
+These last two rows aren't scored against ICE like the rows above them. ICE compares features against how much they move the needle on a persona's problem, and these don't move that needle at all on their own, they're what has to exist before any feature row can run: an account to link a ComEd meter to, and a connected EV for Smart EV charging to control. Scoring them against the same rubric as a feature would be comparing the wrong thing.
 
 ### Price & Cost view: what changed and why
 

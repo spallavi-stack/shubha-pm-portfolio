@@ -60,17 +60,17 @@
 <p>An electric grid has to keep supply and demand matched in real time to hold a stable frequency. Two things make that harder every year: demand spikes that weren't scheduled for, and supply that shows up or disappears on its own schedule, as wind and solar output shifts faster than dispatchable generation can follow. A utility carries real, ongoing cost for both sides of that problem: building and maintaining capacity margin, buying expensive last-minute supply when demand outruns forecast, and absorbing or shedding load when supply outruns it.</p>
 <p>Aggregated, price-aware EV charging is one of the few levers that can move in either direction without new hardware in the field. Charging load can shift into a surplus-supply window, soaking up power the grid would otherwise waste or curtail, or out of a strained window, acting in effect like a battery the utility doesn't have to build. Here's what that maps to, and what's actually confirmed for ComEd versus true in general:</p>
 <ul>
-<li><strong>Capacity value.</strong> PJM's capacity price for the 2026/2027 delivery year is $329.17/MW-day (≈$120,147/MW-year), up from $28.92/MW-day the year before, an over 11x increase.[^1] Flexible, aggregated EV load is a candidate resource for this market. What a ComEd-specific program would actually be worth in this market is not yet calculated (see Open questions).</li>
-<li><strong>Distribution and transmission deferral.</strong> Shifting charging away from local peaks can delay the substation and feeder upgrades a fixed load pattern would otherwise force. This is the same mechanism ComEd's own EV EMS pilot used to avoid $5,000 to $15,000 household panel upgrades, applied at the circuit and substation level instead of the panel level.[^2]</li>
+<li><strong>Capacity value.</strong> PJM's capacity price for the 2026/2027 delivery year is $329.17/MW-day (≈$120,147/MW-year), up from $28.92/MW-day the year before, an over 11x increase.<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup> Flexible, aggregated EV load is a candidate resource for this market. What a ComEd-specific program would actually be worth in this market is not yet calculated (see Open questions).</li>
+<li><strong>Distribution and transmission deferral.</strong> Shifting charging away from local peaks can delay the substation and feeder upgrades a fixed load pattern would otherwise force. This is the same mechanism ComEd's own EV EMS pilot used to avoid $5,000 to $15,000 household panel upgrades, applied at the circuit and substation level instead of the panel level.<sup id="fnref2:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
 <li><strong>Avoided unscheduled outage and load-shedding cost.</strong> Every measure a utility keeps on hand for a demand spike it didn't plan for, emergency purchases, load shedding, spinning reserve, has a real cost. Shifting predictable EV load out of unpredictable peak windows reduces how often those measures get triggered.</li>
-<li><strong>What this pass did not confirm:</strong> whether Flexy's charging-control profile (start/stop scheduling, no bidirectional power flow) would actually qualify for a fast-response ancillary-services or frequency-regulation program. The literature shows EV chargers can be physically fast enough for some regulation products, but that's a feasibility finding, not a qualification one, and most of it assumes vehicle-to-grid (V2G) hardware Flexy's MVP doesn't use. This offer doesn't claim ancillary-services revenue.[^3]</li>
+<li><strong>What this pass did not confirm:</strong> whether Flexy's charging-control profile (start/stop scheduling, no bidirectional power flow) would actually qualify for a fast-response ancillary-services or frequency-regulation program. The literature shows EV chargers can be physically fast enough for some regulation products, but that's a feasibility finding, not a qualification one, and most of it assumes vehicle-to-grid (V2G) hardware Flexy's MVP doesn't use. This offer doesn't claim ancillary-services revenue.<sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup></li>
 </ul>
-<p>Illinois has also just made this a legal obligation, not only an economic opportunity. The Clean and Reliable Grid Affordability Act (CRGA), signed January 8, 2026, requires Illinois utilities to build virtual power plant programs paying customers for the flexibility of batteries, smart thermostats, and electric vehicle chargers specifically.[^4] ComEd's one approved VPP so far, the Scheduled Dispatch VPP, is battery-only.[^5] The EV-charger VPP the law names is a gap ComEd has to close, not a feature Flexy has to convince ComEd it wants.</p>
+<p>Illinois has also just made this a legal obligation, not only an economic opportunity. The Clean and Reliable Grid Affordability Act (CRGA), signed January 8, 2026, requires Illinois utilities to build virtual power plant programs paying customers for the flexibility of batteries, smart thermostats, and electric vehicle chargers specifically.<sup id="fnref:4"><a class="footnote-ref" href="#fn:4">4</a></sup> ComEd's one approved VPP so far, the Scheduled Dispatch VPP, is battery-only.<sup id="fnref:5"><a class="footnote-ref" href="#fn:5">5</a></sup> The EV-charger VPP the law names is a gap ComEd has to close, not a feature Flexy has to convince ComEd it wants.</p>
 <h2>The WeaveGrid relationship, and the gap it names</h2>
-<p>ComEd is not new to EV managed charging. In December 2025, ComEd released the executive summary of its Electric Vehicle Energy Management System (EV EMS) Pilot, run by WeaveGrid with Emporia and Treehouse as subcontractors: twelve residential participants, testing whether panel-level load management could let homes with limited electrical service, roughly two-thirds of ComEd's territory, about 2.2 million homes, install a Level 2 charger without a costly panel upgrade.[^2]</p>
+<p>ComEd is not new to EV managed charging. In December 2025, ComEd released the executive summary of its Electric Vehicle Energy Management System (EV EMS) Pilot, run by WeaveGrid with Emporia and Treehouse as subcontractors: twelve residential participants, testing whether panel-level load management could let homes with limited electrical service, roughly two-thirds of ComEd's territory, about 2.2 million homes, install a Level 2 charger without a costly panel upgrade.<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup></p>
 <p>That pilot solved a different problem than Flexy solves. It keeps a single home's total load under its panel's amp rating. It doesn't shift charging toward the grid's cheapest or least-strained hours, and it doesn't aggregate charging across households into a resource ComEd can see or dispatch as one thing. WeaveGrid's own report to ComEd names this gap directly:</p>
 <blockquote>
-<p>"EMS programs alone are insufficient to address the bulk system and distribution constraints increasingly impacting ComEd's system... active managed charging programs are required to address bulk system and localized peak constraints. WeaveGrid suggests ComEd require rebate recipients to participate in an active managed charging program to ensure overall grid value of EV charging is maximized."[^2]</p>
+<p>"EMS programs alone are insufficient to address the bulk system and distribution constraints increasingly impacting ComEd's system... active managed charging programs are required to address bulk system and localized peak constraints. WeaveGrid suggests ComEd require rebate recipients to participate in an active managed charging program to ensure overall grid value of EV charging is maximized."<sup id="fnref3:2"><a class="footnote-ref" href="#fn:2">2</a></sup></p>
 </blockquote>
 <p>Flexy is built for exactly that category: active, price- and grid-aware managed charging, aggregated across every enrolled household into one dispatchable view. The offer to ComEd is to fill the gap ComEd's own pilot partner already flagged, not to displace the panel-level work WeaveGrid has already done, and not to pitch a category ComEd hasn't heard of before.</p>
 <h2>What ComEd gets</h2>
@@ -87,7 +87,7 @@
 </ul>
 <h2>Business model and pricing</h2>
 <p>Structure unchanged from <code>product-brief.md</code>: ComEd pays a fee per customer registered through the rollout, plus an annual platform license fee.</p>
-<p>The per-customer fee can now be grounded in two figures. No competitor publishes what it actually charges a utility, but a third-party industry guide, not a party selling into this deal, puts utility-deployed DR/DERMS SaaS platforms at <strong>$5 to $20 per participant per year, plus implementation services</strong>, the category Flexy's model matches, as distinct from an aggregator's revenue-share model.[^6] Checked against what ComEd would actually realize per enrolled EV ($145 to $575/year, per the Brattle/ev.energy avoided-cost figure already cited above), that benchmark represents roughly 1 to 14 percent of the value delivered per vehicle, a defensible share regardless of how many households ultimately enroll.[^6][^7]</p>
+<p>The per-customer fee can now be grounded in two figures. No competitor publishes what it actually charges a utility, but a third-party industry guide, not a party selling into this deal, puts utility-deployed DR/DERMS SaaS platforms at <strong>$5 to $20 per participant per year, plus implementation services</strong>, the category Flexy's model matches, as distinct from an aggregator's revenue-share model.<sup id="fnref:6"><a class="footnote-ref" href="#fn:6">6</a></sup> Checked against what ComEd would actually realize per enrolled EV ($145 to $575/year, per the Brattle/ev.energy avoided-cost figure already cited above), that benchmark represents roughly 1 to 14 percent of the value delivered per vehicle, a defensible share regardless of how many households ultimately enroll.<sup id="fnref2:6"><a class="footnote-ref" href="#fn:6">6</a></sup><sup id="fnref:7"><a class="footnote-ref" href="#fn:7">7</a></sup></p>
 <p>That gives a workable <strong>per-customer fee range of $5 to $20/year</strong> to anchor a real negotiation, since the low and high ends both fall inside what comparable platforms already charge. What the total contract is worth to Flexy still depends on enrollment scale, which no pilot has established yet:</p>
 <table>
 <thead>
@@ -131,19 +131,38 @@
 <h2>Open questions</h2>
 <ul>
 <li>What a ComEd-specific active-managed-charging program would actually be worth in dollars or MW is not calculated anywhere in this research. The panel-EMS pilot's avoided-cost figure ($5,000 to $15,000 per household) answers a different question. This is a real gap to close with ComEd directly.</li>
-<li>The current PJM Economic Load Response Net Benefits Test trigger price needs a fresher check before being cited as a specific number in any real conversation with ComEd.[^1]</li>
+<li>The current PJM Economic Load Response Net Benefits Test trigger price needs a fresher check before being cited as a specific number in any real conversation with ComEd.<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 <li>Which CRGA-aligned mechanism (VPP tariff, BE Plan program, a PJM-facing structure, or something ComEd designs) this offer should actually target is ComEd's call.</li>
 </ul>
 <h2>Status</h2>
 <p>Draft v2. Positioning, the why-ComEd-cares argument, the WeaveGrid-relationship framing, offer structure, and partnership success metrics are drafted from <code>utility-offer-grounding-research.md</code>. The Business Model section is updated with a sourced per-customer fee range ($5 to $20/year) and a savings-to-ComEd model at three enrollment scenarios, replacing the earlier unset placeholder. The platform license fee remains explicitly unbenchmarked. The full KPI set, expanding the four partnership success metrics above, and screen-level IA now live in <code>utility-dashboard-kpi-framework.md</code>. The coded dashboard (<code>utility-dashboard.html</code>) is built. A <code>research-auditor</code> run has completed; see its findings for <code>utility-offer-grounding-research.md</code> and this document.</p>
 <h2>Sources</h2>
-<p>[^1]: <code>utility-offer-grounding-research.md</code> §A4. PJM capacity market economics
-[^2]: <code>utility-offer-grounding-research.md</code> §A3. ComEd already ran a dated EV managed-charging pilot
-[^3]: <code>utility-offer-grounding-research.md</code> §A6. Ancillary services / frequency regulation — the overclaim check
-[^4]: <code>utility-offer-grounding-research.md</code> §A1. Illinois's Clean and Reliable Grid Affordability Act
-[^5]: <code>utility-offer-grounding-research.md</code> §A2. ComEd's currently-approved VPP is battery-only
-[^6]: <code>utility-offer-grounding-research.md</code> §Track C. Pricing benchmarks and a savings-to-ComEd model
-[^7]: <code>utility-offer-grounding-research.md</code> §A5. What managed EV charging is worth to a utility, per a named independent methodology</p>
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:1">
+<p><code>utility-offer-grounding-research.md</code> §A4. PJM capacity market economics&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p><code>utility-offer-grounding-research.md</code> §A3. ComEd already ran a dated EV managed-charging pilot&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:3">
+<p><code>utility-offer-grounding-research.md</code> §A6. Ancillary services / frequency regulation — the overclaim check&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+</li>
+<li id="fn:4">
+<p><code>utility-offer-grounding-research.md</code> §A1. Illinois's Clean and Reliable Grid Affordability Act&#160;<a class="footnote-backref" href="#fnref:4" title="Jump back to footnote 4 in the text">&#8617;</a></p>
+</li>
+<li id="fn:5">
+<p><code>utility-offer-grounding-research.md</code> §A2. ComEd's currently-approved VPP is battery-only&#160;<a class="footnote-backref" href="#fnref:5" title="Jump back to footnote 5 in the text">&#8617;</a></p>
+</li>
+<li id="fn:6">
+<p><code>utility-offer-grounding-research.md</code> §Track C. Pricing benchmarks and a savings-to-ComEd model&#160;<a class="footnote-backref" href="#fnref:6" title="Jump back to footnote 6 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:6" title="Jump back to footnote 6 in the text">&#8617;</a></p>
+</li>
+<li id="fn:7">
+<p><code>utility-offer-grounding-research.md</code> §A5. What managed EV charging is worth to a utility, per a named independent methodology&#160;<a class="footnote-backref" href="#fnref:7" title="Jump back to footnote 7 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
 <div class="doc-footer">Part of the Flexy case study documentation set. For the short version, see the <a href="../index.html">case study page</a>.</div>
 </article>
 <footer>

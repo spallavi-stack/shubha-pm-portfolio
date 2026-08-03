@@ -26,16 +26,23 @@ What each core feature actually needs to be built for real, which real APIs and 
 
 **Sequence, high level:**
 
-```
-Register app on Smartcar  ->  User completes Connect consent  ->  App requests
-     dashboard, get                  (simulated Tesla,               access token
-     client ID/secret                grants charge permissions)      (client credentials)
-                                                                            |
-                                                                            v
-                                              Real battery + charge data  <-  App calls
-                                              returned                        Connections/Vehicle
-                                                                               API with token +
-                                                                               user ID
+```mermaid
+sequenceDiagram
+    participant Flexy as Flexy app
+    participant Smartcar
+    participant Vehicle as Vehicle (simulated Tesla)
+
+    Note over Flexy,Smartcar: One-time setup
+    Flexy->>Smartcar: Register app on Smartcar dashboard, get client ID/secret
+
+    Note over Vehicle,Smartcar: Per-user connect
+    Vehicle->>Smartcar: User completes Connect consent (grants charge permissions)
+    Flexy->>Smartcar: Request access token (client credentials)
+    Smartcar-->>Flexy: Access token
+
+    Note over Flexy,Smartcar: Per-request
+    Flexy->>Smartcar: Call Connections/Vehicle API (token + user ID)
+    Smartcar-->>Flexy: Real battery + charge data
 ```
 
 **"Hardware-agnostic" is two claims:**

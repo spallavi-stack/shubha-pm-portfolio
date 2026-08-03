@@ -17,8 +17,7 @@ This is one product in a larger portfolio of case studies - see the [full portfo
 - `assets/` - images/screenshots (currently empty; the case study and prototype are self-contained inline SVG/CSS).
 - `docs/` - supporting documentation, markdown source paired with rendered HTML:
   - `product-brief.md` / `.html` - product brief: one-liner, positioning, MVP scope, competitive analysis.
-  - `personas.md` / `.html` - four personas grounded in real ComEd/Illinois program data.
-  - `jobs-to-be-done.md` / `.html` - JTBD statements mapped to features.
+  - `personas.md` / `.html` - four personas grounded in real ComEd/Illinois program data, including each persona's JTBD statement and a feature coverage map.
   - `synthetic-interviews.md` / `.html` - AI-generated, clearly-labeled synthetic user interviews.
   - `roadmap.md` / `.html` - ICE-prioritized Now/Next/Later roadmap.
   - `user-stories.md` / `.html` - user stories & use cases.

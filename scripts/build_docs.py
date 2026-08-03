@@ -25,7 +25,6 @@ PROJECTS = {
             ("product-brief.md", "product-brief.html", "Product Brief"),
             ("personas.md", "personas.html", "Personas"),
             ("synthetic-interviews.md", "synthetic-interviews.html", "Synthetic Interviews"),
-            ("jobs-to-be-done.md", "jobs-to-be-done.html", "Jobs to Be Done"),
             ("roadmap.md", "roadmap.html", "Roadmap"),
             ("user-stories.md", "user-stories.html", "User Stories & Use Cases"),
             ("technical-feasibility.md", "technical-feasibility.html", "Technical Feasibility & Architecture"),
@@ -132,7 +131,7 @@ TEMPLATE = """<!DOCTYPE html>
 def build(slug):
     cfg = PROJECTS[slug]
     docs_dir = os.path.join(REPO_ROOT, "projects", slug, "docs")
-    md = markdown.Markdown(extensions=["tables", "fenced_code", "sane_lists"])
+    md = markdown.Markdown(extensions=["tables", "fenced_code", "sane_lists", "footnotes"])
     for src, out, title in cfg["docs"]:
         path = os.path.join(docs_dir, src)
         with open(path, "r", encoding="utf-8") as f:
