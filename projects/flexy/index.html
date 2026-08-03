@@ -589,18 +589,10 @@
       <details class="limitation-card">
         <summary><h4>Prototype code isn't production code</h4><span class="toggle-ic"></span></summary>
         <ul>
-          <li>AI-generated prototypes sit outside any real codebase and need re-implementation by an engineering team to actually ship.</li>
           <li>Both of Flexy's click-dummies are static HTML/CSS/JS - no data layer, security review, or compliance pass, relevant since a real version would handle utility account data and OAuth tokens to EV manufacturer APIs.</li>
+          <li>Multiple rounds of AI-assisted fixes and rewrites went into <code>prototype.html</code> (2,000+ lines) without an independent review pass - the kind of accumulated debt a screenshot can't show.</li>
         </ul>
-        <span class="src">Source: <a href="https://monday.com/blog/vibe-coding/vibe-coding-product-managers/" target="_blank" rel="noopener">monday.com, "Vibe coding for product managers"</a></span>
-      </details>
-      <details class="limitation-card">
-        <summary><h4>Iteration accumulates debt a screenshot can't show</h4><span class="toggle-ic"></span></summary>
-        <ul>
-          <li>Multiple rounds of AI-assisted fixes and rewrites (a state-management bug fix, a full cost-model rewrite, tooltip additions) went into this prototype without an independent review pass checking for accumulated inconsistency or dead code across screens.</li>
-          <li><code>prototype.html</code> is over 2,000 lines in a single file; a team inheriting it would need to budget time to untangle accumulated one-off patches, not just to rewrite it for production.</li>
-        </ul>
-        <span class="src">Source: <a href="https://www.youtube.com/watch?v=dduQeaqmpnI" target="_blank" rel="noopener">Edwin Chen (Surge AI), on Lenny's Podcast</a></span>
+        <span class="src">Sources: <a href="https://monday.com/blog/vibe-coding/vibe-coding-product-managers/" target="_blank" rel="noopener">monday.com, "Vibe coding for product managers"</a>, <a href="https://www.youtube.com/watch?v=dduQeaqmpnI" target="_blank" rel="noopener">Edwin Chen (Surge AI), on Lenny's Podcast</a></span>
       </details>
       <details class="limitation-card aud-utility">
         <summary><h4>The operator dashboard's data is illustrative, not live</h4><span class="toggle-ic"></span></summary>
