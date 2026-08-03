@@ -106,7 +106,7 @@ Since Flexy is B2B2C, product-market fit isn't one signal, it's two: does the ut
 **GO**, scoped exactly as above: single utility (ComEd), single state (Illinois), three MVP features. The dynamic-tariff timing is real and dated (2026 TOU rollout, federal credits already expired), the business model has two direct US precedents (Optiwatt, WeaveGrid) already running it, and the core risk, automation trust, is named explicitly, with competitors' own reviews showing exactly where it breaks. The open questions above are the next validation work, sequenced to run during the pilot itself.
 
 ## Further reading
-Full detail: personas.md, roadmap.md, technical-feasibility.md, synthetic-interviews.md, jobs-to-be-done.md. Flexy does not yet have a single project-level grounding-research.md the way later portfolio projects do; the claims in this brief are footnoted directly to primary sources instead (see Sources below).
+Full detail: personas.md, roadmap.md, technical-feasibility.md, synthetic-interviews.md. Flexy does not yet have a single project-level grounding-research.md the way later portfolio projects do; the claims in this brief are footnoted directly to primary sources instead (see Sources below).
 
 ## Sources
 [^1]: Fortune, "[2025 was a turning point for your electricity bill and it's just getting started](https://fortune.com/2026/05/20/electricity-bills-surging-not-just-data-centers/)" (May 2026), citing PowerLines and Bloomberg analysis: US residential electricity prices up nearly 40% since 2021.

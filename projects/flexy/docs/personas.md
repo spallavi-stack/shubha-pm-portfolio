@@ -70,10 +70,13 @@ Template per persona: identity, quote, goal, pain point, current behavior/workar
 
 ---
 
-## Coverage check
-- Price graph: Persona 2 (Priya)
-- Real-time consumption: Persona 3 (Devon)
-- Smart EV charging: Personas 1 (Marcus), 4 (Jenna & Sam)
+## Coverage map
+
+| Feature | Persona(s) served |
+|---|---|
+| Price & Cost view | Priya (rate comparison), Devon (consumption visibility) |
+| Smart EV charging, Max Savings mode | Marcus, Devon |
+| Smart EV charging, Custom Settings mode | Jenna & Sam |
 
 ## Status
 **Frozen v4** - 4 personas, all tied directly to the EV-charging and price-visibility MVP. Two earlier personas (a solar-focused and a heat-pump-focused persona) were cut when the solar and heat pump savings calculators were dropped from scope, since a fictional persona built to justify a feature that no longer exists doesn't belong in the set. Devon's persona corrected to match actual MVP feasibility: Flexy automates EV charging only (device-level control of dishwashers/thermostats/etc. would require per-appliance smart-plug/API integrations well beyond MVP scope); real-time consumption remains informational.
