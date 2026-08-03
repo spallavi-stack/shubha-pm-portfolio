@@ -1,4 +1,4 @@
-/* GTM Trade-Off Engine: PLG vs. enterprise sales motion calculator.
+/* Sales Motion Fit Calculator: PLG vs. enterprise sales motion calculator.
    Scoring model is directionally grounded in the growth-benchmark
    frameworks Lenny's Newsletter has published from Elena Verna and
    Kyle Poyar (ACV and deal complexity as the primary axes separating
@@ -58,7 +58,7 @@
     } else if(acv > 30000 && (cycle === '3-6' || cycle === '6-12')){
       result = {
         label: 'Product-Led Sales / Enterprise Hybrid',
-        desc: 'At ' + formatCurrency(acv) + ' ACV with ' + CYCLE_LABEL[cycle] + ' cycle, product usage should generate and qualify pipeline, but a rep is still needed to close. Let the product create PQLs; let sales run the deal.',
+        desc: 'At ' + formatCurrency(acv) + ' ACV with ' + CYCLE_LABEL[cycle] + ' cycle, product usage should generate and qualify pipeline, but a rep is still needed to close. Let the product surface qualified leads from usage; let sales run the deal.',
         metrics: ['PQL-to-Demo Conversion', 'Sales Cycle Velocity']
       };
       score = Math.max(score, 60);
