@@ -77,7 +77,7 @@
 }
 
 /* ============================================================
-   Tool 1 — GTM Trade-Off Engine
+   Tool 1 — Sales Motion Fit Calculator
    ============================================================ */
 .gtm-grid{display:grid;grid-template-columns:1.1fr 1fr;gap:40px;align-items:start;}
 @media(max-width:820px){.gtm-grid{grid-template-columns:1fr;}}
@@ -155,14 +155,14 @@
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;}
 
 .rice-table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid rgba(255,255,255,0.14);border-radius:14px;}
-.rice-table{width:100%;border-collapse:collapse;min-width:760px;}
-.rice-table th, .rice-table td{padding:12px 10px;text-align:left;vertical-align:middle;}
+.rice-table{width:100%;border-collapse:collapse;min-width:0;}
+.rice-table th, .rice-table td{padding:10px 6px;text-align:left;vertical-align:middle;}
 .rice-table thead th{
   font-size:11px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;color:#B9C0DD;
   background:rgba(255,255,255,0.05);border-bottom:1px solid rgba(255,255,255,0.14);white-space:nowrap;
 }
 .rice-th-sub{display:block;font-size:10px;font-weight:500;text-transform:none;letter-spacing:0;color:#8B90B3;margin-top:2px;}
-.rice-th-name{min-width:220px;}
+.rice-th-name{min-width:150px;}
 .rice-th-remove{width:36px;}
 .rice-table th.rice-th-center{text-align:center;}
 
@@ -192,14 +192,15 @@
 .rice-input{
   width:100%;font-family:var(--font-body);font-size:13.5px;color:#fff;
   background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.16);border-radius:8px;
-  padding:8px 10px;transition:border-color var(--dur-fast) var(--ease-out);
+  padding:8px 8px;transition:border-color var(--dur-fast) var(--ease-out);
 }
 .rice-input:focus{outline:none;border-color:var(--amber);}
-.rice-input-num{width:80px;}
-.rice-input-name{min-width:200px;}
+.rice-input-num{width:70px;}
+.rice-table .rice-input-num{width:64px;}
+.rice-input-name{min-width:140px;}
 
 .rice-table td.rice-td-select{text-align:center;}
-.rice-select{width:auto;min-width:96px;text-align:center;padding:6px 8px;}
+.rice-select{width:auto;min-width:80px;text-align:center;padding:6px 4px;}
 
 .rice-td-score{white-space:nowrap;}
 .rice-score-value{font-family:var(--font-display);font-size:18px;font-weight:600;color:var(--amber);}

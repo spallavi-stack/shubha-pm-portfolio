@@ -114,7 +114,7 @@
               '<input type="text" class="rice-drice-input" data-drice-field="hypothesis" placeholder="If we build X, we believe Y will happen because Z" value="' + escapeAttr(data.hypothesis) + '">' +
             '</div>' +
             '<div class="rice-drice-field">' +
-              '<label>$ Impact estimate (annual)</label>' +
+              '<label>$ Impact estimate (annual)<button type="button" class="rice-info" data-tooltip="The estimated annual dollar value this feature would create or save, if your hypothesis is right. Used to calculate ROI per eng-week." aria-label="What is $ Impact estimate?">i</button></label>' +
               '<input type="number" class="rice-drice-input" data-drice-field="dollarImpact" min="0" step="1000" value="' + data.dollarImpact + '">' +
             '</div>' +
             '<div class="rice-drice-field">' +
