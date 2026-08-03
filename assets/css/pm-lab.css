@@ -195,7 +195,8 @@
   padding:8px 8px;transition:border-color var(--dur-fast) var(--ease-out);
 }
 .rice-input:focus{outline:none;border-color:var(--amber);}
-.rice-input-num{width:60px;}
+.rice-input-num{width:70px;}
+.rice-table .rice-input-num{width:64px;}
 .rice-input-name{min-width:140px;}
 
 .rice-table td.rice-td-select{text-align:center;}
