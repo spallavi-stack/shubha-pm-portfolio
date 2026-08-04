@@ -45,6 +45,19 @@
 // electricityPricePencePerKwh from the user and prefers it when given.
 const ELECTRICITY_PRICE_PENCE_PER_KWH_DEFAULT = 26.11;
 
+// ADDED 4 Aug 2026 (found by a third-party review): a user-typed electricity
+// price is treated as this calculator's most-trusted input — the only
+// genuinely exact answer, taking precedence over every live-fetched or
+// researched default (see the electricity-price-lookup rationale below
+// OCTOPUS_BASE_URL). But nothing previously checked it was even a plausible
+// rate at all: a typo (e.g. a dropped decimal point, "2611" instead of
+// "26.11") would silently produce a result treated as MORE trustworthy than
+// every other number in this file. Not a hard block (a genuine outlier
+// tariff could exist) — a generous plausibility range, wide enough to cover
+// real-world volatility (the 2022 UK energy crisis pushed the price cap
+// briefly above 30p/kWh) while still catching an obvious data-entry error.
+const ELECTRICITY_PRICE_PLAUSIBLE_RANGE_PENCE_PER_KWH = { min: 5, max: 100 };
+
 // WHY A STATIC TABLE HERE, NOT A LIVE FETCH LIKE THE ELECTRICITY PRICE
 // BELOW: SEG export rates are a genuine commercial choice each supplier
 // makes independently — unlike standard-variable *import* rates, they're
@@ -174,6 +187,15 @@ const SEG_TARIFFS = [
 // 4.0p, nearer the 70th percentile than the 50th, contradicting its own
 // "median" label — fixed to actually match it.
 const SEG_RATE_PENCE_PER_KWH_DEFAULT = 3.01;
+
+// ADDED 4 Aug 2026 (found by a third-party review), same reasoning as
+// ELECTRICITY_PRICE_PLAUSIBLE_RANGE_PENCE_PER_KWH above: a manually-typed
+// SEG rate is trusted outright with no sanity check today. SEG_TARIFFS
+// itself spans 1.0-25.0p across 30 researched rows; this range is roughly
+// double that ceiling, generous enough to allow a genuine outlier tariff
+// while still catching an implausible entry (e.g. a price accidentally
+// typed into the SEG field, or a decimal-point slip).
+const SEG_RATE_PLAUSIBLE_RANGE_PENCE_PER_KWH = { min: 0, max: 50 };
 
 // [Assumption — wide range, no single authoritative figure] Typical UK
 // domestic rooftop system cost estimates range £5,500-£8,700; £7,000 is
@@ -660,6 +682,19 @@ function scoreStatus(paybackYears, thresholds) {
   return 'red';
 }
 
+/**
+ * True if a user-typed rate falls outside a generous plausibility range —
+ * see ELECTRICITY_PRICE_PLAUSIBLE_RANGE_PENCE_PER_KWH /
+ * SEG_RATE_PLAUSIBLE_RANGE_PENCE_PER_KWH's own sourcing notes. Not a
+ * validation error; callers surface this as a flag, not a rejection, since
+ * a genuine outlier rate could exist.
+ * @param {number} value
+ * @param {{min: number, max: number}} range
+ */
+function isImplausibleRate(value, range) {
+  return value < range.min || value > range.max;
+}
+
 /** Returns SEG_TARIFFS, already sorted highest to lowest rate. For a UI to build a picker from. */
 function getSegTariffs() {
   return SEG_TARIFFS;
@@ -1023,6 +1058,29 @@ function calculateRooftopViability({
     title: 'In a conservation area? Extra rules may apply',
     note: 'Panels visible from a highway in a conservation area may need full planning permission even within the Permitted Development ceiling; rear- or side-facing panels not visible from a highway are more often still exempt. Not checked by this tool.',
   });
+
+  // ADDED 4 Aug 2026 (found by a third-party review): user-typed rates are
+  // this calculator's most-trusted inputs (top priority over every
+  // live-fetched or researched default) but were previously accepted with
+  // no plausibility check at all — see ELECTRICITY_PRICE_PLAUSIBLE_RANGE_PENCE_PER_KWH
+  // / SEG_RATE_PLAUSIBLE_RANGE_PENCE_PER_KWH's own sourcing notes. Not a
+  // hard block; a real outlier tariff could exist.
+  if (electricityPriceIsUserProvided && isImplausibleRate(usedElectricityPrice, ELECTRICITY_PRICE_PLAUSIBLE_RANGE_PENCE_PER_KWH)) {
+    flags.push({
+      id: 'electricityPriceUnusual',
+      tier: 'Inference',
+      title: 'The electricity price you entered looks unusual',
+      note: `You entered ${usedElectricityPrice}p/kWh, outside the ${ELECTRICITY_PRICE_PLAUSIBLE_RANGE_PENCE_PER_KWH.min}-${ELECTRICITY_PRICE_PLAUSIBLE_RANGE_PENCE_PER_KWH.max}p/kWh range this calculator's own research considers plausible for UK domestic electricity. This could be correct (a genuine outlier tariff), but it's also consistent with a typo — e.g. a misplaced decimal point. Double-check it before trusting this result, since a user-provided rate is used exactly as given, with no other check applied.`,
+    });
+  }
+  if (segRateIsUserProvided && isImplausibleRate(usedSegRate, SEG_RATE_PLAUSIBLE_RANGE_PENCE_PER_KWH)) {
+    flags.push({
+      id: 'segRateUnusual',
+      tier: 'Inference',
+      title: 'The SEG export rate you entered looks unusual',
+      note: `You entered ${usedSegRate}p/kWh, outside the ${SEG_RATE_PLAUSIBLE_RANGE_PENCE_PER_KWH.min}-${SEG_RATE_PLAUSIBLE_RANGE_PENCE_PER_KWH.max}p/kWh range this calculator's own researched SEG tariffs (SEG_TARIFFS, spanning 1.0-25.0p) considers plausible. This could be correct (a genuine outlier tariff), but it's also consistent with a typo. Double-check it before trusting this result.`,
+    });
+  }
 
   // ADDED 4 Aug 2026 (found by a third-party review): a roofAreaM2 too small
   // to fit even one panel (< ROOF_AREA_PER_PANEL_M2) previously fell through
@@ -1676,6 +1734,17 @@ function calculatePluginViability({ occupancy, orientation, electricityPricePenc
     });
   }
 
+  // ADDED 4 Aug 2026 (found by a third-party review), same reasoning and
+  // range as calculateRooftopViability's electricityPriceUnusual flag.
+  if (electricityPriceIsUserProvided && isImplausibleRate(usedElectricityPrice, ELECTRICITY_PRICE_PLAUSIBLE_RANGE_PENCE_PER_KWH)) {
+    flags.push({
+      id: 'electricityPriceUnusual',
+      tier: 'Inference',
+      title: 'The electricity price you entered looks unusual',
+      note: `You entered ${usedElectricityPrice}p/kWh, outside the ${ELECTRICITY_PRICE_PLAUSIBLE_RANGE_PENCE_PER_KWH.min}-${ELECTRICITY_PRICE_PLAUSIBLE_RANGE_PENCE_PER_KWH.max}p/kWh range this calculator's own research considers plausible for UK domestic electricity. This could be correct (a genuine outlier tariff), but it's also consistent with a typo — e.g. a misplaced decimal point. Double-check it before trusting this result, since a user-provided rate is used exactly as given, with no other check applied.`,
+    });
+  }
+
   return {
     segment: 'plugin',
     status,
@@ -1741,7 +1810,9 @@ const SunnySideUpCalculator = {
   simulatePaybackYears,
   constants: {
     ELECTRICITY_PRICE_PENCE_PER_KWH_DEFAULT,
+    ELECTRICITY_PRICE_PLAUSIBLE_RANGE_PENCE_PER_KWH,
     SEG_RATE_PENCE_PER_KWH_DEFAULT,
+    SEG_RATE_PLAUSIBLE_RANGE_PENCE_PER_KWH,
     SEG_TARIFFS,
     ROOFTOP_SYSTEM_COST_GBP,
     ROOFTOP_ANNUAL_GENERATION_KWH,

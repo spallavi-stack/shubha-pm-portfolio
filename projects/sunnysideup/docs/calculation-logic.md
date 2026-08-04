@@ -333,6 +333,7 @@ flowchart TD
 | Live Octopus rate | varies by region | Inference | Confirmed end-to-end via a direct-HTTP test across 4 real UK regions (25 Jul 2026); see `calculator.js`'s comment on `OCTOPUS_BASE_URL` for the two bugs found and fixed during that test |
 | Product-selection rule | exact "Flexible Octopus" name match, else most-recent `available_from` among filtered candidates | N/A | Candidates exclude green/tracker/prepay/business/restricted/expired products |
 | Why Octopus's rate stands in for any supplier | N/A | Fact, empirically checked | 5 real (supplier, region) pairs landed within ~0.03p/kWh of Ofgem's regional cap; standard-variable tariffs are regulatorily pinned to the cap, unlike SEG export rates |
+| `ELECTRICITY_PRICE_PLAUSIBLE_RANGE_PENCE_PER_KWH` | 5-100p/kWh | N/A (a sanity bound, not a researched figure) | Added 4 Aug 2026, found by a third-party review. A user-typed rate is this calculator's most-trusted input (top priority over every other source) but previously had no plausibility check at all; a typo could silently produce a result treated as more trustworthy than everything else in this file. Generous enough to cover real volatility (the 2022 UK energy crisis briefly pushed the price cap above 30p/kWh) while catching an obvious data-entry error. Not a hard block — surfaces an `electricityPriceUnusual` flag (§5), doesn't reject the input |
 
 ### 4d. SEG export rate resolution (UI-layer logic)
 
@@ -369,7 +370,9 @@ both are filled in. Either resolution path also carries the picked row's eligibi
 "battery" — at least two `SEG_TARIFFS` rows require one, but this calculator has no battery input
 or battery-aware self-consumption model anywhere, so picking one of those rows surfaces the
 `segTariffRequiresBatteryNotModeled` flag (§5) rather than silently combining a battery-tied rate
-with a no-battery physics model.
+with a no-battery physics model. A manually-typed rate (either "different supplier" or "same
+supplier") is also checked against `SEG_RATE_PLAUSIBLE_RANGE_PENCE_PER_KWH` below and surfaces a
+`segRateUnusual` flag (§5) if it falls outside it.
 
 **Key constants** (`calculator.js` L81-173):
 
@@ -378,6 +381,7 @@ with a no-battery physics model.
 | `SEG_RATE_PENCE_PER_KWH_DEFAULT` | 3.01p | Inference | Median of the 10 tariffs in `SEG_TARIFFS` explicitly "open to anyone, no switch needed" |
 | `SEG_TARIFFS` table | 30 rows, £1.00-25.00p, named supplier/tariff/eligibility/source | Mixed, see table | User-provided CSV (23 Jul 2026); 9 rows spot-checked directly (2 confirmed Fact, e.g. Octopus's own "Outgoing Octopus" and "Smart Export Guarantee"; 7 turned up real mismatches, e.g. Ofgem's SEG register lists licensee names only, never rates); 21 rows still unchecked. Full per-row detail in `calculator.js`, not reproduced here. |
 | Fixed-first sort rule | N/A | N/A | A structured field (`rateType`). It surfaced a real issue where the numerically-highest row (Octopus's "Intelligent Octopus Flux") isn't actually a flat quotable rate |
+| `SEG_RATE_PLAUSIBLE_RANGE_PENCE_PER_KWH` | 0-50p/kWh | N/A (a sanity bound, not a researched figure) | Added 4 Aug 2026, found by a third-party review, same reasoning as `ELECTRICITY_PRICE_PLAUSIBLE_RANGE_PENCE_PER_KWH` (§4c). Roughly double `SEG_TARIFFS`' own 1.0-25.0p span — generous enough for a genuine outlier tariff, tight enough to catch an implausible entry. Not a hard block |
 
 ### 4e. Core formula
 
@@ -571,6 +575,8 @@ conditional on any input this calculator collects either — see its own row bel
 | `highExportSensitivity` | No user-picked SEG tariff, and exported share of generation exceeds 50% | Inference | This result uses the low default SEG rate; a high-export household's result moves more than most when a real (much higher) tariff is picked |
 | `segTariffRequiresBatteryNotModeled` | The picked SEG tariff's eligibility text mentions "battery" | Inference | Added 4 Aug 2026, found by a third-party review. At least two `SEG_TARIFFS` rows (Octopus's "Intelligent Octopus Flux," So Energy's "So Bright") require a battery as part of their eligibility, but this calculator has no battery input anywhere and models self-consumption as if no battery exists throughout. A battery typically raises real self-consumption well above what the no-battery formula predicts, so picking a battery-eligibility tariff's rate while the underlying split still assumes no battery is a real mismatch, not resolved by this tool |
 | `roofAreaInsufficientForPanels` | `roofAreaM2` given, but too small to fit even one panel | Inference | Added 4 Aug 2026, found by a third-party review — see §4b's correction note. Distinguishes "your roof area can't fit a system" from "we don't know your roof area yet," which previously collapsed into the same flat-default fallback and the same, now actively misleading, "give your roof area" note |
+| `electricityPriceUnusual` | A user-provided `electricityPricePencePerKwh` falls outside `ELECTRICITY_PRICE_PLAUSIBLE_RANGE_PENCE_PER_KWH` (5-100p) | Inference | Added 4 Aug 2026, found by a third-party review. Both segments. Not a rejection — the value is still used exactly as given — just a double-check prompt, since a user-provided rate is otherwise trusted with no other check |
+| `segRateUnusual` | A user-provided `segRatePencePerKwh` falls outside `SEG_RATE_PLAUSIBLE_RANGE_PENCE_PER_KWH` (0-50p) | Inference | Added 4 Aug 2026, found by a third-party review. Rooftop only (plug-in has no SEG concept). Same non-rejecting treatment as `electricityPriceUnusual` |
 | `inverterReplacementFactored` | Simulated payback period includes ≥1 inverter replacement | Inference | Rooftop only. Names how many replacements were folded in and the flat (no-escalation/no-degradation/no-inverter) comparison figure, so the adjustment is visible rather than a silent change to the headline number. Updated 1 Aug 2026 to report a count (can be more than one for a very long payback) rather than a single fixed adjustment |
 | `paybackNotReachedWithinSimulation` | Simulated cumulative savings never clear cumulative cost within `PAYBACK_SIMULATION_MAX_YEARS` (30) | Inference | Added 1 Aug 2026, both segments. `paybackYears` is `null` in this case rather than a raw `Infinity` |
 

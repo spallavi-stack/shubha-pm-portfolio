@@ -98,3 +98,19 @@ describe('calculatePluginViability — status scoring', () => {
     assert.match(result.assumptions.paybackYears.note, /no payback within the simulated horizon/);
   });
 });
+
+describe('calculatePluginViability — user-provided rate plausibility', () => {
+  const { ELECTRICITY_PRICE_PLAUSIBLE_RANGE_PENCE_PER_KWH } = constants;
+
+  test('electricityPriceUnusual fires for a user-provided price outside the plausible range', () => {
+    const result = calculatePluginViability({ occupancy: 'usuallyHome', electricityPricePencePerKwh: ELECTRICITY_PRICE_PLAUSIBLE_RANGE_PENCE_PER_KWH.max + 1 });
+    assert.ok(result.flags.some((f) => f.id === 'electricityPriceUnusual'));
+  });
+
+  test('electricityPriceUnusual does not fire for a plausible user-provided price or the default', () => {
+    const plausible = calculatePluginViability({ occupancy: 'usuallyHome', electricityPricePencePerKwh: 30 });
+    const usingDefault = calculatePluginViability({ occupancy: 'usuallyHome' });
+    assert.ok(!plausible.flags.some((f) => f.id === 'electricityPriceUnusual'));
+    assert.ok(!usingDefault.flags.some((f) => f.id === 'electricityPriceUnusual'));
+  });
+});

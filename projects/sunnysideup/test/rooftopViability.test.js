@@ -10,6 +10,8 @@ const {
   REFERENCE_SYSTEM_SIZE_KWP,
   ROOFTOP_SYSTEM_COST_GBP,
   REGIONAL_GENERATION_MULTIPLIER,
+  ELECTRICITY_PRICE_PLAUSIBLE_RANGE_PENCE_PER_KWH,
+  SEG_RATE_PLAUSIBLE_RANGE_PENCE_PER_KWH,
 } = constants;
 
 const baseInput = { orientation: 'southFacing', occupancy: 'usuallyHome', annualConsumptionKwh: 4000 };
@@ -232,6 +234,32 @@ describe('calculateRooftopViability — flags', () => {
   test('segTariffRequiresBatteryNotModeled does not fire with no SEG tariff picked at all', () => {
     const result = calculateRooftopViability(baseInput);
     assert.ok(!result.flags.some((f) => f.id === 'segTariffRequiresBatteryNotModeled'));
+  });
+
+  test('electricityPriceUnusual fires for a user-provided price outside the plausible range', () => {
+    const tooLow = calculateRooftopViability({ ...baseInput, electricityPricePencePerKwh: ELECTRICITY_PRICE_PLAUSIBLE_RANGE_PENCE_PER_KWH.min - 1 });
+    const tooHigh = calculateRooftopViability({ ...baseInput, electricityPricePencePerKwh: ELECTRICITY_PRICE_PLAUSIBLE_RANGE_PENCE_PER_KWH.max + 1 });
+    assert.ok(tooLow.flags.some((f) => f.id === 'electricityPriceUnusual'));
+    assert.ok(tooHigh.flags.some((f) => f.id === 'electricityPriceUnusual'));
+  });
+
+  test('electricityPriceUnusual does not fire for a plausible user-provided price or the default', () => {
+    const plausible = calculateRooftopViability({ ...baseInput, electricityPricePencePerKwh: 30 });
+    const usingDefault = calculateRooftopViability(baseInput);
+    assert.ok(!plausible.flags.some((f) => f.id === 'electricityPriceUnusual'));
+    assert.ok(!usingDefault.flags.some((f) => f.id === 'electricityPriceUnusual'));
+  });
+
+  test('segRateUnusual fires for a user-provided SEG rate outside the plausible range', () => {
+    const tooHigh = calculateRooftopViability({ ...baseInput, segRatePencePerKwh: SEG_RATE_PLAUSIBLE_RANGE_PENCE_PER_KWH.max + 10 });
+    assert.ok(tooHigh.flags.some((f) => f.id === 'segRateUnusual'));
+  });
+
+  test('segRateUnusual does not fire for a plausible user-provided SEG rate or the default', () => {
+    const plausible = calculateRooftopViability({ ...baseInput, segRatePencePerKwh: 10 });
+    const usingDefault = calculateRooftopViability(baseInput);
+    assert.ok(!plausible.flags.some((f) => f.id === 'segRateUnusual'));
+    assert.ok(!usingDefault.flags.some((f) => f.id === 'segRateUnusual'));
   });
 
   test('occupancyMayLowerRealSelfConsumption fires for every rooftop result, regardless of occupancy', () => {
