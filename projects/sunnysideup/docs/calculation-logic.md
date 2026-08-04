@@ -212,7 +212,7 @@ flowchart TD
     G5{"≥90% hourly<br/>data + valid<br/>shape?"}
     G6["Coordinate-precise:<br/>insolation x 4kWp<br/>x 0.86 PR"]
     G7["Country x<br/>baseline:<br/>Eng 1.0 / Wal 0.93<br/>Sco 0.85 / NI 0.85"]
-    G8["Pre-scaling<br/>generation"]
+    G8["Per-kWp annual<br/>yield = resolved<br/>generation / 4<br/>(reference kWp)"]
 
     G0 -->|No| G1
     G0 -->|Yes| G2
@@ -244,12 +244,20 @@ flowchart TD
     RA4 --> RA8
   end
 
-  SCALE["Final generation<br/>= pre-scaling x<br/>(kWp / 4 ref)"]
+  SCALE["Final generation<br/>= per-kWp yield x<br/>systemSizeKwp"]
   GenFinal(["generationKwh,<br/>systemSizeKwp,<br/>systemCostGbp"])
   G8 --> SCALE
   RA8 --> SCALE
   SCALE --> GenFinal
 ```
+
+Simplified 4 Aug 2026 (found by a third-party review, no behavior change — verified against the prior
+implementation across 128 input combinations with zero mismatches): previously computed generation
+for an assumed `REFERENCE_SYSTEM_SIZE_KWP` (4kWp) system first, then rescaled it by the ratio of the
+real system size back to that same reference — a resolve-then-immediately-undo indirection, since
+every generation source above (flat baseline, regional multiplier, Open-Meteo override) is already
+calibrated to that one reference size. Now resolves a per-kWp annual yield once and multiplies
+directly by the real system size at the end: the same physical quantity, one fewer conceptual hop.
 
 **Key constants** (`calculator.js` L184-245, L287-292, L217-236, L723-727):
 

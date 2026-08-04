@@ -902,11 +902,22 @@ function calculateRooftopViability({
   roofAreaM2,
 }) {
   const baseGeneration = ROOFTOP_ANNUAL_GENERATION_KWH[orientation];
-  const preRoofAreaGeneration = generationOverride
-    ? generationOverride.value
+  // SIMPLIFIED 4 Aug 2026 (found by a third-party review): previously computed
+  // generation for an assumed REFERENCE_SYSTEM_SIZE_KWP system first, then
+  // rescaled it by the ratio of the real system size back to that same
+  // reference — a resolve-then-immediately-undo indirection, since every
+  // generation source here (the flat baseline, the regional multiplier, and
+  // Open-Meteo's coordinate-precise override) is already calibrated to that
+  // one reference size. Resolving a per-kWp annual yield once and
+  // multiplying directly by the real system size at the end gives the same
+  // physical quantity with one fewer conceptual hop: "yield per kWp x
+  // system size in kWp," not "generation for a system you don't have x a
+  // ratio back to the one you do."
+  const annualYieldKwhPerKwp = generationOverride
+    ? generationOverride.value / REFERENCE_SYSTEM_SIZE_KWP
     : regionalGeneration
-      ? Math.round(baseGeneration * regionalGeneration.value)
-      : baseGeneration;
+      ? (baseGeneration * regionalGeneration.value) / REFERENCE_SYSTEM_SIZE_KWP
+      : baseGeneration / REFERENCE_SYSTEM_SIZE_KWP;
 
   const roofAreaSizing = roofAreaM2 != null ? estimateSystemSizeFromRoofArea(roofAreaM2) : null;
   // ADDED 4 Aug 2026 (found by a third-party review): estimateSystemSizeFromRoofArea
@@ -919,8 +930,7 @@ function calculateRooftopViability({
   // roof area" note are reserved for the real no-answer case.
   const roofAreaTooSmallForAnyPanel = roofAreaM2 != null && roofAreaSizing == null;
   const systemSizeKwp = roofAreaSizing ? roofAreaSizing.systemSizeKwp : REFERENCE_SYSTEM_SIZE_KWP;
-  const roofAreaMultiplier = roofAreaSizing ? roofAreaSizing.systemSizeKwp / REFERENCE_SYSTEM_SIZE_KWP : 1;
-  const generation = Math.round(preRoofAreaGeneration * roofAreaMultiplier);
+  const generation = Math.round(annualYieldKwhPerKwp * systemSizeKwp);
   const systemCostGbp = roofAreaSizing ? roofAreaSizing.systemCostGbp : ROOFTOP_SYSTEM_COST_GBP;
 
   const generationSplit = resolveGenerationSplit(generation, annualConsumptionKwh);
