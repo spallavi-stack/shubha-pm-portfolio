@@ -555,7 +555,7 @@ function simulatePaybackYears({
   let inverterReplacementsFactored = 0;
 
   for (let year = 1; year <= PAYBACK_SIMULATION_MAX_YEARS; year += 1) {
-    if (inverterReplacementCostGbp && year > 1 && (year - 1) % inverterReplacementEveryYears === 0) {
+    if (inverterReplacementCostGbp && year % inverterReplacementEveryYears === 0) {
       cumulativeCostGbp += inverterReplacementCostGbp;
       inverterReplacementsFactored += 1;
     }

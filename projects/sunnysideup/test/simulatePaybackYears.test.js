@@ -56,6 +56,33 @@ describe('simulatePaybackYears', () => {
     assert.ok(result.inverterReplacementsFactored >= 1, 'expected at least one inverter replacement to be factored in');
   });
 
+  test('first inverter replacement lands exactly at inverterReplacementEveryYears, not one year later', () => {
+    // Engineered so unassisted (no-inverter) payback lands strictly between
+    // year 11 and year 12: cumulative savings cross cumulative cost during
+    // the year-12 iteration. A replacement due "every 12 years" must apply
+    // before that year's savings are counted, pushing payback out. A
+    // replacement configured for every 13 years must NOT have fired yet,
+    // since payback completes before year 13 is ever reached.
+    const common = {
+      systemCostGbp: 3300,
+      baseSelfConsumedKwh: 1000,
+      baseSecondaryKwh: 0,
+      secondaryRatePencePerKwh: 0,
+      electricityPricePencePerKwh: 26.11,
+      inverterReplacementCostGbp: 950,
+    };
+    const noInverter = simulatePaybackYears({ ...common, inverterReplacementCostGbp: undefined });
+    assert.ok(noInverter.paybackYears > 11 && noInverter.paybackYears < 12, `test is only valid if unassisted payback lands in year 12, got ${noInverter.paybackYears}`);
+
+    const every12 = simulatePaybackYears({ ...common, inverterReplacementEveryYears: 12 });
+    assert.equal(every12.inverterReplacementsFactored, 1, 'a 12-year replacement cycle must have fired by the time payback completes in year 12');
+    assert.ok(every12.paybackYears > noInverter.paybackYears, 'the year-12 replacement cost should push payback later than the unassisted case');
+
+    const every13 = simulatePaybackYears({ ...common, inverterReplacementEveryYears: 13 });
+    assert.equal(every13.inverterReplacementsFactored, 0, 'a 13-year replacement cycle must not have fired yet, since payback completes in year 12');
+    assert.equal(every13.paybackYears, noInverter.paybackYears, 'with no replacement fired, payback should match the unassisted case exactly');
+  });
+
   test('no inverter params given never touches inverterReplacementEveryYears and never throws', () => {
     assert.doesNotThrow(() => {
       simulatePaybackYears({

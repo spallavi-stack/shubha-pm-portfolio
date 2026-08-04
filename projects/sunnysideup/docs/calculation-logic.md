@@ -487,6 +487,15 @@ escalation are general PV/market assumptions, not rooftop-specific the way the i
 is (no comparable inverter-cost research exists at plug-in's scale, §3), so plug-in gets the same
 escalation/degradation treatment but no inverter-replacement cost.
 
+Corrected 4 Aug 2026: `simulatePaybackYears`'s replacement-due check read `(year - 1) %
+inverterReplacementEveryYears === 0`, which fires when `year - 1` is a multiple of 12, i.e. at
+years 13, 25, 37 — one year later than `INVERTER_REPLACEMENT_YEAR` (12) and every comment
+describing this behavior actually intended. Found by a third-party review; no test had pinned the
+exact year, only that at least one replacement fired. Fixed to `year % inverterReplacementEveryYears
+=== 0` (replacements now land at years 12, 24, 36), which also made the previous `year > 1` guard
+redundant, so it was dropped. A regression test (`simulatePaybackYears.test.js`) now pins the exact
+year a replacement first fires, distinguishing it from a cycle length one year longer.
+
 ---
 
 ## 5. What comes back alongside the number
