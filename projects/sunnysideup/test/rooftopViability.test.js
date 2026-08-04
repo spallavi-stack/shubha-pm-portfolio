@@ -193,11 +193,19 @@ describe('calculateRooftopViability — flags', () => {
     assert.ok(!result.flags.some((f) => f.id === 'highExportSensitivity'));
   });
 
-  test('occupancyMayLowerRealSelfConsumption fires only for usuallyOut', () => {
+  test('occupancyMayLowerRealSelfConsumption fires for every rooftop result, regardless of occupancy', () => {
+    // Widened 4 Aug 2026: the annual-vs-seasonal approximation this flag
+    // describes applies to every household, not just 'usuallyOut' ones —
+    // only the note's extra within-day detail is occupancy-specific.
     const usuallyOut = calculateRooftopViability({ ...baseInput, occupancy: 'usuallyOut' });
     const usuallyHome = calculateRooftopViability({ ...baseInput, occupancy: 'usuallyHome' });
     assert.ok(usuallyOut.flags.some((f) => f.id === 'occupancyMayLowerRealSelfConsumption'));
-    assert.ok(!usuallyHome.flags.some((f) => f.id === 'occupancyMayLowerRealSelfConsumption'));
+    assert.ok(usuallyHome.flags.some((f) => f.id === 'occupancyMayLowerRealSelfConsumption'));
+
+    const outNote = usuallyOut.flags.find((f) => f.id === 'occupancyMayLowerRealSelfConsumption').note;
+    const homeNote = usuallyHome.flags.find((f) => f.id === 'occupancyMayLowerRealSelfConsumption').note;
+    assert.notEqual(outNote, homeNote, "usuallyOut's note should add within-day detail the usuallyHome note doesn't have");
+    assert.ok(outNote.length > homeNote.length);
   });
 
   test('occupancy does not change any numeric result field, only the flags', () => {

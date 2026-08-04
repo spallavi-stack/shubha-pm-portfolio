@@ -435,7 +435,7 @@ figures use — not computed once at year 1 and decayed in parallel. See the cor
 
 | Constant | Value | Tier | Note |
 |---|---|---|---|
-| `SELF_CONSUMPTION_DEMAND_RATIO_COEFFICIENT` / `_EXPONENT` | 0.6748 / -0.703 | Fact (formula), Inference (annual application) | DESNZ Home Energy Model's own self-consumption formula (`HEM-TP-18`, gov.uk, fetched and extracted directly 1 Aug 2026): `factor = min(0.6748 x demandRatio^-0.703, 1)`, where `demandRatio = generation / consumption`. Derived from field data across a small UK dwelling sample, cross-checked against other datasets in HEM's own literature review. HEM applies this per timestep (sub-hourly); this calculator applies it once to the annual demand ratio, a coarser approximation that can't distinguish daytime-concentrated consumption from evening-concentrated consumption at the same annual total |
+| `SELF_CONSUMPTION_DEMAND_RATIO_COEFFICIENT` / `_EXPONENT` | 0.6748 / -0.703 | Fact (formula), Inference (annual application) | DESNZ Home Energy Model's own self-consumption formula (`HEM-TP-18`, gov.uk, fetched and extracted directly 1 Aug 2026): `factor = min(0.6748 x demandRatio^-0.703, 1)`, where `demandRatio = generation / consumption`. Derived from field data across a small UK dwelling sample, cross-checked against other datasets in HEM's own literature review. HEM applies this per timestep (sub-hourly); this calculator applies it once to the annual demand ratio, a coarser approximation. Reframed 4 Aug 2026 (found by a third-party review): the dominant version of that gap is seasonal, not within-day — UK solar generation swings roughly 10x by season while consumption doesn't, and this formula is convex over most of its uncapped range, so by Jensen's inequality, applying it once to an aggregated annual ratio tends to understate true self-consumption rather than approximate it with an unclear direction [Inference, this calculator's own adaptation, not re-run against HEM at monthly resolution] |
 | `ROOFTOP_PAYBACK_THRESHOLDS` | green ≤8yr, amber ≤13yr | Design judgment, not cited | Loosely anchored to `grounding-research.md`'s reported "roughly 6-14 years across sources" range, not a regulator or industry-body standard. Named as a design judgment (not a personalized recommendation) in every result's `assumptions.paybackYears`, added 1 Aug 2026 — see the correction note below |
 | `INVERTER_REPLACEMENT_COST_GBP` / `_YEAR` | £950 / year 12 | Assumption — consumer-guide convergence, no MCS/government source found | Added 1 Aug 2026. String inverter replacement commonly cited ~£700-1,200 incl. labour for a 3-4kWp system (£950 midpoint); typical lifespan 10-15yr (12 midpoint). Recurring: added again every 12 years the simulation runs, not just once |
 | `ELECTRICITY_PRICE_ANNUAL_ESCALATION_RATE` | 3%/yr | Assumption — consumer-guide convergence on a commonly-used industry modeling figure | Added 1 Aug 2026. A primary DESNZ appraisal document ("Valuation of energy use and greenhouse gas emissions for appraisal," Nov 2023, gov.uk) was fetched and checked directly but its long-run price projections live in an accompanying spreadsheet not accessible from this session — no single quotable figure found there, so this falls back to industry-convergence sourcing (3-5% range cited). Applied only to the import price (self-consumed portion); SEG export rate is left flat, a named simplification |
@@ -538,10 +538,12 @@ interrupt anyone by default.
 Rooftop results also carry a `flags` array: situational, always-worth-surfacing callouts,
 distinct from `assumptions` in kind, not just placement: `assumptions` explains how confident a
 *number* is, `flags` tells the user about a *condition attached to this specific result* that
-the number alone doesn't convey. Each entry is `{ id, tier, title, note }`. Four are
-unconditional (every rooftop result gets them, since no input this calculator collects tells it
-whether a property is leasehold, listed, in a conservation area, or physically eligible for
-Permitted Development, deliberately not adding new inputs just to gate these):
+the number alone doesn't convey. Each entry is `{ id, tier, title, note }`. Five are
+unconditional (every rooftop result gets them — four because no input this calculator collects
+tells it whether a property is leasehold, listed, in a conservation area, or physically eligible
+for Permitted Development, deliberately not adding new inputs just to gate these; the fifth
+because the annual-average self-consumption approximation's dominant blind spot is seasonal, not
+conditional on any input this calculator collects either — see its own row below):
 
 | id | Trigger | Tier | What it says |
 |---|---|---|---|
@@ -549,9 +551,9 @@ Permitted Development, deliberately not adding new inputs just to gate these):
 | `tenancyConsent` | Always | Fact | Leaseholders generally need freeholder consent for exterior alterations; renters should check with their landlord; standard UK leasehold law, not resolved by this tool |
 | `listedBuilding` | Always | Fact | Listed buildings have zero Permitted Development rights for solar at any size |
 | `conservationArea` | Always | Inference | Street-visible panels in a conservation area may need planning permission even if the physical criteria are otherwise met |
+| `occupancyMayLowerRealSelfConsumption` | Always | Inference | Added 1 Aug 2026, alongside the self-consumption formula fix above; widened 4 Aug 2026 (found by a third-party review) from firing only for `usuallyOut` to firing for every result. The formula is annual-average and can't see how generation and consumption actually line up over time — the dominant version of that gap is seasonal (UK solar generation swings roughly 10x by season, consumption doesn't), which tends to understate true self-consumption regardless of occupancy. `occupancy` being `usuallyOut` adds a secondary, within-day version of the same understatement to the note, compounding in the same direction; `usuallyHome` gets the seasonal note alone |
 | `regulatoryRegime` | Postcode resolves to Scotland or Wales | Fact | That country's own permitted-development/building-regulation regime hasn't been researched here |
 | `highExportSensitivity` | No user-picked SEG tariff, and exported share of generation exceeds 50% | Inference | This result uses the low default SEG rate; a high-export household's result moves more than most when a real (much higher) tariff is picked |
-| `occupancyMayLowerRealSelfConsumption` | `occupancy` is `usuallyOut` | Inference | Added 1 Aug 2026, alongside the self-consumption formula fix above. The formula is annual-average and can't see *when* within the day consumption happens — only its total relative to generation. A usually-out household's consumption is more likely concentrated outside midday solar hours than the annual total alone suggests, which would make real self-consumption lower than the formula's estimate. Not shown for `usuallyHome`, since there's no comparably clear directional bias to flag for that case |
 | `inverterReplacementFactored` | Simulated payback period includes ≥1 inverter replacement | Inference | Rooftop only. Names how many replacements were folded in and the flat (no-escalation/no-degradation/no-inverter) comparison figure, so the adjustment is visible rather than a silent change to the headline number. Updated 1 Aug 2026 to report a count (can be more than one for a very long payback) rather than a single fixed adjustment |
 | `paybackNotReachedWithinSimulation` | Simulated cumulative savings never clear cumulative cost within `PAYBACK_SIMULATION_MAX_YEARS` (30) | Inference | Added 1 Aug 2026, both segments. `paybackYears` is `null` in this case rather than a raw `Infinity` |
 
@@ -575,9 +577,13 @@ the next review pass to weigh in on:
 
 - **Self-consumption rate** (corrected 1 Aug 2026) now comes from DESNZ's own Home Energy Model
   formula rather than a hardcoded occupancy proxy, but is still applied annually rather than the
-  per-timestep basis the formula was designed for — it can't distinguish daytime-concentrated
-  consumption from evening-concentrated consumption at the same annual total. Flagged to the user
-  via `occupancyMayLowerRealSelfConsumption` for `usuallyOut` households specifically.
+  per-timestep basis the formula was designed for. The dominant version of that gap is seasonal
+  (UK solar generation swings roughly 10x by season, consumption doesn't), which most likely
+  *understates* true self-consumption rather than just approximating it with an unclear direction
+  (reframed 4 Aug 2026, found by a third-party review — see `SELF_CONSUMPTION_DEMAND_RATIO_COEFFICIENT`'s
+  sourcing note in §4e). Flagged to the user via `occupancyMayLowerRealSelfConsumption`, which now
+  fires for every rooftop result rather than only `usuallyOut` households, with `usuallyOut` adding
+  an extra within-day reason to the same note.
 - **Plug-in's self-consumption** (corrected 1 Aug 2026, see §3) now uses the same demand-ratio
   formula as rooftop when a consumption figure is given, and any generation beyond that rate earns
   nothing rather than being counted as savings. Without a consumption figure, it still falls back

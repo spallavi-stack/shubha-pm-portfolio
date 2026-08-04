@@ -408,6 +408,28 @@ function pluginOrientationMultiplier(orientation) {
 // now gets a demand-ratio-driven, not occupancy-driven, self-consumption
 // estimate — mechanically capturing what the occupancy proxy could not,
 // without inventing a new unresearched per-appliance modifier.
+//
+// REFRAMED 4 Aug 2026 (found by a third-party review; no formula change): the
+// paragraph above named the annual-vs-per-timestep gap as a within-day
+// blind spot ("daytime-concentrated... vs evening-concentrated... at the
+// same annual total"). The larger effect is across the year, not across the
+// day: UK solar generation swings roughly 10x between December and June,
+// while household consumption is comparatively flat by season. Collapsing a
+// full year into one demand ratio, then running it through a single
+// power-law formula, isn't a neutral loss of detail — this specific formula
+// (uncapped) is convex over most of the range where it isn't already capped
+// at 1 or 1/demandRatio, so by Jensen's inequality, applying it once to an
+// aggregated annual ratio tends to sit below what summing it across each
+// month's own ratio would give. [Inference, this calculator's own
+// adaptation, not independently re-run against HEM at monthly resolution]
+// In practice this means the annual approximation most likely
+// *understates* true self-consumption and savings for a typical unbattoried
+// UK home, not just approximates it with an unclear direction. Not fixed
+// here — extending to monthly resolution would need monthly
+// generation/consumption data this calculator doesn't collect, a real scope
+// increase, not a formula tweak. See the occupancyMayLowerRealSelfConsumption
+// flag below, which now names this seasonal mismatch as the dominant driver
+// rather than only the within-day one.
 const SELF_CONSUMPTION_DEMAND_RATIO_COEFFICIENT = 0.6748;
 const SELF_CONSUMPTION_DEMAND_RATIO_EXPONENT = -0.703;
 
@@ -791,7 +813,7 @@ function estimateAnnualConsumptionKwh({ householdSize, hasHeatPump, hasEv, evCou
 /**
  * @param {Object} input
  * @param {'southFacing'|'eastWestFacing'|'northFacing'} input.orientation
- * @param {'usuallyHome'|'usuallyOut'} input.occupancy - no longer drives the self-consumption number itself (see selfConsumptionFactorFromDemandRatio's sourcing note); used only to decide whether the lowConfidenceOccupancyMismatch flag below is worth surfacing
+ * @param {'usuallyHome'|'usuallyOut'} input.occupancy - no longer drives the self-consumption number itself (see selfConsumptionFactorFromDemandRatio's sourcing note); the occupancyMayLowerRealSelfConsumption flag below fires for every result regardless of this value, but its note says more when this is 'usuallyOut'
  * @param {number} input.annualConsumptionKwh - household's own annual electricity use
  * @param {number} [input.electricityPricePencePerKwh] - the user's own known rate; takes precedence over electricityPriceOverride and the static default
  * @param {Object} [input.electricityPriceOverride] - a specific { value, tier, note } to use for the electricity price outright (e.g. a live-fetched current regional rate), used only if electricityPricePencePerKwh is omitted; falls back to the static Ofgem default if this is also omitted
@@ -996,23 +1018,32 @@ function calculateRooftopViability({
   }
 
   // The self-consumption formula above is annual-average, so it can't see
-  // *when* within the day a household's consumption happens — only its
-  // total relative to generation. Occupancy pattern is a reasonable signal
-  // for whether that blind spot cuts in a particular direction: a household
-  // that's usually out on weekdays is more likely to have its consumption
-  // concentrated outside midday solar hours than the annual total alone
-  // would suggest, which would make real self-consumption lower than this
-  // result's formula-driven estimate, not higher. Not shown for
-  // 'usuallyHome' households, since there's no comparably clear directional
-  // case that the annual approximation is biased for them specifically.
-  if (occupancy === 'usuallyOut') {
-    flags.push({
-      id: 'occupancyMayLowerRealSelfConsumption',
-      tier: 'Inference',
-      title: "Usually out during the day? Your real self-consumption may be lower than this",
-      note: "This result's self-consumption figure comes from your annual generation-to-consumption ratio (DESNZ's Home Energy Model formula), not from your occupancy pattern directly — it assumes your consumption is reasonably well spread across the day. If you're usually out on weekdays, your actual consumption is more likely concentrated in the morning/evening, outside peak solar hours, which would make your real self-consumption (and savings) lower than this estimate. A battery or a smart diverter for a timed load (immersion heater, EV charger) can close some of that gap.",
-    });
-  }
+  // how generation and consumption actually line up in time — only their
+  // totals. The dominant version of that gap is seasonal, not within-day:
+  // UK solar generation swings roughly 10x between December and June, while
+  // consumption is comparatively flat by season, and collapsing a full
+  // year into one demand ratio tends to understate true self-consumption
+  // for that reason alone (see SELF_CONSUMPTION_DEMAND_RATIO_COEFFICIENT's
+  // own sourcing note above) — so this flag now fires for every rooftop
+  // result, not just 'usuallyOut' households (widened 4 Aug 2026, found by a
+  // third-party review; previously scoped to 'usuallyOut' only, which
+  // undersold how broadly this approximation applies). Occupancy pattern
+  // adds a secondary, within-day version of the same blind spot: a
+  // household that's usually out on weekdays is more likely to have its
+  // consumption concentrated outside midday solar hours than the annual
+  // total alone would suggest, compounding the seasonal effect further in
+  // the same (understating) direction — so the note below says more when
+  // occupancy is 'usuallyOut' specifically.
+  flags.push({
+    id: 'occupancyMayLowerRealSelfConsumption',
+    tier: 'Inference',
+    title: 'This result likely understates your real self-consumption',
+    note:
+      "This result's self-consumption figure comes from your annual generation-to-consumption ratio (DESNZ's Home Energy Model formula), applied once to the whole year rather than to how generation and consumption actually line up hour by hour. UK solar generation is heavily seasonal (far more in summer than winter) while consumption is comparatively flat by season, so this annual approximation tends to understate true self-consumption, not just approximate it with an unclear direction." +
+      (occupancy === 'usuallyOut'
+        ? " Being usually out on weekdays adds to this: your actual consumption is more likely concentrated in the morning/evening, outside peak solar hours, than the annual total alone suggests, pushing your real self-consumption (and savings) lower still. A battery or a smart diverter for a timed load (immersion heater, EV charger) can close some of that gap."
+        : ''),
+  });
 
   if (paybackSimulation.inverterReplacementsFactored > 0) {
     flags.push({
