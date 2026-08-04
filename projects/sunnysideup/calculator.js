@@ -836,7 +836,7 @@ function estimateAnnualConsumptionKwh({ householdSize, hasHeatPump, hasEv, evCou
  * @param {string} [input.segTariffEligibility] - that tariff row's eligibility text (e.g. "requires system installed by that same supplier"), if available — carried into the result so the condition attached to the picked rate isn't lost between the picker UI and the calculated output
  * @param {Object} [input.regionalGeneration] - a REGIONAL_GENERATION_MULTIPLIER entry, e.g. from calculateRooftopViabilityByPostcode()'s country-level fallback; omit to use the England-calibrated baseline unchanged. Ignored if generationOverride is also given.
  * @param {Object} [input.generationOverride] - a specific { value, tier, note } to use for generationKwh outright (e.g. a coordinate-precise weather-API estimate), taking precedence over regionalGeneration and the orientation-based default
- * @param {number} [input.roofAreaM2] - usable roof area; if given, sizes the system (panels, kWp, cost) against it via estimateSystemSizeFromRoofArea() instead of the flat REFERENCE_SYSTEM_SIZE_KWP default, and scales whatever generation figure was otherwise resolved (flat/regional/override) proportionally to the derived system size
+ * @param {number} [input.roofAreaM2] - usable roof area; if given, sizes the system (panels, kWp, cost) against it via estimateSystemSizeFromRoofArea() instead of the flat REFERENCE_SYSTEM_SIZE_KWP default, and scales whatever generation figure was otherwise resolved (flat/regional/override) proportionally to the derived system size. If given but too small to fit even one panel, falls back to the flat default same as omitting it, but surfaces a roofAreaInsufficientForPanels flag instead of silently looking like the question was never answered
  */
 function calculateRooftopViability({
   orientation,
@@ -860,6 +860,15 @@ function calculateRooftopViability({
       : baseGeneration;
 
   const roofAreaSizing = roofAreaM2 != null ? estimateSystemSizeFromRoofArea(roofAreaM2) : null;
+  // ADDED 4 Aug 2026 (found by a third-party review): estimateSystemSizeFromRoofArea
+  // returns null both when roofAreaM2 was never given AND when it was given
+  // but is too small to fit even one panel (< ROOF_AREA_PER_PANEL_M2) — two
+  // very different situations that previously collapsed into the same
+  // "fall back to the flat default, tell them to give their roof area" path
+  // below, which is actively misleading for someone who just did. This flag
+  // distinguishes the two so the flat-default fallback and its "give your
+  // roof area" note are reserved for the real no-answer case.
+  const roofAreaTooSmallForAnyPanel = roofAreaM2 != null && roofAreaSizing == null;
   const systemSizeKwp = roofAreaSizing ? roofAreaSizing.systemSizeKwp : REFERENCE_SYSTEM_SIZE_KWP;
   const roofAreaMultiplier = roofAreaSizing ? roofAreaSizing.systemSizeKwp / REFERENCE_SYSTEM_SIZE_KWP : 1;
   const generation = Math.round(preRoofAreaGeneration * roofAreaMultiplier);
@@ -938,7 +947,13 @@ function calculateRooftopViability({
             tier: 'Inference — derived from your roof area',
             note: `${roofAreaSizing.panelCount} panels x ${PANEL_WATTAGE_KWP}kWp x £${roofAreaSizing.costPerKwpGbp}/kWp (MCS-sourced installed-cost rate for this system size). Not a quote for your specific roof — actual roof shape, shading, and access all affect a real quote.`,
           }
-        : { value: systemCostGbp, tier: 'Assumption', note: `Industry-consensus range is £5,500-£8,700 for a ~${REFERENCE_SYSTEM_SIZE_KWP}kWp system (MCS's own reported UK average is 4.6kWp); not a quote for your specific roof. Give your usable roof area for a size-adjusted estimate instead of this flat default.` },
+        : {
+            value: systemCostGbp,
+            tier: 'Assumption',
+            note: roofAreaTooSmallForAnyPanel
+              ? `Industry-consensus range is £5,500-£8,700 for a ~${REFERENCE_SYSTEM_SIZE_KWP}kWp system (MCS's own reported UK average is 4.6kWp); not a quote for your specific roof. Your stated roof area (${roofAreaM2}m²) can't fit even one panel at ${ROOF_AREA_PER_PANEL_M2}m²/panel, so this flat reference is shown instead — see the roofAreaInsufficientForPanels flag.`
+              : `Industry-consensus range is £5,500-£8,700 for a ~${REFERENCE_SYSTEM_SIZE_KWP}kWp system (MCS's own reported UK average is 4.6kWp); not a quote for your specific roof. Give your usable roof area for a size-adjusted estimate instead of this flat default.`,
+          },
       generationKwh: generationOverride
         ? { value: generation, tier: generationOverride.tier, note: `${generationOverride.note}${roofAreaSizing ? ` Further scaled by your roof-area-derived system size (${systemSizeKwp}kWp vs the ${REFERENCE_SYSTEM_SIZE_KWP}kWp this figure and your postcode estimate are both otherwise calibrated to).` : ''}` }
         : regionalGeneration
@@ -1008,6 +1023,22 @@ function calculateRooftopViability({
     title: 'In a conservation area? Extra rules may apply',
     note: 'Panels visible from a highway in a conservation area may need full planning permission even within the Permitted Development ceiling; rear- or side-facing panels not visible from a highway are more often still exempt. Not checked by this tool.',
   });
+
+  // ADDED 4 Aug 2026 (found by a third-party review): a roofAreaM2 too small
+  // to fit even one panel (< ROOF_AREA_PER_PANEL_M2) previously fell through
+  // to the exact same flat-default path, and the exact same "give your roof
+  // area" note, as never answering the roof-area question at all — actively
+  // misleading for someone who just did. This is the more useful, honest
+  // result the input actually supports: your stated roof area can't fit a
+  // rooftop system, distinct from "we don't know your roof area yet."
+  if (roofAreaTooSmallForAnyPanel) {
+    flags.push({
+      id: 'roofAreaInsufficientForPanels',
+      tier: 'Inference',
+      title: "Your stated roof area can't fit a panel",
+      note: `You gave a usable roof area of ${roofAreaM2}m², which is smaller than a single panel's footprint plus mounting/spacing clearance (${ROOF_AREA_PER_PANEL_M2}m²/panel). The numbers in this result fall back to a flat, generic ${REFERENCE_SYSTEM_SIZE_KWP}kWp/£${ROOFTOP_SYSTEM_COST_GBP} reference system, not a system sized to what you actually have — treat this result as illustrative only, not a real estimate for this roof. Double-check the area you entered, or consider whether rooftop solar is realistic here at all.`,
+    });
+  }
 
   // High-export households are unusually sensitive to which SEG rate this
   // result assumes: real tariffs span roughly 1-25p/kWh (SEG_TARIFFS above),

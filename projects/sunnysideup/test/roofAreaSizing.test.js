@@ -1,8 +1,8 @@
 const { test, describe } = require('node:test');
 const assert = require('node:assert/strict');
-const { estimateSystemSizeFromRoofArea, constants } = require('../calculator.js');
+const { estimateSystemSizeFromRoofArea, calculateRooftopViability, constants } = require('../calculator.js');
 
-const { ROOF_AREA_PER_PANEL_M2, PANEL_WATTAGE_KWP, COST_PER_KWP_GBP_BY_TIER } = constants;
+const { ROOF_AREA_PER_PANEL_M2, PANEL_WATTAGE_KWP, COST_PER_KWP_GBP_BY_TIER, REFERENCE_SYSTEM_SIZE_KWP, ROOFTOP_SYSTEM_COST_GBP } = constants;
 
 describe('estimateSystemSizeFromRoofArea', () => {
   test('returns null when the area cannot fit even one panel', () => {
@@ -58,5 +58,41 @@ describe('estimateSystemSizeFromRoofArea', () => {
     if (result.systemSizeKwp === COST_PER_KWP_GBP_BY_TIER.smallSystemThresholdKwp) {
       assert.equal(result.costPerKwpGbp, COST_PER_KWP_GBP_BY_TIER.smallSystemCostPerKwp);
     }
+  });
+});
+
+describe('calculateRooftopViability — roof area too small for any panel', () => {
+  // ADDED 4 Aug 2026 (found by a third-party review): a roofAreaM2 that
+  // can't fit even one panel previously fell through to the exact same
+  // flat-default path, with the exact same "give your roof area" note, as
+  // never answering the question at all — this distinguishes the two.
+  const baseInput = { orientation: 'southFacing', occupancy: 'usuallyHome', annualConsumptionKwh: 4000 };
+
+  test('roofAreaInsufficientForPanels fires when roofAreaM2 is given but too small for one panel', () => {
+    const result = calculateRooftopViability({ ...baseInput, roofAreaM2: 1 });
+    const flag = result.flags.find((f) => f.id === 'roofAreaInsufficientForPanels');
+    assert.ok(flag, 'expected roofAreaInsufficientForPanels to fire');
+    assert.match(flag.note, /1m²/);
+  });
+
+  test('roofAreaInsufficientForPanels does not fire when roofAreaM2 is omitted entirely', () => {
+    const result = calculateRooftopViability(baseInput);
+    assert.ok(!result.flags.some((f) => f.id === 'roofAreaInsufficientForPanels'));
+  });
+
+  test('roofAreaInsufficientForPanels does not fire when roofAreaM2 fits at least one panel', () => {
+    const result = calculateRooftopViability({ ...baseInput, roofAreaM2: 30 });
+    assert.ok(!result.flags.some((f) => f.id === 'roofAreaInsufficientForPanels'));
+  });
+
+  test('a too-small roofAreaM2 still falls back to the flat REFERENCE_SYSTEM_SIZE_KWP/ROOFTOP_SYSTEM_COST_GBP numbers, but the assumptions note differs from the never-given case', () => {
+    const tooSmall = calculateRooftopViability({ ...baseInput, roofAreaM2: 1 });
+    const neverGiven = calculateRooftopViability(baseInput);
+    assert.equal(tooSmall.systemSizeKwp, REFERENCE_SYSTEM_SIZE_KWP);
+    assert.equal(tooSmall.systemCostGbp, ROOFTOP_SYSTEM_COST_GBP);
+    assert.equal(tooSmall.systemSizeKwp, neverGiven.systemSizeKwp);
+    assert.equal(tooSmall.systemCostGbp, neverGiven.systemCostGbp);
+    assert.notEqual(tooSmall.assumptions.systemCostGbp.note, neverGiven.assumptions.systemCostGbp.note);
+    assert.doesNotMatch(tooSmall.assumptions.systemCostGbp.note, /Give your usable roof area/);
   });
 });

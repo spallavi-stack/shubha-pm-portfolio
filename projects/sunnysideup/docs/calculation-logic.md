@@ -277,6 +277,16 @@ there's no correct kWp number to replace it with — this calculator has no roof
 height, or protrusion inputs to actually evaluate the real test. See §5's `permittedDevelopment`
 flag, now unconditional and stating the real criteria instead of a false determination.
 
+Corrected 4 Aug 2026 (found by a third-party review): a `roofAreaM2` too small to fit even one
+panel (< `ROOF_AREA_PER_PANEL_M2`) previously fell through to the exact same flat-default path,
+with the exact same "give your usable roof area for a size-adjusted estimate" assumptions note, as
+someone who never answered the roof-area question at all — actively misleading for someone who
+just did. `estimateSystemSizeFromRoofArea` returning `null` in both cases meant
+`calculateRooftopViability` couldn't tell them apart. Now distinguished via a
+`roofAreaTooSmallForAnyPanel` check: the flat-default numbers are still used either way (there's no
+other system to size against), but a too-small area gets its own `roofAreaInsufficientForPanels`
+flag and assumptions note (§5) instead of the never-given case's note.
+
 | Regional generation multiplier | England 1.0 / Wales 0.93 / Scotland 0.85 / N.Ireland 0.85 | England: baseline. Scotland: Inference. Wales, N.Ireland: Assumption, extrapolated | No Wales/N.Ireland-specific figure was found; both extrapolated from Scotland's climate/latitude band |
 | Open-Meteo tilt / performance ratio / assumed peak power | 35° / 0.86 / 4kWp | Assumption (all three) | Same near-optimal-UK-roof and system-loss assumptions used throughout |
 
@@ -560,6 +570,7 @@ conditional on any input this calculator collects either — see its own row bel
 | `regulatoryRegime` | Postcode resolves to Scotland or Wales | Fact | That country's own permitted-development/building-regulation regime hasn't been researched here |
 | `highExportSensitivity` | No user-picked SEG tariff, and exported share of generation exceeds 50% | Inference | This result uses the low default SEG rate; a high-export household's result moves more than most when a real (much higher) tariff is picked |
 | `segTariffRequiresBatteryNotModeled` | The picked SEG tariff's eligibility text mentions "battery" | Inference | Added 4 Aug 2026, found by a third-party review. At least two `SEG_TARIFFS` rows (Octopus's "Intelligent Octopus Flux," So Energy's "So Bright") require a battery as part of their eligibility, but this calculator has no battery input anywhere and models self-consumption as if no battery exists throughout. A battery typically raises real self-consumption well above what the no-battery formula predicts, so picking a battery-eligibility tariff's rate while the underlying split still assumes no battery is a real mismatch, not resolved by this tool |
+| `roofAreaInsufficientForPanels` | `roofAreaM2` given, but too small to fit even one panel | Inference | Added 4 Aug 2026, found by a third-party review — see §4b's correction note. Distinguishes "your roof area can't fit a system" from "we don't know your roof area yet," which previously collapsed into the same flat-default fallback and the same, now actively misleading, "give your roof area" note |
 | `inverterReplacementFactored` | Simulated payback period includes ≥1 inverter replacement | Inference | Rooftop only. Names how many replacements were folded in and the flat (no-escalation/no-degradation/no-inverter) comparison figure, so the adjustment is visible rather than a silent change to the headline number. Updated 1 Aug 2026 to report a count (can be more than one for a very long payback) rather than a single fixed adjustment |
 | `paybackNotReachedWithinSimulation` | Simulated cumulative savings never clear cumulative cost within `PAYBACK_SIMULATION_MAX_YEARS` (30) | Inference | Added 1 Aug 2026, both segments. `paybackYears` is `null` in this case rather than a raw `Infinity` |
 
