@@ -722,6 +722,19 @@ function findSegTariffsBySupplier(supplier) {
 // examples. The boundary rule below (household size 1-2 -> low, 3 ->
 // medium, 4+ -> high) is this calculator's own tie-breaking choice, not an
 // Ofgem rule — flagged here so it isn't mistaken for an official cutoff.
+//
+// NAMED 4 Aug 2026 (found by a third-party review, not a code change): the
+// deeper issue isn't just where the boundary sits, it's that the bands
+// themselves are described by DWELLING size ("flat/1-bed," "2-3 bed," "4+
+// bed") while tdcvBandForHouseholdSize below selects a band purely from
+// OCCUPANT COUNT. Those are two different variables this calculator treats
+// as one. Four adults sharing a 2-bedroom flat get bucketed into the "high,
+// 4+ bedroom house" band, even though the actual dwelling (and its real
+// heating/consumption profile) is a small flat, not a large house. Left as
+// an occupant-count proxy rather than adding a dwelling-size input (a
+// bigger scope change than this note), but the mismatch is now named
+// explicitly in the result's own breakdown note below, not folded into the
+// more general boundary-cutoff caveat.
 const TDCV_ELECTRICITY_KWH_BY_BAND = {
   low: { value: 1600, description: 'flat or 1-bedroom house, 1-2 people' },
   medium: { value: 2500, description: '2-3 bedroom house, 2-3 people' },
@@ -787,7 +800,7 @@ function estimateAnnualConsumptionKwh({ householdSize, hasHeatPump, hasEv, evCou
     baseline: {
       value: baseline.value,
       tier: 'Fact',
-      note: `Ofgem TDCV ${band} band (standard single-rate meter, effective 1 Jul 2026): ${baseline.description}. Household size ${householdSize} mapped to this band by this calculator's own tie-breaking rule, not an Ofgem-published cutoff.`,
+      note: `Ofgem TDCV ${band} band (standard single-rate meter, effective 1 Jul 2026): ${baseline.description}. Household size ${householdSize} mapped to this band by this calculator's own tie-breaking rule, not an Ofgem-published cutoff — and this maps your number of people, not your home's actual size, onto a band Ofgem itself describes by dwelling size. A large household in a small home may see this overestimate consumption; a small household in a large home may see it underestimate.`,
     },
   };
   if (hasHeatPump) {

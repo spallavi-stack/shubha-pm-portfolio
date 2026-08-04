@@ -66,4 +66,13 @@ describe('estimateAnnualConsumptionKwh — breakdown shape', () => {
     const result = estimateAnnualConsumptionKwh({ householdSize: 3, hasHeatPump: false, hasEv: false });
     assert.deepEqual(Object.keys(result.breakdown), ['baseline']);
   });
+
+  test('baseline note names the household-size-vs-dwelling-size proxy, not just the boundary cutoff', () => {
+    // householdSize is occupant count; TDCV_ELECTRICITY_KWH_BY_BAND's own
+    // bands are described by dwelling size (bedrooms). The note should say
+    // this explicitly, since a large household in a small home (or vice
+    // versa) gets a band based on the wrong variable.
+    const result = estimateAnnualConsumptionKwh({ householdSize: 4 });
+    assert.match(result.breakdown.baseline.note, /your home's actual size/);
+  });
 });

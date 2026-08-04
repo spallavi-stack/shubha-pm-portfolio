@@ -195,7 +195,7 @@ flowchart TD
 
 | Constant | Value | Tier | Note |
 |---|---|---|---|
-| TDCV bands | low 1,600 / medium 2,500 / high 3,800 kWh/yr | Fact | Ofgem TDCV, effective 1 Jul 2026. The household-size-to-band boundary rule itself (≤2/3/4+) is this calculator's own tie-breaking choice, not an Ofgem-published cutoff. |
+| TDCV bands | low 1,600 / medium 2,500 / high 3,800 kWh/yr | Fact | Ofgem TDCV, effective 1 Jul 2026. The household-size-to-band boundary rule itself (≤2/3/4+) is this calculator's own tie-breaking choice, not an Ofgem-published cutoff. Named 4 Aug 2026 (found by a third-party review): a deeper issue than the boundary itself — the bands are described by *dwelling* size ("flat/1-bed," "2-3 bed," "4+ bed") but selected here purely from *occupant count*, two different variables treated as one. Four adults in a 2-bed flat get the "4+ bedroom house" band. Not fixed with a new dwelling-size input (a bigger scope change); named explicitly in the result's own `assumptions`/breakdown note instead of left inside the more general boundary-cutoff caveat. |
 | `HEAT_PUMP_ANNUAL_KWH_ESTIMATE` | 4,300kWh/yr | Inference | Calculated: ~12,000kWh/yr EST heat-demand assumption ÷ 2.78 DESNZ field-trial median SPF |
 | `EV_ANNUAL_HOME_CHARGING_KWH_ESTIMATE` | 1,960kWh/yr per vehicle | Inference | Calculated: 8,900mi/yr DfT BEV mileage ÷ 3.5-4.3mi/kWh (Assumption-tier efficiency, no gov't source) × 85% Zap-Map home-charging share |
 
