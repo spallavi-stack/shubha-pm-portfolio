@@ -1,0 +1,7 @@
+# Pinned for scripts/build_docs.py. Added 4 Aug 2026, found by a third-party
+# review: an unpinned `pip install markdown` had produced a different render
+# of docs/*.html across sessions (blockquote handling, footnote-extension
+# availability) than whatever generated the previously-committed HTML,
+# creating a large unrelated diff whenever the docs were rebuilt. Pin so a
+# rebuild is reproducible; bump deliberately, not incidentally.
+markdown==3.10.3

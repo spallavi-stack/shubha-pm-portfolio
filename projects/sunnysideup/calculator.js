@@ -45,6 +45,19 @@
 // electricityPricePencePerKwh from the user and prefers it when given.
 const ELECTRICITY_PRICE_PENCE_PER_KWH_DEFAULT = 26.11;
 
+// ADDED 4 Aug 2026 (found by a third-party review): a user-typed electricity
+// price is treated as this calculator's most-trusted input — the only
+// genuinely exact answer, taking precedence over every live-fetched or
+// researched default (see the electricity-price-lookup rationale below
+// OCTOPUS_BASE_URL). But nothing previously checked it was even a plausible
+// rate at all: a typo (e.g. a dropped decimal point, "2611" instead of
+// "26.11") would silently produce a result treated as MORE trustworthy than
+// every other number in this file. Not a hard block (a genuine outlier
+// tariff could exist) — a generous plausibility range, wide enough to cover
+// real-world volatility (the 2022 UK energy crisis pushed the price cap
+// briefly above 30p/kWh) while still catching an obvious data-entry error.
+const ELECTRICITY_PRICE_PLAUSIBLE_RANGE_PENCE_PER_KWH = { min: 5, max: 100 };
+
 // WHY A STATIC TABLE HERE, NOT A LIVE FETCH LIKE THE ELECTRICITY PRICE
 // BELOW: SEG export rates are a genuine commercial choice each supplier
 // makes independently — unlike standard-variable *import* rates, they're
@@ -175,6 +188,15 @@ const SEG_TARIFFS = [
 // "median" label — fixed to actually match it.
 const SEG_RATE_PENCE_PER_KWH_DEFAULT = 3.01;
 
+// ADDED 4 Aug 2026 (found by a third-party review), same reasoning as
+// ELECTRICITY_PRICE_PLAUSIBLE_RANGE_PENCE_PER_KWH above: a manually-typed
+// SEG rate is trusted outright with no sanity check today. SEG_TARIFFS
+// itself spans 1.0-25.0p across 30 researched rows; this range is roughly
+// double that ceiling, generous enough to allow a genuine outlier tariff
+// while still catching an implausible entry (e.g. a price accidentally
+// typed into the SEG field, or a decimal-point slip).
+const SEG_RATE_PLAUSIBLE_RANGE_PENCE_PER_KWH = { min: 0, max: 50 };
+
 // [Assumption — wide range, no single authoritative figure] Typical UK
 // domestic rooftop system cost estimates range £5,500-£8,700; £7,000 is
 // close to MCS's 2025 average. grounding-research.md §System cost, size, and generation.
@@ -236,6 +258,20 @@ const PANEL_WATTAGE_KWP = 0.43;
 // simplification of a real but more gradual relationship, not a precise
 // costing tool.
 const COST_PER_KWP_GBP_BY_TIER = { smallSystemThresholdKwp: 3, smallSystemCostPerKwp: 1800, standardCostPerKwp: 1625 };
+
+// ADDED 4 Aug 2026 (found by a third-party review): COST_PER_KWP_GBP_BY_TIER
+// only has two tiers (<=3kWp / >3kWp), with a single flat rate for
+// everything above 3kWp and no upper bound on roofAreaM2 at all. A very
+// large input (a mistyped area, or a roof area genuinely outside domestic
+// scale) produces a system priced at the same £1,625/kWp as a typical
+// 4kWp house, understating real bulk/commercial economics at that size and
+// extrapolating research (MCS's own reported UK average is 4.6kWp; a
+// typical 3-bed semi's usable roof fits 3.9-5.2kWp) well past where it was
+// ever meant to apply. N/A (a sanity cap, not a researched figure) — chosen
+// generously (roughly 4x the MCS average) so it doesn't false-flag a
+// genuinely large detached-house roof, only inputs clearly outside typical
+// domestic scale.
+const DOMESTIC_SYSTEM_SIZE_SANITY_MAX_KWP = 20;
 
 // CORRECTED 1 Aug 2026: this file previously had a PERMITTED_DEVELOPMENT_KWP_CEILING_ENGLAND
 // = 4 constant, tagged [Fact], claiming 4kWp was "the largest system size
@@ -408,6 +444,28 @@ function pluginOrientationMultiplier(orientation) {
 // now gets a demand-ratio-driven, not occupancy-driven, self-consumption
 // estimate — mechanically capturing what the occupancy proxy could not,
 // without inventing a new unresearched per-appliance modifier.
+//
+// REFRAMED 4 Aug 2026 (found by a third-party review; no formula change): the
+// paragraph above named the annual-vs-per-timestep gap as a within-day
+// blind spot ("daytime-concentrated... vs evening-concentrated... at the
+// same annual total"). The larger effect is across the year, not across the
+// day: UK solar generation swings roughly 10x between December and June,
+// while household consumption is comparatively flat by season. Collapsing a
+// full year into one demand ratio, then running it through a single
+// power-law formula, isn't a neutral loss of detail — this specific formula
+// (uncapped) is convex over most of the range where it isn't already capped
+// at 1 or 1/demandRatio, so by Jensen's inequality, applying it once to an
+// aggregated annual ratio tends to sit below what summing it across each
+// month's own ratio would give. [Inference, this calculator's own
+// adaptation, not independently re-run against HEM at monthly resolution]
+// In practice this means the annual approximation most likely
+// *understates* true self-consumption and savings for a typical unbattoried
+// UK home, not just approximates it with an unclear direction. Not fixed
+// here — extending to monthly resolution would need monthly
+// generation/consumption data this calculator doesn't collect, a real scope
+// increase, not a formula tweak. See the occupancyMayLowerRealSelfConsumption
+// flag below, which now names this seasonal mismatch as the dominant driver
+// rather than only the within-day one.
 const SELF_CONSUMPTION_DEMAND_RATIO_COEFFICIENT = 0.6748;
 const SELF_CONSUMPTION_DEMAND_RATIO_EXPONENT = -0.703;
 
@@ -427,6 +485,30 @@ function selfConsumptionFactorFromDemandRatio(generationKwh, consumptionKwh) {
   // HEM's own stated limit: the factor should never exceed 1/demandRatio,
   // otherwise self-consumption could be predicted higher than total demand.
   return Math.min(rawFactor, 1, 1 / demandRatio);
+}
+
+/**
+ * Splits a given generation amount (any single year's, degraded or not)
+ * into self-consumed vs. the secondary bucket (rooftop's exported kWh, or
+ * plug-in's unself-consumed kWh) for a known annual consumption, via
+ * selfConsumptionFactorFromDemandRatio. When annualConsumptionKwh isn't
+ * known at all (plug-in's optional-consumption fallback — see
+ * calculatePluginViability's own comment), assumes full self-consumption
+ * instead, since the demand-ratio formula has nothing to divide by.
+ *
+ * The single place this split is computed, so a result's year-1 headline
+ * figures and every year of simulatePaybackYears' simulation reuse the same
+ * logic rather than the simulation re-deriving or freezing its own copy.
+ * @param {number} generationKwh
+ * @param {number} [annualConsumptionKwh]
+ */
+function resolveGenerationSplit(generationKwh, annualConsumptionKwh) {
+  if (annualConsumptionKwh == null) {
+    return { selfConsumedKwh: generationKwh, secondaryKwh: 0, selfConsumptionRate: 1 };
+  }
+  const selfConsumptionRate = selfConsumptionFactorFromDemandRatio(generationKwh, annualConsumptionKwh);
+  const selfConsumedKwh = Math.min(generationKwh * selfConsumptionRate, annualConsumptionKwh);
+  return { selfConsumedKwh, secondaryKwh: generationKwh - selfConsumedKwh, selfConsumptionRate };
 }
 
 // Payback thresholds for green/amber/red. Not a cited figure — a design
@@ -526,25 +608,34 @@ const PAYBACK_SIMULATION_MAX_YEARS = 30;
  * (omit both inverter params for a segment with no such cost modeled, e.g.
  * plug-in — see PLUGIN_VERTICAL_ORIENTATION_MULTIPLIER's sourcing note for
  * why that cost isn't modeled at plug-in's scale).
+ *
+ * The self-consumed/secondary split is re-derived every year via
+ * resolveGenerationSplit, from that year's own degraded generation, rather
+ * than computed once at year 1 and decayed in parallel — a lower demand
+ * ratio (degraded generation against unchanged consumption) genuinely means
+ * a higher self-consumption fraction under the same formula used for the
+ * headline year-1 figures, so freezing the split would contradict this
+ * calculator's own self-consumption model for every year after the first.
  * @param {Object} input
  * @param {number} input.systemCostGbp
- * @param {number} input.baseSelfConsumedKwh - year-1 self-consumed kWh, before degradation
- * @param {number} input.baseSecondaryKwh - year-1 kWh in the second bucket (rooftop's exported kWh, or plug-in's unselfConsumedKwh)
- * @param {number} input.secondaryRatePencePerKwh - rate applied to baseSecondaryKwh (SEG rate for rooftop, 0 for plug-in — that bucket earns nothing)
+ * @param {number} input.baseGenerationKwh - year-1 generation, before degradation
+ * @param {number} [input.annualConsumptionKwh] - household annual consumption, held flat across years; omit for plug-in's optional-consumption fallback (100% self-consumed every year — see resolveGenerationSplit)
+ * @param {number} input.secondaryRatePencePerKwh - rate applied to the secondary bucket (SEG rate for rooftop, 0 for plug-in — that bucket earns nothing)
  * @param {number} input.electricityPricePencePerKwh - year-1 import price, escalated in later years
  * @param {number} [input.inverterReplacementCostGbp]
  * @param {number} [input.inverterReplacementEveryYears]
  */
 function simulatePaybackYears({
   systemCostGbp,
-  baseSelfConsumedKwh,
-  baseSecondaryKwh,
+  baseGenerationKwh,
+  annualConsumptionKwh,
   secondaryRatePencePerKwh,
   electricityPricePencePerKwh,
   inverterReplacementCostGbp,
   inverterReplacementEveryYears,
 }) {
-  const baseYearSavingsGbp = (baseSelfConsumedKwh * electricityPricePencePerKwh + baseSecondaryKwh * secondaryRatePencePerKwh) / 100;
+  const year1Split = resolveGenerationSplit(baseGenerationKwh, annualConsumptionKwh);
+  const baseYearSavingsGbp = (year1Split.selfConsumedKwh * electricityPricePencePerKwh + year1Split.secondaryKwh * secondaryRatePencePerKwh) / 100;
   const flatPaybackYears = baseYearSavingsGbp > 0 ? systemCostGbp / baseYearSavingsGbp : Infinity;
   if (baseYearSavingsGbp <= 0) {
     return { paybackYears: Infinity, flatPaybackYears, inverterReplacementsFactored: 0 };
@@ -555,21 +646,23 @@ function simulatePaybackYears({
   let inverterReplacementsFactored = 0;
 
   for (let year = 1; year <= PAYBACK_SIMULATION_MAX_YEARS; year += 1) {
-    if (inverterReplacementCostGbp && year > 1 && (year - 1) % inverterReplacementEveryYears === 0) {
+    if (inverterReplacementCostGbp && year % inverterReplacementEveryYears === 0) {
       cumulativeCostGbp += inverterReplacementCostGbp;
       inverterReplacementsFactored += 1;
     }
 
     const degradationFactor = (1 - PANEL_DEGRADATION_ANNUAL_RATE) ** (year - 1);
     const escalatedPrice = electricityPricePencePerKwh * (1 + ELECTRICITY_PRICE_ANNUAL_ESCALATION_RATE) ** (year - 1);
-    const yearSavingsGbp = (baseSelfConsumedKwh * degradationFactor * escalatedPrice + baseSecondaryKwh * degradationFactor * secondaryRatePencePerKwh) / 100;
+    const generationThisYear = baseGenerationKwh * degradationFactor;
+    const yearSplit = resolveGenerationSplit(generationThisYear, annualConsumptionKwh);
+    const yearSavingsGbp = (yearSplit.selfConsumedKwh * escalatedPrice + yearSplit.secondaryKwh * secondaryRatePencePerKwh) / 100;
 
     const savingsBeforeThisYear = cumulativeSavingsGbp;
     cumulativeSavingsGbp += yearSavingsGbp;
 
     if (cumulativeSavingsGbp >= cumulativeCostGbp) {
       const remainder = cumulativeCostGbp - savingsBeforeThisYear;
-      // yearSavingsGbp <= 0 here would require baseYearSavingsGbp <= 0 too (degradation/escalation only scale a positive base up or down, never flip its sign), which the early-return guard above already catches before the loop starts; unreachable given this function's real input domain.
+      // Reaching this branch means savingsBeforeThisYear < cumulativeCostGbp (otherwise a prior year would already have returned), so remainder > 0; adding yearSavingsGbp is what newly cleared cumulativeCostGbp, so yearSavingsGbp >= remainder > 0 always holds here — unreachable given this function's real input domain.
       /* c8 ignore next */
       const fraction = yearSavingsGbp > 0 ? remainder / yearSavingsGbp : 0;
       return { paybackYears: (year - 1) + fraction, flatPaybackYears, inverterReplacementsFactored };
@@ -601,6 +694,19 @@ function scoreStatus(paybackYears, thresholds) {
   if (paybackYears <= thresholds.green) return 'green';
   if (paybackYears <= thresholds.amber) return 'amber';
   return 'red';
+}
+
+/**
+ * True if a user-typed rate falls outside a generous plausibility range —
+ * see ELECTRICITY_PRICE_PLAUSIBLE_RANGE_PENCE_PER_KWH /
+ * SEG_RATE_PLAUSIBLE_RANGE_PENCE_PER_KWH's own sourcing notes. Not a
+ * validation error; callers surface this as a flag, not a rejection, since
+ * a genuine outlier rate could exist.
+ * @param {number} value
+ * @param {{min: number, max: number}} range
+ */
+function isImplausibleRate(value, range) {
+  return value < range.min || value > range.max;
 }
 
 /** Returns SEG_TARIFFS, already sorted highest to lowest rate. For a UI to build a picker from. */
@@ -665,6 +771,19 @@ function findSegTariffsBySupplier(supplier) {
 // examples. The boundary rule below (household size 1-2 -> low, 3 ->
 // medium, 4+ -> high) is this calculator's own tie-breaking choice, not an
 // Ofgem rule — flagged here so it isn't mistaken for an official cutoff.
+//
+// NAMED 4 Aug 2026 (found by a third-party review, not a code change): the
+// deeper issue isn't just where the boundary sits, it's that the bands
+// themselves are described by DWELLING size ("flat/1-bed," "2-3 bed," "4+
+// bed") while tdcvBandForHouseholdSize below selects a band purely from
+// OCCUPANT COUNT. Those are two different variables this calculator treats
+// as one. Four adults sharing a 2-bedroom flat get bucketed into the "high,
+// 4+ bedroom house" band, even though the actual dwelling (and its real
+// heating/consumption profile) is a small flat, not a large house. Left as
+// an occupant-count proxy rather than adding a dwelling-size input (a
+// bigger scope change than this note), but the mismatch is now named
+// explicitly in the result's own breakdown note below, not folded into the
+// more general boundary-cutoff caveat.
 const TDCV_ELECTRICITY_KWH_BY_BAND = {
   low: { value: 1600, description: 'flat or 1-bedroom house, 1-2 people' },
   medium: { value: 2500, description: '2-3 bedroom house, 2-3 people' },
@@ -730,7 +849,7 @@ function estimateAnnualConsumptionKwh({ householdSize, hasHeatPump, hasEv, evCou
     baseline: {
       value: baseline.value,
       tier: 'Fact',
-      note: `Ofgem TDCV ${band} band (standard single-rate meter, effective 1 Jul 2026): ${baseline.description}. Household size ${householdSize} mapped to this band by this calculator's own tie-breaking rule, not an Ofgem-published cutoff.`,
+      note: `Ofgem TDCV ${band} band (standard single-rate meter, effective 1 Jul 2026): ${baseline.description}. Household size ${householdSize} mapped to this band by this calculator's own tie-breaking rule, not an Ofgem-published cutoff — and this maps your number of people, not your home's actual size, onto a band Ofgem itself describes by dwelling size. A large household in a small home may see this overestimate consumption; a small household in a large home may see it underestimate.`,
     },
   };
   if (hasHeatPump) {
@@ -756,7 +875,7 @@ function estimateAnnualConsumptionKwh({ householdSize, hasHeatPump, hasEv, evCou
 /**
  * @param {Object} input
  * @param {'southFacing'|'eastWestFacing'|'northFacing'} input.orientation
- * @param {'usuallyHome'|'usuallyOut'} input.occupancy - no longer drives the self-consumption number itself (see selfConsumptionFactorFromDemandRatio's sourcing note); used only to decide whether the lowConfidenceOccupancyMismatch flag below is worth surfacing
+ * @param {'usuallyHome'|'usuallyOut'} input.occupancy - no longer drives the self-consumption number itself (see selfConsumptionFactorFromDemandRatio's sourcing note); the occupancyMayLowerRealSelfConsumption flag below fires for every result regardless of this value, but its note says more when this is 'usuallyOut'
  * @param {number} input.annualConsumptionKwh - household's own annual electricity use
  * @param {number} [input.electricityPricePencePerKwh] - the user's own known rate; takes precedence over electricityPriceOverride and the static default
  * @param {Object} [input.electricityPriceOverride] - a specific { value, tier, note } to use for the electricity price outright (e.g. a live-fetched current regional rate), used only if electricityPricePencePerKwh is omitted; falls back to the static Ofgem default if this is also omitted
@@ -766,7 +885,7 @@ function estimateAnnualConsumptionKwh({ householdSize, hasHeatPump, hasEv, evCou
  * @param {string} [input.segTariffEligibility] - that tariff row's eligibility text (e.g. "requires system installed by that same supplier"), if available — carried into the result so the condition attached to the picked rate isn't lost between the picker UI and the calculated output
  * @param {Object} [input.regionalGeneration] - a REGIONAL_GENERATION_MULTIPLIER entry, e.g. from calculateRooftopViabilityByPostcode()'s country-level fallback; omit to use the England-calibrated baseline unchanged. Ignored if generationOverride is also given.
  * @param {Object} [input.generationOverride] - a specific { value, tier, note } to use for generationKwh outright (e.g. a coordinate-precise weather-API estimate), taking precedence over regionalGeneration and the orientation-based default
- * @param {number} [input.roofAreaM2] - usable roof area; if given, sizes the system (panels, kWp, cost) against it via estimateSystemSizeFromRoofArea() instead of the flat REFERENCE_SYSTEM_SIZE_KWP default, and scales whatever generation figure was otherwise resolved (flat/regional/override) proportionally to the derived system size
+ * @param {number} [input.roofAreaM2] - usable roof area; if given, sizes the system (panels, kWp, cost) against it via estimateSystemSizeFromRoofArea() instead of the flat REFERENCE_SYSTEM_SIZE_KWP default, and scales whatever generation figure was otherwise resolved (flat/regional/override) proportionally to the derived system size. If given but too small to fit even one panel, falls back to the flat default same as omitting it, but surfaces a roofAreaInsufficientForPanels flag instead of silently looking like the question was never answered
  */
 function calculateRooftopViability({
   orientation,
@@ -783,21 +902,41 @@ function calculateRooftopViability({
   roofAreaM2,
 }) {
   const baseGeneration = ROOFTOP_ANNUAL_GENERATION_KWH[orientation];
-  const preRoofAreaGeneration = generationOverride
-    ? generationOverride.value
+  // SIMPLIFIED 4 Aug 2026 (found by a third-party review): previously computed
+  // generation for an assumed REFERENCE_SYSTEM_SIZE_KWP system first, then
+  // rescaled it by the ratio of the real system size back to that same
+  // reference — a resolve-then-immediately-undo indirection, since every
+  // generation source here (the flat baseline, the regional multiplier, and
+  // Open-Meteo's coordinate-precise override) is already calibrated to that
+  // one reference size. Resolving a per-kWp annual yield once and
+  // multiplying directly by the real system size at the end gives the same
+  // physical quantity with one fewer conceptual hop: "yield per kWp x
+  // system size in kWp," not "generation for a system you don't have x a
+  // ratio back to the one you do."
+  const annualYieldKwhPerKwp = generationOverride
+    ? generationOverride.value / REFERENCE_SYSTEM_SIZE_KWP
     : regionalGeneration
-      ? Math.round(baseGeneration * regionalGeneration.value)
-      : baseGeneration;
+      ? (baseGeneration * regionalGeneration.value) / REFERENCE_SYSTEM_SIZE_KWP
+      : baseGeneration / REFERENCE_SYSTEM_SIZE_KWP;
 
   const roofAreaSizing = roofAreaM2 != null ? estimateSystemSizeFromRoofArea(roofAreaM2) : null;
+  // ADDED 4 Aug 2026 (found by a third-party review): estimateSystemSizeFromRoofArea
+  // returns null both when roofAreaM2 was never given AND when it was given
+  // but is too small to fit even one panel (< ROOF_AREA_PER_PANEL_M2) — two
+  // very different situations that previously collapsed into the same
+  // "fall back to the flat default, tell them to give their roof area" path
+  // below, which is actively misleading for someone who just did. This flag
+  // distinguishes the two so the flat-default fallback and its "give your
+  // roof area" note are reserved for the real no-answer case.
+  const roofAreaTooSmallForAnyPanel = roofAreaM2 != null && roofAreaSizing == null;
   const systemSizeKwp = roofAreaSizing ? roofAreaSizing.systemSizeKwp : REFERENCE_SYSTEM_SIZE_KWP;
-  const roofAreaMultiplier = roofAreaSizing ? roofAreaSizing.systemSizeKwp / REFERENCE_SYSTEM_SIZE_KWP : 1;
-  const generation = Math.round(preRoofAreaGeneration * roofAreaMultiplier);
+  const generation = Math.round(annualYieldKwhPerKwp * systemSizeKwp);
   const systemCostGbp = roofAreaSizing ? roofAreaSizing.systemCostGbp : ROOFTOP_SYSTEM_COST_GBP;
 
-  const selfConsumptionRate = selfConsumptionFactorFromDemandRatio(generation, annualConsumptionKwh);
-  const selfConsumedKwh = Math.min(generation * selfConsumptionRate, annualConsumptionKwh);
-  const exportedKwh = generation - selfConsumedKwh;
+  const generationSplit = resolveGenerationSplit(generation, annualConsumptionKwh);
+  const selfConsumptionRate = generationSplit.selfConsumptionRate;
+  const selfConsumedKwh = generationSplit.selfConsumedKwh;
+  const exportedKwh = generationSplit.secondaryKwh;
 
   const electricityPriceIsUserProvided = electricityPricePencePerKwh != null;
   const usedElectricityPrice = electricityPriceIsUserProvided
@@ -822,8 +961,8 @@ function calculateRooftopViability({
   // PANEL_DEGRADATION_ANNUAL_RATE's sourcing notes above.
   const paybackSimulation = simulatePaybackYears({
     systemCostGbp,
-    baseSelfConsumedKwh: selfConsumedKwh,
-    baseSecondaryKwh: exportedKwh,
+    baseGenerationKwh: generation,
+    annualConsumptionKwh,
     secondaryRatePencePerKwh: usedSegRate,
     electricityPricePencePerKwh: usedElectricityPrice,
     inverterReplacementCostGbp: INVERTER_REPLACEMENT_COST_GBP,
@@ -867,7 +1006,13 @@ function calculateRooftopViability({
             tier: 'Inference — derived from your roof area',
             note: `${roofAreaSizing.panelCount} panels x ${PANEL_WATTAGE_KWP}kWp x £${roofAreaSizing.costPerKwpGbp}/kWp (MCS-sourced installed-cost rate for this system size). Not a quote for your specific roof — actual roof shape, shading, and access all affect a real quote.`,
           }
-        : { value: systemCostGbp, tier: 'Assumption', note: `Industry-consensus range is £5,500-£8,700 for a ~${REFERENCE_SYSTEM_SIZE_KWP}kWp system (MCS's own reported UK average is 4.6kWp); not a quote for your specific roof. Give your usable roof area for a size-adjusted estimate instead of this flat default.` },
+        : {
+            value: systemCostGbp,
+            tier: 'Assumption',
+            note: roofAreaTooSmallForAnyPanel
+              ? `Industry-consensus range is £5,500-£8,700 for a ~${REFERENCE_SYSTEM_SIZE_KWP}kWp system (MCS's own reported UK average is 4.6kWp); not a quote for your specific roof. Your stated roof area (${roofAreaM2}m²) can't fit even one panel at ${ROOF_AREA_PER_PANEL_M2}m²/panel, so this flat reference is shown instead — see the roofAreaInsufficientForPanels flag.`
+              : `Industry-consensus range is £5,500-£8,700 for a ~${REFERENCE_SYSTEM_SIZE_KWP}kWp system (MCS's own reported UK average is 4.6kWp); not a quote for your specific roof. Give your usable roof area for a size-adjusted estimate instead of this flat default.`,
+          },
       generationKwh: generationOverride
         ? { value: generation, tier: generationOverride.tier, note: `${generationOverride.note}${roofAreaSizing ? ` Further scaled by your roof-area-derived system size (${systemSizeKwp}kWp vs the ${REFERENCE_SYSTEM_SIZE_KWP}kWp this figure and your postcode estimate are both otherwise calibrated to).` : ''}` }
         : regionalGeneration
@@ -938,6 +1083,61 @@ function calculateRooftopViability({
     note: 'Panels visible from a highway in a conservation area may need full planning permission even within the Permitted Development ceiling; rear- or side-facing panels not visible from a highway are more often still exempt. Not checked by this tool.',
   });
 
+  // ADDED 4 Aug 2026 (found by a third-party review): user-typed rates are
+  // this calculator's most-trusted inputs (top priority over every
+  // live-fetched or researched default) but were previously accepted with
+  // no plausibility check at all — see ELECTRICITY_PRICE_PLAUSIBLE_RANGE_PENCE_PER_KWH
+  // / SEG_RATE_PLAUSIBLE_RANGE_PENCE_PER_KWH's own sourcing notes. Not a
+  // hard block; a real outlier tariff could exist.
+  if (electricityPriceIsUserProvided && isImplausibleRate(usedElectricityPrice, ELECTRICITY_PRICE_PLAUSIBLE_RANGE_PENCE_PER_KWH)) {
+    flags.push({
+      id: 'electricityPriceUnusual',
+      tier: 'Inference',
+      title: 'The electricity price you entered looks unusual',
+      note: `You entered ${usedElectricityPrice}p/kWh, outside the ${ELECTRICITY_PRICE_PLAUSIBLE_RANGE_PENCE_PER_KWH.min}-${ELECTRICITY_PRICE_PLAUSIBLE_RANGE_PENCE_PER_KWH.max}p/kWh range this calculator's own research considers plausible for UK domestic electricity. This could be correct (a genuine outlier tariff), but it's also consistent with a typo — e.g. a misplaced decimal point. Double-check it before trusting this result, since a user-provided rate is used exactly as given, with no other check applied.`,
+    });
+  }
+  if (segRateIsUserProvided && isImplausibleRate(usedSegRate, SEG_RATE_PLAUSIBLE_RANGE_PENCE_PER_KWH)) {
+    flags.push({
+      id: 'segRateUnusual',
+      tier: 'Inference',
+      title: 'The SEG export rate you entered looks unusual',
+      note: `You entered ${usedSegRate}p/kWh, outside the ${SEG_RATE_PLAUSIBLE_RANGE_PENCE_PER_KWH.min}-${SEG_RATE_PLAUSIBLE_RANGE_PENCE_PER_KWH.max}p/kWh range this calculator's own researched SEG tariffs (SEG_TARIFFS, spanning 1.0-25.0p) considers plausible. This could be correct (a genuine outlier tariff), but it's also consistent with a typo. Double-check it before trusting this result.`,
+    });
+  }
+
+  // ADDED 4 Aug 2026 (found by a third-party review): a roofAreaM2 too small
+  // to fit even one panel (< ROOF_AREA_PER_PANEL_M2) previously fell through
+  // to the exact same flat-default path, and the exact same "give your roof
+  // area" note, as never answering the roof-area question at all — actively
+  // misleading for someone who just did. This is the more useful, honest
+  // result the input actually supports: your stated roof area can't fit a
+  // rooftop system, distinct from "we don't know your roof area yet."
+  if (roofAreaTooSmallForAnyPanel) {
+    flags.push({
+      id: 'roofAreaInsufficientForPanels',
+      tier: 'Inference',
+      title: "Your stated roof area can't fit a panel",
+      note: `You gave a usable roof area of ${roofAreaM2}m², which is smaller than a single panel's footprint plus mounting/spacing clearance (${ROOF_AREA_PER_PANEL_M2}m²/panel). The numbers in this result fall back to a flat, generic ${REFERENCE_SYSTEM_SIZE_KWP}kWp/£${ROOFTOP_SYSTEM_COST_GBP} reference system, not a system sized to what you actually have — treat this result as illustrative only, not a real estimate for this roof. Double-check the area you entered, or consider whether rooftop solar is realistic here at all.`,
+    });
+  }
+
+  // ADDED 4 Aug 2026 (found by a third-party review): COST_PER_KWP_GBP_BY_TIER
+  // has no upper bound — a very large roof-area-derived system still prices
+  // at the same flat >3kWp rate as a typical domestic install, extrapolating
+  // this file's own MCS-anchored research (4.6kWp UK average) well past
+  // where it was ever meant to apply. Not a hard cap on the roofAreaM2
+  // input itself, just a visibility flag once the derived system crosses a
+  // generous sanity bound.
+  if (roofAreaSizing && roofAreaSizing.systemSizeKwp > DOMESTIC_SYSTEM_SIZE_SANITY_MAX_KWP) {
+    flags.push({
+      id: 'roofAreaSizingExceedsDomesticScale',
+      tier: 'Inference',
+      title: 'This roof-area-derived system is unusually large',
+      note: `Your stated roof area produces a ${roofAreaSizing.systemSizeKwp}kWp system, well above typical UK domestic scale (MCS's own reported average is 4.6kWp) and above the ${DOMESTIC_SYSTEM_SIZE_SANITY_MAX_KWP}kWp range this calculator's cost research was ever checked against. The £${roofAreaSizing.costPerKwpGbp}/kWp rate used here is the same flat rate applied to an ordinary ~4kWp system — real economics at this scale would likely differ, and this result's cost figure shouldn't be trusted at face value. Double-check the roof area you entered.`,
+    });
+  }
+
   // High-export households are unusually sensitive to which SEG rate this
   // result assumes: real tariffs span roughly 1-25p/kWh (SEG_TARIFFS above),
   // a much wider spread than electricity import prices do. When no specific
@@ -959,24 +1159,57 @@ function calculateRooftopViability({
     });
   }
 
-  // The self-consumption formula above is annual-average, so it can't see
-  // *when* within the day a household's consumption happens — only its
-  // total relative to generation. Occupancy pattern is a reasonable signal
-  // for whether that blind spot cuts in a particular direction: a household
-  // that's usually out on weekdays is more likely to have its consumption
-  // concentrated outside midday solar hours than the annual total alone
-  // would suggest, which would make real self-consumption lower than this
-  // result's formula-driven estimate, not higher. Not shown for
-  // 'usuallyHome' households, since there's no comparably clear directional
-  // case that the annual approximation is biased for them specifically.
-  if (occupancy === 'usuallyOut') {
+  // ADDED 4 Aug 2026 (found by a third-party review): at least two rows in
+  // SEG_TARIFFS (Octopus's "Intelligent Octopus Flux," So Energy's "So
+  // Bright") name a battery as part of their eligibility text — but this
+  // calculator has no battery input anywhere, and selfConsumptionFactorFromDemandRatio
+  // models a no-battery system throughout. A battery typically pushes real
+  // self-consumption well above what that formula predicts (commonly cited
+  // roughly 30-50% unbattoried to 60-80%+ with one), so picking a
+  // battery-eligible tariff's (often higher) export rate while the
+  // self-consumption/export split underneath still assumes no battery is a
+  // real physics/eligibility mismatch, not just the already-documented
+  // "eligibility text isn't auto-filtered" tradeoff (findSegTariffsBySupplier's
+  // own comment covers only the supplier-install-requirement case). Detected
+  // via a simple keyword match on the picked tariff's own eligibility text —
+  // deliberately not attempting to model battery physics here, a separate,
+  // larger scope decision.
+  if (segTariffEligibility && /\bbatter(?:y|ies)\b/i.test(segTariffEligibility)) {
     flags.push({
-      id: 'occupancyMayLowerRealSelfConsumption',
+      id: 'segTariffRequiresBatteryNotModeled',
       tier: 'Inference',
-      title: "Usually out during the day? Your real self-consumption may be lower than this",
-      note: "This result's self-consumption figure comes from your annual generation-to-consumption ratio (DESNZ's Home Energy Model formula), not from your occupancy pattern directly — it assumes your consumption is reasonably well spread across the day. If you're usually out on weekdays, your actual consumption is more likely concentrated in the morning/evening, outside peak solar hours, which would make your real self-consumption (and savings) lower than this estimate. A battery or a smart diverter for a timed load (immersion heater, EV charger) can close some of that gap.",
+      title: 'This tariff requires a battery, which this result does not model',
+      note: `The SEG tariff used for this result (${segTariffLabel || 'your picked tariff'}) requires a battery: "${segTariffEligibility}". This calculator's self-consumption and export figures assume no battery throughout — a real battery-equipped system typically self-consumes a materially higher share of its generation (commonly cited roughly 30-50% without a battery to 60-80%+ with one), which would shift this result's self-consumed/exported split, and therefore its savings and payback, in ways this tool doesn't calculate.`,
     });
   }
+
+  // The self-consumption formula above is annual-average, so it can't see
+  // how generation and consumption actually line up in time — only their
+  // totals. The dominant version of that gap is seasonal, not within-day:
+  // UK solar generation swings roughly 10x between December and June, while
+  // consumption is comparatively flat by season, and collapsing a full
+  // year into one demand ratio tends to understate true self-consumption
+  // for that reason alone (see SELF_CONSUMPTION_DEMAND_RATIO_COEFFICIENT's
+  // own sourcing note above) — so this flag now fires for every rooftop
+  // result, not just 'usuallyOut' households (widened 4 Aug 2026, found by a
+  // third-party review; previously scoped to 'usuallyOut' only, which
+  // undersold how broadly this approximation applies). Occupancy pattern
+  // adds a secondary, within-day version of the same blind spot: a
+  // household that's usually out on weekdays is more likely to have its
+  // consumption concentrated outside midday solar hours than the annual
+  // total alone would suggest, compounding the seasonal effect further in
+  // the same (understating) direction — so the note below says more when
+  // occupancy is 'usuallyOut' specifically.
+  flags.push({
+    id: 'occupancyMayLowerRealSelfConsumption',
+    tier: 'Inference',
+    title: 'This result likely understates your real self-consumption',
+    note:
+      "This result's self-consumption figure comes from your annual generation-to-consumption ratio (DESNZ's Home Energy Model formula), applied once to the whole year rather than to how generation and consumption actually line up hour by hour. UK solar generation is heavily seasonal (far more in summer than winter) while consumption is comparatively flat by season, so this annual approximation tends to understate true self-consumption, not just approximate it with an unclear direction." +
+      (occupancy === 'usuallyOut'
+        ? " Being usually out on weekdays adds to this: your actual consumption is more likely concentrated in the morning/evening, outside peak solar hours, than the annual total alone suggests, pushing your real self-consumption (and savings) lower still. A battery or a smart diverter for a timed load (immersion heater, EV charger) can close some of that gap."
+        : ''),
+  });
 
   if (paybackSimulation.inverterReplacementsFactored > 0) {
     flags.push({
@@ -1494,9 +1727,11 @@ function calculatePluginViability({ occupancy, orientation, electricityPricePenc
   // assumption, but that fallback is now named as a real overstatement risk
   // in the result's flags/assumptions, not silently presented as fine.
   const hasConsumptionInput = annualConsumptionKwh != null && annualConsumptionKwh > 0;
-  const selfConsumptionRate = hasConsumptionInput ? selfConsumptionFactorFromDemandRatio(generation, annualConsumptionKwh) : 1;
-  const selfConsumedKwh = hasConsumptionInput ? Math.min(generation * selfConsumptionRate, annualConsumptionKwh) : generation;
-  const unselfConsumedKwh = generation - selfConsumedKwh;
+  const resolvedConsumptionKwh = hasConsumptionInput ? annualConsumptionKwh : null;
+  const generationSplit = resolveGenerationSplit(generation, resolvedConsumptionKwh);
+  const selfConsumptionRate = generationSplit.selfConsumptionRate;
+  const selfConsumedKwh = generationSplit.selfConsumedKwh;
+  const unselfConsumedKwh = generationSplit.secondaryKwh;
 
   // Year-1 snapshot, still the headline "annual savings" figure. Payback
   // below is simulated year-by-year (degradation + price escalation, no
@@ -1505,8 +1740,8 @@ function calculatePluginViability({ occupancy, orientation, electricityPricePenc
   const annualSavingsGbp = (selfConsumedKwh * usedElectricityPrice) / 100;
   const paybackSimulation = simulatePaybackYears({
     systemCostGbp: PLUGIN_KIT_COST_GBP,
-    baseSelfConsumedKwh: selfConsumedKwh,
-    baseSecondaryKwh: unselfConsumedKwh,
+    baseGenerationKwh: generation,
+    annualConsumptionKwh: resolvedConsumptionKwh,
     secondaryRatePencePerKwh: 0,
     electricityPricePencePerKwh: usedElectricityPrice,
   });
@@ -1536,6 +1771,17 @@ function calculatePluginViability({ occupancy, orientation, electricityPricePenc
       tier: 'Inference',
       title: `This result doesn't pay back within ${PAYBACK_SIMULATION_MAX_YEARS} years`,
       note: `Simulated cumulative savings (accounting for price escalation and panel degradation) never clear the kit cost within a ${PAYBACK_SIMULATION_MAX_YEARS}-year horizon. This result is a clear red regardless of the exact figure.`,
+    });
+  }
+
+  // ADDED 4 Aug 2026 (found by a third-party review), same reasoning and
+  // range as calculateRooftopViability's electricityPriceUnusual flag.
+  if (electricityPriceIsUserProvided && isImplausibleRate(usedElectricityPrice, ELECTRICITY_PRICE_PLAUSIBLE_RANGE_PENCE_PER_KWH)) {
+    flags.push({
+      id: 'electricityPriceUnusual',
+      tier: 'Inference',
+      title: 'The electricity price you entered looks unusual',
+      note: `You entered ${usedElectricityPrice}p/kWh, outside the ${ELECTRICITY_PRICE_PLAUSIBLE_RANGE_PENCE_PER_KWH.min}-${ELECTRICITY_PRICE_PLAUSIBLE_RANGE_PENCE_PER_KWH.max}p/kWh range this calculator's own research considers plausible for UK domestic electricity. This could be correct (a genuine outlier tariff), but it's also consistent with a typo — e.g. a misplaced decimal point. Double-check it before trusting this result, since a user-provided rate is used exactly as given, with no other check applied.`,
     });
   }
 
@@ -1604,7 +1850,9 @@ const SunnySideUpCalculator = {
   simulatePaybackYears,
   constants: {
     ELECTRICITY_PRICE_PENCE_PER_KWH_DEFAULT,
+    ELECTRICITY_PRICE_PLAUSIBLE_RANGE_PENCE_PER_KWH,
     SEG_RATE_PENCE_PER_KWH_DEFAULT,
+    SEG_RATE_PLAUSIBLE_RANGE_PENCE_PER_KWH,
     SEG_TARIFFS,
     ROOFTOP_SYSTEM_COST_GBP,
     ROOFTOP_ANNUAL_GENERATION_KWH,
@@ -1612,6 +1860,7 @@ const SunnySideUpCalculator = {
     ROOF_AREA_PER_PANEL_M2,
     PANEL_WATTAGE_KWP,
     COST_PER_KWP_GBP_BY_TIER,
+    DOMESTIC_SYSTEM_SIZE_SANITY_MAX_KWP,
     REGIONAL_GENERATION_MULTIPLIER,
     REGIONS_WITH_UNRESEARCHED_REGULATORY_REGIME,
     OPEN_METEO_ASSUMED_PEAK_POWER_KWP,

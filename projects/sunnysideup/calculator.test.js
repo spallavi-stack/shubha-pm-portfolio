@@ -26,10 +26,13 @@ printResult(
 // demand-ratio-driven now, corrected 1 Aug 2026 — the old occupancy binary
 // couldn't reflect e.g. an EV/heat pump timed into daylight hours changing
 // real self-consumption at a fixed occupancy pattern). Expect: numerically
-// IDENTICAL to the 'usuallyHome' case above, but with an extra
-// "occupancyMayLowerRealSelfConsumption" flag this one doesn't get, since an
-// annual-average formula can't see whether a usually-out household's
-// consumption clusters outside solar hours.
+// IDENTICAL to the 'usuallyHome' case above. Both cases get an
+// "occupancyMayLowerRealSelfConsumption" flag (widened 4 Aug 2026 to fire
+// for every rooftop result, since the annual-average formula's dominant
+// blind spot is seasonal, not occupancy-specific — see the flag's own
+// comment in calculator.js), but this 'usuallyOut' case's note is longer,
+// naming an added within-day reason real self-consumption may run lower
+// still.
 printResult(
   'Rooftop — south-facing, usually out, 4,000kWh/yr household use',
   calculateRooftopViability({ orientation: 'southFacing', occupancy: 'usuallyOut', annualConsumptionKwh: 4000 })
@@ -273,8 +276,7 @@ printResult(
 console.log('\n--- simulatePaybackYears: zero-degradation, zero-escalation should reduce to flat division ---');
 const zeroEffectSim = simulatePaybackYears({
   systemCostGbp: 1000,
-  baseSelfConsumedKwh: 1000,
-  baseSecondaryKwh: 0,
+  baseGenerationKwh: 1000,
   secondaryRatePencePerKwh: 0,
   electricityPricePencePerKwh: 20,
   // No inverter params: this path should also confirm the "no inverter
@@ -288,8 +290,7 @@ console.log('- With escalation/degradation constants nonzero but a trivial 5-yea
 console.log('\n--- simulatePaybackYears: a case that never recovers within PAYBACK_SIMULATION_MAX_YEARS ---');
 const neverRecoversSim = simulatePaybackYears({
   systemCostGbp: 100000,
-  baseSelfConsumedKwh: 100,
-  baseSecondaryKwh: 0,
+  baseGenerationKwh: 100,
   secondaryRatePencePerKwh: 0,
   electricityPricePencePerKwh: 20,
 });

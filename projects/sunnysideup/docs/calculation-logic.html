@@ -124,9 +124,9 @@ changing <em>what the fallback value is</em> is a <code>calculator.js</code> cha
 <p>Each stage is detailed in the matching section below: §3 for plug-in, §4a-4e for rooftop.</p>
 <hr />
 <h2>3. Plug-in / balcony solar</h2>
-<p>The simpler of the two segments: no postcode dependency, no roof-area sizing (it's a fixed
-small kit). No export mechanism still, but as of 1 Aug 2026, generation beyond what the household
-self-consumes is no longer credited as savings — see the correction note below.</p>
+<p>The simpler of the two segments: no postcode dependency, no roof-area sizing (it's a fixed small
+kit). No export mechanism still, but as of 1 Aug 2026, generation beyond what the household
+self-consumes is no longer credited as savings — see the correction note below the flowchart.</p>
 <pre class="mermaid">flowchart TD
   A["Orientation<br/>(default: south)"] --> B["Multiplier =<br/>vertical-mount<br/>E/W 85% / N 40%<br/>ratio"]
   B --> C["Generation =<br/>770kWh x<br/>multiplier"]
@@ -192,8 +192,56 @@ self-consumes is no longer credited as savings — see the correction note below
 </tr>
 </tbody>
 </table>
-<blockquote>Corrected 1 Aug 2026: this segment previously treated 100% of generation as self-consumed unconditionally, with no export/unmet-demand concept at all — not a sourcing gap like the constants above, but a real modeling gap. Plug-in kits have no export meter or SEG tracking, so a household away during the day got nothing for a midday generation spike exceeding its baseload demand: that surplus is fed to the grid for free, not banked as savings, yet the old model counted it as if it were. <code>calculatePluginViability</code> now accepts an optional <code>annualConsumptionKwh</code> (threaded through from the same consumption resolution the UI already does for rooftop, in <code>prototype.html</code>'s <code>runCalculation()</code>); when given, self-consumption is computed the same way as rooftop's demand-ratio formula, and any generation beyond that rate earns nothing. When <code>annualConsumptionKwh</code> isn't given, the function still falls back to the old fully-self-consumed assumption (a plug-in kit's onboarding may be lighter-weight than rooftop's, so this input stays optional) — but that fallback is now a <code>pluginSelfConsumptionUnverified</code> flag on the result, not a silent default. If consumption is given and a meaningful share (&gt;15%) of generation is still projected to go unused, a separate <code>pluginUnselfConsumedShare</code> flag names the real amount involved.</blockquote>
-<blockquote>Corrected 1 Aug 2026 (a second, separate fix in the same pass): the orientation multiplier previously reused rooftop's own east/west ≈79% and north ≈50% ratios, which reflect losses at rooftop's own ~35° tilt (see §4b's <code>OPEN_METEO_TILT_ANGLE_DEGREES</code>), not the mounting angle a plug-in kit actually uses — real plug-in kits are typically mounted near-vertical (balcony rail, wall bracket), and vertical mounts have a genuinely different azimuth-sensitivity curve than a ~35°-tilt rooftop. Checked directly: two independent UK sources, each citing PVGIS modeling, put vertical (90°) mounting at roughly 70-74% of an optimally-tilted rooftop panel's output for the same south orientation (one cross-checks almost exactly against this file's own <code>ROOFTOP_ANNUAL_GENERATION_KWH.southFacing</code> figure at rooftop scale — 3,800kWh pitched vs ~2,800kWh vertical, a genuine independent confirmation, not just a coincidence of rounding). That range describes the overall tilt-mismatch risk sitting inside <code>PLUGIN_ANNUAL_GENERATION_KWH</code>'s own south-facing baseline — deliberately <strong>not</strong> applied to discount that number, since the weak original 640-900kWh/yr sources never stated a mounting angle either, and there's no way to tell whether they already reflect real vertical-mount output or an idealized tilt. Silently applying a 70-74% haircut on top of an already-ambiguous number risks double-counting an effect that might already be baked in; surfaced instead as an explicit caveat in the south-facing case's <code>assumptions.generationKwh.note</code>, not a silent correction. What is now corrected with real numbers: <code>PLUGIN_VERTICAL_ORIENTATION_MULTIPLIER</code>, a vertical-mount-specific east/west and north ratio, replacing the borrowed rooftop figures. UK consumer-guide sources (weaker sourcing than the tilt-loss figure above) put vertical east/west walls around 15-20% below vertical south (≈80-85% of south) and vertical north walls well under half of vertical south (≈43% or lower). The east/west result is a genuine surprise worth naming directly: vertical mounting is <em>less</em> orientation-sensitive east/west than rooftop's own 79% ratio implied (85% vs 79%), not more — the original critique's "vertical mounts suffer steeper losses" framing holds for north specifically (40% vs rooftop's 50%), but not uniformly across every orientation.</blockquote>
+<blockquote>
+<p>Corrected 1 Aug 2026: this segment previously treated 100% of generation as self-consumed
+unconditionally, with no export/unmet-demand concept at all — not a sourcing gap like the
+constants above, but a real modeling gap. Plug-in kits have no export meter or SEG tracking, so a
+household away during the day got nothing for a midday generation spike exceeding its baseload
+demand: that surplus is fed to the grid for free, not banked as savings, yet the old model counted
+it as if it were. <code>calculatePluginViability</code> now accepts an optional <code>annualConsumptionKwh</code>
+(threaded through from the same consumption resolution the UI already does for rooftop, in
+<code>prototype.html</code>'s <code>runCalculation()</code>); when given, self-consumption is computed the same way as
+rooftop's demand-ratio formula, and any generation beyond that rate earns nothing. When
+<code>annualConsumptionKwh</code> isn't given, the function still falls back to the old fully-self-consumed
+assumption (a plug-in kit's onboarding may be lighter-weight than rooftop's, so this input stays
+optional) — but that fallback is now a <code>pluginSelfConsumptionUnverified</code> flag on the result, not a
+silent default. If consumption <em>is</em> given and a meaningful share (&gt;15%) of generation is still
+projected to go unused, a separate <code>pluginUnselfConsumedShare</code> flag names the real amount involved.</p>
+</blockquote>
+<!-- -->
+
+<blockquote>
+<p>Corrected 1 Aug 2026 (a second, separate fix in the same pass): the orientation multiplier
+previously reused rooftop's own east/west ≈79% and north ≈50% ratios, which reflect losses at
+rooftop's own ~35° tilt (see §4b's <code>OPEN_METEO_TILT_ANGLE_DEGREES</code>), not the mounting angle a
+plug-in kit actually uses — real plug-in kits are typically mounted near-vertical (balcony rail,
+wall bracket), and vertical mounts have a genuinely different azimuth-sensitivity curve than a
+~35°-tilt rooftop. Checked directly: two independent UK sources, each citing PVGIS modeling, put
+vertical (90°) mounting at roughly 70-74% of an optimally-tilted rooftop panel's output for the
+same south orientation (one cross-checks almost exactly against this file's own
+<code>ROOFTOP_ANNUAL_GENERATION_KWH.southFacing</code> figure at rooftop scale — 3,800kWh pitched vs
+~2,800kWh vertical, a genuine independent confirmation, not just a coincidence of rounding). That
+range describes the overall tilt-mismatch risk sitting inside <code>PLUGIN_ANNUAL_GENERATION_KWH</code>'s own
+south-facing baseline — deliberately <strong>not</strong> applied to discount that number, since the weak
+original 640-900kWh/yr sources never stated a mounting angle either, and there's no way to tell
+whether they already reflect real vertical-mount output or an idealized tilt. Silently applying a
+70-74% haircut on top of an already-ambiguous number risks double-counting an effect that might
+already be baked in; surfaced instead as an explicit caveat in the south-facing case's
+<code>assumptions.generationKwh.note</code>, not a silent correction.</p>
+</blockquote>
+<p>What <em>is</em> now corrected with real numbers: <code>PLUGIN_VERTICAL_ORIENTATION_MULTIPLIER</code>, a
+vertical-mount-specific east/west and north ratio, replacing the borrowed rooftop figures.
+UK consumer-guide sources (weaker sourcing than the tilt-loss figure above — no explicit PVGIS
+citation for these specific numbers, and near-identical figures recurring across multiple similar
+sites in a way that suggests shared rather than independent sourcing) put vertical east/west walls
+around 15-20% below vertical south (≈80-85% of south) and vertical north walls well under half of
+vertical south (one source: under 1,000kWh/yr against a ~2,300kWh/yr vertical-south figure at a
+larger system scale, ≈43% or lower). The east/west result is a genuine surprise worth naming
+directly: vertical mounting is <em>less</em> orientation-sensitive east/west than rooftop's own 79% ratio
+implied (85% vs 79%), not more — the original critique's "vertical mounts suffer steeper losses"
+framing holds for north specifically (40% vs rooftop's 50%), but not uniformly across every
+orientation. Not a single "vertical is always worse" correction; a genuinely different relationship
+per orientation.</p>
 <p>Output also carries a static <code>PLUGIN_LEGAL_STATUS</code> block (electrician install legal since
 2026-04-15 under BS 7671 Amendment 4 [Fact]; DIY self-install not legal until 2026-08-27 under
 SI 2026/848 [Fact]; tenancy consent status unresolved, no relevant provision either way). This
@@ -243,7 +291,7 @@ isn't part of the calculation, but ships alongside it in the same result object.
 <td>TDCV bands</td>
 <td>low 1,600 / medium 2,500 / high 3,800 kWh/yr</td>
 <td>Fact</td>
-<td>Ofgem TDCV, effective 1 Jul 2026. The household-size-to-band boundary rule itself (≤2/3/4+) is this calculator's own tie-breaking choice, not an Ofgem-published cutoff.</td>
+<td>Ofgem TDCV, effective 1 Jul 2026. The household-size-to-band boundary rule itself (≤2/3/4+) is this calculator's own tie-breaking choice, not an Ofgem-published cutoff. Named 4 Aug 2026 (found by a third-party review): a deeper issue than the boundary itself — the bands are described by <em>dwelling</em> size ("flat/1-bed," "2-3 bed," "4+ bed") but selected here purely from <em>occupant count</em>, two different variables treated as one. Four adults in a 2-bed flat get the "4+ bedroom house" band. Not fixed with a new dwelling-size input (a bigger scope change); named explicitly in the result's own <code>assumptions</code>/breakdown note instead of left inside the more general boundary-cutoff caveat.</td>
 </tr>
 <tr>
 <td><code>HEAT_PUMP_ANNUAL_KWH_ESTIMATE</code></td>
@@ -270,7 +318,7 @@ isn't part of the calculation, but ships alongside it in the same result object.
     G5{"≥90% hourly<br/>data + valid<br/>shape?"}
     G6["Coordinate-precise:<br/>insolation x 4kWp<br/>x 0.86 PR"]
     G7["Country x<br/>baseline:<br/>Eng 1.0 / Wal 0.93<br/>Sco 0.85 / NI 0.85"]
-    G8["Pre-scaling<br/>generation"]
+    G8["Per-kWp annual<br/>yield = resolved<br/>generation / 4<br/>(reference kWp)"]
 
     G0 -->|No| G1
     G0 -->|Yes| G2
@@ -302,12 +350,19 @@ isn't part of the calculation, but ships alongside it in the same result object.
     RA4 --> RA8
   end
 
-  SCALE["Final generation<br/>= pre-scaling x<br/>(kWp / 4 ref)"]
+  SCALE["Final generation<br/>= per-kWp yield x<br/>systemSizeKwp"]
   GenFinal(["generationKwh,<br/>systemSizeKwp,<br/>systemCostGbp"])
   G8 --> SCALE
   RA8 --> SCALE
   SCALE --> GenFinal
 </pre>
+<p>Simplified 4 Aug 2026 (found by a third-party review, no behavior change — verified against the prior
+implementation across 128 input combinations with zero mismatches): previously computed generation
+for an assumed <code>REFERENCE_SYSTEM_SIZE_KWP</code> (4kWp) system first, then rescaled it by the ratio of the
+real system size back to that same reference — a resolve-then-immediately-undo indirection, since
+every generation source above (flat baseline, regional multiplier, Open-Meteo override) is already
+calibrated to that one reference size. Now resolves a per-kWp annual yield once and multiplies
+directly by the real system size at the end: the same physical quantity, one fewer conceptual hop.</p>
 <p><strong>Key constants</strong> (<code>calculator.js</code> L184-245, L287-292, L217-236, L723-727):</p>
 <table>
 <thead>
@@ -361,25 +416,44 @@ isn't part of the calculation, but ships alongside it in the same result object.
 <td>Fact</td>
 <td>MCS's own nonlinear installed-cost figures; smaller systems cost more per kWp</td>
 </tr>
-</tbody>
-</table>
-<blockquote>Corrected 1 Aug 2026: this table previously included a <code>PERMITTED_DEVELOPMENT_KWP_CEILING_ENGLAND</code> constant (4kWp, tagged Fact), and the roof-area sizing flow above fired a "may need planning permission" flag whenever a roof-area-derived system exceeded it. That was wrong: the real GPDO 2015 Schedule 2 Part 14 Class J test for Permitted Development is physical (panel protrusion ≤200mm from the roof slope/wall, not projecting above the roof's highest point, not on a listed building — see <code>grounding-research.md</code> §Permitted development), not a kWp ceiling. No source in this project's own research ever supported a 4kWp figure for this purpose; it most likely got conflated with the unrelated G98 DNO grid-connection fast-track threshold (~3.68kW, see <code>grounding-research.md</code> §G98 vs G99), which governs when a supplier must be notified of a new connection, not planning law. Removed the constant and the size-triggered flag entirely, since there's no correct kWp number to replace it with — this calculator has no roof pitch, ridge height, or protrusion inputs to actually evaluate the real test. See §5's <code>permittedDevelopment</code> flag, now unconditional and stating the real criteria instead of a false determination.</blockquote>
-<table>
-<tbody>
 <tr>
-<td>Regional generation multiplier</td>
-<td>England 1.0 / Wales 0.93 / Scotland 0.85 / N.Ireland 0.85</td>
-<td>England: baseline. Scotland: Inference. Wales, N.Ireland: Assumption, extrapolated</td>
-<td>No Wales/N.Ireland-specific figure was found; both extrapolated from Scotland's climate/latitude band</td>
-</tr>
-<tr>
-<td>Open-Meteo tilt / performance ratio / assumed peak power</td>
-<td>35° / 0.86 / 4kWp</td>
-<td>Assumption (all three)</td>
-<td>Same near-optimal-UK-roof and system-loss assumptions used throughout</td>
+<td><code>DOMESTIC_SYSTEM_SIZE_SANITY_MAX_KWP</code></td>
+<td>20kWp</td>
+<td>N/A (a sanity cap, not a researched figure)</td>
+<td>Added 4 Aug 2026, found by a third-party review. <code>COST_PER_KWP_GBP_BY_TIER</code> has no upper bound, so a very large roof-area-derived system still prices at the same flat &gt;3kWp rate as an ordinary domestic install, extrapolating MCS-anchored research (4.6kWp UK average) well past where it was checked. Chosen generously (~4x the MCS average) so it only flags inputs clearly outside typical domestic scale, not a genuinely large detached-house roof. Surfaces a <code>roofAreaSizingExceedsDomesticScale</code> flag (§5), doesn't cap the input</td>
 </tr>
 </tbody>
 </table>
+<blockquote>
+<p>Corrected 1 Aug 2026: this table previously included a <code>PERMITTED_DEVELOPMENT_KWP_CEILING_ENGLAND</code>
+constant (4kWp, tagged Fact), and the roof-area sizing flow above fired a "may need planning
+permission" flag whenever a roof-area-derived system exceeded it. That was wrong: the real GPDO
+2015 Schedule 2 Part 14 Class J test for Permitted Development is physical (panel protrusion
+≤200mm from the roof slope/wall, not projecting above the roof's highest point, not on a listed
+building — see <code>grounding-research.md</code> §Permitted development), not a kWp ceiling. No source in
+this project's own research ever supported a 4kWp figure for this purpose; it most likely got
+conflated with the unrelated G98 DNO grid-connection fast-track threshold (~3.68kW, see
+<code>grounding-research.md</code> §G98 vs G99), which governs when a supplier must be notified of a new
+connection, not planning law. Removed the constant and the size-triggered flag entirely, since
+there's no correct kWp number to replace it with — this calculator has no roof pitch, ridge
+height, or protrusion inputs to actually evaluate the real test. See §5's <code>permittedDevelopment</code>
+flag, now unconditional and stating the real criteria instead of a false determination.</p>
+</blockquote>
+<!-- -->
+
+<blockquote>
+<p>Corrected 4 Aug 2026 (found by a third-party review): a <code>roofAreaM2</code> too small to fit even one
+panel (&lt; <code>ROOF_AREA_PER_PANEL_M2</code>) previously fell through to the exact same flat-default path,
+with the exact same "give your usable roof area for a size-adjusted estimate" assumptions note, as
+someone who never answered the roof-area question at all — actively misleading for someone who
+just did. <code>estimateSystemSizeFromRoofArea</code> returning <code>null</code> in both cases meant
+<code>calculateRooftopViability</code> couldn't tell them apart. Now distinguished via a
+<code>roofAreaTooSmallForAnyPanel</code> check: the flat-default numbers are still used either way (there's no
+other system to size against), but a too-small area gets its own <code>roofAreaInsufficientForPanels</code>
+flag and assumptions note (§5) instead of the never-given case's note.</p>
+</blockquote>
+<p>| Regional generation multiplier | England 1.0 / Wales 0.93 / Scotland 0.85 / N.Ireland 0.85 | England: baseline. Scotland: Inference. Wales, N.Ireland: Assumption, extrapolated | No Wales/N.Ireland-specific figure was found; both extrapolated from Scotland's climate/latitude band |
+| Open-Meteo tilt / performance ratio / assumed peak power | 35° / 0.86 / 4kWp | Assumption (all three) | Same near-optimal-UK-roof and system-loss assumptions used throughout |</p>
 <h3>4c. Electricity price resolution</h3>
 <pre class="mermaid">flowchart TD
   E0{"User typed<br/>a rate?"}
@@ -447,6 +521,12 @@ isn't part of the calculation, but ships alongside it in the same result object.
 <td>Fact, empirically checked</td>
 <td>5 real (supplier, region) pairs landed within ~0.03p/kWh of Ofgem's regional cap; standard-variable tariffs are regulatorily pinned to the cap, unlike SEG export rates</td>
 </tr>
+<tr>
+<td><code>ELECTRICITY_PRICE_PLAUSIBLE_RANGE_PENCE_PER_KWH</code></td>
+<td>5-100p/kWh</td>
+<td>N/A (a sanity bound, not a researched figure)</td>
+<td>Added 4 Aug 2026, found by a third-party review. A user-typed rate is this calculator's most-trusted input (top priority over every other source) but previously had no plausibility check at all; a typo could silently produce a result treated as more trustworthy than everything else in this file. Generous enough to cover real volatility (the 2022 UK energy crisis briefly pushed the price cap above 30p/kWh) while catching an obvious data-entry error. Not a hard block — surfaces an <code>electricityPriceUnusual</code> flag (§5), doesn't reject the input</td>
+</tr>
 </tbody>
 </table>
 <h3>4d. SEG export rate resolution (UI-layer logic)</h3>
@@ -476,7 +556,14 @@ isn't part of the calculation, but ships alongside it in the same result object.
 </pre>
 <p>For the "different supplier" choice, a manually typed rate overrides the table selection if
 both are filled in. Either resolution path also carries the picked row's eligibility text (e.g.
-"requires system installed by that same supplier") into the final result; see §5.</p>
+"requires system installed by that same supplier") into the final result; see §5. Added 4 Aug
+2026 (found by a third-party review): that eligibility text is also checked for the word
+"battery" — at least two <code>SEG_TARIFFS</code> rows require one, but this calculator has no battery input
+or battery-aware self-consumption model anywhere, so picking one of those rows surfaces the
+<code>segTariffRequiresBatteryNotModeled</code> flag (§5) rather than silently combining a battery-tied rate
+with a no-battery physics model. A manually-typed rate (either "different supplier" or "same
+supplier") is also checked against <code>SEG_RATE_PLAUSIBLE_RANGE_PENCE_PER_KWH</code> below and surfaces a
+<code>segRateUnusual</code> flag (§5) if it falls outside it.</p>
 <p><strong>Key constants</strong> (<code>calculator.js</code> L81-173):</p>
 <table>
 <thead>
@@ -506,6 +593,12 @@ both are filled in. Either resolution path also carries the picked row's eligibi
 <td>N/A</td>
 <td>A structured field (<code>rateType</code>). It surfaced a real issue where the numerically-highest row (Octopus's "Intelligent Octopus Flux") isn't actually a flat quotable rate</td>
 </tr>
+<tr>
+<td><code>SEG_RATE_PLAUSIBLE_RANGE_PENCE_PER_KWH</code></td>
+<td>0-50p/kWh</td>
+<td>N/A (a sanity bound, not a researched figure)</td>
+<td>Added 4 Aug 2026, found by a third-party review, same reasoning as <code>ELECTRICITY_PRICE_PLAUSIBLE_RANGE_PENCE_PER_KWH</code> (§4c). Roughly double <code>SEG_TARIFFS</code>' own 1.0-25.0p span — generous enough for a genuine outlier tariff, tight enough to catch an implausible entry. Not a hard block</td>
+</tr>
 </tbody>
 </table>
 <h3>4e. Core formula</h3>
@@ -531,14 +624,19 @@ both are filled in. Either resolution path also carries the picked row's eligibi
   F6 -->|Yes| Amber
   F6 -->|No| Red
 </pre>
-<p><code>rate</code> above (the self-consumption factor feeding F1) is no longer an occupancy lookup — see the first correction note below. <code>simulatePaybackYears</code> (added 1 Aug 2026, replacing the flat <code>systemCost / savings</code> division and the two-branch inverter-only adjustment that preceded it) runs a year-by-year loop:</p>
+<p><code>rate</code> above (the self-consumption factor feeding F1) is no longer an occupancy lookup — see the
+first correction note below. <code>simulatePaybackYears</code> (added 1 Aug 2026, replacing the flat
+<code>systemCost / savings</code> division and the two-branch inverter-only adjustment that preceded it) runs
+a year-by-year loop:</p>
 <pre class="mermaid">flowchart TD
   Y0["year = 1..30"]
   Y1{"inverter due<br/>this year?"}
   Y2["cumulativeCost +=<br/>£950"]
   Y3["degradation =<br/>(1 − 0.5%)^(year−1)"]
   Y4["escalatedPrice =<br/>price x (1 + 3%)^(year−1)"]
-  Y5["yearSavings =<br/>(selfConsumed x degradation<br/>x escalatedPrice + exported<br/>x degradation x SEG) / 100"]
+  Y4b["thisYearGeneration =<br/>baseGeneration x degradation"]
+  Y4c["re-derive selfConsumed /<br/>exported for<br/>thisYearGeneration<br/>(same demand-ratio<br/>formula as F0-F2)"]
+  Y5["yearSavings =<br/>(selfConsumed x<br/>escalatedPrice + exported<br/>x SEG) / 100"]
   Y6["cumulativeSavings<br/>+= yearSavings"]
   Y7{"cumulativeSavings<br/>≥ cumulativeCost?"}
   Y8["payback = year − 1 +<br/>fraction of this year needed"]
@@ -550,7 +648,9 @@ both are filled in. Either resolution path also carries the picked row's eligibi
   Y1 -->|No| Y3
   Y2 --> Y3
   Y3 --> Y4
-  Y4 --> Y5
+  Y4 --> Y4b
+  Y4b --> Y4c
+  Y4c --> Y5
   Y5 --> Y6
   Y6 --> Y7
   Y7 -->|Yes| Y8
@@ -558,6 +658,9 @@ both are filled in. Either resolution path also carries the picked row's eligibi
   Y9 --> Y0
   Y0 -->|"loop exhausted"| Y10
 </pre>
+<p>The self-consumed/exported split (<code>selfConsumed</code>/<code>exported</code>) is re-derived every year from that
+year's own degraded generation, via the same <code>resolveGenerationSplit</code> helper §4e's headline year-1
+figures use — not computed once at year 1 and decayed in parallel. See the correction note below.</p>
 <p><strong>Key constants</strong> (<code>calculator.js</code>, self-consumption formula + payback simulation):</p>
 <table>
 <thead>
@@ -573,7 +676,7 @@ both are filled in. Either resolution path also carries the picked row's eligibi
 <td><code>SELF_CONSUMPTION_DEMAND_RATIO_COEFFICIENT</code> / <code>_EXPONENT</code></td>
 <td>0.6748 / -0.703</td>
 <td>Fact (formula), Inference (annual application)</td>
-<td>DESNZ Home Energy Model's own self-consumption formula (<code>HEM-TP-18</code>, gov.uk, fetched and extracted directly 1 Aug 2026): <code>factor = min(0.6748 x demandRatio^-0.703, 1)</code>, where <code>demandRatio = generation / consumption</code>. Derived from field data across a small UK dwelling sample, cross-checked against other datasets in HEM's own literature review. HEM applies this per timestep (sub-hourly); this calculator applies it once to the annual demand ratio, a coarser approximation that can't distinguish daytime-concentrated consumption from evening-concentrated consumption at the same annual total</td>
+<td>DESNZ Home Energy Model's own self-consumption formula (<code>HEM-TP-18</code>, gov.uk, fetched and extracted directly 1 Aug 2026): <code>factor = min(0.6748 x demandRatio^-0.703, 1)</code>, where <code>demandRatio = generation / consumption</code>. Derived from field data across a small UK dwelling sample, cross-checked against other datasets in HEM's own literature review. HEM applies this per timestep (sub-hourly); this calculator applies it once to the annual demand ratio, a coarser approximation. Reframed 4 Aug 2026 (found by a third-party review): the dominant version of that gap is seasonal, not within-day — UK solar generation swings roughly 10x by season while consumption doesn't, and this formula is convex over most of its uncapped range, so by Jensen's inequality, applying it once to an aggregated annual ratio tends to understate true self-consumption rather than approximate it with an unclear direction [Inference, this calculator's own adaptation, not re-run against HEM at monthly resolution]</td>
 </tr>
 <tr>
 <td><code>ROOFTOP_PAYBACK_THRESHOLDS</code></td>
@@ -607,9 +710,101 @@ both are filled in. Either resolution path also carries the picked row's eligibi
 </tr>
 </tbody>
 </table>
-<blockquote>Corrected 1 Aug 2026: this table previously included <code>SELF_CONSUMPTION_RATE</code>, a hardcoded two-tier occupancy lookup (usually-home 0.55 / usually-out 0.30), tagged "Prototype simplification, not independently researched." That mapping had a real gap: it couldn't reflect that a household with an EV or heat pump timed to run during daylight hours self-consumes more than one without, at the same occupancy pattern, since <code>annualConsumptionKwh</code> (which already includes heat pump/EV additions, §4a) never fed into the self-consumption number at all. The demand-ratio formula above fixes this mechanically: a higher annual consumption lowers the demand ratio, which the formula translates into a higher self-consumption factor, without inventing a new unresearched per-appliance modifier. <code>occupancy</code> is no longer used to compute the number itself; see §5's new <code>occupancyMayLowerRealSelfConsumption</code> flag for how it's still used, as a caveat rather than a formula input.</blockquote>
-<blockquote>Corrected 1 Aug 2026 (a second, separate fix in the same pass): the payback critique named two distinct problems with the thresholds above. First, payback tolerance is genuinely subjective — how long someone plans to own the property and how they weigh upfront cost against long-term saving both change what counts as a "good" payback, and no fixed cutoff can be right for everyone. This calculator doesn't try to personalize the thresholds (asking for a planned ownership horizon and inventing an unresearched horizon-to-tolerance mapping would just be a different, worse kind of false precision than the fixed cutoffs it would replace). Instead, every result now carries an explicit <code>assumptions.paybackYears</code> entry naming the thresholds as a design judgment and pointing back to the raw number, which was already the headline figure shown, not hidden behind the color. Second, the payback model ignored a real, quantifiable mid-life cost: inverter replacement. Panels themselves are typically warrantied well beyond 12 years, but a standard string inverter commonly needs replacing around then. Originally fixed (this same day) with a two-branch shortcut: if the naive <code>systemCost / savings</code> figure already exceeded <code>INVERTER_REPLACEMENT_YEAR</code>, re-solve for <code>(systemCost + INVERTER_REPLACEMENT_COST_GBP) / savings</code> instead, capped at one replacement cycle. That shortcut has since been superseded by the fuller simulation described below, which handles recurring replacements properly instead of an artificial one-cycle cap.</blockquote>
-<blockquote>Corrected 1 Aug 2026 (a third, separate fix in the same pass, superseding the inverter-only shortcut above with a fuller model): both segments' payback previously used a single-year snapshot (this year's price, this year's generation) linearly annualized across a 10-25 year horizon — no price escalation, no panel degradation. A static rate isn't itself wrong for a same-year comparison, but stretching it across decades understates how solar's own value tends to compound: UK electricity prices have historically trended upward, so a flat-rate payback is, if anything, conservative on that front — the opposite of "inflating savings." Degradation cuts the other way. <code>simulatePaybackYears</code> now runs a year-by-year loop (see the second diagram above) that nets both effects plus recurring inverter replacement (rooftop only) into a single realistic payback figure, replacing the flat division and the two-branch inverter shortcut entirely. In practice, price escalation (3%/yr assumed) is bigger than degradation (0.5%/yr) and the inverter cost combined, so simulated payback usually comes out <em>shorter</em> than the old flat figure would give, even once an inverter replacement is included — a genuinely counterintuitive result worth stating plainly, since a reader might reasonably assume "more realistic" means "more pessimistic." Both the simulated figure and what a flat calculation would have given are shown side by side in <code>assumptions.paybackYears.note</code>, so the size of the effect is visible, not just its direction. If the loop runs the full <code>PAYBACK_SIMULATION_MAX_YEARS</code> (30) without cumulative savings clearing cumulative cost, <code>paybackYears</code> is <code>null</code> (not a raw <code>Infinity</code>, which is JSON-invalid) and a <code>paybackNotReachedWithinSimulation</code> flag fires. Applied to both segments — degradation and price escalation are general PV/market assumptions, not rooftop-specific the way the inverter cost figure is (no comparable inverter-cost research exists at plug-in's scale, §3), so plug-in gets the same escalation/degradation treatment but no inverter-replacement cost.</blockquote>
+<blockquote>
+<p>Corrected 1 Aug 2026: this row previously read <code>SELF_CONSUMPTION_RATE</code>, a hardcoded two-tier
+occupancy lookup (usually-home 0.55 / usually-out 0.30), tagged "Prototype simplification, not
+independently researched." That mapping had a real gap the "self-consumption/occupancy" critique
+named directly: it couldn't reflect that a household with an EV or heat pump timed to run during
+daylight hours self-consumes more than one without, at the <em>same</em> occupancy pattern, since
+<code>annualConsumptionKwh</code> (which already includes heat pump/EV additions via
+<code>estimateAnnualConsumptionKwh</code>, §4a) never fed into the self-consumption number at all. The
+demand-ratio formula above fixes this mechanically: a higher annual consumption (from a heat pump
+or EV) lowers the demand ratio, which the formula translates into a higher self-consumption
+factor, without inventing a new unresearched per-appliance modifier. <code>occupancy</code> is no longer used
+to compute the number itself; see §5's new <code>occupancyMayLowerRealSelfConsumption</code> flag for how it's
+still used, as a caveat rather than an input to the formula.</p>
+</blockquote>
+<!-- -->
+
+<blockquote>
+<p>Corrected 1 Aug 2026 (a second, separate fix in the same pass): the payback critique named two
+distinct problems with the thresholds above. First, payback tolerance is genuinely subjective —
+how long someone plans to own the property and how they weigh upfront cost against long-term
+saving both change what counts as a "good" payback, and no fixed cutoff can be right for everyone.
+This calculator doesn't try to personalize the thresholds (asking for a planned ownership horizon
+and inventing an unresearched horizon-to-tolerance mapping would just be a different, worse kind
+of false precision than the fixed cutoffs it would replace). Instead, every result now carries an
+explicit <code>assumptions.paybackYears</code> entry naming the thresholds as a design judgment and pointing
+back to the raw number, which was already the headline figure shown, not hidden behind the color.
+Second, the payback model ignored a real, quantifiable mid-life cost: inverter replacement. Panels
+themselves are typically warrantied well beyond 12 years, but a standard string inverter commonly
+needs replacing around then. Originally fixed (this same day) with a two-branch shortcut: if the
+naive <code>systemCost / savings</code> figure already exceeded <code>INVERTER_REPLACEMENT_YEAR</code>, re-solve for
+<code>(systemCost + INVERTER_REPLACEMENT_COST_GBP) / savings</code> instead, capped at one replacement cycle.
+That shortcut has since been superseded by the fuller simulation described below, which handles
+recurring replacements properly instead of an artificial one-cycle cap.</p>
+</blockquote>
+<!-- -->
+
+<blockquote>
+<p>Corrected 1 Aug 2026 (a third, separate fix in the same pass, superseding the inverter-only
+shortcut above with a fuller model): both segments' payback previously used a single-year snapshot
+(this year's price, this year's generation) linearly annualized across a 10-25 year horizon — no
+price escalation, no panel degradation. A static rate isn't itself wrong for a same-year
+comparison, but stretching it across decades understates how solar's own value tends to compound:
+UK electricity prices have historically trended upward, so a flat-rate payback is, if anything,
+conservative on that front — the opposite of "inflating savings." Degradation cuts the other way.
+<code>simulatePaybackYears</code> now runs a year-by-year loop (see the second mermaid diagram above) that
+nets both effects plus recurring inverter replacement (rooftop only) into a single realistic
+payback figure, replacing the flat division and the two-branch inverter shortcut entirely. In
+practice, price escalation (3%/yr assumed) is bigger than degradation (0.5%/yr) and the inverter
+cost combined, so simulated payback usually comes out <em>shorter</em> than the old flat figure would
+give, even once an inverter replacement is included — a genuinely counterintuitive result worth
+stating plainly, since a reader might reasonably assume "more realistic" means "more pessimistic."
+Both the simulated figure and what a flat calculation would have given are shown side by side in
+<code>assumptions.paybackYears.note</code>, so the size of the effect is visible, not just its direction. If
+the loop runs the full <code>PAYBACK_SIMULATION_MAX_YEARS</code> (30) without cumulative savings clearing
+cumulative cost, <code>paybackYears</code> is <code>null</code> (not a raw <code>Infinity</code>, which is JSON-invalid) and a
+<code>paybackNotReachedWithinSimulation</code> flag fires. Applied to both segments — degradation and price
+escalation are general PV/market assumptions, not rooftop-specific the way the inverter cost figure
+is (no comparable inverter-cost research exists at plug-in's scale, §3), so plug-in gets the same
+escalation/degradation treatment but no inverter-replacement cost.</p>
+</blockquote>
+<!-- -->
+
+<blockquote>
+<p>Corrected 4 Aug 2026: <code>simulatePaybackYears</code>'s replacement-due check read <code>(year - 1) %
+inverterReplacementEveryYears === 0</code>, which fires when <code>year - 1</code> is a multiple of 12, i.e. at
+years 13, 25, 37 — one year later than <code>INVERTER_REPLACEMENT_YEAR</code> (12) and every comment
+describing this behavior actually intended. Found by a third-party review; no test had pinned the
+exact year, only that at least one replacement fired. Fixed to <code>year % inverterReplacementEveryYears
+=== 0</code> (replacements now land at years 12, 24, 36), which also made the previous <code>year &gt; 1</code> guard
+redundant, so it was dropped. A regression test (<code>simulatePaybackYears.test.js</code>) now pins the exact
+year a replacement first fires, distinguishing it from a cycle length one year longer.</p>
+</blockquote>
+<!-- -->
+
+<blockquote>
+<p>Corrected 4 Aug 2026 (a second, separate fix in the same pass): <code>simulatePaybackYears</code> previously
+computed the self-consumed/exported split once, at year 1, and decayed both halves by the same
+degradation factor every subsequent year — freezing the <em>ratio</em> between them for the full 30-year
+horizon even as generation fell. That contradicted this calculator's own self-consumption model:
+<code>selfConsumptionFactorFromDemandRatio</code> says a lower demand ratio (degraded generation against
+unchanged consumption) means a <em>higher</em> self-consumption fraction, a relationship the simulation
+used correctly for the headline year-1 figures and then ignored for every year after. Found by a
+third-party review. Fixed by extracting the split computation into a shared
+<code>resolveGenerationSplit(generationKwh, annualConsumptionKwh)</code> helper, now called both for the
+year-1 headline figures and inside the simulation loop every year, against that year's own degraded
+generation — one formula, reused, instead of a real path (year 1) and a frozen approximation of it
+(years 2-30). <code>simulatePaybackYears</code>'s signature changed accordingly: it now takes
+<code>baseGenerationKwh</code> and <code>annualConsumptionKwh</code> (the two physical quantities the caller already has)
+in place of a pre-split <code>baseSelfConsumedKwh</code>/<code>baseSecondaryKwh</code> pair the caller previously had to
+derive correctly beforehand. Year-1 output is unchanged (no degradation yet, so the split matches
+exactly what the old code produced); later years now self-consume a rising share as generation
+degrades, matching the rest of the file's own model. <code>resolveGenerationSplit</code> also folds in
+plug-in's "no consumption given" fallback (100% self-consumed, every year) as its <code>null</code>-consumption
+case, so <code>calculatePluginViability</code>'s own year-1 split computation now reuses the same helper too.</p>
+</blockquote>
 <hr />
 <h2>5. What comes back alongside the number</h2>
 <p>Every result carries an <code>assumptions</code> object naming each input's resolved value, confidence
@@ -621,10 +816,12 @@ interrupt anyone by default.</p>
 <p>Rooftop results also carry a <code>flags</code> array: situational, always-worth-surfacing callouts,
 distinct from <code>assumptions</code> in kind, not just placement: <code>assumptions</code> explains how confident a
 <em>number</em> is, <code>flags</code> tells the user about a <em>condition attached to this specific result</em> that
-the number alone doesn't convey. Each entry is <code>{ id, tier, title, note }</code>. Four are
-unconditional (every rooftop result gets them, since no input this calculator collects tells it
-whether a property is leasehold, listed, in a conservation area, or physically eligible for
-Permitted Development, deliberately not adding new inputs just to gate these):</p>
+the number alone doesn't convey. Each entry is <code>{ id, tier, title, note }</code>. Five are
+unconditional (every rooftop result gets them — four because no input this calculator collects
+tells it whether a property is leasehold, listed, in a conservation area, or physically eligible
+for Permitted Development, deliberately not adding new inputs just to gate these; the fifth
+because the annual-average self-consumption approximation's dominant blind spot is seasonal, not
+conditional on any input this calculator collects either — see its own row below):</p>
 <table>
 <thead>
 <tr>
@@ -639,7 +836,7 @@ Permitted Development, deliberately not adding new inputs just to gate these):</
 <td><code>permittedDevelopment</code></td>
 <td>Always</td>
 <td>Fact</td>
-<td>States the real GPDO physical test (protrusion ≤200mm, not above roof ridge, not on a listed building) and says this calculator can't check it — no roof pitch/ridge/protrusion inputs collected. Corrected 1 Aug 2026: previously fired only when a roof-area-derived system exceeded a hardcoded 4kWp figure wrongly labeled a Permitted Development ceiling — that figure isn't part of the real GPDO test</td>
+<td>States the real GPDO physical test (protrusion ≤200mm, not above roof ridge, not on a listed building) and says this calculator can't check it — no roof pitch/ridge/protrusion inputs collected. Corrected 1 Aug 2026: previously fired only when a roof-area-derived system exceeded a hardcoded 4kWp figure wrongly labeled a Permitted Development ceiling — that figure isn't part of the real GPDO test (see §4b's note and <code>calculator.js</code>'s correction comment)</td>
 </tr>
 <tr>
 <td><code>tenancyConsent</code></td>
@@ -660,6 +857,12 @@ Permitted Development, deliberately not adding new inputs just to gate these):</
 <td>Street-visible panels in a conservation area may need planning permission even if the physical criteria are otherwise met</td>
 </tr>
 <tr>
+<td><code>occupancyMayLowerRealSelfConsumption</code></td>
+<td>Always</td>
+<td>Inference</td>
+<td>Added 1 Aug 2026, alongside the self-consumption formula fix above; widened 4 Aug 2026 (found by a third-party review) from firing only for <code>usuallyOut</code> to firing for every result. The formula is annual-average and can't see how generation and consumption actually line up over time — the dominant version of that gap is seasonal (UK solar generation swings roughly 10x by season, consumption doesn't), which tends to understate true self-consumption regardless of occupancy. <code>occupancy</code> being <code>usuallyOut</code> adds a secondary, within-day version of the same understatement to the note, compounding in the same direction; <code>usuallyHome</code> gets the seasonal note alone</td>
+</tr>
+<tr>
 <td><code>regulatoryRegime</code></td>
 <td>Postcode resolves to Scotland or Wales</td>
 <td>Fact</td>
@@ -672,10 +875,34 @@ Permitted Development, deliberately not adding new inputs just to gate these):</
 <td>This result uses the low default SEG rate; a high-export household's result moves more than most when a real (much higher) tariff is picked</td>
 </tr>
 <tr>
-<td><code>occupancyMayLowerRealSelfConsumption</code></td>
-<td><code>occupancy</code> is <code>usuallyOut</code></td>
+<td><code>segTariffRequiresBatteryNotModeled</code></td>
+<td>The picked SEG tariff's eligibility text mentions "battery"</td>
 <td>Inference</td>
-<td>Added 1 Aug 2026, alongside the self-consumption formula fix above. The formula is annual-average and can't see when within the day consumption happens, only its total relative to generation. A usually-out household's consumption is more likely concentrated outside midday solar hours than the annual total alone suggests, which would make real self-consumption lower than the formula's estimate. Not shown for <code>usuallyHome</code>, since there's no comparably clear directional bias to flag for that case</td>
+<td>Added 4 Aug 2026, found by a third-party review. At least two <code>SEG_TARIFFS</code> rows (Octopus's "Intelligent Octopus Flux," So Energy's "So Bright") require a battery as part of their eligibility, but this calculator has no battery input anywhere and models self-consumption as if no battery exists throughout. A battery typically raises real self-consumption well above what the no-battery formula predicts, so picking a battery-eligibility tariff's rate while the underlying split still assumes no battery is a real mismatch, not resolved by this tool</td>
+</tr>
+<tr>
+<td><code>roofAreaInsufficientForPanels</code></td>
+<td><code>roofAreaM2</code> given, but too small to fit even one panel</td>
+<td>Inference</td>
+<td>Added 4 Aug 2026, found by a third-party review — see §4b's correction note. Distinguishes "your roof area can't fit a system" from "we don't know your roof area yet," which previously collapsed into the same flat-default fallback and the same, now actively misleading, "give your roof area" note</td>
+</tr>
+<tr>
+<td><code>electricityPriceUnusual</code></td>
+<td>A user-provided <code>electricityPricePencePerKwh</code> falls outside <code>ELECTRICITY_PRICE_PLAUSIBLE_RANGE_PENCE_PER_KWH</code> (5-100p)</td>
+<td>Inference</td>
+<td>Added 4 Aug 2026, found by a third-party review. Both segments. Not a rejection — the value is still used exactly as given — just a double-check prompt, since a user-provided rate is otherwise trusted with no other check</td>
+</tr>
+<tr>
+<td><code>segRateUnusual</code></td>
+<td>A user-provided <code>segRatePencePerKwh</code> falls outside <code>SEG_RATE_PLAUSIBLE_RANGE_PENCE_PER_KWH</code> (0-50p)</td>
+<td>Inference</td>
+<td>Added 4 Aug 2026, found by a third-party review. Rooftop only (plug-in has no SEG concept). Same non-rejecting treatment as <code>electricityPriceUnusual</code></td>
+</tr>
+<tr>
+<td><code>roofAreaSizingExceedsDomesticScale</code></td>
+<td>Roof-area-derived <code>systemSizeKwp</code> exceeds <code>DOMESTIC_SYSTEM_SIZE_SANITY_MAX_KWP</code> (20kWp)</td>
+<td>Inference</td>
+<td>Added 4 Aug 2026, found by a third-party review — see §4b's note. <code>COST_PER_KWP_GBP_BY_TIER</code>'s flat &gt;3kWp rate is untested at this scale; names the result's cost figure as unreliable rather than silently extrapolating</td>
 </tr>
 <tr>
 <td><code>inverterReplacementFactored</code></td>
@@ -705,49 +932,49 @@ the two.</p>
 <p>Pulled from <code>calculator.js</code>'s own comments, not new critique. Worth having in one place for
 the next review pass to weigh in on:</p>
 <ul>
-<li><strong>Self-consumption rate</strong> (corrected 1 Aug 2026) now comes from DESNZ's own Home
-  Energy Model formula rather than a hardcoded occupancy proxy, but is still applied annually
-  rather than the per-timestep basis the formula was designed for — it can't distinguish
-  daytime-concentrated consumption from evening-concentrated consumption at the same annual
-  total. Flagged to the user via <code>occupancyMayLowerRealSelfConsumption</code> for
-  <code>usuallyOut</code> households specifically.</li>
-<li><strong>Plug-in's self-consumption</strong> (corrected 1 Aug 2026, see §3) now uses the same
-  demand-ratio formula as rooftop when a consumption figure is given, and any generation beyond
-  that rate earns nothing rather than being counted as savings. Without a consumption figure, it
-  still falls back to assuming 100% self-consumption — now an explicitly flagged
-  (<code>pluginSelfConsumptionUnverified</code>) fallback rather than a silent default, but still
-  the weakest part of this segment's math when it fires. Plug-in kits genuinely have no export
-  meter, so this fallback's overstatement risk is real whenever a user skips the consumption
-  question.</li>
+<li><strong>Self-consumption rate</strong> (corrected 1 Aug 2026) now comes from DESNZ's own Home Energy Model
+  formula rather than a hardcoded occupancy proxy, but is still applied annually rather than the
+  per-timestep basis the formula was designed for. The dominant version of that gap is seasonal
+  (UK solar generation swings roughly 10x by season, consumption doesn't), which most likely
+  <em>understates</em> true self-consumption rather than just approximating it with an unclear direction
+  (reframed 4 Aug 2026, found by a third-party review — see <code>SELF_CONSUMPTION_DEMAND_RATIO_COEFFICIENT</code>'s
+  sourcing note in §4e). Flagged to the user via <code>occupancyMayLowerRealSelfConsumption</code>, which now
+  fires for every rooftop result rather than only <code>usuallyOut</code> households, with <code>usuallyOut</code> adding
+  an extra within-day reason to the same note.</li>
+<li><strong>Plug-in's self-consumption</strong> (corrected 1 Aug 2026, see §3) now uses the same demand-ratio
+  formula as rooftop when a consumption figure is given, and any generation beyond that rate earns
+  nothing rather than being counted as savings. Without a consumption figure, it still falls back
+  to assuming 100% self-consumption — now an explicitly flagged (<code>pluginSelfConsumptionUnverified</code>)
+  fallback rather than a silent default, but still the weakest part of this segment's math when it
+  fires. Plug-in kits genuinely have no export meter, so this fallback's overstatement risk is real
+  whenever a user skips the consumption question.</li>
 <li><strong>Plug-in generation and kit cost</strong> are the weakest-sourced figures in the calculator. No
   government, MCS, or established consumer-body source for either.</li>
-<li><strong>Plug-in orientation multiplier</strong> (corrected 1 Aug 2026, see §3) now uses
-  vertical-mount-specific ratios (85% E/W, 40% N of south) from two UK sources, rather than
-  rooftop's own 35°-tilt-calibrated ratios — still stacks an Inference/Assumption-tier ratio onto an
-  Assumption-tier south-facing baseline, and the south-facing baseline's own mounting-tilt
-  assumption remains unverified (research suggests real vertical mounting could plausibly run
-  70-74% of an idealized-tilt figure, deliberately not applied to avoid double-counting an
-  already-ambiguous number).</li>
+<li><strong>Plug-in orientation multiplier</strong> (corrected 1 Aug 2026, see §3) now uses vertical-mount-specific
+  ratios (85% E/W, 40% N of south) from two UK sources, rather than rooftop's own 35°-tilt-calibrated
+  ratios — still stacks an Inference/Assumption-tier ratio onto an Assumption-tier south-facing
+  baseline, and the south-facing baseline's own mounting-tilt assumption remains unverified (research
+  suggests real vertical mounting could plausibly run 70-74% of an idealized-tilt figure, deliberately
+  not applied to avoid double-counting an already-ambiguous number).</li>
 <li><strong>East/west and north-facing rooftop generation</strong> figures are a prototype-only proportional
   estimate, not independently researched the way the south-facing figure is.</li>
 <li><strong>Payback thresholds</strong> (both segments) are a design judgment loosely anchored to the
   researched payback range, not a cited industry or regulatory standard — this is now stated
-  explicitly in every result's <code>assumptions.paybackYears</code> (added 1 Aug 2026) rather than
-  left implicit, since payback tolerance genuinely depends on ownership horizon and risk preference
-  the calculator has no way to know.</li>
-<li><strong>Both segments' payback is now simulated year-by-year</strong> (added 1 Aug 2026,
-  <code>simulatePaybackYears</code>, replacing a flat single-year-snapshot division that implicitly
-  assumed price and generation both stay constant forever): 3%/yr electricity price escalation and
-  0.5%/yr panel degradation, both consumer-guide-sourced (no official DESNZ/Ofgem figure found
-  specifically for the escalation rate, despite a primary DESNZ appraisal document being checked
-  directly), and — rooftop only — a recurring inverter replacement (£950, every 12 years, also
-  consumer-guide-sourced) whenever the payback period runs that long. Not modeled for plug-in: no
-  comparable inverter-cost research exists at plug-in's much smaller scale, though the
-  escalation/degradation assumptions do apply there too (general PV/market assumptions, not
-  rooftop-specific). Price escalation is assumed larger than degradation, so simulated payback
-  usually comes out shorter than the old flat figure, even with an inverter replacement included —
-  the flat comparison figure is always shown alongside the simulated one so the size of this effect
-  is visible.</li>
+  explicitly in every result's <code>assumptions.paybackYears</code> (added 1 Aug 2026) rather than left
+  implicit, since payback tolerance genuinely depends on ownership horizon and risk preference the
+  calculator has no way to know.</li>
+<li><strong>Both segments' payback is now simulated year-by-year</strong> (added 1 Aug 2026, <code>simulatePaybackYears</code>,
+  replacing a flat single-year-snapshot division that implicitly assumed price and generation both
+  stay constant forever): 3%/yr electricity price escalation and 0.5%/yr panel degradation, both
+  consumer-guide-sourced (no official DESNZ/Ofgem figure found specifically for the escalation
+  rate, despite a primary DESNZ appraisal document being checked directly), and — rooftop only — a
+  recurring inverter replacement (£950, every 12 years, also consumer-guide-sourced) whenever the
+  payback period runs that long. Not modeled for plug-in: no comparable inverter-cost research
+  exists at plug-in's much smaller scale, though the escalation/degradation assumptions do apply
+  there too (general PV/market assumptions, not rooftop-specific). Price escalation is assumed
+  larger than degradation, so simulated payback usually comes out shorter than the old flat figure,
+  even with an inverter replacement included — the flat comparison figure is always shown alongside
+  the simulated one so the size of this effect is visible.</li>
 <li><strong>21 of 30 rows</strong> in the SEG tariff table are still unverified against their named source.</li>
 <li><strong>Wales and Northern Ireland</strong> regional generation multipliers are extrapolated from
   Scotland's climate/latitude band, not independently found.</li>

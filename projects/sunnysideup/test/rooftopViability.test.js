@@ -10,6 +10,8 @@ const {
   REFERENCE_SYSTEM_SIZE_KWP,
   ROOFTOP_SYSTEM_COST_GBP,
   REGIONAL_GENERATION_MULTIPLIER,
+  ELECTRICITY_PRICE_PLAUSIBLE_RANGE_PENCE_PER_KWH,
+  SEG_RATE_PLAUSIBLE_RANGE_PENCE_PER_KWH,
 } = constants;
 
 const baseInput = { orientation: 'southFacing', occupancy: 'usuallyHome', annualConsumptionKwh: 4000 };
@@ -193,11 +195,86 @@ describe('calculateRooftopViability — flags', () => {
     assert.ok(!result.flags.some((f) => f.id === 'highExportSensitivity'));
   });
 
-  test('occupancyMayLowerRealSelfConsumption fires only for usuallyOut', () => {
+  test('segTariffRequiresBatteryNotModeled fires for a battery-eligibility tariff (Intelligent Octopus Flux)', () => {
+    const batteryTariff = findSegTariff('Octopus Energy', 'Intelligent Octopus Flux');
+    const result = calculateRooftopViability({
+      ...baseInput,
+      segRatePencePerKwh: batteryTariff.ratePencePerKwh,
+      segTariffLabel: `${batteryTariff.supplier} — ${batteryTariff.tariff}`,
+      segTariffEligibility: batteryTariff.eligibility,
+    });
+    const flag = result.flags.find((f) => f.id === 'segTariffRequiresBatteryNotModeled');
+    assert.ok(flag, 'expected segTariffRequiresBatteryNotModeled to fire for a battery-eligibility tariff');
+    assert.match(flag.note, /battery/i);
+    assert.match(flag.note, /Octopus Energy — Intelligent Octopus Flux/);
+  });
+
+  test('segTariffRequiresBatteryNotModeled fires for a second battery-eligibility tariff (So Bright)', () => {
+    const batteryTariff = findSegTariff('So Energy', 'So Bright');
+    const result = calculateRooftopViability({
+      ...baseInput,
+      segRatePencePerKwh: batteryTariff.ratePencePerKwh,
+      segTariffLabel: `${batteryTariff.supplier} — ${batteryTariff.tariff}`,
+      segTariffEligibility: batteryTariff.eligibility,
+    });
+    assert.ok(result.flags.some((f) => f.id === 'segTariffRequiresBatteryNotModeled'));
+  });
+
+  test('segTariffRequiresBatteryNotModeled does not fire for a non-battery tariff', () => {
+    const nonBatteryTariff = findSegTariff('Octopus Energy', 'Outgoing Octopus');
+    const result = calculateRooftopViability({
+      ...baseInput,
+      segRatePencePerKwh: nonBatteryTariff.ratePencePerKwh,
+      segTariffLabel: `${nonBatteryTariff.supplier} — ${nonBatteryTariff.tariff}`,
+      segTariffEligibility: nonBatteryTariff.eligibility,
+    });
+    assert.ok(!result.flags.some((f) => f.id === 'segTariffRequiresBatteryNotModeled'));
+  });
+
+  test('segTariffRequiresBatteryNotModeled does not fire with no SEG tariff picked at all', () => {
+    const result = calculateRooftopViability(baseInput);
+    assert.ok(!result.flags.some((f) => f.id === 'segTariffRequiresBatteryNotModeled'));
+  });
+
+  test('electricityPriceUnusual fires for a user-provided price outside the plausible range', () => {
+    const tooLow = calculateRooftopViability({ ...baseInput, electricityPricePencePerKwh: ELECTRICITY_PRICE_PLAUSIBLE_RANGE_PENCE_PER_KWH.min - 1 });
+    const tooHigh = calculateRooftopViability({ ...baseInput, electricityPricePencePerKwh: ELECTRICITY_PRICE_PLAUSIBLE_RANGE_PENCE_PER_KWH.max + 1 });
+    assert.ok(tooLow.flags.some((f) => f.id === 'electricityPriceUnusual'));
+    assert.ok(tooHigh.flags.some((f) => f.id === 'electricityPriceUnusual'));
+  });
+
+  test('electricityPriceUnusual does not fire for a plausible user-provided price or the default', () => {
+    const plausible = calculateRooftopViability({ ...baseInput, electricityPricePencePerKwh: 30 });
+    const usingDefault = calculateRooftopViability(baseInput);
+    assert.ok(!plausible.flags.some((f) => f.id === 'electricityPriceUnusual'));
+    assert.ok(!usingDefault.flags.some((f) => f.id === 'electricityPriceUnusual'));
+  });
+
+  test('segRateUnusual fires for a user-provided SEG rate outside the plausible range', () => {
+    const tooHigh = calculateRooftopViability({ ...baseInput, segRatePencePerKwh: SEG_RATE_PLAUSIBLE_RANGE_PENCE_PER_KWH.max + 10 });
+    assert.ok(tooHigh.flags.some((f) => f.id === 'segRateUnusual'));
+  });
+
+  test('segRateUnusual does not fire for a plausible user-provided SEG rate or the default', () => {
+    const plausible = calculateRooftopViability({ ...baseInput, segRatePencePerKwh: 10 });
+    const usingDefault = calculateRooftopViability(baseInput);
+    assert.ok(!plausible.flags.some((f) => f.id === 'segRateUnusual'));
+    assert.ok(!usingDefault.flags.some((f) => f.id === 'segRateUnusual'));
+  });
+
+  test('occupancyMayLowerRealSelfConsumption fires for every rooftop result, regardless of occupancy', () => {
+    // Widened 4 Aug 2026: the annual-vs-seasonal approximation this flag
+    // describes applies to every household, not just 'usuallyOut' ones —
+    // only the note's extra within-day detail is occupancy-specific.
     const usuallyOut = calculateRooftopViability({ ...baseInput, occupancy: 'usuallyOut' });
     const usuallyHome = calculateRooftopViability({ ...baseInput, occupancy: 'usuallyHome' });
     assert.ok(usuallyOut.flags.some((f) => f.id === 'occupancyMayLowerRealSelfConsumption'));
-    assert.ok(!usuallyHome.flags.some((f) => f.id === 'occupancyMayLowerRealSelfConsumption'));
+    assert.ok(usuallyHome.flags.some((f) => f.id === 'occupancyMayLowerRealSelfConsumption'));
+
+    const outNote = usuallyOut.flags.find((f) => f.id === 'occupancyMayLowerRealSelfConsumption').note;
+    const homeNote = usuallyHome.flags.find((f) => f.id === 'occupancyMayLowerRealSelfConsumption').note;
+    assert.notEqual(outNote, homeNote, "usuallyOut's note should add within-day detail the usuallyHome note doesn't have");
+    assert.ok(outNote.length > homeNote.length);
   });
 
   test('occupancy does not change any numeric result field, only the flags', () => {
