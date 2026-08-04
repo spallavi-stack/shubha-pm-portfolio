@@ -273,8 +273,7 @@ printResult(
 console.log('\n--- simulatePaybackYears: zero-degradation, zero-escalation should reduce to flat division ---');
 const zeroEffectSim = simulatePaybackYears({
   systemCostGbp: 1000,
-  baseSelfConsumedKwh: 1000,
-  baseSecondaryKwh: 0,
+  baseGenerationKwh: 1000,
   secondaryRatePencePerKwh: 0,
   electricityPricePencePerKwh: 20,
   // No inverter params: this path should also confirm the "no inverter
@@ -288,8 +287,7 @@ console.log('- With escalation/degradation constants nonzero but a trivial 5-yea
 console.log('\n--- simulatePaybackYears: a case that never recovers within PAYBACK_SIMULATION_MAX_YEARS ---');
 const neverRecoversSim = simulatePaybackYears({
   systemCostGbp: 100000,
-  baseSelfConsumedKwh: 100,
-  baseSecondaryKwh: 0,
+  baseGenerationKwh: 100,
   secondaryRatePencePerKwh: 0,
   electricityPricePencePerKwh: 20,
 });

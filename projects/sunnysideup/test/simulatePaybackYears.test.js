@@ -6,8 +6,7 @@ describe('simulatePaybackYears', () => {
   test('zero base-year savings returns Infinity without simulating', () => {
     const result = simulatePaybackYears({
       systemCostGbp: 5000,
-      baseSelfConsumedKwh: 0,
-      baseSecondaryKwh: 0,
+      baseGenerationKwh: 0,
       secondaryRatePencePerKwh: 0,
       electricityPricePencePerKwh: 26.11,
     });
@@ -15,10 +14,12 @@ describe('simulatePaybackYears', () => {
   });
 
   test('a simple case is close to, but not identical to, flat division (escalation applies from year 2)', () => {
+    // annualConsumptionKwh omitted: full self-consumption every year (see
+    // resolveGenerationSplit), so this isolates the escalation/degradation
+    // behavior from the self-consumption split entirely.
     const result = simulatePaybackYears({
       systemCostGbp: 1000,
-      baseSelfConsumedKwh: 1000,
-      baseSecondaryKwh: 0,
+      baseGenerationKwh: 1000,
       secondaryRatePencePerKwh: 0,
       electricityPricePencePerKwh: 20,
     });
@@ -32,8 +33,7 @@ describe('simulatePaybackYears', () => {
   test('never recovering within PAYBACK_SIMULATION_MAX_YEARS returns Infinity, loop terminates', () => {
     const result = simulatePaybackYears({
       systemCostGbp: 100000,
-      baseSelfConsumedKwh: 100,
-      baseSecondaryKwh: 0,
+      baseGenerationKwh: 100,
       secondaryRatePencePerKwh: 0,
       electricityPricePencePerKwh: 20,
     });
@@ -46,8 +46,7 @@ describe('simulatePaybackYears', () => {
     // replacement in.
     const result = simulatePaybackYears({
       systemCostGbp: 14000,
-      baseSelfConsumedKwh: 1000,
-      baseSecondaryKwh: 0,
+      baseGenerationKwh: 1000,
       secondaryRatePencePerKwh: 0,
       electricityPricePencePerKwh: 26.11,
       inverterReplacementCostGbp: 950,
@@ -65,8 +64,7 @@ describe('simulatePaybackYears', () => {
     // since payback completes before year 13 is ever reached.
     const common = {
       systemCostGbp: 3300,
-      baseSelfConsumedKwh: 1000,
-      baseSecondaryKwh: 0,
+      baseGenerationKwh: 1000,
       secondaryRatePencePerKwh: 0,
       electricityPricePencePerKwh: 26.11,
       inverterReplacementCostGbp: 950,
@@ -87,8 +85,8 @@ describe('simulatePaybackYears', () => {
     assert.doesNotThrow(() => {
       simulatePaybackYears({
         systemCostGbp: 7000,
-        baseSelfConsumedKwh: 2000,
-        baseSecondaryKwh: 500,
+        baseGenerationKwh: 2500,
+        annualConsumptionKwh: 2000,
         secondaryRatePencePerKwh: 3,
         electricityPricePencePerKwh: 26.11,
       });
@@ -101,8 +99,7 @@ describe('simulatePaybackYears', () => {
     // move the number) should land between year 1 and year 2.
     const result = simulatePaybackYears({
       systemCostGbp: 750,
-      baseSelfConsumedKwh: 5000,
-      baseSecondaryKwh: 0,
+      baseGenerationKwh: 5000,
       secondaryRatePencePerKwh: 0,
       electricityPricePencePerKwh: 10, // year-1 savings = 5000*10/100 = £500
     });
@@ -112,5 +109,56 @@ describe('simulatePaybackYears', () => {
   test('respects PAYBACK_SIMULATION_MAX_YEARS as the simulation horizon', () => {
     assert.equal(typeof constants.PAYBACK_SIMULATION_MAX_YEARS, 'number');
     assert.ok(constants.PAYBACK_SIMULATION_MAX_YEARS > 0);
+  });
+
+  test('self-consumption split is recomputed each year from that year\'s degraded generation, not frozen at year 1', () => {
+    // With a real annualConsumptionKwh given, generation and consumption
+    // start close together (demand ratio near 1) so the self-consumption
+    // fraction is not already saturated at its 1/demandRatio ceiling. As
+    // generation degrades year over year, the demand ratio falls, and the
+    // self-consumption fraction (per selfConsumptionFactorFromDemandRatio)
+    // should rise — so a long-enough simulation should yield strictly more
+    // total self-consumed-priced savings than freezing the year-1 split
+    // would have, which this test checks indirectly via payback being
+    // shorter than a hand-computed frozen-split equivalent.
+    const systemCostGbp = 6000;
+    const baseGenerationKwh = 4000;
+    const annualConsumptionKwh = 4000;
+    const secondaryRatePencePerKwh = 3;
+    const electricityPricePencePerKwh = 26.11;
+
+    const recomputed = simulatePaybackYears({
+      systemCostGbp,
+      baseGenerationKwh,
+      annualConsumptionKwh,
+      secondaryRatePencePerKwh,
+      electricityPricePencePerKwh,
+    });
+
+    // Hand-rolled frozen-split simulation, matching the pre-fix behavior:
+    // the year-1 split is computed once and just decayed in parallel.
+    const { selfConsumptionFactorFromDemandRatio } = require('../calculator.js');
+    const year1Rate = selfConsumptionFactorFromDemandRatio(baseGenerationKwh, annualConsumptionKwh);
+    const year1SelfConsumedKwh = Math.min(baseGenerationKwh * year1Rate, annualConsumptionKwh);
+    const year1SecondaryKwh = baseGenerationKwh - year1SelfConsumedKwh;
+    let cumulativeSavingsGbp = 0;
+    let frozenPaybackYears = Infinity;
+    for (let year = 1; year <= constants.PAYBACK_SIMULATION_MAX_YEARS; year += 1) {
+      const degradationFactor = (1 - constants.PANEL_DEGRADATION_ANNUAL_RATE) ** (year - 1);
+      const escalatedPrice = electricityPricePencePerKwh * (1 + constants.ELECTRICITY_PRICE_ANNUAL_ESCALATION_RATE) ** (year - 1);
+      const yearSavingsGbp = (year1SelfConsumedKwh * degradationFactor * escalatedPrice + year1SecondaryKwh * degradationFactor * secondaryRatePencePerKwh) / 100;
+      const savingsBeforeThisYear = cumulativeSavingsGbp;
+      cumulativeSavingsGbp += yearSavingsGbp;
+      if (cumulativeSavingsGbp >= systemCostGbp) {
+        frozenPaybackYears = (year - 1) + (systemCostGbp - savingsBeforeThisYear) / yearSavingsGbp;
+        break;
+      }
+    }
+
+    assert.ok(Number.isFinite(frozenPaybackYears), 'test setup should reach payback under the frozen-split comparison too');
+    assert.ok(
+      recomputed.paybackYears < frozenPaybackYears,
+      `recomputing the split each year (rising self-consumption as generation degrades) should pay back sooner than freezing it at year 1: got ${recomputed.paybackYears} vs frozen ${frozenPaybackYears}`
+    );
   });
 });

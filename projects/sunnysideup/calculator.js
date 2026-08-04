@@ -429,6 +429,30 @@ function selfConsumptionFactorFromDemandRatio(generationKwh, consumptionKwh) {
   return Math.min(rawFactor, 1, 1 / demandRatio);
 }
 
+/**
+ * Splits a given generation amount (any single year's, degraded or not)
+ * into self-consumed vs. the secondary bucket (rooftop's exported kWh, or
+ * plug-in's unself-consumed kWh) for a known annual consumption, via
+ * selfConsumptionFactorFromDemandRatio. When annualConsumptionKwh isn't
+ * known at all (plug-in's optional-consumption fallback — see
+ * calculatePluginViability's own comment), assumes full self-consumption
+ * instead, since the demand-ratio formula has nothing to divide by.
+ *
+ * The single place this split is computed, so a result's year-1 headline
+ * figures and every year of simulatePaybackYears' simulation reuse the same
+ * logic rather than the simulation re-deriving or freezing its own copy.
+ * @param {number} generationKwh
+ * @param {number} [annualConsumptionKwh]
+ */
+function resolveGenerationSplit(generationKwh, annualConsumptionKwh) {
+  if (annualConsumptionKwh == null) {
+    return { selfConsumedKwh: generationKwh, secondaryKwh: 0, selfConsumptionRate: 1 };
+  }
+  const selfConsumptionRate = selfConsumptionFactorFromDemandRatio(generationKwh, annualConsumptionKwh);
+  const selfConsumedKwh = Math.min(generationKwh * selfConsumptionRate, annualConsumptionKwh);
+  return { selfConsumedKwh, secondaryKwh: generationKwh - selfConsumedKwh, selfConsumptionRate };
+}
+
 // Payback thresholds for green/amber/red. Not a cited figure — a design
 // judgment loosely anchored to grounding-research.md's own reported payback
 // range ("roughly 6-14 years across sources" for rooftop), not a regulator
@@ -526,25 +550,34 @@ const PAYBACK_SIMULATION_MAX_YEARS = 30;
  * (omit both inverter params for a segment with no such cost modeled, e.g.
  * plug-in — see PLUGIN_VERTICAL_ORIENTATION_MULTIPLIER's sourcing note for
  * why that cost isn't modeled at plug-in's scale).
+ *
+ * The self-consumed/secondary split is re-derived every year via
+ * resolveGenerationSplit, from that year's own degraded generation, rather
+ * than computed once at year 1 and decayed in parallel — a lower demand
+ * ratio (degraded generation against unchanged consumption) genuinely means
+ * a higher self-consumption fraction under the same formula used for the
+ * headline year-1 figures, so freezing the split would contradict this
+ * calculator's own self-consumption model for every year after the first.
  * @param {Object} input
  * @param {number} input.systemCostGbp
- * @param {number} input.baseSelfConsumedKwh - year-1 self-consumed kWh, before degradation
- * @param {number} input.baseSecondaryKwh - year-1 kWh in the second bucket (rooftop's exported kWh, or plug-in's unselfConsumedKwh)
- * @param {number} input.secondaryRatePencePerKwh - rate applied to baseSecondaryKwh (SEG rate for rooftop, 0 for plug-in — that bucket earns nothing)
+ * @param {number} input.baseGenerationKwh - year-1 generation, before degradation
+ * @param {number} [input.annualConsumptionKwh] - household annual consumption, held flat across years; omit for plug-in's optional-consumption fallback (100% self-consumed every year — see resolveGenerationSplit)
+ * @param {number} input.secondaryRatePencePerKwh - rate applied to the secondary bucket (SEG rate for rooftop, 0 for plug-in — that bucket earns nothing)
  * @param {number} input.electricityPricePencePerKwh - year-1 import price, escalated in later years
  * @param {number} [input.inverterReplacementCostGbp]
  * @param {number} [input.inverterReplacementEveryYears]
  */
 function simulatePaybackYears({
   systemCostGbp,
-  baseSelfConsumedKwh,
-  baseSecondaryKwh,
+  baseGenerationKwh,
+  annualConsumptionKwh,
   secondaryRatePencePerKwh,
   electricityPricePencePerKwh,
   inverterReplacementCostGbp,
   inverterReplacementEveryYears,
 }) {
-  const baseYearSavingsGbp = (baseSelfConsumedKwh * electricityPricePencePerKwh + baseSecondaryKwh * secondaryRatePencePerKwh) / 100;
+  const year1Split = resolveGenerationSplit(baseGenerationKwh, annualConsumptionKwh);
+  const baseYearSavingsGbp = (year1Split.selfConsumedKwh * electricityPricePencePerKwh + year1Split.secondaryKwh * secondaryRatePencePerKwh) / 100;
   const flatPaybackYears = baseYearSavingsGbp > 0 ? systemCostGbp / baseYearSavingsGbp : Infinity;
   if (baseYearSavingsGbp <= 0) {
     return { paybackYears: Infinity, flatPaybackYears, inverterReplacementsFactored: 0 };
@@ -562,14 +595,16 @@ function simulatePaybackYears({
 
     const degradationFactor = (1 - PANEL_DEGRADATION_ANNUAL_RATE) ** (year - 1);
     const escalatedPrice = electricityPricePencePerKwh * (1 + ELECTRICITY_PRICE_ANNUAL_ESCALATION_RATE) ** (year - 1);
-    const yearSavingsGbp = (baseSelfConsumedKwh * degradationFactor * escalatedPrice + baseSecondaryKwh * degradationFactor * secondaryRatePencePerKwh) / 100;
+    const generationThisYear = baseGenerationKwh * degradationFactor;
+    const yearSplit = resolveGenerationSplit(generationThisYear, annualConsumptionKwh);
+    const yearSavingsGbp = (yearSplit.selfConsumedKwh * escalatedPrice + yearSplit.secondaryKwh * secondaryRatePencePerKwh) / 100;
 
     const savingsBeforeThisYear = cumulativeSavingsGbp;
     cumulativeSavingsGbp += yearSavingsGbp;
 
     if (cumulativeSavingsGbp >= cumulativeCostGbp) {
       const remainder = cumulativeCostGbp - savingsBeforeThisYear;
-      // yearSavingsGbp <= 0 here would require baseYearSavingsGbp <= 0 too (degradation/escalation only scale a positive base up or down, never flip its sign), which the early-return guard above already catches before the loop starts; unreachable given this function's real input domain.
+      // Reaching this branch means savingsBeforeThisYear < cumulativeCostGbp (otherwise a prior year would already have returned), so remainder > 0; adding yearSavingsGbp is what newly cleared cumulativeCostGbp, so yearSavingsGbp >= remainder > 0 always holds here — unreachable given this function's real input domain.
       /* c8 ignore next */
       const fraction = yearSavingsGbp > 0 ? remainder / yearSavingsGbp : 0;
       return { paybackYears: (year - 1) + fraction, flatPaybackYears, inverterReplacementsFactored };
@@ -795,9 +830,10 @@ function calculateRooftopViability({
   const generation = Math.round(preRoofAreaGeneration * roofAreaMultiplier);
   const systemCostGbp = roofAreaSizing ? roofAreaSizing.systemCostGbp : ROOFTOP_SYSTEM_COST_GBP;
 
-  const selfConsumptionRate = selfConsumptionFactorFromDemandRatio(generation, annualConsumptionKwh);
-  const selfConsumedKwh = Math.min(generation * selfConsumptionRate, annualConsumptionKwh);
-  const exportedKwh = generation - selfConsumedKwh;
+  const generationSplit = resolveGenerationSplit(generation, annualConsumptionKwh);
+  const selfConsumptionRate = generationSplit.selfConsumptionRate;
+  const selfConsumedKwh = generationSplit.selfConsumedKwh;
+  const exportedKwh = generationSplit.secondaryKwh;
 
   const electricityPriceIsUserProvided = electricityPricePencePerKwh != null;
   const usedElectricityPrice = electricityPriceIsUserProvided
@@ -822,8 +858,8 @@ function calculateRooftopViability({
   // PANEL_DEGRADATION_ANNUAL_RATE's sourcing notes above.
   const paybackSimulation = simulatePaybackYears({
     systemCostGbp,
-    baseSelfConsumedKwh: selfConsumedKwh,
-    baseSecondaryKwh: exportedKwh,
+    baseGenerationKwh: generation,
+    annualConsumptionKwh,
     secondaryRatePencePerKwh: usedSegRate,
     electricityPricePencePerKwh: usedElectricityPrice,
     inverterReplacementCostGbp: INVERTER_REPLACEMENT_COST_GBP,
@@ -1494,9 +1530,11 @@ function calculatePluginViability({ occupancy, orientation, electricityPricePenc
   // assumption, but that fallback is now named as a real overstatement risk
   // in the result's flags/assumptions, not silently presented as fine.
   const hasConsumptionInput = annualConsumptionKwh != null && annualConsumptionKwh > 0;
-  const selfConsumptionRate = hasConsumptionInput ? selfConsumptionFactorFromDemandRatio(generation, annualConsumptionKwh) : 1;
-  const selfConsumedKwh = hasConsumptionInput ? Math.min(generation * selfConsumptionRate, annualConsumptionKwh) : generation;
-  const unselfConsumedKwh = generation - selfConsumedKwh;
+  const resolvedConsumptionKwh = hasConsumptionInput ? annualConsumptionKwh : null;
+  const generationSplit = resolveGenerationSplit(generation, resolvedConsumptionKwh);
+  const selfConsumptionRate = generationSplit.selfConsumptionRate;
+  const selfConsumedKwh = generationSplit.selfConsumedKwh;
+  const unselfConsumedKwh = generationSplit.secondaryKwh;
 
   // Year-1 snapshot, still the headline "annual savings" figure. Payback
   // below is simulated year-by-year (degradation + price escalation, no
@@ -1505,8 +1543,8 @@ function calculatePluginViability({ occupancy, orientation, electricityPricePenc
   const annualSavingsGbp = (selfConsumedKwh * usedElectricityPrice) / 100;
   const paybackSimulation = simulatePaybackYears({
     systemCostGbp: PLUGIN_KIT_COST_GBP,
-    baseSelfConsumedKwh: selfConsumedKwh,
-    baseSecondaryKwh: unselfConsumedKwh,
+    baseGenerationKwh: generation,
+    annualConsumptionKwh: resolvedConsumptionKwh,
     secondaryRatePencePerKwh: 0,
     electricityPricePencePerKwh: usedElectricityPrice,
   });

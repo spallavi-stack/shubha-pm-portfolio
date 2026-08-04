@@ -402,7 +402,9 @@ flowchart TD
   Y2["cumulativeCost +=<br/>£950"]
   Y3["degradation =<br/>(1 − 0.5%)^(year−1)"]
   Y4["escalatedPrice =<br/>price x (1 + 3%)^(year−1)"]
-  Y5["yearSavings =<br/>(selfConsumed x degradation<br/>x escalatedPrice + exported<br/>x degradation x SEG) / 100"]
+  Y4b["thisYearGeneration =<br/>baseGeneration x degradation"]
+  Y4c["re-derive selfConsumed /<br/>exported for<br/>thisYearGeneration<br/>(same demand-ratio<br/>formula as F0-F2)"]
+  Y5["yearSavings =<br/>(selfConsumed x<br/>escalatedPrice + exported<br/>x SEG) / 100"]
   Y6["cumulativeSavings<br/>+= yearSavings"]
   Y7{"cumulativeSavings<br/>≥ cumulativeCost?"}
   Y8["payback = year − 1 +<br/>fraction of this year needed"]
@@ -414,7 +416,9 @@ flowchart TD
   Y1 -->|No| Y3
   Y2 --> Y3
   Y3 --> Y4
-  Y4 --> Y5
+  Y4 --> Y4b
+  Y4b --> Y4c
+  Y4c --> Y5
   Y5 --> Y6
   Y6 --> Y7
   Y7 -->|Yes| Y8
@@ -422,6 +426,10 @@ flowchart TD
   Y9 --> Y0
   Y0 -->|"loop exhausted"| Y10
 ```
+
+The self-consumed/exported split (`selfConsumed`/`exported`) is re-derived every year from that
+year's own degraded generation, via the same `resolveGenerationSplit` helper §4e's headline year-1
+figures use — not computed once at year 1 and decayed in parallel. See the correction note below.
 
 **Key constants** (`calculator.js`, self-consumption formula + payback simulation):
 
@@ -495,6 +503,26 @@ exact year, only that at least one replacement fired. Fixed to `year % inverterR
 === 0` (replacements now land at years 12, 24, 36), which also made the previous `year > 1` guard
 redundant, so it was dropped. A regression test (`simulatePaybackYears.test.js`) now pins the exact
 year a replacement first fires, distinguishing it from a cycle length one year longer.
+
+Corrected 4 Aug 2026 (a second, separate fix in the same pass): `simulatePaybackYears` previously
+computed the self-consumed/exported split once, at year 1, and decayed both halves by the same
+degradation factor every subsequent year — freezing the *ratio* between them for the full 30-year
+horizon even as generation fell. That contradicted this calculator's own self-consumption model:
+`selfConsumptionFactorFromDemandRatio` says a lower demand ratio (degraded generation against
+unchanged consumption) means a *higher* self-consumption fraction, a relationship the simulation
+used correctly for the headline year-1 figures and then ignored for every year after. Found by a
+third-party review. Fixed by extracting the split computation into a shared
+`resolveGenerationSplit(generationKwh, annualConsumptionKwh)` helper, now called both for the
+year-1 headline figures and inside the simulation loop every year, against that year's own degraded
+generation — one formula, reused, instead of a real path (year 1) and a frozen approximation of it
+(years 2-30). `simulatePaybackYears`'s signature changed accordingly: it now takes
+`baseGenerationKwh` and `annualConsumptionKwh` (the two physical quantities the caller already has)
+in place of a pre-split `baseSelfConsumedKwh`/`baseSecondaryKwh` pair the caller previously had to
+derive correctly beforehand. Year-1 output is unchanged (no degradation yet, so the split matches
+exactly what the old code produced); later years now self-consume a rising share as generation
+degrades, matching the rest of the file's own model. `resolveGenerationSplit` also folds in
+plug-in's "no consumption given" fallback (100% self-consumed, every year) as its `null`-consumption
+case, so `calculatePluginViability`'s own year-1 split computation now reuses the same helper too.
 
 ---
 
