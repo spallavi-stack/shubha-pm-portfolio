@@ -2,7 +2,7 @@ const { test, describe } = require('node:test');
 const assert = require('node:assert/strict');
 const { estimateSystemSizeFromRoofArea, calculateRooftopViability, constants } = require('../calculator.js');
 
-const { ROOF_AREA_PER_PANEL_M2, PANEL_WATTAGE_KWP, COST_PER_KWP_GBP_BY_TIER, REFERENCE_SYSTEM_SIZE_KWP, ROOFTOP_SYSTEM_COST_GBP } = constants;
+const { ROOF_AREA_PER_PANEL_M2, PANEL_WATTAGE_KWP, COST_PER_KWP_GBP_BY_TIER, REFERENCE_SYSTEM_SIZE_KWP, ROOFTOP_SYSTEM_COST_GBP, DOMESTIC_SYSTEM_SIZE_SANITY_MAX_KWP } = constants;
 
 describe('estimateSystemSizeFromRoofArea', () => {
   test('returns null when the area cannot fit even one panel', () => {
@@ -94,5 +94,31 @@ describe('calculateRooftopViability — roof area too small for any panel', () =
     assert.equal(tooSmall.systemCostGbp, neverGiven.systemCostGbp);
     assert.notEqual(tooSmall.assumptions.systemCostGbp.note, neverGiven.assumptions.systemCostGbp.note);
     assert.doesNotMatch(tooSmall.assumptions.systemCostGbp.note, /Give your usable roof area/);
+  });
+});
+
+describe('calculateRooftopViability — roof area far exceeding domestic scale', () => {
+  // ADDED 4 Aug 2026 (found by a third-party review): COST_PER_KWP_GBP_BY_TIER
+  // has no upper bound, so a very large roof-area-derived system still
+  // prices at the same flat >3kWp rate as an ordinary domestic install.
+  const baseInput = { orientation: 'southFacing', occupancy: 'usuallyHome', annualConsumptionKwh: 4000 };
+
+  test('roofAreaSizingExceedsDomesticScale fires for a system well above DOMESTIC_SYSTEM_SIZE_SANITY_MAX_KWP', () => {
+    const result = calculateRooftopViability({ ...baseInput, roofAreaM2: 200 });
+    assert.ok(result.systemSizeKwp > DOMESTIC_SYSTEM_SIZE_SANITY_MAX_KWP, 'test setup should produce a system above the sanity max');
+    const flag = result.flags.find((f) => f.id === 'roofAreaSizingExceedsDomesticScale');
+    assert.ok(flag, 'expected roofAreaSizingExceedsDomesticScale to fire');
+    assert.match(flag.note, new RegExp(`${DOMESTIC_SYSTEM_SIZE_SANITY_MAX_KWP}kWp`));
+  });
+
+  test('roofAreaSizingExceedsDomesticScale does not fire for a typical domestic roof area', () => {
+    const result = calculateRooftopViability({ ...baseInput, roofAreaM2: 25 });
+    assert.ok(result.systemSizeKwp <= DOMESTIC_SYSTEM_SIZE_SANITY_MAX_KWP, 'test setup should stay within the sanity max');
+    assert.ok(!result.flags.some((f) => f.id === 'roofAreaSizingExceedsDomesticScale'));
+  });
+
+  test('roofAreaSizingExceedsDomesticScale does not fire when no roof area is given at all', () => {
+    const result = calculateRooftopViability(baseInput);
+    assert.ok(!result.flags.some((f) => f.id === 'roofAreaSizingExceedsDomesticScale'));
   });
 });

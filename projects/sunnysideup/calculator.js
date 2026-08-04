@@ -259,6 +259,20 @@ const PANEL_WATTAGE_KWP = 0.43;
 // costing tool.
 const COST_PER_KWP_GBP_BY_TIER = { smallSystemThresholdKwp: 3, smallSystemCostPerKwp: 1800, standardCostPerKwp: 1625 };
 
+// ADDED 4 Aug 2026 (found by a third-party review): COST_PER_KWP_GBP_BY_TIER
+// only has two tiers (<=3kWp / >3kWp), with a single flat rate for
+// everything above 3kWp and no upper bound on roofAreaM2 at all. A very
+// large input (a mistyped area, or a roof area genuinely outside domestic
+// scale) produces a system priced at the same £1,625/kWp as a typical
+// 4kWp house, understating real bulk/commercial economics at that size and
+// extrapolating research (MCS's own reported UK average is 4.6kWp; a
+// typical 3-bed semi's usable roof fits 3.9-5.2kWp) well past where it was
+// ever meant to apply. N/A (a sanity cap, not a researched figure) — chosen
+// generously (roughly 4x the MCS average) so it doesn't false-flag a
+// genuinely large detached-house roof, only inputs clearly outside typical
+// domestic scale.
+const DOMESTIC_SYSTEM_SIZE_SANITY_MAX_KWP = 20;
+
 // CORRECTED 1 Aug 2026: this file previously had a PERMITTED_DEVELOPMENT_KWP_CEILING_ENGLAND
 // = 4 constant, tagged [Fact], claiming 4kWp was "the largest system size
 // covered by Permitted Development Rights in England." That was wrong, and
@@ -1098,6 +1112,22 @@ function calculateRooftopViability({
     });
   }
 
+  // ADDED 4 Aug 2026 (found by a third-party review): COST_PER_KWP_GBP_BY_TIER
+  // has no upper bound — a very large roof-area-derived system still prices
+  // at the same flat >3kWp rate as a typical domestic install, extrapolating
+  // this file's own MCS-anchored research (4.6kWp UK average) well past
+  // where it was ever meant to apply. Not a hard cap on the roofAreaM2
+  // input itself, just a visibility flag once the derived system crosses a
+  // generous sanity bound.
+  if (roofAreaSizing && roofAreaSizing.systemSizeKwp > DOMESTIC_SYSTEM_SIZE_SANITY_MAX_KWP) {
+    flags.push({
+      id: 'roofAreaSizingExceedsDomesticScale',
+      tier: 'Inference',
+      title: 'This roof-area-derived system is unusually large',
+      note: `Your stated roof area produces a ${roofAreaSizing.systemSizeKwp}kWp system, well above typical UK domestic scale (MCS's own reported average is 4.6kWp) and above the ${DOMESTIC_SYSTEM_SIZE_SANITY_MAX_KWP}kWp range this calculator's cost research was ever checked against. The £${roofAreaSizing.costPerKwpGbp}/kWp rate used here is the same flat rate applied to an ordinary ~4kWp system — real economics at this scale would likely differ, and this result's cost figure shouldn't be trusted at face value. Double-check the roof area you entered.`,
+    });
+  }
+
   // High-export households are unusually sensitive to which SEG rate this
   // result assumes: real tariffs span roughly 1-25p/kWh (SEG_TARIFFS above),
   // a much wider spread than electricity import prices do. When no specific
@@ -1820,6 +1850,7 @@ const SunnySideUpCalculator = {
     ROOF_AREA_PER_PANEL_M2,
     PANEL_WATTAGE_KWP,
     COST_PER_KWP_GBP_BY_TIER,
+    DOMESTIC_SYSTEM_SIZE_SANITY_MAX_KWP,
     REGIONAL_GENERATION_MULTIPLIER,
     REGIONS_WITH_UNRESEARCHED_REGULATORY_REGIME,
     OPEN_METEO_ASSUMED_PEAK_POWER_KWP,
