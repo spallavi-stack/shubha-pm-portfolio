@@ -137,6 +137,7 @@ button{font-family:inherit;}
 
 .field input[type=text],
 .field input[type=number],
+.field input[type=email],
 .field select{
   width:100%;
   font:inherit;
@@ -158,6 +159,8 @@ button{font-family:inherit;}
   background-repeat:no-repeat;background-position:right 14px center;padding-right:38px;
 }
 .field input:focus,.field select:focus{box-shadow:var(--shadow-sm), 0 0 0 3px var(--color-sky-blue-tint);}
+.field input.invalid,.field input.invalid:focus{box-shadow:var(--shadow-sm), 0 0 0 3px var(--color-poor-tint);border-color:var(--color-poor-dark);}
+.field-error{font-size:var(--text-xs);font-weight:700;color:var(--color-poor-dark);}
 
 .checkbox-row{display:flex;align-items:center;gap:10px;cursor:pointer;font-weight:500;font-size:var(--text-base);margin-bottom:var(--space-3);user-select:none;}
 .checkbox-row:last-child{margin-bottom:0;}
@@ -315,6 +318,73 @@ button{font-family:inherit;}
 .carousel-nav{display:flex;gap:12px;margin-top:var(--space-2);}
 .carousel-nav .btn{flex:1;}
 .carousel-nav .btn-ghost{flex:0 0 auto;visibility:visible;}
+
+/* ---------- Share badge + referral modal ---------- */
+.share-block{
+  margin-top:var(--space-6);padding-top:var(--space-5);
+  border-top:2px solid var(--color-ink-10);
+  display:flex;flex-direction:column;align-items:center;gap:var(--space-3);text-align:center;
+}
+.share-prompt{font-family:var(--font-display);font-weight:700;font-size:var(--text-base);}
+.share-badge{
+  width:104px;height:104px;padding:0;flex-shrink:0;
+  border:var(--border-thick);border-radius:var(--radius-pill);
+  background:var(--surface-card);color:var(--color-good-dark);
+  box-shadow:var(--shadow-md);cursor:pointer;
+  transition:transform var(--duration-fast) var(--ease-pop), box-shadow var(--duration-fast) var(--ease-pop);
+}
+.share-badge svg{display:block;width:100%;height:100%;}
+.share-badge:active{transform:translate(3px,3px);box-shadow:var(--shadow-press);}
+.share-badge:focus-visible{outline:none;box-shadow:var(--shadow-md), 0 0 0 3px var(--color-sky-blue-tint);}
+/* The word ring turns slowly on its own, and speeds up on hover so the badge
+   reads as pressable rather than as a printed sticker. */
+.share-ring{transform-origin:50% 50%;animation:share-spin 24s linear infinite;}
+.share-badge:hover .share-ring{animation-duration:6s;}
+@keyframes share-spin{to{transform:rotate(360deg);}}
+@media (prefers-reduced-motion:reduce){.share-ring{animation:none;}.share-badge:hover .share-ring{animation:none;}}
+
+.modal-backdrop{
+  position:fixed;inset:0;z-index:100;
+  background:rgba(28,27,24,0.45);
+  display:flex;align-items:center;justify-content:center;padding:20px;
+}
+.modal{
+  background:var(--surface-page);
+  border:var(--border-heavy);border-radius:var(--radius-lg);
+  box-shadow:var(--shadow-lg);
+  padding:var(--space-6);
+  width:100%;max-width:420px;max-height:calc(100vh - 40px);overflow-y:auto;
+  animation:modal-pop var(--duration-base) var(--ease-pop);
+}
+@keyframes modal-pop{from{transform:translateY(12px) scale(0.96);opacity:0;}}
+@media (prefers-reduced-motion:reduce){.modal{animation:none;}}
+.modal-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:var(--space-2);}
+.modal-head h2{font-size:var(--text-2xl);}
+.modal-close{
+  flex-shrink:0;width:32px;height:32px;line-height:1;
+  border:var(--border-thin);border-radius:var(--radius-pill);
+  background:var(--surface-card);color:var(--color-ink);
+  font-size:var(--text-lg);font-weight:700;cursor:pointer;
+}
+.modal-close:active{transform:translate(1px,1px);}
+.modal-sub{font-size:var(--text-sm);color:var(--text-secondary);margin-bottom:var(--space-5);}
+.modal-actions{display:flex;gap:12px;margin-top:var(--space-6);}
+.modal-actions .btn{flex:1;font-size:var(--text-base);padding:14px 20px;}
+.modal-actions .btn-ghost{flex:0 0 auto;}
+.modal-note{
+  margin-top:var(--space-5);padding-top:var(--space-4);
+  border-top:2px solid var(--color-ink-10);
+  font-size:var(--text-xs);color:var(--text-muted);
+}
+.share-sent{display:flex;flex-direction:column;align-items:center;text-align:center;gap:var(--space-3);padding:var(--space-4) 0;}
+.share-sent .tick{
+  width:56px;height:56px;border-radius:var(--radius-pill);
+  border:var(--border-thick);background:var(--color-good-tint);color:var(--color-good-dark);
+  display:flex;align-items:center;justify-content:center;
+  font-size:var(--text-2xl);font-weight:900;box-shadow:var(--shadow-sm);
+}
+.share-sent .headline{font-family:var(--font-display);font-weight:700;font-size:var(--text-xl);}
+.share-sent .detail{font-size:var(--text-sm);color:var(--text-secondary);}
 
 /* Decorative doodle accents, used sparingly */
 .doodle{position:absolute;pointer-events:none;opacity:0.5;}
@@ -491,12 +561,75 @@ button{font-family:inherit;}
             <summary>See the full breakdown</summary>
             <div class="accordion-body" id="assumptionsBody"></div>
           </details>
+
+          <div class="share-block hidden" id="shareBlock">
+            <p class="share-prompt">Know someone else weighing up solar?</p>
+            <button type="button" class="share-badge" id="shareBadge" aria-label="Share SunnySideUp with someone" onclick="openShareModal()">
+              <svg viewBox="0 0 100 100" aria-hidden="true">
+                <defs>
+                  <path id="shareRingPath" fill="none" d="M50,50 m-36,0 a36,36 0 1,1 72,0 a36,36 0 1,1 -72,0"></path>
+                </defs>
+                <g class="share-ring">
+                  <text font-family="Space Grotesk, sans-serif" font-size="11" font-weight="700" fill="currentColor">
+                    <textPath href="#shareRingPath" startOffset="0" textLength="226.2" lengthAdjust="spacing">SHARE • SHARE • SHARE • </textPath>
+                  </text>
+                </g>
+                <g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M50 57 V38"></path>
+                  <path d="M43 45 L50 38 L57 45"></path>
+                  <path d="M38 52 v10 a3 3 0 0 0 3 3 h18 a3 3 0 0 0 3 -3 v-10"></path>
+                </g>
+              </svg>
+            </button>
+          </div>
         </div>
       </div>
     </div>
   </div>
 </div>
 
+</div>
+
+<div class="modal-backdrop hidden" id="shareModal" onclick="onShareBackdropClick(event)">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="shareModalTitle">
+
+    <div id="shareFormView">
+      <div class="modal-head">
+        <h2 id="shareModalTitle">Share this with</h2>
+        <button type="button" class="modal-close" aria-label="Close" onclick="closeShareModal()">✕</button>
+      </div>
+      <p class="modal-sub">They'll get a short note about SunnySideUp so they can check their own place.</p>
+
+      <form id="shareForm" novalidate onsubmit="submitShare(event)">
+        <div class="field">
+          <label for="shareName">Their name</label>
+          <input id="shareName" type="text" autocomplete="off" placeholder="e.g. Priya">
+          <p class="field-error hidden" id="shareNameError"></p>
+        </div>
+
+        <div class="field">
+          <label for="shareEmail">Their email address</label>
+          <input id="shareEmail" type="email" autocomplete="off" placeholder="e.g. priya@example.com">
+          <p class="field-error hidden" id="shareEmailError"></p>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn btn-ghost" onclick="closeShareModal()">Cancel</button>
+          <button type="submit" class="btn">Send it</button>
+        </div>
+      </form>
+
+      <p class="modal-note">Prototype only. Nothing is sent and no address is stored.</p>
+    </div>
+
+    <div class="share-sent hidden" id="shareSentView">
+      <div class="tick" aria-hidden="true">✓</div>
+      <p class="headline" id="shareSentHeadline"></p>
+      <p class="detail">In the real product this is where their invite would go out. Here it stops at your browser.</p>
+      <button type="button" class="btn" onclick="closeShareModal()">Done</button>
+    </div>
+
+  </div>
 </div>
 
 <script src="calculator.js"></script>
@@ -813,6 +946,78 @@ function stopSignalCycle(finalColor) {
   document.querySelector(`.signal-lamp[data-color="${finalColor}"]`).classList.add('lit');
 }
 
+// ---------- Referral share modal ----------
+// Deliberately no send: this collects and validates the recipient's details,
+// then stops. Wiring it to a real mail service is a post-prototype job.
+
+// Basic shape check only, on purpose. Anything stricter starts rejecting
+// addresses that are actually valid, and the real check is whether the mail
+// lands, which nothing client-side can tell us.
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+let shareLastFocused = null;
+
+function setFieldError(inputId, errorId, message) {
+  const input = document.getElementById(inputId);
+  const error = document.getElementById(errorId);
+  input.classList.toggle('invalid', Boolean(message));
+  input.setAttribute('aria-invalid', message ? 'true' : 'false');
+  error.textContent = message || '';
+  error.classList.toggle('hidden', !message);
+}
+
+function clearShareErrors() {
+  setFieldError('shareName', 'shareNameError', '');
+  setFieldError('shareEmail', 'shareEmailError', '');
+}
+
+function openShareModal() {
+  shareLastFocused = document.activeElement;
+  const form = document.getElementById('shareForm');
+  form.reset();
+  clearShareErrors();
+  document.getElementById('shareFormView').classList.remove('hidden');
+  document.getElementById('shareSentView').classList.add('hidden');
+  document.getElementById('shareModal').classList.remove('hidden');
+  document.getElementById('shareName').focus();
+}
+
+function closeShareModal() {
+  document.getElementById('shareModal').classList.add('hidden');
+  if (shareLastFocused && shareLastFocused.focus) shareLastFocused.focus();
+}
+
+function onShareBackdropClick(event) {
+  if (event.target === event.currentTarget) closeShareModal();
+}
+
+document.addEventListener('keydown', (event) => {
+  if (event.key !== 'Escape') return;
+  if (document.getElementById('shareModal').classList.contains('hidden')) return;
+  closeShareModal();
+});
+
+function submitShare(event) {
+  event.preventDefault();
+  const name = document.getElementById('shareName').value.trim();
+  const email = document.getElementById('shareEmail').value.trim();
+
+  const nameError = name ? '' : 'Add a name so we know who this is for.';
+  let emailError = '';
+  if (!email) emailError = 'Add an email address to send this to.';
+  else if (!EMAIL_PATTERN.test(email)) emailError = "That doesn't look like an email address.";
+
+  setFieldError('shareName', 'shareNameError', nameError);
+  setFieldError('shareEmail', 'shareEmailError', emailError);
+
+  if (nameError) { document.getElementById('shareName').focus(); return; }
+  if (emailError) { document.getElementById('shareEmail').focus(); return; }
+
+  document.getElementById('shareSentHeadline').textContent = `Sent to ${name}.`;
+  document.getElementById('shareFormView').classList.add('hidden');
+  document.getElementById('shareSentView').classList.remove('hidden');
+}
+
 async function runCalculation() {
   const segment = document.getElementById('segment').value;
   const electricityPricePencePerKwh = parseLocaleNumber(document.getElementById('elecPriceRoof').value);
@@ -838,6 +1043,7 @@ async function runCalculation() {
   const accordion = document.getElementById('assumptionsAccordion');
   accordion.classList.add('hidden');
   accordion.open = false;
+  document.getElementById('shareBlock').classList.add('hidden');
   startSignalCycle();
 
   const calcPromise = (async () => {
@@ -892,6 +1098,7 @@ async function runCalculation() {
 
   fillAssumptions(result, segment);
   accordion.classList.remove('hidden');
+  document.getElementById('shareBlock').classList.remove('hidden');
 }
 
 updateSegmentVisibility();
