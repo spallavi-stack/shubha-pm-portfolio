@@ -193,6 +193,47 @@ describe('calculateRooftopViability — flags', () => {
     assert.ok(!result.flags.some((f) => f.id === 'highExportSensitivity'));
   });
 
+  test('segTariffRequiresBatteryNotModeled fires for a battery-eligibility tariff (Intelligent Octopus Flux)', () => {
+    const batteryTariff = findSegTariff('Octopus Energy', 'Intelligent Octopus Flux');
+    const result = calculateRooftopViability({
+      ...baseInput,
+      segRatePencePerKwh: batteryTariff.ratePencePerKwh,
+      segTariffLabel: `${batteryTariff.supplier} — ${batteryTariff.tariff}`,
+      segTariffEligibility: batteryTariff.eligibility,
+    });
+    const flag = result.flags.find((f) => f.id === 'segTariffRequiresBatteryNotModeled');
+    assert.ok(flag, 'expected segTariffRequiresBatteryNotModeled to fire for a battery-eligibility tariff');
+    assert.match(flag.note, /battery/i);
+    assert.match(flag.note, /Octopus Energy — Intelligent Octopus Flux/);
+  });
+
+  test('segTariffRequiresBatteryNotModeled fires for a second battery-eligibility tariff (So Bright)', () => {
+    const batteryTariff = findSegTariff('So Energy', 'So Bright');
+    const result = calculateRooftopViability({
+      ...baseInput,
+      segRatePencePerKwh: batteryTariff.ratePencePerKwh,
+      segTariffLabel: `${batteryTariff.supplier} — ${batteryTariff.tariff}`,
+      segTariffEligibility: batteryTariff.eligibility,
+    });
+    assert.ok(result.flags.some((f) => f.id === 'segTariffRequiresBatteryNotModeled'));
+  });
+
+  test('segTariffRequiresBatteryNotModeled does not fire for a non-battery tariff', () => {
+    const nonBatteryTariff = findSegTariff('Octopus Energy', 'Outgoing Octopus');
+    const result = calculateRooftopViability({
+      ...baseInput,
+      segRatePencePerKwh: nonBatteryTariff.ratePencePerKwh,
+      segTariffLabel: `${nonBatteryTariff.supplier} — ${nonBatteryTariff.tariff}`,
+      segTariffEligibility: nonBatteryTariff.eligibility,
+    });
+    assert.ok(!result.flags.some((f) => f.id === 'segTariffRequiresBatteryNotModeled'));
+  });
+
+  test('segTariffRequiresBatteryNotModeled does not fire with no SEG tariff picked at all', () => {
+    const result = calculateRooftopViability(baseInput);
+    assert.ok(!result.flags.some((f) => f.id === 'segTariffRequiresBatteryNotModeled'));
+  });
+
   test('occupancyMayLowerRealSelfConsumption fires for every rooftop result, regardless of occupancy', () => {
     // Widened 4 Aug 2026: the annual-vs-seasonal approximation this flag
     // describes applies to every household, not just 'usuallyOut' ones —

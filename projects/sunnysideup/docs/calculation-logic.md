@@ -354,7 +354,12 @@ flowchart TD
 
 For the "different supplier" choice, a manually typed rate overrides the table selection if
 both are filled in. Either resolution path also carries the picked row's eligibility text (e.g.
-"requires system installed by that same supplier") into the final result; see §5.
+"requires system installed by that same supplier") into the final result; see §5. Added 4 Aug
+2026 (found by a third-party review): that eligibility text is also checked for the word
+"battery" — at least two `SEG_TARIFFS` rows require one, but this calculator has no battery input
+or battery-aware self-consumption model anywhere, so picking one of those rows surfaces the
+`segTariffRequiresBatteryNotModeled` flag (§5) rather than silently combining a battery-tied rate
+with a no-battery physics model.
 
 **Key constants** (`calculator.js` L81-173):
 
@@ -554,6 +559,7 @@ conditional on any input this calculator collects either — see its own row bel
 | `occupancyMayLowerRealSelfConsumption` | Always | Inference | Added 1 Aug 2026, alongside the self-consumption formula fix above; widened 4 Aug 2026 (found by a third-party review) from firing only for `usuallyOut` to firing for every result. The formula is annual-average and can't see how generation and consumption actually line up over time — the dominant version of that gap is seasonal (UK solar generation swings roughly 10x by season, consumption doesn't), which tends to understate true self-consumption regardless of occupancy. `occupancy` being `usuallyOut` adds a secondary, within-day version of the same understatement to the note, compounding in the same direction; `usuallyHome` gets the seasonal note alone |
 | `regulatoryRegime` | Postcode resolves to Scotland or Wales | Fact | That country's own permitted-development/building-regulation regime hasn't been researched here |
 | `highExportSensitivity` | No user-picked SEG tariff, and exported share of generation exceeds 50% | Inference | This result uses the low default SEG rate; a high-export household's result moves more than most when a real (much higher) tariff is picked |
+| `segTariffRequiresBatteryNotModeled` | The picked SEG tariff's eligibility text mentions "battery" | Inference | Added 4 Aug 2026, found by a third-party review. At least two `SEG_TARIFFS` rows (Octopus's "Intelligent Octopus Flux," So Energy's "So Bright") require a battery as part of their eligibility, but this calculator has no battery input anywhere and models self-consumption as if no battery exists throughout. A battery typically raises real self-consumption well above what the no-battery formula predicts, so picking a battery-eligibility tariff's rate while the underlying split still assumes no battery is a real mismatch, not resolved by this tool |
 | `inverterReplacementFactored` | Simulated payback period includes ≥1 inverter replacement | Inference | Rooftop only. Names how many replacements were folded in and the flat (no-escalation/no-degradation/no-inverter) comparison figure, so the adjustment is visible rather than a silent change to the headline number. Updated 1 Aug 2026 to report a count (can be more than one for a very long payback) rather than a single fixed adjustment |
 | `paybackNotReachedWithinSimulation` | Simulated cumulative savings never clear cumulative cost within `PAYBACK_SIMULATION_MAX_YEARS` (30) | Inference | Added 1 Aug 2026, both segments. `paybackYears` is `null` in this case rather than a raw `Infinity` |
 

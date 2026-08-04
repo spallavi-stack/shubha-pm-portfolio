@@ -1030,6 +1030,30 @@ function calculateRooftopViability({
     });
   }
 
+  // ADDED 4 Aug 2026 (found by a third-party review): at least two rows in
+  // SEG_TARIFFS (Octopus's "Intelligent Octopus Flux," So Energy's "So
+  // Bright") name a battery as part of their eligibility text — but this
+  // calculator has no battery input anywhere, and selfConsumptionFactorFromDemandRatio
+  // models a no-battery system throughout. A battery typically pushes real
+  // self-consumption well above what that formula predicts (commonly cited
+  // roughly 30-50% unbattoried to 60-80%+ with one), so picking a
+  // battery-eligible tariff's (often higher) export rate while the
+  // self-consumption/export split underneath still assumes no battery is a
+  // real physics/eligibility mismatch, not just the already-documented
+  // "eligibility text isn't auto-filtered" tradeoff (findSegTariffsBySupplier's
+  // own comment covers only the supplier-install-requirement case). Detected
+  // via a simple keyword match on the picked tariff's own eligibility text —
+  // deliberately not attempting to model battery physics here, a separate,
+  // larger scope decision.
+  if (segTariffEligibility && /\bbatter(?:y|ies)\b/i.test(segTariffEligibility)) {
+    flags.push({
+      id: 'segTariffRequiresBatteryNotModeled',
+      tier: 'Inference',
+      title: 'This tariff requires a battery, which this result does not model',
+      note: `The SEG tariff used for this result (${segTariffLabel || 'your picked tariff'}) requires a battery: "${segTariffEligibility}". This calculator's self-consumption and export figures assume no battery throughout — a real battery-equipped system typically self-consumes a materially higher share of its generation (commonly cited roughly 30-50% without a battery to 60-80%+ with one), which would shift this result's self-consumed/exported split, and therefore its savings and payback, in ways this tool doesn't calculate.`,
+    });
+  }
+
   // The self-consumption formula above is annual-average, so it can't see
   // how generation and consumption actually line up in time — only their
   // totals. The dominant version of that gap is seasonal, not within-day:
