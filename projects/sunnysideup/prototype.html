@@ -327,15 +327,15 @@ button{font-family:inherit;}
 }
 .share-prompt{font-family:var(--font-display);font-weight:700;font-size:var(--text-base);}
 .share-badge{
-  width:104px;height:104px;padding:0;flex-shrink:0;
-  border:var(--border-thick);border-radius:var(--radius-pill);
+  width:80px;height:80px;padding:0;flex-shrink:0;
+  border:var(--border-thin);border-radius:var(--radius-pill);
   background:var(--surface-card);color:var(--color-good-dark);
-  box-shadow:var(--shadow-md);cursor:pointer;
+  box-shadow:var(--shadow-sm);cursor:pointer;
   transition:transform var(--duration-fast) var(--ease-pop), box-shadow var(--duration-fast) var(--ease-pop);
 }
 .share-badge svg{display:block;width:100%;height:100%;}
 .share-badge:active{transform:translate(3px,3px);box-shadow:var(--shadow-press);}
-.share-badge:focus-visible{outline:none;box-shadow:var(--shadow-md), 0 0 0 3px var(--color-sky-blue-tint);}
+.share-badge:focus-visible{outline:none;box-shadow:var(--shadow-sm), 0 0 0 3px var(--color-sky-blue-tint);}
 /* The word ring turns slowly on its own, and speeds up on hover so the badge
    reads as pressable rather than as a printed sticker. */
 .share-ring{transform-origin:50% 50%;animation:share-spin 24s linear infinite;}
@@ -563,14 +563,14 @@ button{font-family:inherit;}
           </details>
 
           <div class="share-block hidden" id="shareBlock">
-            <p class="share-prompt">Know someone else weighing up solar?</p>
+            <p class="share-prompt">Know someone considering solar?</p>
             <button type="button" class="share-badge" id="shareBadge" aria-label="Share SunnySideUp with someone" onclick="openShareModal()">
               <svg viewBox="0 0 100 100" aria-hidden="true">
                 <defs>
                   <path id="shareRingPath" fill="none" d="M50,50 m-36,0 a36,36 0 1,1 72,0 a36,36 0 1,1 -72,0"></path>
                 </defs>
                 <g class="share-ring">
-                  <text font-family="Space Grotesk, sans-serif" font-size="11" font-weight="700" fill="currentColor">
+                  <text font-family="Space Grotesk, sans-serif" font-size="12.5" font-weight="700" fill="currentColor">
                     <textPath href="#shareRingPath" startOffset="0" textLength="226.2" lengthAdjust="spacing">SHARE • SHARE • SHARE • </textPath>
                   </text>
                 </g>
