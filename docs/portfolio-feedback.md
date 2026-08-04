@@ -71,6 +71,34 @@ There are other buyers who could hire this work and are not addressed anywhere o
 
 **What this implies.** The current section order inverts on each case study page. Research, market sizing, roadmap, and the documents list stay on the page in full, and move underneath. Nothing gets cut, it changes position.
 
+### Layout decision for items 3 to 5 (August 2026)
+
+**Decided: stacked. Video full width, prototype full width directly below it, everything else underneath.**
+
+Side by side was considered and dropped. Shubha's constraint was that it shouldn't happen if it looks cramped, and against the prototypes that actually exist it does:
+
+- Flexy's homeowner prototype is a phone at 390x780. Beside a video it has to lose roughly 200px of height to fit above the fold, which shrinks the UI text inside it.
+- SunnySideUp's prototype is mobile-first with breakpoints at 640, 768 and 960px. In a half-width column it falls into its mobile layout, so the desktop tool gets shown in a view it wasn't designed to be judged by.
+- Flexy's utility dashboard holds a 1180px container and collapses its four-column grids below 1100px. No side-by-side treatment gives it enough room.
+
+Neither wide prototype breaks in a narrow column, since both are responsive. The objection is what they survive as, rather than whether they survive.
+
+Stacking costs one scroll and compromises nothing. It also applies the same pattern to all three prototypes, which stops the utility dashboard from needing its own permanent exception. The video should be sized so the top of the prototype frame crosses the fold, so a visitor can see something playable sits directly below before scrolling. That covers the single advantage side by side had.
+
+Four options drawn to scale against the real prototypes: https://claude.ai/code/artifact/bb9131c2-e851-499a-b4de-850fd2648247
+
+**Still open.** Whether the prototype at the top is live and clickable or a still image that opens the real thing full-screen. Stacking works either way.
+
+### Video production and hosting (August 2026)
+
+**Tool.** Shubha plans to use Supercut, already available through the Lenny's Newsletter bundle. It is a screen-recording and video editing tool, which suits a video whose material is the prototype and the documents.
+
+**Decided: export the MP4 and commit it to the repo.** Shubha raised the right risk. The bundle grants a year, and a video that lives only on a subscription-tied host disappears when the subscription does, taking the top of both case study pages with it. Owning the file makes the tool a production choice that can change freely rather than a dependency.
+
+Self-hosting fits comfortably. Two minutes of 1080p screen recording lands roughly in the 15 to 50MB range because static UI compresses well, against GitHub's 100MB per-file limit. A plain HTML video tag then works with no player branding, no third party, and no cookie banner.
+
+**Unverified.** Supercut's own hosting and retention behaviour, and what happens to anything stored there if access lapses, has not been confirmed against their documentation. It stops mattering if the MP4 is exported and committed, which is why that is the recommendation regardless.
+
 ### 6. Put the source documents behind a password
 
 **Status:** Open. Medium priority.
