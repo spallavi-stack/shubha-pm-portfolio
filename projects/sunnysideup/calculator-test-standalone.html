@@ -515,6 +515,24 @@ function selfConsumptionFactorFromDemandRatio(generationKwh, consumptionKwh) {
   return Math.min(rawFactor, 1, 1 / demandRatio);
 }
 
+// SYNCED 4 Aug 2026 from calculator.js, found by a third-party review — two
+// correctness bugs shared by this standalone copy, not just calculator.js:
+// (1) simulatePaybackYears' inverter-replacement check fired one year late
+// (year 13, not 12); (2) the self-consumed/exported split was computed once
+// at year 1 and decayed in parallel rather than recomputed from each year's
+// own degraded generation. See calculator.js's own comments on
+// resolveGenerationSplit and simulatePaybackYears for the full reasoning.
+// Other calculator.js changes from that same review (new flags, plausibility
+// checks) are advisory-only, don't change any number, and aren't ported
+// here — this file stays a snapshot of the core calculation logic only, per
+// its own "no separate calculator.js to keep in sync" scope.
+function resolveGenerationSplit(generationKwh, annualConsumptionKwh) {
+  if (annualConsumptionKwh == null) return { selfConsumedKwh: generationKwh, secondaryKwh: 0, selfConsumptionRate: 1 };
+  const selfConsumptionRate = selfConsumptionFactorFromDemandRatio(generationKwh, annualConsumptionKwh);
+  const selfConsumedKwh = Math.min(generationKwh * selfConsumptionRate, annualConsumptionKwh);
+  return { selfConsumedKwh, secondaryKwh: generationKwh - selfConsumedKwh, selfConsumptionRate };
+}
+
 // Payback thresholds for green/amber/red. Not a cited figure — a design
 // judgment loosely anchored to grounding-research.md's own reported payback
 // range ("roughly 6-14 years across sources" for rooftop). ADDRESSED 1 Aug
@@ -540,8 +558,9 @@ const ELECTRICITY_PRICE_ANNUAL_ESCALATION_RATE = 0.03;
 const PANEL_DEGRADATION_ANNUAL_RATE = 0.005;
 const PAYBACK_SIMULATION_MAX_YEARS = 30;
 
-function simulatePaybackYears({ systemCostGbp, baseSelfConsumedKwh, baseSecondaryKwh, secondaryRatePencePerKwh, electricityPricePencePerKwh, inverterReplacementCostGbp, inverterReplacementEveryYears }) {
-  const baseYearSavingsGbp = (baseSelfConsumedKwh * electricityPricePencePerKwh + baseSecondaryKwh * secondaryRatePencePerKwh) / 100;
+function simulatePaybackYears({ systemCostGbp, baseGenerationKwh, annualConsumptionKwh, secondaryRatePencePerKwh, electricityPricePencePerKwh, inverterReplacementCostGbp, inverterReplacementEveryYears }) {
+  const year1Split = resolveGenerationSplit(baseGenerationKwh, annualConsumptionKwh);
+  const baseYearSavingsGbp = (year1Split.selfConsumedKwh * electricityPricePencePerKwh + year1Split.secondaryKwh * secondaryRatePencePerKwh) / 100;
   const flatPaybackYears = baseYearSavingsGbp > 0 ? systemCostGbp / baseYearSavingsGbp : Infinity;
   if (baseYearSavingsGbp <= 0) return { paybackYears: Infinity, flatPaybackYears, inverterReplacementsFactored: 0 };
 
@@ -550,13 +569,15 @@ function simulatePaybackYears({ systemCostGbp, baseSelfConsumedKwh, baseSecondar
   let inverterReplacementsFactored = 0;
 
   for (let year = 1; year <= PAYBACK_SIMULATION_MAX_YEARS; year += 1) {
-    if (inverterReplacementCostGbp && year > 1 && (year - 1) % inverterReplacementEveryYears === 0) {
+    if (inverterReplacementCostGbp && year % inverterReplacementEveryYears === 0) {
       cumulativeCostGbp += inverterReplacementCostGbp;
       inverterReplacementsFactored += 1;
     }
     const degradationFactor = (1 - PANEL_DEGRADATION_ANNUAL_RATE) ** (year - 1);
     const escalatedPrice = electricityPricePencePerKwh * (1 + ELECTRICITY_PRICE_ANNUAL_ESCALATION_RATE) ** (year - 1);
-    const yearSavingsGbp = (baseSelfConsumedKwh * degradationFactor * escalatedPrice + baseSecondaryKwh * degradationFactor * secondaryRatePencePerKwh) / 100;
+    const generationThisYear = baseGenerationKwh * degradationFactor;
+    const yearSplit = resolveGenerationSplit(generationThisYear, annualConsumptionKwh);
+    const yearSavingsGbp = (yearSplit.selfConsumedKwh * escalatedPrice + yearSplit.secondaryKwh * secondaryRatePencePerKwh) / 100;
     const savingsBeforeThisYear = cumulativeSavingsGbp;
     cumulativeSavingsGbp += yearSavingsGbp;
     if (cumulativeSavingsGbp >= cumulativeCostGbp) {
@@ -652,9 +673,10 @@ function calculateRooftopViability({ orientation, occupancy, annualConsumptionKw
   const generation = Math.round(preRoofAreaGeneration * roofAreaMultiplier);
   const systemCostGbp = roofAreaSizing ? roofAreaSizing.systemCostGbp : ROOFTOP_SYSTEM_COST_GBP;
 
-  const selfConsumptionRate = selfConsumptionFactorFromDemandRatio(generation, annualConsumptionKwh);
-  const selfConsumedKwh = Math.min(generation * selfConsumptionRate, annualConsumptionKwh);
-  const exportedKwh = generation - selfConsumedKwh;
+  const generationSplit = resolveGenerationSplit(generation, annualConsumptionKwh);
+  const selfConsumptionRate = generationSplit.selfConsumptionRate;
+  const selfConsumedKwh = generationSplit.selfConsumedKwh;
+  const exportedKwh = generationSplit.secondaryKwh;
 
   const electricityPriceIsUserProvided = electricityPricePencePerKwh != null;
   const usedElectricityPrice = electricityPriceIsUserProvided
@@ -668,8 +690,8 @@ function calculateRooftopViability({ orientation, occupancy, annualConsumptionKw
   const annualSavingsGbp = (selfConsumedKwh * usedElectricityPrice + exportedKwh * usedSegRate) / 100;
   const paybackSimulation = simulatePaybackYears({
     systemCostGbp,
-    baseSelfConsumedKwh: selfConsumedKwh,
-    baseSecondaryKwh: exportedKwh,
+    baseGenerationKwh: generation,
+    annualConsumptionKwh,
     secondaryRatePencePerKwh: usedSegRate,
     electricityPricePencePerKwh: usedElectricityPrice,
     inverterReplacementCostGbp: INVERTER_REPLACEMENT_COST_GBP,
@@ -791,15 +813,17 @@ function calculatePluginViability({ occupancy, orientation, electricityPricePenc
   const electricityPriceIsUserProvided = electricityPricePencePerKwh != null;
 
   const hasConsumptionInput = annualConsumptionKwh != null && annualConsumptionKwh > 0;
-  const selfConsumptionRate = hasConsumptionInput ? selfConsumptionFactorFromDemandRatio(generation, annualConsumptionKwh) : 1;
-  const selfConsumedKwh = hasConsumptionInput ? Math.min(generation * selfConsumptionRate, annualConsumptionKwh) : generation;
-  const unselfConsumedKwh = generation - selfConsumedKwh;
+  const resolvedConsumptionKwh = hasConsumptionInput ? annualConsumptionKwh : null;
+  const generationSplit = resolveGenerationSplit(generation, resolvedConsumptionKwh);
+  const selfConsumptionRate = generationSplit.selfConsumptionRate;
+  const selfConsumedKwh = generationSplit.selfConsumedKwh;
+  const unselfConsumedKwh = generationSplit.secondaryKwh;
 
   const annualSavingsGbp = (selfConsumedKwh * usedElectricityPrice) / 100;
   const paybackSimulation = simulatePaybackYears({
     systemCostGbp: PLUGIN_KIT_COST_GBP,
-    baseSelfConsumedKwh: selfConsumedKwh,
-    baseSecondaryKwh: unselfConsumedKwh,
+    baseGenerationKwh: generation,
+    annualConsumptionKwh: resolvedConsumptionKwh,
     secondaryRatePencePerKwh: 0,
     electricityPricePencePerKwh: usedElectricityPrice,
   });
