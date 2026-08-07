@@ -37,13 +37,10 @@
   .split-line{overflow:hidden;padding-bottom:0.08em;}
   .subtitle{font-size:18px;color:#E4E1F5;max-width:600px;margin:0 0 28px;}
   .hero-who{margin:0 0 32px;}
-  .hero-who .section-kicker{color:var(--amber);margin-bottom:12px;}
+  .hero-who .section-kicker{color:var(--amber);margin-bottom:10px;}
   .hero-who .section-kicker::before{background:var(--amber);}
-  .hero-who-list{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:10px;}
-  .hero-who-list li{
-    background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.25);
-    color:#fff;font-size:13px;font-weight:600;padding:8px 16px;border-radius:999px;
-  }
+  .hero-who-list{margin:0;max-width:520px;font-size:15px;font-weight:600;color:#fff;line-height:1.7;}
+  .hero-who-list .sep{color:var(--amber);margin:0 10px;font-weight:400;}
   .hero-ctas{display:flex;gap:16px;flex-wrap:wrap;}
 
   /* The stakes: blunt, oversized numbers, but in the site's own navy/amber system.
@@ -219,12 +216,7 @@
       <p class="subtitle">Hi! I'm Shubha, a Product Manager with a bone to pick with the climate crisis. I work as a freelance PM for climate and energy companies, running the same process I'd bring to any paid engagement: research where every claim is tagged fact, reasoning, or open assumption, and a working prototype.</p>
       <div class="hero-who">
         <div class="section-kicker">Who this is for</div>
-        <ul class="hero-who-list">
-          <li>New product line</li>
-          <li>Feature before you build</li>
-          <li>Pivot</li>
-          <li>Studio &amp; agency capacity</li>
-        </ul>
+        <p class="hero-who-list">New product line<span class="sep">&middot;</span>Feature before you build<span class="sep">&middot;</span>Pivot<span class="sep">&middot;</span>Studio &amp; agency capacity</p>
       </div>
       <div class="hero-ctas">
         <a class="btn" data-magnetic href="#case-studies">View case studies</a>
