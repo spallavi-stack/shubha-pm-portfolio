@@ -85,146 +85,6 @@
     });
   }
 
-  /* ---------- Count-up numbers (stat strip) ---------- */
-  function initCountUp(){
-    var stats = document.querySelectorAll('[data-count]');
-    if(!stats.length) return;
-    stats.forEach(function(el){
-      if(el.closest('[data-stakes-rotator]')) return; // handled by initStakesRotator instead
-      var target = parseFloat(el.getAttribute('data-count'));
-      var suffix = el.getAttribute('data-suffix') || '';
-      var decimals = el.getAttribute('data-decimals') ? parseInt(el.getAttribute('data-decimals'),10) : 0;
-      var ring = el.closest('.stat') && el.closest('.stat').querySelector('.arc');
-      var run = function(){
-        var obj = { v:0 };
-        if(hasGSAP){
-          gsap.to(obj, {
-            v:target, duration:1.6, ease:'power2.out',
-            onUpdate:function(){ el.textContent = obj.v.toFixed(decimals) + suffix; }
-          });
-          if(ring){
-            var len = ring.getTotalLength ? ring.getTotalLength() : 301.6;
-            gsap.set(ring, { strokeDasharray:len, strokeDashoffset:len });
-            gsap.to(ring, { strokeDashoffset:0, duration:1.6, ease:'power2.out' });
-          }
-        } else {
-          el.textContent = target.toFixed(decimals) + suffix;
-        }
-      };
-      if(hasGSAP){
-        ScrollTrigger.create({ trigger: el, start:'top 90%', once:true, onEnter: run });
-      } else {
-        run();
-      }
-    });
-  }
-
-  /* ---------- Stakes rotator: one shocking climate fact at a time ----------
-     Base CSS shows every .stake stacked and fully visible, so this works
-     with no JS at all. JS only switches to absolute-positioned crossfade
-     mode when it actually runs, and skips auto-rotation under reduced
-     motion (falls back to the static stacked list instead). New facts can
-     be added later by just appending another .stake block in the HTML —
-     nothing here needs to change. */
-  function initStakesRotator(){
-    var container = document.querySelector('[data-stakes-rotator]');
-    if(!container) return;
-    var stakes = Array.prototype.slice.call(container.querySelectorAll('.stake'));
-    if(stakes.length < 2){ runCount(stakes[0]); return; }
-
-    function runCount(stake){
-      if(!stake) return;
-      var span = stake.querySelector('[data-count]');
-      if(!span || span.getAttribute('data-counted')) return;
-      span.setAttribute('data-counted', '1');
-      var target = parseFloat(span.getAttribute('data-count'));
-      var suffix = span.getAttribute('data-suffix') || '';
-      var decimals = span.getAttribute('data-decimals') ? parseInt(span.getAttribute('data-decimals'),10) : 0;
-      if(hasGSAP){
-        var obj = { v:0 };
-        gsap.to(obj, {
-          v:target, duration:1.1, ease:'power2.out',
-          onUpdate:function(){ span.textContent = obj.v.toFixed(decimals) + suffix; }
-        });
-      } else {
-        span.textContent = target.toFixed(decimals) + suffix;
-      }
-    }
-
-    if(!hasGSAP || !enableFullMotion){
-      // Static stacked fallback: no rotation, just count up everything once.
-      stakes.forEach(runCount);
-      return;
-    }
-
-    container.classList.add('is-rotating');
-    var section = container.closest('.stakes-card');
-    if(section) section.classList.add('is-rotating');
-    gsap.set(stakes, { autoAlpha:0 });
-
-    var scenes = section ? Array.prototype.slice.call(section.querySelectorAll('.stakes-bg .scene')) : [];
-
-    var dotsWrap = document.getElementById('stakesDots');
-    var dots = [];
-    if(dotsWrap){
-      stakes.forEach(function(_, i){
-        var dot = document.createElement('button');
-        dot.type = 'button';
-        dot.className = 'car-dot';
-        dot.setAttribute('aria-label', 'Show stat ' + (i + 1) + ' of ' + stakes.length);
-        dotsWrap.appendChild(dot);
-        dots.push(dot);
-      });
-    }
-
-    var current = 0, timer = null, paused = false;
-
-    function show(i){
-      current = i;
-      stakes.forEach(function(el, idx){
-        gsap.to(el, { autoAlpha: idx === i ? 1 : 0, duration:0.6, ease:'power2.inOut' });
-      });
-      if(scenes.length === stakes.length){
-        scenes.forEach(function(scene, idx){
-          scene.classList.toggle('is-active', idx === i);
-        });
-      }
-      dots.forEach(function(d, idx){ d.classList.toggle('active', idx === i); });
-      runCount(stakes[i]);
-    }
-
-    function scheduleNext(delay){
-      clearTimeout(timer);
-      if(paused) return;
-      timer = setTimeout(function(){
-        show((current + 1) % stakes.length);
-        scheduleNext(5000);
-      }, delay);
-    }
-
-    dots.forEach(function(dot, i){
-      dot.addEventListener('click', function(){
-        show(i);
-        scheduleNext(5000);
-      });
-    });
-    container.addEventListener('focusin', function(){ paused = true; clearTimeout(timer); });
-    container.addEventListener('focusout', function(){ paused = false; scheduleNext(5000); });
-
-    var started = false;
-    function start(){
-      if(started) return;
-      started = true;
-      show(0);
-      scheduleNext(5000);
-    }
-    if(window.ScrollTrigger){
-      ScrollTrigger.create({ trigger: container, start:'top 85%', once:true, onEnter: start });
-    } else {
-      start();
-    }
-  }
-
   /* ---------- Magnetic hover (desktop only) ---------- */
   function initMagnetic(){
     if(!enableHoverMotion || !hasGSAP) return;
@@ -336,20 +196,50 @@
      for the full sentence via a CSS 3D flip. Pure CSS transform, no GSAP
      dependency, so it works identically whether or not GSAP loaded. Toggles
      aria-hidden/aria-expanded so a screen reader only ever announces
-     whichever face is currently facing the visitor. ---------- */
+     whichever face is currently facing the visitor.
+
+     At most one card open at a time: opening a second card first closes
+     whichever one is already open, then waits for its collapse transition
+     to finish before growing the new one, so two cards never sit mid-grow
+     together and disrupt the row layout at once. Delay matches the
+     .flip-card width/height transition duration (500ms); skipped entirely
+     under reduced motion, where that transition is already instant. ---------- */
   function initFlipCards(){
     var cards = document.querySelectorAll('[data-flip-card]');
     if(!cards.length) return;
+    var CLOSE_DELAY = reduceMotion ? 0 : 500;
+    var setters = new Map();
+    var openCard = null;
+
     cards.forEach(function(card){
       var btn = card.querySelector('.flip-card-trigger');
       var front = card.querySelector('.flip-card-front');
       var back = card.querySelector('.flip-card-back');
       if(!btn) return;
-      btn.addEventListener('click', function(){
-        var flipped = card.classList.toggle('is-flipped');
+
+      function setFlipped(flipped){
+        card.classList.toggle('is-flipped', flipped);
         btn.setAttribute('aria-expanded', flipped ? 'true' : 'false');
         if(front) front.setAttribute('aria-hidden', flipped ? 'true' : 'false');
         if(back) back.setAttribute('aria-hidden', flipped ? 'false' : 'true');
+      }
+      setters.set(card, setFlipped);
+
+      btn.addEventListener('click', function(){
+        if(card.classList.contains('is-flipped')){
+          setFlipped(false);
+          openCard = null;
+          return;
+        }
+        if(openCard){
+          var closePrev = setters.get(openCard);
+          if(closePrev) closePrev(false);
+          openCard = card;
+          setTimeout(function(){ setFlipped(true); }, CLOSE_DELAY);
+        } else {
+          openCard = card;
+          setFlipped(true);
+        }
       });
     });
   }
@@ -370,8 +260,6 @@
     initSplitHeadline();
     initReveal();
     initStagger();
-    initCountUp();
-    initStakesRotator();
     initCaseCards();
     initFlipCards();
     initMagnetic();
