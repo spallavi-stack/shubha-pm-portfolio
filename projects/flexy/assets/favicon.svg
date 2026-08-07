@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+<defs>
+<linearGradient id="flexyFaviconGrad" x1="0" y1="0" x2="1" y2="1">
+<stop offset="0" stop-color="#1E1A2E"/>
+<stop offset="1" stop-color="#125E6B"/>
+</linearGradient>
+<clipPath id="flexyFaviconClip"><rect x="0" y="0" width="64" height="64" rx="12"/></clipPath>
+</defs>
+<rect x="0" y="0" width="64" height="64" rx="12" fill="url(#flexyFaviconGrad)"/>
+<g clip-path="url(#flexyFaviconClip)"><circle cx="44" cy="34" r="13" fill="#B45309"/></g>
+<path d="M10 24 L24 34 L36 30 L54 48" fill="none" stroke="#ffffff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="10" cy="24" r="3.5" fill="#ffffff"/>
+<circle cx="54" cy="48" r="3.5" fill="#ffffff"/>
+</svg>
