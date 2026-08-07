@@ -132,7 +132,13 @@
   .car-btn:disabled{opacity:0.3;cursor:default;}
   .car-prev{left:-16px;}
   .car-next{right:-16px;}
-  @media(max-width:640px){.car-btn{display:none;}}
+  /* Was hidden below 640px with no dot-pagination fallback ever built, so
+     touch visitors had no visible way to navigate the carousel besides an
+     undiscoverable swipe. Kept visible on mobile instead, sized up to a
+     44px touch target. */
+  @media(max-width:640px){
+    .car-btn{width:44px;height:44px;font-size:20px;}
+  }
   .car-dot{width:7px;height:7px;border-radius:50%;background:var(--border);border:none;padding:0;cursor:pointer;transition:all .2s ease;}
   .car-dot.active{background:var(--accent);width:22px;border-radius:5px;}
 
