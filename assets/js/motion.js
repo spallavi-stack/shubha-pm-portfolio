@@ -73,11 +73,15 @@
   /* ---------- Hero headline split-text reveal ---------- */
   function initSplitHeadline(){
     var el = document.querySelector('[data-split-reveal]');
-    if(!el || !hasGSAP) return;
+    if(!el || !hasGSAP) return; // base CSS already leaves it visible
     if(!enableFullMotion || !window.SplitText){
       gsap.set(el, { autoAlpha:1, y:0 });
       return;
     }
+    // Only hide right before we can actually animate it back in, so a
+    // vendor-script failure (checked above) never leaves the headline stuck
+    // invisible - base CSS has no visibility:hidden of its own.
+    gsap.set(el, { autoAlpha:0 });
     var split = new SplitText(el, { type:'lines,words', linesClass:'split-line' });
     gsap.set(el, { autoAlpha:1 });
     gsap.from(split.words, {
