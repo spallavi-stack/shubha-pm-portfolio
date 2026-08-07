@@ -8,13 +8,13 @@ Status values: **Open** (logged, no decision yet), **Decided** (approach agreed,
 
 ---
 
-## Round 1 — August 2026
+## Round 1, August 2026
 
 **Source:** two conversations with reviewers of the live site. Feedback is recorded as given.
 
 ### 1. The portfolio speaks to the audience least able to hire
 
-**Status:** Open. Highest priority of this round.
+**Status:** Open. Highest priority of this round. **Substantially developed by Round 2 (items 8 to 11), which should be read alongside this one.** The same reviewer later argued that picking the target segment is harder than it looks and that the differentiator matters more than the segment.
 
 **What was said.** The site reads as though it is aimed at founders of small, ideation-stage companies who need someone to take them from idea to prototype. That audience has a real problem: they typically don't have much money, and many are themselves mid-fundraise, so hiring an experienced product manager is not a near-term move for them. Optimising the portfolio for that group points it at the segment least able to act on it.
 
@@ -141,3 +141,70 @@ One known imperfection in Flexy's even split: the phone frame is 780px tall agai
 ## Themes across this round
 
 Two of the three reviewers' concerns are about the same underlying thing: **a visitor cannot quickly tell who this is for or what they'd be buying.** Item 1 is that problem at the site level (no stated audience, and the implied one is the wrong one). Items 3 to 5 are that problem at the case study level (the value is real but buried behind reading). Item 6 pushes in the opposite direction to items 3 to 5, and is the one place where the round's feedback conflicts with itself.
+
+---
+
+## Round 2, August 2026
+
+**Source:** the same reviewer as Round 1 item 1, over LinkedIn, responding to a drafted list of three candidate target segments. He was explicit that he is describing constraints and is not arguing against doing this.
+
+This round goes directly at Round 1 item 1. Item 1 established that no audience is stated anywhere. This round argues that picking the audience is harder than it looked, and that the audience may be the wrong thing to lead with.
+
+### 8. Each of the three drafted target segments has a named objection
+
+**Status:** Open. Feeds directly into item 1.
+
+The three segments as drafted, with his assessment of each:
+
+**Segment A: funded seed-stage startups needing an interim PM to validate an MVP before a full-time hire.** He doubts this is a real segment. VCs are usually reluctant to fund this specific spend, and he adds a selection argument: founders who cannot work this out themselves are likely to fail regardless. Weakest of the three.
+
+**Segment B: mid-sized companies and SMEs, especially in energy and climate, wanting to prototype a new product line without pulling their main product team off it.** He accepts this one as possible, with two objections. These companies often believe they already understand their target group well enough to not need a PM. And they often expect German.
+
+**Segment C: agencies and venture studios wanting a freelance PM on a project basis for discovery and prototyping.** He rates this the most sensible of the three. Two objections again. They often keep in-house PMs for exactly this kind of work, and German comes up here too.
+
+**What is addressable.** The ranking is usable as-is: C first, B second, A deprioritized. Beyond ranking, two of the objections are answerable by the portfolio itself rather than requiring a different segment:
+
+- Segment B's "we already know our users" objection is a sales objection the case studies can pre-empt, because demonstrating that assumptions get tested and sometimes overturned is the thing the research process already does. The SunnySideUp renter persona whose ceiling is capped by unresolved law is a concrete example of research changing the answer.
+- Segment C's "we have in-house PMs" objection points at positioning as overflow or spike capacity for a specific project, which is a different pitch from replacing anyone.
+
+Segment A's objection is structural and no portfolio change fixes it.
+
+### 9. German is a hard constraint and the site says nothing about language or market
+
+**Status:** Open. Needs a decision from Shubha before item 1 can be finished.
+
+German came up against two of the three segments independently. The reviewer flagged that he does not know whether Shubha speaks it.
+
+The site currently states no location, no market, and no working language. A visitor cannot tell which country's market this is aimed at. The case studies point in two different directions on their own, since Flexy is sized to Illinois and ComEd while SunnySideUp is sized to the UK, and neither is Germany.
+
+**Open questions only Shubha can answer.** Does she speak German, and at what working level? Is DACH the target market, or is it one of several? Whatever the answers, the site should state where she works and in what language, because that information is absent and two of three candidate segments turn on it.
+
+### 10. The differentiator matters more than the segment
+
+**Status:** Open. The most consequential item in this round.
+
+His strongest point, and the one that reframes item 1. A lot of experienced people have been laid off recently and many of them went freelance, so the market is crowded with strong competition. Segment selection matters less than being able to answer why someone should pick her over the rest of that field.
+
+His answer for 0-to-1 work is **framework and structure.** He argues domain knowledge is secondary, because client companies almost always have their own domain experts, and any good PM can extract that knowledge from internal people and then build and test prototypes.
+
+**This cuts against how the portfolio is currently framed.** The homepage leads with climate, both in the headline and in the hero copy, and both case studies are climate products. If domain knowledge is secondary to the buyer, the current framing leads with the part he considers least differentiating.
+
+**The material to do it differently already exists.** The documented research process (`discovery-scope`, `grounding-research`, `research-auditor`), the frozen product brief template, ICE-scored roadmaps with the reasoning shown, the honest limitations sections, and the Fact/Inference/Assumption tagging are all framework and structure, and all already built. The homepage even has a section on the system used for each new project. The framing puts climate first and the method second.
+
+**Worth holding both sides before deciding.** A climate focus is itself a differentiator in a crowded market, it is the reason the portfolio exists, and abandoning it to compete on process alone gives up something real. The decision is which one leads and which one serves as proof, and that is Shubha's call rather than something this log should settle.
+
+### 11. Early freelancing means taking what comes, which argues against narrowing too hard
+
+**Status:** Open. Tempers item 1.
+
+His practical note: when starting out as a freelancer you take everything and simply try to get clients.
+
+This refines item 1 rather than contradicting it. Item 1's finding was that the site names no audience at all, which is still true and still worth fixing. This says the fix should not be a narrow declaration that excludes work she would happily take. State clearly what she does, how she works, and the kinds of problems she takes on, and let the segment list stay broad enough to catch the work that actually arrives.
+
+---
+
+## Themes across Round 2
+
+Round 1 asked who the portfolio is for. Round 2's answer is that the segment question has no clean answer, and that a sharper one sits behind it: in a market crowded with recently laid-off senior people, what makes this the obvious choice? The reviewer's answer is the method, and the method is already documented across this repo without being the thing the site leads with.
+
+Two decisions are blocked on Shubha rather than on any further research: German and the target market (item 9), and whether the process or the climate focus becomes the headline (item 10).
