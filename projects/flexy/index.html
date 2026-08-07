@@ -110,6 +110,8 @@
   details.persona-more summary{cursor:pointer;font-size:12.5px;color:var(--teal-dark);font-weight:600;}
   details.persona-more div{margin-top:8px;}
 
+  .table-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;margin-top:12px;}
+  .table-scroll table{margin-top:0;}
   table{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:12px;}
   th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--border);}
   th{font-size:11.5px;text-transform:uppercase;letter-spacing:0.05em;color:var(--ink-soft);font-weight:700;}
@@ -143,6 +145,23 @@
     box-shadow:0 20px 60px rgba(0,0,0,0.4);
   }
   .proto-actions{display:flex;gap:12px;justify-content:center;margin-top:18px;flex-wrap:wrap;}
+
+  /* Below 640px the phone/dashboard mockups get squeezed narrower than their
+     fixed-size content while staying the same height (flex-shrink on a fixed
+     width, or width:100% against a fixed height), distorting proportions and
+     making UI inside illegible. Below that width, hide the mockup and show a
+     CTA to open the real thing full-screen instead - already confirmed to
+     render correctly at phone widths for the two prototypes themselves. */
+  .proto-mobile-cta{display:none;}
+  @media(max-width:640px){
+    .proto-frame-wrap,.proto-frame-wrap-wide{display:none;}
+    .proto-mobile-cta{
+      display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center;
+      background:#0E1116;border-radius:14px;padding:32px 24px;margin-top:24px;color:#fff;
+    }
+    .proto-mobile-cta-icon{font-size:34px;}
+    .proto-mobile-cta-text{font-size:14px;color:#C9C3DA;max-width:320px;margin:0;}
+  }
 
   .proto-frame-wrap-wide{
     background:#0E1116;border-radius:14px;padding:16px;margin-top:24px;
@@ -228,8 +247,8 @@
   }
   .audience-btn{
     font-family:inherit;font-size:13.5px;font-weight:700;color:var(--ink-soft);
-    background:transparent;border:0;border-radius:999px;padding:9px 20px;cursor:pointer;
-    transition:background .15s, color .15s;
+    background:transparent;border:0;border-radius:999px;padding:14px 20px;cursor:pointer;
+    min-height:44px;transition:background .15s, color .15s;
   }
   .audience-btn.active{background:var(--teal);color:#fff;}
   .audience-hint{font-size:12.5px;color:var(--ink-soft);margin:10px 0 0;}
@@ -419,6 +438,7 @@
     </div>
 
     <h3 class="subhead">Competitive landscape</h3>
+    <div class="table-scroll">
     <table>
       <tr><th>Company</th><th>Model</th><th>Gap Flexy targets</th></tr>
       <tr><td><strong>Tibber</strong> (EU)</td><td>Retail energy supplier + app</td><td>Is the utility, not a plug-in; Flexy can't and doesn't try to be a supplier</td></tr>
@@ -430,6 +450,7 @@
       <tr><td><strong>Emporia</strong> (US)</td><td>Hardware + app, consumption + scheduling</td><td>Requires buying hardware; not utility-distributed</td></tr>
       <tr><td><strong>Span / Sense</strong> (US)</td><td>Premium smart panel hardware</td><td>Sense is pivoting to utility-licensed software, validating Flexy's model</td></tr>
     </table>
+    </div>
     <p style="font-size:13.5px;color:var(--ink-soft);margin-top:10px;" class="aud-homeowner">No single US player currently combines live dynamic-price visibility, real-time consumption, and hardware-agnostic EV charging in one utility-distributed layer. That combination is Flexy's bet.</p>
     <p style="font-size:13.5px;color:var(--ink-soft);margin-top:10px;" class="aud-utility">No single US vendor currently combines live dynamic-price visibility, real-time consumption, and hardware-agnostic EV charging in one white-label layer - Optiwatt and WeaveGrid are the closest peer set, and both are EV-only. That gap is Flexy's pitch to you.</p>
 
@@ -549,6 +570,10 @@
     <div class="proto-frame-wrap">
       <iframe class="proto" src="prototype.html" title="Flexy interactive prototype"></iframe>
     </div>
+    <div class="proto-mobile-cta">
+      <span class="proto-mobile-cta-icon" aria-hidden="true">📱</span>
+      <p class="proto-mobile-cta-text">This is a full interactive click-dummy. Open it full-screen for the real experience on your phone.</p>
+    </div>
     <div class="proto-actions">
       <a class="btn" data-magnetic href="prototype.html" target="_blank">Open prototype full-screen</a>
     </div>
@@ -557,6 +582,10 @@
     <div class="aud-utility">
     <div class="proto-frame-wrap-wide">
       <iframe class="proto-wide" src="utility-dashboard.html" title="Flexy for Utilities operator dashboard prototype"></iframe>
+    </div>
+    <div class="proto-mobile-cta">
+      <span class="proto-mobile-cta-icon" aria-hidden="true">💻</span>
+      <p class="proto-mobile-cta-text">This operator dashboard is built for a wider screen. Open it full-screen to explore it - best on tablet or desktop.</p>
     </div>
     <div class="proto-actions">
       <a class="btn" data-magnetic href="utility-dashboard.html" target="_blank">Open operator dashboard full-screen</a>
