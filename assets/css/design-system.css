@@ -121,7 +121,7 @@ nav a.contact{color:var(--ink-soft);text-decoration:none;font-size:13.5px;font-w
 nav ul{list-style:none;display:flex;gap:24px;margin:0;padding:0;}
 nav ul a{color:var(--ink-soft);text-decoration:none;font-size:13.5px;font-weight:500;}
 nav ul a:hover,nav a.contact:hover{color:var(--accent-dark);}
-@media(max-width:720px){ nav ul{display:none;} }
+@media(max-width:800px){ nav ul{display:none;} }
 
 /* ---------- Section rhythm ---------- */
 section{padding:88px 0;}

@@ -15,10 +15,10 @@ PROJECTS = {
     "flexy": {
         "title": "Flexy",
         "colors": {
-            "teal": "#C2790E", "teal_dark": "#96600A", "navy": "#1C1712",
-            "ink": "#201A12", "ink_soft": "#5C5445", "paper": "#FFFFFF",
-            "paper_soft": "#F7F4EC", "border": "#E5DFD2",
-            "footer_ink": "#C9BBA0", "footer_link": "#F6D9A0",
+            "teal": "#125E6B", "teal_dark": "#0C4750", "navy": "#1E1A2E",
+            "ink": "#1C1A22", "ink_soft": "#565061", "paper": "#FFFFFF",
+            "paper_soft": "#F6F4F9", "border": "#E4E0EC",
+            "footer_ink": "#C9C3DA", "footer_link": "#D9C9F5",
         },
         "footer_note": "Flexy is a fictional case study built for portfolio purposes. Market research is real and cited; personas, interviews, and user data are synthetic.",
         "docs": [
