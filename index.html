@@ -35,12 +35,7 @@
     visibility:hidden;
   }
   .split-line{overflow:hidden;padding-bottom:0.08em;}
-  .subtitle{font-size:18px;color:#E4E1F5;max-width:600px;margin:0 0 28px;}
-  .hero-who{margin:0 0 32px;}
-  .hero-who .section-kicker{color:var(--amber);margin-bottom:10px;}
-  .hero-who .section-kicker::before{background:var(--amber);}
-  .hero-who-list{margin:0;max-width:520px;font-size:15px;font-weight:600;color:#fff;line-height:1.7;}
-  .hero-who-list .sep{color:var(--amber);margin:0 10px;font-weight:400;}
+  .subtitle{font-size:18px;color:#E4E1F5;max-width:600px;margin:0 0 36px;}
   .hero-ctas{display:flex;gap:16px;flex-wrap:wrap;}
 
   /* The stakes: blunt, oversized numbers, but in the site's own navy/amber system.
@@ -101,6 +96,54 @@
   .dark-section .section-kicker::before{background:var(--amber);}
   .dark-section h2.section-title{color:#fff;}
   .dark-section .lede{color:#C6CBE6;}
+
+  /* Who-this-is-for flip cards: small and centered at rest, label only.
+     Click/tap grows the card to real size (width/height transition, not a
+     transform scale, so the longer back sentence has room to lay out
+     without clipping) and flips it to the back face at the same time, two
+     concurrent movements from one click. No instructional "tap to flip"
+     copy: cursor, hover state and the motion itself are the affordance.
+     prefers-reduced-motion drops both transitions to an instant swap. */
+  #who-this-is-for{padding:52px 0 60px;}
+  .who-grid{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:18px;margin-top:24px;}
+  .flip-card{
+    width:150px;height:122px;perspective:1200px;
+    transition:width 0.5s cubic-bezier(0.4,0,0.2,1),height 0.5s cubic-bezier(0.4,0,0.2,1);
+  }
+  .flip-card.is-flipped{width:220px;height:200px;}
+  .flip-card-trigger{
+    all:unset;display:block;width:100%;height:100%;cursor:pointer;box-sizing:border-box;
+  }
+  .flip-card-trigger:focus-visible{outline:2px solid var(--amber);outline-offset:5px;border-radius:16px;}
+  .flip-card-trigger:hover .flip-card-front{border-color:rgba(255,255,255,0.34);}
+  .flip-card-inner{
+    display:block;position:relative;width:100%;height:100%;transform-style:preserve-3d;
+    transition:transform 0.5s cubic-bezier(0.4,0,0.2,1);
+  }
+  @media(prefers-reduced-motion:reduce){.flip-card,.flip-card-inner{transition:none;}}
+  .flip-card.is-flipped .flip-card-inner{transform:rotateY(180deg);}
+  .flip-card-face{
+    position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;
+    border-radius:16px;padding:18px;display:flex;align-items:center;justify-content:center;text-align:center;
+    box-sizing:border-box;
+  }
+  .flip-card-front{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.16);transition:border-color 0.3s;}
+  .flip-card-back{background:var(--amber);color:#2B2118;transform:rotateY(180deg);}
+  .flip-card-label{font-family:var(--font-display);font-weight:600;font-size:19px;color:#fff;line-height:1.2;}
+  .flip-card-desc{font-size:14px;font-weight:600;line-height:1.5;}
+
+  /* Below 640px a row can only ever fit two of these, so growing one card
+     to fit its sentence knocks its neighbors out of their pairs and the
+     whole grid cascades into a stack of lopsided single-card rows. Stack
+     in one column instead: growth only ever pushes straight down, and the
+     row-fit math that causes the cascade never comes up. */
+  @media(max-width:640px){
+    .who-grid{flex-direction:column;align-items:center;}
+    .flip-card{width:100%;max-width:280px;height:60px;}
+    .flip-card.is-flipped{height:132px;}
+    .flip-card-label{font-size:17px;}
+    .flip-card-desc{font-size:13.5px;}
+  }
 
   details.section-collapse summary{cursor:pointer;list-style:none;display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:2px 0;}
   details.section-collapse summary::-webkit-details-marker{display:none;}
@@ -214,10 +257,6 @@
       <div class="hero-content">
       <h1 class="title" data-split-reveal>The energy transition needs better products.</h1>
       <p class="subtitle">Hi! I'm Shubha, a Product Manager with a bone to pick with the climate crisis. I work as a freelance PM for climate and energy companies, running the same process I'd bring to any paid engagement: research where every claim is tagged fact, reasoning, or open assumption, and a working prototype.</p>
-      <div class="hero-who">
-        <div class="section-kicker">Who this is for</div>
-        <p class="hero-who-list">New product line<span class="sep">&middot;</span>Feature before you build<span class="sep">&middot;</span>Pivot<span class="sep">&middot;</span>Studio &amp; agency capacity</p>
-      </div>
       <div class="hero-ctas">
         <a class="btn" data-magnetic href="#case-studies">View case studies</a>
         <a class="btn btn-ghost" data-magnetic href="contact.html" style="background:rgba(255,255,255,0.08);color:#fff;border-color:rgba(255,255,255,0.25);">Get in touch →</a>
@@ -325,6 +364,73 @@
   </div>
 </header>
 
+<section class="dark-section" id="who-this-is-for">
+  <div class="wrap">
+    <div class="section-kicker">Who this is for</div>
+    <div class="who-grid" data-reveal-stagger>
+      <div class="flip-card" data-flip-card>
+        <button type="button" class="flip-card-trigger" aria-expanded="false">
+          <span class="flip-card-inner">
+            <span class="flip-card-face flip-card-front">
+              <span class="flip-card-label">Exploration</span>
+            </span>
+            <span class="flip-card-face flip-card-back" aria-hidden="true">
+              <span class="flip-card-desc">Testing a product idea before you commit engineering time to it</span>
+            </span>
+          </span>
+        </button>
+      </div>
+      <div class="flip-card" data-flip-card>
+        <button type="button" class="flip-card-trigger" aria-expanded="false">
+          <span class="flip-card-inner">
+            <span class="flip-card-face flip-card-front">
+              <span class="flip-card-label">Feature test</span>
+            </span>
+            <span class="flip-card-face flip-card-back" aria-hidden="true">
+              <span class="flip-card-desc">Testing features before you build them</span>
+            </span>
+          </span>
+        </button>
+      </div>
+      <div class="flip-card" data-flip-card>
+        <button type="button" class="flip-card-trigger" aria-expanded="false">
+          <span class="flip-card-inner">
+            <span class="flip-card-face flip-card-front">
+              <span class="flip-card-label">Pivot</span>
+            </span>
+            <span class="flip-card-face flip-card-back" aria-hidden="true">
+              <span class="flip-card-desc">Rethinking your product's direction and want it pressure-tested by outside research</span>
+            </span>
+          </span>
+        </button>
+      </div>
+      <div class="flip-card" data-flip-card>
+        <button type="button" class="flip-card-trigger" aria-expanded="false">
+          <span class="flip-card-inner">
+            <span class="flip-card-face flip-card-front">
+              <span class="flip-card-label">Studio support</span>
+            </span>
+            <span class="flip-card-face flip-card-back" aria-hidden="true">
+              <span class="flip-card-desc">Running an agency or studio and need extra PM hands for a client project</span>
+            </span>
+          </span>
+        </button>
+      </div>
+      <div class="flip-card" data-flip-card>
+        <button type="button" class="flip-card-trigger" aria-expanded="false">
+          <span class="flip-card-inner">
+            <span class="flip-card-face flip-card-front">
+              <span class="flip-card-label">New build</span>
+            </span>
+            <span class="flip-card-face flip-card-back" aria-hidden="true">
+              <span class="flip-card-desc">Starting from scratch and need a product built out, research through prototype</span>
+            </span>
+          </span>
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
 
 <section class="dark-section case-bridge" id="case-studies">
   <div class="about-fade" aria-hidden="true"></div>

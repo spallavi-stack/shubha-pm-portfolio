@@ -332,6 +332,28 @@
     };
   }
 
+  /* ---------- Who-this-is-for flip cards: click/tap swaps the short label
+     for the full sentence via a CSS 3D flip. Pure CSS transform, no GSAP
+     dependency, so it works identically whether or not GSAP loaded. Toggles
+     aria-hidden/aria-expanded so a screen reader only ever announces
+     whichever face is currently facing the visitor. ---------- */
+  function initFlipCards(){
+    var cards = document.querySelectorAll('[data-flip-card]');
+    if(!cards.length) return;
+    cards.forEach(function(card){
+      var btn = card.querySelector('.flip-card-trigger');
+      var front = card.querySelector('.flip-card-front');
+      var back = card.querySelector('.flip-card-back');
+      if(!btn) return;
+      btn.addEventListener('click', function(){
+        var flipped = card.classList.toggle('is-flipped');
+        btn.setAttribute('aria-expanded', flipped ? 'true' : 'false');
+        if(front) front.setAttribute('aria-hidden', flipped ? 'true' : 'false');
+        if(back) back.setAttribute('aria-hidden', flipped ? 'false' : 'true');
+      });
+    });
+  }
+
   /* ---------- Subtle hero parallax (full motion only) ---------- */
   function initHeroParallax(){
     if(!enableFullMotion || !hasGSAP) return;
@@ -351,6 +373,7 @@
     initCountUp();
     initStakesRotator();
     initCaseCards();
+    initFlipCards();
     initMagnetic();
     initEnergyDividers();
     initHeroParallax();
