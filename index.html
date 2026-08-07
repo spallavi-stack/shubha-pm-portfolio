@@ -159,7 +159,6 @@
   .case-bridge .wrap{position:relative;z-index:1;}
 
   /* Case study carousel */
-  .case-process-cases{min-width:0;}
   .carousel{position:relative;margin-top:40px;min-width:0;}
   .case-grid{display:flex;gap:22px;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;-ms-overflow-style:none;padding-bottom:6px;}
   .case-grid::-webkit-scrollbar{display:none;}
@@ -176,8 +175,7 @@
      brand color. .case-card-v2 is just the carousel slot - flex:0 0 100%
      so exactly one is visible at a time (scroll-snap) - and .case-v2-inner
      is the actual visual card, capped narrower than the slot so it doesn't
-     stretch edge to edge with a lot of empty middle space. Sized to fill
-     the ~80%-width left column of the case-studies/process grid. */
+     stretch edge to edge with a lot of empty middle space. */
   .case-card-v2{
     text-decoration:none;color:#fff;display:flex;justify-content:center;
     flex:0 0 100%;width:100%;scroll-snap-align:start;
@@ -214,17 +212,6 @@
   .case-v2-soon .case-v2-tag{color:rgba(255,255,255,0.5);}
   .case-v2-soon .case-v2-name{visibility:visible;font-size:22px;color:#fff;margin-bottom:24px;}
   .case-v2-soon .cta{color:rgba(255,255,255,0.5);}
-
-  /* Process: right-hand column of the case-studies/process grid - header
-     plus numbered headlines only, no body copy, so it reads at a glance
-     alongside the narrower case-study carousel. */
-  .case-process-steps{min-width:0;}
-  .approach-list-compact{counter-reset:step;margin-top:8px;}
-  .approach-step{display:flex;align-items:center;gap:16px;padding:18px 0;border-bottom:1px solid rgba(255,255,255,0.14);}
-  .approach-step:last-child{border-bottom:none;}
-  .approach-step h4{margin:0;font-size:16px;font-family:var(--font-body);font-weight:700;color:#fff;}
-  .approach-num{counter-increment:step;font-family:var(--font-display);font-size:14px;font-weight:600;color:#2B2118;background:var(--amber);width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-  .approach-num::before{content:counter(step);}
 
   footer{background:var(--navy);color:#C6CBE6;padding:44px 0;text-align:center;font-size:13px;}
   footer a{color:var(--amber);}
@@ -435,8 +422,6 @@
 <section class="dark-section case-bridge" id="case-studies">
   <div class="about-fade" aria-hidden="true"></div>
   <div class="wrap">
-    <div class="case-process-grid">
-    <div class="case-process-cases">
     <div class="section-kicker">Case studies</div>
     <h2 class="section-title">Real problems, working prototypes.</h2>
     <p class="lede">Case studies so far, with more industries in the pipeline.</p>
@@ -521,21 +506,6 @@
         </div>
       </div>
     </div>
-    </div>
-    </div>
-
-    <div class="case-process-steps">
-    <div class="section-kicker">Process</div>
-    <h2 class="section-title">A refined system for tackling each new project</h2>
-    <div class="approach-list-compact" data-reveal-stagger>
-      <div class="approach-step"><div class="approach-num"></div><h4>Research the real problem first</h4></div>
-      <div class="approach-step"><div class="approach-num"></div><h4>Build personas &amp; run interviews</h4></div>
-      <div class="approach-step"><div class="approach-num"></div><h4>Prioritize with a defensible framework</h4></div>
-      <div class="approach-step"><div class="approach-num"></div><h4>Prototype it</h4></div>
-      <div class="approach-step"><div class="approach-num"></div><h4>Prove it's buildable and trackable</h4></div>
-    </div>
-    </div>
-
     </div>
   </div>
 </section>
