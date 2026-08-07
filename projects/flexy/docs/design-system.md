@@ -40,7 +40,7 @@ Every other named competitor's brand color was checked before picking the replac
 
 ## 4. Typography
 
-Unchanged from v2. **Inter Variable throughout, no display serif** (`--font-display` aliased to `--font-body`), plus a dedicated **monospace face for numeric readouts** (prices, kWh, stat-tile numbers, charge percentages):
+Updated from v2, which ran Inter Variable throughout with no display serif (`--font-display` aliased to `--font-body`). The hero `h1.title` now uses the shared design system's default **Fraunces Variable display serif** (italic, weight 600), matching SunnySideUp's headline treatment; the rest of the page stays on **Inter Variable**, plus a dedicated **monospace face for numeric readouts** (prices, kWh, stat-tile numbers, charge percentages):
 ```
 --font-mono: ui-monospace, 'SF Mono', 'Cascadia Mono', 'JetBrains Mono', Menlo, Consolas, monospace;
 ```
