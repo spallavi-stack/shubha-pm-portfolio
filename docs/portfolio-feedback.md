@@ -171,13 +171,26 @@ Segment A's objection is structural and no portfolio change fixes it.
 
 ### 9. German is a hard constraint and the site says nothing about language or market
 
-**Status:** Open. Needs a decision from Shubha before item 1 can be finished.
+**Status: Answered by Shubha, August 2026. Two target channels defined, site copy still to be written.**
 
 German came up against two of the three segments independently. The reviewer flagged that he does not know whether Shubha speaks it.
 
 The site currently states no location, no market, and no working language. A visitor cannot tell which country's market this is aimed at. The case studies point in two different directions on their own, since Flexy is sized to Illinois and ComEd while SunnySideUp is sized to the UK, and neither is Germany.
 
-**Open questions only Shubha can answer.** Does she speak German, and at what working level? Is DACH the target market, or is it one of several? Whatever the answers, the site should state where she works and in what language, because that information is absent and two of three candidate segments turn on it.
+**Shubha's answer.** She speaks some German, below a working level for running product discovery. DACH is not the primary target. The focus is an English-speaking audience, plus her existing German network of people who have worked with her before.
+
+**What that resolves.** The German objection in item 8 mostly dissolves, because it was an objection to competing for German-language mandates, which is now out of scope. It stays live only if segments B or C get pursued cold in the German market.
+
+**What that defines: two channels that need different things from the site.**
+
+- **Cold, English-speaking.** The portfolio carries the whole argument on its own. This is the channel where item 10's differentiator has to land, because nothing else is doing the persuading.
+- **Warm, her existing German network.** These people have worked with her and already trust the work. The site functions as a credibility artifact confirming what she has been building, rather than as a persuasion device. Language is a low barrier here because the relationship predates it.
+
+**This turns the Illinois and UK split into an asset.** Flexy sized to ComEd and SunnySideUp sized to the UK previously read as an inconsistency about which market the portfolio addresses. Under an English-speaking, remote-first target it reads as deliberate international range instead, and no longer needs reconciling.
+
+**The trade-off being accepted, stated plainly.** Ruling out German-language delivery shrinks the reachable pool in her local market, which is the substance of the reviewer's point. The answer is that English-speaking clients are reachable remotely and the warm German network does not require the language. Worth revisiting only if inbound work turns out to be overwhelmingly German-language.
+
+**Still to do on the site.** State the working language and that she works remotely with English-speaking clients. That information is absent today, and a visitor cannot currently tell.
 
 ### 10. The differentiator matters more than the segment
 
@@ -207,4 +220,6 @@ This refines item 1 rather than contradicting it. Item 1's finding was that the 
 
 Round 1 asked who the portfolio is for. Round 2's answer is that the segment question has no clean answer, and that a sharper one sits behind it: in a market crowded with recently laid-off senior people, what makes this the obvious choice? The reviewer's answer is the method, and the method is already documented across this repo without being the thing the site leads with.
 
-Two decisions are blocked on Shubha rather than on any further research: German and the target market (item 9), and whether the process or the climate focus becomes the headline (item 10).
+Two decisions were blocked on Shubha rather than on any further research. **Item 9 is now answered**: English-speaking clients plus her existing German network, with DACH out of scope as a primary market. **Item 10 is still open** and is the last strategic decision holding up item 1: whether the process or the climate focus becomes the headline.
+
+Item 9's answer raises the stakes on item 10. With the cold channel being English-speaking and remote, the portfolio does the entire job of persuading a stranger who has no prior relationship with her. That is exactly the channel where the differentiator has to be legible in the first few seconds.
