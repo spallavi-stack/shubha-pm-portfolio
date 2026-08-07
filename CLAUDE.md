@@ -84,6 +84,10 @@ Applies to product briefs, case studies, personas, and anything else meant to be
 
 This rule was set explicitly because the docs written so far violate it constantly. Check new writing against it deliberately rather than assuming default style is fine.
 
+## Git & PR workflow
+
+**Always ask before merging a pull request, every time — even after the user has approved a merge earlier in the same session.** Opening a PR and pushing commits to a feature branch don't need per-action confirmation, but merging into `main` does, no exceptions.
+
 ## Other notes
 
 - **Feedback on the portfolio site itself** (positioning, structure, what a visitor experiences, as distinct from any one case study's research) is logged in `docs/portfolio-feedback.md` at the repo root. **Read it before making changes to `index.html` or either case study's `index.html`** — it carries the open feedback items and the decisions already made about them, including a case-study restructure that is agreed but not yet built. Add new feedback there as a dated round rather than starting a new file, and append repeat mentions to the existing item so weight of evidence stays visible.
