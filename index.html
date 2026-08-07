@@ -35,7 +35,15 @@
     visibility:hidden;
   }
   .split-line{overflow:hidden;padding-bottom:0.08em;}
-  .subtitle{font-size:18px;color:#E4E1F5;max-width:600px;margin:0 0 36px;}
+  .subtitle{font-size:18px;color:#E4E1F5;max-width:600px;margin:0 0 28px;}
+  .hero-who{margin:0 0 32px;}
+  .hero-who .section-kicker{color:var(--amber);margin-bottom:12px;}
+  .hero-who .section-kicker::before{background:var(--amber);}
+  .hero-who-list{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:10px;}
+  .hero-who-list li{
+    background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.25);
+    color:#fff;font-size:13px;font-weight:600;padding:8px 16px;border-radius:999px;
+  }
   .hero-ctas{display:flex;gap:16px;flex-wrap:wrap;}
 
   /* The stakes: blunt, oversized numbers, but in the site's own navy/amber system.
@@ -208,7 +216,16 @@
     <div class="hero-grid">
       <div class="hero-content">
       <h1 class="title" data-split-reveal>The energy transition needs better products.</h1>
-      <p class="subtitle">Hi! I'm Shubha, a Product Manager with a bone to pick with the climate crisis. I am currently working on 0-to-1 product case studies that tackle overlooked gaps in climate change mitigation and adaptation. Every case study is end-to-end: real research, solid documentation, and a working prototype. If you're working on a climate solution and need product support, I'd love to connect.</p>
+      <p class="subtitle">Hi! I'm Shubha, a Product Manager with a bone to pick with the climate crisis. I work as a freelance PM for climate and energy companies, running the same process I'd bring to any paid engagement: research where every claim is tagged fact, reasoning, or open assumption, and a working prototype.</p>
+      <div class="hero-who">
+        <div class="section-kicker">Who this is for</div>
+        <ul class="hero-who-list">
+          <li>New product line</li>
+          <li>Feature before you build</li>
+          <li>Pivot</li>
+          <li>Studio &amp; agency capacity</li>
+        </ul>
+      </div>
       <div class="hero-ctas">
         <a class="btn" data-magnetic href="#case-studies">View case studies</a>
         <a class="btn btn-ghost" data-magnetic href="contact.html" style="background:rgba(255,255,255,0.08);color:#fff;border-color:rgba(255,255,255,0.25);">Get in touch →</a>
