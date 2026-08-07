@@ -4,7 +4,9 @@ A running record of feedback on the portfolio site itself (positioning, structur
 
 **How to use this file.** Every round of feedback gets its own section, dated, with the source noted. Each item records what was said, what it implies for the site, and a status. Items stay in the log after they're actioned so the reasoning behind a change is still findable later. Items that were heard once and not yet acted on stay open rather than being deleted, and a second or third mention of the same thing is added to the existing item rather than logged fresh, so weight of evidence is visible.
 
-Status values: **Open** (logged, no decision yet), **Decided** (approach agreed, not built), **Done** (shipped), **Parked** (deliberately deferred, waiting for corroboration).
+Status values: **Open** (logged, no decision yet), **Decided** (approach agreed, not built), **Done** (shipped), **Parked** (deliberately deferred, waiting for corroboration), **Declined** (heard, considered, deliberately not acted on).
+
+**This log is feedback received, not a backlog.** Every item here is someone's opinion, recorded so it can be weighed. Shubha decides which ones get acted on, and her own judgement about the portfolio is a legitimate reason to decline any of them. Declining is a real resolution and gets recorded with its reasoning, the same as any other decision. Item 10 is the worked example. Do not treat an open item as an instruction to implement it.
 
 ---
 
@@ -14,7 +16,7 @@ Status values: **Open** (logged, no decision yet), **Decided** (approach agreed,
 
 ### 1. The portfolio speaks to the audience least able to hire
 
-**Status:** Open. Highest priority of this round. **Substantially developed by Round 2 (items 8 to 11), which should be read alongside this one.** The same reviewer later argued that picking the target segment is harder than it looks and that the differentiator matters more than the segment.
+**Status:** Open, and now unblocked. **Read Round 2 (items 8 to 11) alongside this one**, which develops it substantially and settles the two decisions it was waiting on. Climate leads (item 10), the audience is English-speaking plus a warm German network (item 9), and the segment framing stays broad (item 11). What remains is writing the copy.
 
 **What was said.** The site reads as though it is aimed at founders of small, ideation-stage companies who need someone to take them from idea to prototype. That audience has a real problem: they typically don't have much money, and many are themselves mid-fundraise, so hiring an experienced product manager is not a near-term move for them. Optimising the portfolio for that group points it at the segment least able to act on it.
 
@@ -194,7 +196,15 @@ The site currently states no location, no market, and no working language. A vis
 
 ### 10. The differentiator matters more than the segment
 
-**Status:** Open. The most consequential item in this round.
+**Status: Decided by Shubha, August 2026. Climate leads. The reviewer's core recommendation is declined.**
+
+**The decision.** Climate stays the headline. The site continues to lead with the energy transition and with why Shubha works on it. The method stays as supporting evidence rather than becoming the opening argument.
+
+**The reasoning.** Shubha's judgement, weighed against the reviewer's. Feedback is an input to this decision and not a verdict on it, and her read on what the portfolio is for carries more weight than a single reviewer's read on what the market wants. The climate focus is the reason the portfolio exists, and leading with process would give up a real differentiator to compete on process against everyone else competing on process.
+
+**What survives the decision.** The reviewer's underlying observation still holds and is compatible with climate leading: the method is currently buried, and it is the strongest argument for the segments he rated highest. Surfacing it better is available without demoting climate. The homepage already has a section on the system used per project, and the process itself is documented across this repo. Making that more visible is a separate, smaller piece of work from changing what the site leads with.
+
+**Recorded below for context, since the argument shaped items 8 and 11.**
 
 His strongest point, and the one that reframes item 1. A lot of experienced people have been laid off recently and many of them went freelance, so the market is crowded with strong competition. Segment selection matters less than being able to answer why someone should pick her over the rest of that field.
 
@@ -220,6 +230,8 @@ This refines item 1 rather than contradicting it. Item 1's finding was that the 
 
 Round 1 asked who the portfolio is for. Round 2's answer is that the segment question has no clean answer, and that a sharper one sits behind it: in a market crowded with recently laid-off senior people, what makes this the obvious choice? The reviewer's answer is the method, and the method is already documented across this repo without being the thing the site leads with.
 
-Two decisions were blocked on Shubha rather than on any further research. **Item 9 is now answered**: English-speaking clients plus her existing German network, with DACH out of scope as a primary market. **Item 10 is still open** and is the last strategic decision holding up item 1: whether the process or the climate focus becomes the headline.
+Both decisions that were blocked on Shubha are now made. **Item 9:** English-speaking clients plus her existing German network, with DACH out of scope as a primary market. **Item 10:** climate leads, and the reviewer's recommendation to lead with method is declined.
 
-Item 9's answer raises the stakes on item 10. With the cold channel being English-speaking and remote, the portfolio does the entire job of persuading a stranger who has no prior relationship with her. That is exactly the channel where the differentiator has to be legible in the first few seconds.
+**Item 1 is therefore unblocked.** The positioning work can now be written against settled ground: climate leads, the audience is English-speaking plus a warm German network, and per item 11 the segment framing stays broad enough to catch work she would take rather than narrowing to one buyer. What remains is writing the copy, since the site still states no audience, no engagement type, and no working language.
+
+The one piece of Round 2 still worth acting on independently is surfacing the method better, which item 10 records as compatible with climate leading.
