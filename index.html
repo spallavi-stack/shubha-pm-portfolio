@@ -21,101 +21,55 @@
   .hero-fade{position:absolute;left:0;right:0;bottom:0;height:220px;z-index:1;pointer-events:none;background:linear-gradient(to bottom, transparent, var(--navy));}
   .hero .wrap{position:relative;z-index:2;}
 
-  /* Hero content (left) + stakes card (right), side by side. Same gradient
-     backdrop throughout; the stakes card floats on top with its own
-     contained navy background, border and shadow, rather than the two
-     being stacked as separate full-width sections. */
-  .hero-grid{display:grid;grid-template-columns:1fr minmax(300px,380px);gap:48px;align-items:center;}
+  /* Hero main content (left) + who-this-is-for cards (right), side by
+     side, using the space the removed stats card left behind. Stacks on
+     narrower screens, cards below the text. */
+  .hero-grid{display:grid;grid-template-columns:1fr minmax(240px,300px);gap:44px;align-items:start;}
   @media(max-width:900px){.hero-grid{grid-template-columns:1fr;}}
 
   h1.title{
     font-family:var(--font-display);font-weight:600;font-style:italic;
     font-variation-settings:'SOFT' 40,'opsz' 72;
-    font-size:clamp(38px,5.6vw,64px);line-height:1.08;margin:0 0 22px;letter-spacing:-0.01em;
+    font-size:clamp(32px,4.2vw,52px);line-height:1.1;margin:0 0 20px;letter-spacing:-0.01em;
     visibility:hidden;
   }
   .split-line{overflow:hidden;padding-bottom:0.08em;}
   .subtitle{font-size:18px;color:#E4E1F5;max-width:600px;margin:0 0 36px;}
   .hero-ctas{display:flex;gap:16px;flex-wrap:wrap;}
 
-  /* The stakes: blunt, oversized numbers, but in the site's own navy/amber system.
-     Rotates one fact at a time; base CSS (no JS / reduced motion) shows them
-     stacked and fully visible, JS only switches to crossfade mode when it runs. */
-  .stakes-card{
-    position:relative;overflow:hidden;background:var(--navy);color:#fff;text-align:center;
-    border-radius:22px;border:1px solid rgba(255,255,255,0.14);box-shadow:0 30px 70px rgba(6,4,20,0.45);
-  }
-  .stakes-card .section-kicker{color:var(--amber);justify-content:center;}
-  .stakes-card .section-kicker::before{background:var(--amber);}
-  .stakes-card-inner{position:relative;z-index:1;padding:36px 30px;}
-
-  /* Per-fact illustrated backdrop, content-matched, hidden until JS enables rotation */
-  .stakes-bg{position:absolute;inset:0;z-index:0;display:none;}
-  .stakes-card.is-rotating .stakes-bg{display:block;}
-  .stakes-bottom-fade{position:absolute;left:0;right:0;bottom:0;height:90px;z-index:0;pointer-events:none;background:linear-gradient(to bottom, transparent, var(--navy) 90%);}
-  .stakes-bg .scene{position:absolute;inset:0;width:100%;height:100%;opacity:0;transition:opacity 0.8s ease;}
-  .stakes-bg .scene.is-active{opacity:1;}
-  .stakes-bg .shimmer-line{animation:shimmerDrift 6s ease-in-out infinite;}
-  .stakes-bg .shimmer-line-slow{animation-duration:9s;animation-direction:reverse;}
-  @keyframes shimmerDrift{ 0%,100%{transform:translateX(0);} 50%{transform:translateX(24px);} }
-  .stakes-bg .drift-cloud{animation:cloudDrift 14s ease-in-out infinite;}
-  .stakes-bg .drift-cloud-slow{animation-duration:20s;animation-direction:reverse;}
-  @keyframes cloudDrift{ 0%,100%{transform:translateX(0);} 50%{transform:translateX(40px);} }
-  .stakes-bg .bolt{animation:boltFlicker 5s ease-in-out infinite;}
-  @keyframes boltFlicker{
-    0%,88%,92%{opacity:0;} 89%{opacity:0.9;} 90%{opacity:0.2;} 91%{opacity:0.7;}
-  }
-
-  .stakes-slot{position:relative;margin-top:8px;display:flex;flex-direction:column;align-items:center;}
-  .stakes-slot.is-rotating .stake{display:flex;flex-direction:column;align-items:center;}
-  .stakes-dots{justify-content:center;}
-  .stakes-slot .stake{margin-bottom:40px;}
-  .stakes-slot .stake:last-child{margin-bottom:0;}
-  .stakes-slot.is-rotating{min-height:230px;}
-  @media(max-width:640px){.stakes-slot.is-rotating{min-height:260px;}}
-  .stakes-slot.is-rotating .stake{position:absolute;inset:0;opacity:0;margin-bottom:0;}
-  .stake-num{
-    font-family:var(--font-body);font-weight:800;font-size:clamp(40px,9vw,56px);line-height:1;
-    letter-spacing:-0.02em;color:var(--amber);margin-bottom:14px;
-  }
-  .stake-num-text{font-size:clamp(26px,6vw,36px);}
-  .stake-arrow{color:#B9C0DD;margin:0 4px;font-weight:600;}
-  .stake-label{font-size:14px;color:#B9C0DD;max-width:280px;line-height:1.5;margin:0 auto 10px;}
-  .stake-src a{font-size:11px;text-transform:uppercase;letter-spacing:0.06em;color:#8B90B3;text-decoration:none;border-bottom:1px solid rgba(139,144,179,0.4);}
-  .stake-src a:hover{color:var(--amber);border-color:var(--amber);}
-  .stakes-dots{display:flex;gap:7px;margin-top:28px;}
-  .stakes-dots .car-dot{background:rgba(255,255,255,0.22);}
-  .stakes-dots .car-dot.active{background:var(--amber);}
-
-  /* Dark section: hero, stakes, and the case-studies/process grid all
-     share one continuous navy backdrop, so product-brand card colors read
-     as accents within one consistent dark stage instead of floating on
-     unrelated cream. */
+  /* Dark section: hero and the case-studies grid share one continuous navy
+     backdrop, so product-brand card colors read as accents within one
+     consistent dark stage instead of floating on unrelated cream. */
   .dark-section{background:var(--navy);color:#fff;}
   .dark-section .section-kicker{color:var(--amber);}
   .dark-section .section-kicker::before{background:var(--amber);}
   .dark-section h2.section-title{color:#fff;}
   .dark-section .lede{color:#C6CBE6;}
 
-  /* Who-this-is-for flip cards: small and centered at rest, label only.
-     Click/tap grows the card to real size (width/height transition, not a
-     transform scale, so the longer back sentence has room to lay out
-     without clipping) and flips it to the back face at the same time, two
-     concurrent movements from one click. No instructional "tap to flip"
-     copy: cursor, hover state and the motion itself are the affordance.
-     prefers-reduced-motion drops both transitions to an instant swap. */
-  #who-this-is-for{padding:52px 0 60px;}
-  .who-grid{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:18px;margin-top:24px;}
+  /* Who-this-is-for flip cards, living in the hero's own right-hand
+     column now, so the column is narrow at every viewport width, not
+     just mobile. Stacked in a single column for that reason: growing a
+     card on click only ever pushes the ones below it down, never
+     sideways, so nothing else in the column has to reflow to make room.
+     Click/tap grows the card to real size (width/height transition, not
+     a transform scale, so the longer back sentence has room to lay out
+     without clipping) and flips it to the back face at the same time,
+     two concurrent movements from one click. No instructional "tap to
+     flip" copy: cursor, hover state and the motion itself are the
+     affordance. prefers-reduced-motion drops both transitions to an
+     instant swap. */
+  .hero-who .section-kicker{color:var(--amber);}
+  .hero-who .section-kicker::before{background:var(--amber);}
+  .who-grid{display:flex;flex-direction:column;gap:10px;margin-top:16px;}
   .flip-card{
-    width:150px;height:122px;perspective:1200px;
+    width:100%;height:56px;perspective:1200px;
     transition:width 0.5s cubic-bezier(0.4,0,0.2,1),height 0.5s cubic-bezier(0.4,0,0.2,1);
   }
-  .flip-card.is-flipped{width:220px;height:200px;}
+  .flip-card.is-flipped{height:128px;}
   .flip-card-trigger{
     all:unset;display:block;width:100%;height:100%;cursor:pointer;box-sizing:border-box;
   }
   .flip-card-trigger:focus-visible{outline:2px solid var(--amber);outline-offset:5px;border-radius:16px;}
-  .flip-card-trigger:hover .flip-card-front{border-color:rgba(255,255,255,0.34);}
   .flip-card-inner{
     display:block;position:relative;width:100%;height:100%;transform-style:preserve-3d;
     transition:transform 0.5s cubic-bezier(0.4,0,0.2,1);
@@ -124,26 +78,30 @@
   .flip-card.is-flipped .flip-card-inner{transform:rotateY(180deg);}
   .flip-card-face{
     position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;
-    border-radius:16px;padding:18px;display:flex;align-items:center;justify-content:center;text-align:center;
+    border-radius:14px;padding:14px;display:flex;align-items:center;justify-content:center;text-align:center;
     box-sizing:border-box;
+    box-shadow:0 1px 0 rgba(255,255,255,0.07) inset, 0 10px 22px rgba(6,4,20,0.35);
+    transition:transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
   }
-  .flip-card-front{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.16);transition:border-color 0.3s;}
-  .flip-card-back{background:var(--amber);color:#2B2118;transform:rotateY(180deg);}
-  .flip-card-label{font-family:var(--font-display);font-weight:600;font-size:19px;color:#fff;line-height:1.2;}
-  .flip-card-desc{font-size:14px;font-weight:600;line-height:1.5;}
-
-  /* Below 640px a row can only ever fit two of these, so growing one card
-     to fit its sentence knocks its neighbors out of their pairs and the
-     whole grid cascades into a stack of lopsided single-card rows. Stack
-     in one column instead: growth only ever pushes straight down, and the
-     row-fit math that causes the cascade never comes up. */
-  @media(max-width:640px){
-    .who-grid{flex-direction:column;align-items:center;}
-    .flip-card{width:100%;max-width:280px;height:60px;}
-    .flip-card.is-flipped{height:132px;}
-    .flip-card-label{font-size:17px;}
-    .flip-card-desc{font-size:13.5px;}
+  .flip-card-front{
+    background:linear-gradient(160deg, rgba(255,255,255,0.09), rgba(255,255,255,0.03));
+    border:1px solid rgba(255,255,255,0.14);
   }
+  .flip-card-trigger:hover .flip-card-front{
+    border-color:rgba(231,178,58,0.45);
+    box-shadow:0 1px 0 rgba(255,255,255,0.09) inset, 0 0 0 1px rgba(231,178,58,0.18), 0 14px 30px rgba(6,4,20,0.45), 0 0 22px rgba(231,178,58,0.14);
+    transform:translateY(-2px);
+  }
+  .flip-card-back{
+    background:linear-gradient(160deg, #F0C158, var(--amber));
+    color:#2B2118;transform:rotateY(180deg);
+    border:1px solid rgba(43,33,24,0.12);
+    box-shadow:0 1px 0 rgba(255,255,255,0.25) inset, 0 14px 30px rgba(231,178,58,0.3);
+  }
+  .flip-card-label{
+    font-family:var(--font-display);font-weight:600;font-size:17px;color:#fff;line-height:1.2;letter-spacing:-0.01em;
+  }
+  .flip-card-desc{font-size:13.5px;font-weight:600;line-height:1.45;}
 
   details.section-collapse summary{cursor:pointer;list-style:none;display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:2px 0;}
   details.section-collapse summary::-webkit-details-marker{display:none;}
@@ -241,7 +199,7 @@
   <div class="hero-fade" aria-hidden="true"></div>
   <div class="wrap">
     <div class="hero-grid">
-      <div class="hero-content">
+      <div class="hero-main">
       <h1 class="title" data-split-reveal>The energy transition needs better products.</h1>
       <p class="subtitle">Hi! I'm Shubha, a Product Manager with a bone to pick with the climate crisis. I work as a freelance PM for climate and energy companies, running the same process I'd bring to any paid engagement: research where every claim is tagged fact, reasoning, or open assumption, and a working prototype.</p>
       <div class="hero-ctas">
@@ -250,174 +208,74 @@
       </div>
       </div>
 
-      <div class="stakes-card">
-        <div class="stakes-bg" aria-hidden="true">
-          <svg class="scene" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMax slice">
-            <defs><radialGradient id="scn0" cx="30%" cy="90%" r="70%"><stop offset="0" stop-color="#6B5A3E" stop-opacity="0.55"/><stop offset="1" stop-color="#6B5A3E" stop-opacity="0"/></radialGradient></defs>
-            <rect width="1200" height="700" fill="url(#scn0)"/>
-            <ellipse cx="250" cy="620" rx="420" ry="90" fill="#4A4032" opacity="0.4"/>
-            <ellipse cx="750" cy="660" rx="360" ry="70" fill="#4A4032" opacity="0.3"/>
-            <path d="M180 640 Q 205 560 190 500 Q 178 460 200 420" stroke="#8A8168" stroke-width="9" fill="none" opacity="0.35" stroke-linecap="round"/>
-            <path d="M760 650 Q 785 580 770 530" stroke="#8A8168" stroke-width="7" fill="none" opacity="0.28" stroke-linecap="round"/>
-          </svg>
-          <svg class="scene" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMax slice">
-            <circle cx="950" cy="560" r="260" fill="#FF7A3D" opacity="0.22"/>
-            <circle cx="950" cy="560" r="150" fill="#FFAE42" opacity="0.28"/>
-            <path d="M0 660 Q 300 600 600 650 T 1200 630 V 700 H 0 Z" fill="#3D1A12" opacity="0.4"/>
-          </svg>
-          <svg class="scene" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMax slice">
-            <circle cx="620" cy="320" r="110" fill="#FF5A36" opacity="0.3"/>
-            <path class="shimmer-line" d="M-100 420 Q -40 400 20 420 T 140 420 T 260 420 T 380 420 T 500 420 T 620 420 T 740 420 T 860 420 T 980 420 T 1100 420 T 1220 420 T 1300 420" stroke="#FF8A5C" stroke-width="3" fill="none" opacity="0.32"/>
-            <path class="shimmer-line shimmer-line-slow" d="M-100 490 Q -40 470 20 490 T 140 490 T 260 490 T 380 490 T 500 490 T 620 490 T 740 490 T 860 490 T 980 490 T 1100 490 T 1220 490 T 1300 490" stroke="#FF8A5C" stroke-width="3" fill="none" opacity="0.22"/>
-          </svg>
-          <svg class="scene" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMax slice">
-            <ellipse cx="600" cy="680" rx="700" ry="60" fill="#5C4A32" opacity="0.35"/>
-            <path d="M300 640 L330 595 L312 555 M330 595 L362 606" stroke="#7A6648" stroke-width="4" fill="none" opacity="0.4" stroke-linecap="round"/>
-            <path d="M860 650 L828 598 L846 556 M828 598 L802 612" stroke="#7A6648" stroke-width="4" fill="none" opacity="0.4" stroke-linecap="round"/>
-            <path d="M0 662 Q 200 650 400 666 T 800 660 T 1200 666" stroke="#8A7856" stroke-width="2" fill="none" opacity="0.3"/>
-            <path d="M150 400 Q168 380 186 400 Q204 380 222 400" stroke="#C9BFA0" stroke-width="4" fill="none" opacity="0.55" stroke-linecap="round"/>
-            <path d="M240 350 Q254 334 268 350 Q282 334 296 350" stroke="#C9BFA0" stroke-width="3.5" fill="none" opacity="0.48" stroke-linecap="round"/>
-            <path d="M990 380 Q1006 362 1022 380 Q1038 362 1054 380" stroke="#C9BFA0" stroke-width="4" fill="none" opacity="0.55" stroke-linecap="round"/>
-            <path d="M920 440 Q933 425 946 440 Q959 425 972 440" stroke="#C9BFA0" stroke-width="3" fill="none" opacity="0.45" stroke-linecap="round"/>
-          </svg>
-          <svg class="scene" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMax slice">
-            <path d="M0 560 Q 150 528 300 560 T 600 560 T 900 560 T 1200 560 V 700 H 0 Z" fill="#0D5C6B" opacity="0.4"/>
-            <path d="M0 615 Q 150 585 300 615 T 600 615 T 900 615 T 1200 615 V 700 H 0 Z" fill="#0A4A56" opacity="0.45"/>
-            <ellipse class="drift-cloud" cx="260" cy="340" rx="120" ry="34" fill="#1B2440" opacity="0.4"/>
-            <ellipse class="drift-cloud drift-cloud-slow" cx="480" cy="300" rx="150" ry="40" fill="#1B2440" opacity="0.32"/>
-            <path class="bolt" d="M790 320 L748 440 L796 440 L738 545" stroke="#CFE8EA" stroke-width="4" fill="none" opacity="0" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-          <svg class="scene" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMax slice">
-            <polygon points="150,650 260,510 380,650" fill="#BFE3EA" opacity="0.25"/>
-            <polygon points="700,650 830,470 980,650" fill="#BFE3EA" opacity="0.3"/>
-            <path d="M830 470 L852 512 L808 522 Z" fill="#0A2A33" opacity="0.32"/>
-            <path d="M0 662 Q 300 640 600 662 T 1200 656" stroke="#E4F4F6" stroke-width="2" fill="none" opacity="0.3"/>
-          </svg>
-          <svg class="scene" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMax slice">
-            <circle cx="600" cy="820" r="220" fill="#FFC24B" opacity="0.22"/>
-            <circle cx="600" cy="820" r="120" fill="#FFE9A8" opacity="0.24"/>
-            <g opacity="0.4">
-              <rect x="80" y="640" width="90" height="50" fill="#1E4B6B" transform="skewX(-20)"/>
-              <rect x="195" y="640" width="90" height="50" fill="#1E4B6B" transform="skewX(-20)"/>
-              <rect x="960" y="640" width="90" height="50" fill="#1E4B6B" transform="skewX(-20)"/>
-              <rect x="1075" y="640" width="90" height="50" fill="#1E4B6B" transform="skewX(-20)"/>
-            </g>
-          </svg>
-        </div>
-        <div class="stakes-bottom-fade" aria-hidden="true"></div>
-        <div class="stakes-card-inner">
-          <div class="section-kicker">The stakes</div>
-          <div class="stakes-slot" data-stakes-rotator>
-            <div class="stake">
-              <div class="stake-num"><span data-count="38.1" data-decimals="1" data-suffix="B">0</span></div>
-              <div class="stake-label">Tonnes of CO2 from fossil fuels and industry in 2025, a new record high.</div>
-              <div class="stake-src"><a href="https://globalcarbonbudget.org/fossil-fuel-co2-emissions-hit-record-high-in-2025/" target="_blank" rel="noopener">Global Carbon Budget, 2025</a></div>
-            </div>
-            <div class="stake">
-              <div class="stake-num stake-num-text">2015&ndash;2024</div>
-              <div class="stake-label">The warmest ten-year period ever recorded.</div>
-              <div class="stake-src"><a href="https://wmo.int/news/media-centre/wmo-confirms-2024-warmest-year-record-about-155degc-above-pre-industrial-level" target="_blank" rel="noopener">World Meteorological Organization</a></div>
-            </div>
-            <div class="stake">
-              <div class="stake-num"><span data-count="30" data-suffix="%">0</span></div>
-              <div class="stake-label">Of the world's population already faces potentially deadly heat for 20+ days a year.</div>
-              <div class="stake-src"><a href="https://www.nature.com/articles/nclimate3322" target="_blank" rel="noopener">Mora et al., Nature Climate Change</a></div>
-            </div>
-            <div class="stake">
-              <div class="stake-num"><span data-count="73" data-suffix="%">0</span></div>
-              <div class="stake-label">Decline in the average size of monitored wildlife populations since 1970.</div>
-              <div class="stake-src"><a href="https://www.worldwildlife.org/publications/2024-living-planet-report/" target="_blank" rel="noopener">WWF / ZSL Living Planet Report, 2024</a></div>
-            </div>
-            <div class="stake">
-              <div class="stake-num stake-num-text">2.1<span class="stake-arrow">&rarr;</span>4.5mm</div>
-              <div class="stake-label">The rate of global sea level rise, per year, more than doubled between 1993 and 2024.</div>
-              <div class="stake-src"><a href="https://www.earthdata.nasa.gov/learn/data-in-action/rate-global-sea-level-rise-doubled-during-past-three-decades" target="_blank" rel="noopener">NASA Sea Level Change Portal</a></div>
-            </div>
-            <div class="stake">
-              <div class="stake-num"><span data-count="12.1" data-decimals="1" data-suffix="%">0</span></div>
-              <div class="stake-label">Per-decade decline in Arctic sea ice minimum extent since the 1979 satellite record began.</div>
-              <div class="stake-src"><a href="https://nsidc.org/sea-ice-today/analyses/2025-arctic-sea-ice-minimum-squeezes-ten-lowest-minimums" target="_blank" rel="noopener">NASA / NSIDC</a></div>
-            </div>
-            <div class="stake">
-              <div class="stake-num"><span data-count="34" data-suffix="%">0</span></div>
-              <div class="stake-label">Of global electricity now comes from renewables, which overtook coal for the first time in over a century in 2025.</div>
-              <div class="stake-src"><a href="https://www.iea.org/reports/global-energy-review-2026/electricity-supply" target="_blank" rel="noopener">IEA, Global Energy Review 2026</a></div>
-            </div>
+      <div class="hero-who" id="who-this-is-for">
+        <div class="section-kicker">Who this is for</div>
+        <div class="who-grid" data-reveal-stagger>
+          <div class="flip-card" data-flip-card>
+            <button type="button" class="flip-card-trigger" aria-expanded="false">
+              <span class="flip-card-inner">
+                <span class="flip-card-face flip-card-front">
+                  <span class="flip-card-label">Innovation leads</span>
+                </span>
+                <span class="flip-card-face flip-card-back" aria-hidden="true">
+                  <span class="flip-card-desc">Testing a product idea before you commit engineering time to it</span>
+                </span>
+              </span>
+            </button>
           </div>
-          <div class="stakes-dots" id="stakesDots"></div>
+          <div class="flip-card" data-flip-card>
+            <button type="button" class="flip-card-trigger" aria-expanded="false">
+              <span class="flip-card-inner">
+                <span class="flip-card-face flip-card-front">
+                  <span class="flip-card-label">Experiment leads</span>
+                </span>
+                <span class="flip-card-face flip-card-back" aria-hidden="true">
+                  <span class="flip-card-desc">Testing features before you build them</span>
+                </span>
+              </span>
+            </button>
+          </div>
+          <div class="flip-card" data-flip-card>
+            <button type="button" class="flip-card-trigger" aria-expanded="false">
+              <span class="flip-card-inner">
+                <span class="flip-card-face flip-card-front">
+                  <span class="flip-card-label">Teams mid-pivot</span>
+                </span>
+                <span class="flip-card-face flip-card-back" aria-hidden="true">
+                  <span class="flip-card-desc">Rethinking your product's direction and want it pressure-tested by outside research</span>
+                </span>
+              </span>
+            </button>
+          </div>
+          <div class="flip-card" data-flip-card>
+            <button type="button" class="flip-card-trigger" aria-expanded="false">
+              <span class="flip-card-inner">
+                <span class="flip-card-face flip-card-front">
+                  <span class="flip-card-label">Agencies &amp; studios</span>
+                </span>
+                <span class="flip-card-face flip-card-back" aria-hidden="true">
+                  <span class="flip-card-desc">Need extra PM hands for a client project</span>
+                </span>
+              </span>
+            </button>
+          </div>
+          <div class="flip-card" data-flip-card>
+            <button type="button" class="flip-card-trigger" aria-expanded="false">
+              <span class="flip-card-inner">
+                <span class="flip-card-face flip-card-front">
+                  <span class="flip-card-label">Early-stage founders</span>
+                </span>
+                <span class="flip-card-face flip-card-back" aria-hidden="true">
+                  <span class="flip-card-desc">Need a product built out, research through prototype</span>
+                </span>
+              </span>
+            </button>
+          </div>
         </div>
       </div>
     </div>
   </div>
 </header>
-
-<section class="dark-section" id="who-this-is-for">
-  <div class="wrap">
-    <div class="section-kicker">Who this is for</div>
-    <div class="who-grid" data-reveal-stagger>
-      <div class="flip-card" data-flip-card>
-        <button type="button" class="flip-card-trigger" aria-expanded="false">
-          <span class="flip-card-inner">
-            <span class="flip-card-face flip-card-front">
-              <span class="flip-card-label">Exploration</span>
-            </span>
-            <span class="flip-card-face flip-card-back" aria-hidden="true">
-              <span class="flip-card-desc">Testing a product idea before you commit engineering time to it</span>
-            </span>
-          </span>
-        </button>
-      </div>
-      <div class="flip-card" data-flip-card>
-        <button type="button" class="flip-card-trigger" aria-expanded="false">
-          <span class="flip-card-inner">
-            <span class="flip-card-face flip-card-front">
-              <span class="flip-card-label">Feature test</span>
-            </span>
-            <span class="flip-card-face flip-card-back" aria-hidden="true">
-              <span class="flip-card-desc">Testing features before you build them</span>
-            </span>
-          </span>
-        </button>
-      </div>
-      <div class="flip-card" data-flip-card>
-        <button type="button" class="flip-card-trigger" aria-expanded="false">
-          <span class="flip-card-inner">
-            <span class="flip-card-face flip-card-front">
-              <span class="flip-card-label">Pivot</span>
-            </span>
-            <span class="flip-card-face flip-card-back" aria-hidden="true">
-              <span class="flip-card-desc">Rethinking your product's direction and want it pressure-tested by outside research</span>
-            </span>
-          </span>
-        </button>
-      </div>
-      <div class="flip-card" data-flip-card>
-        <button type="button" class="flip-card-trigger" aria-expanded="false">
-          <span class="flip-card-inner">
-            <span class="flip-card-face flip-card-front">
-              <span class="flip-card-label">Studio support</span>
-            </span>
-            <span class="flip-card-face flip-card-back" aria-hidden="true">
-              <span class="flip-card-desc">Running an agency or studio and need extra PM hands for a client project</span>
-            </span>
-          </span>
-        </button>
-      </div>
-      <div class="flip-card" data-flip-card>
-        <button type="button" class="flip-card-trigger" aria-expanded="false">
-          <span class="flip-card-inner">
-            <span class="flip-card-face flip-card-front">
-              <span class="flip-card-label">New build</span>
-            </span>
-            <span class="flip-card-face flip-card-back" aria-hidden="true">
-              <span class="flip-card-desc">Starting from scratch and need a product built out, research through prototype</span>
-            </span>
-          </span>
-        </button>
-      </div>
-    </div>
-  </div>
-</section>
 
 <section class="dark-section case-bridge" id="case-studies">
   <div class="about-fade" aria-hidden="true"></div>
