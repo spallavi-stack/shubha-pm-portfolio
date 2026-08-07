@@ -99,6 +99,28 @@ Self-hosting fits comfortably. Two minutes of 1080p screen recording lands rough
 
 **Unverified.** Supercut's own hosting and retention behaviour, and what happens to anything stored there if access lapses, has not been confirmed against their documentation. It stops mattering if the MP4 is exported and committed, which is why that is the recommendation regardless.
 
+**Two things to check before recording.** Whether the bundle tier exports without a watermark, and whether any licensed asset gets baked into the video. Your own screen recording and your own narration are yours permanently. Stock music, an AI voiceover, or stock footage may be licensed only while subscribed, in which case the MP4 keeps playing but the licence behind part of it has ended. Sticking to your own recording and narration avoids the question.
+
+**Length: 90 seconds, with 2 minutes as a ceiling.** Roughly 225 words of narration. Flexy gets two videos, one per audience toggle state, since one video covering both the homeowner app and the utility dashboard runs long and serves neither well. Scripts are drafted in `docs/video-scripts.md`.
+
+### 7. The prototype layout question (August 2026, follow-up)
+
+**Status:** Decided, not built.
+
+Two further points came up after the layout decision above and change it:
+
+- **An even split is fine when there is room for it.** Both case study pages currently cap at `max-width:920px` (`projects/flexy/index.html:35`, `projects/sunnysideup/index.html:28`), which is 872px of content, or 424px per column in an even split. That is cramped regardless of the visitor's monitor, because the page caps itself. Clearing SunnySideUp's 640px breakpoint per column would need the top section to break out to roughly 1360px, which needs about a 1400px viewport.
+- **SunnySideUp should keep its laptop frame.** Reverting it to a phone frame to save width would contradict the page's own copy at `projects/sunnysideup/index.html:418`, which states the prototype is "built as a desktop web tool rather than a mobile app, so it's shown here on a laptop rather than in a phone frame." That is a documented product decision, so the layout should bend around it.
+
+**Resulting decision: let the layout follow each prototype's shape, so the two case studies differ.**
+
+- **Flexy:** even split. Its prototype is a 390px-wide phone, which fits a ~430px column with no changes to the frame at all.
+- **SunnySideUp:** stacked. Video full width, laptop frame full width below it, laptop frame untouched.
+
+Both pages should stack below roughly 1400px viewport width so a visitor on a smaller laptop never gets the squeezed version.
+
+One known imperfection in Flexy's even split: the phone frame is 780px tall against a video around 376px tall at that column width. The space under the video takes the framing copy and the buttons, so the two columns will not end flush.
+
 ### 6. Put the source documents behind a password
 
 **Status:** Open. Medium priority.

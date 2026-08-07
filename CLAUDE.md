@@ -86,6 +86,7 @@ This rule was set explicitly because the docs written so far violate it constant
 
 ## Other notes
 
-- Feedback on the portfolio site itself (positioning, structure, what a visitor experiences, as distinct from any one case study's research) is logged in `docs/portfolio-feedback.md` at the repo root. Add new feedback there as a dated round rather than starting a new file, and append repeat mentions to the existing item so weight of evidence stays visible.
+- **Feedback on the portfolio site itself** (positioning, structure, what a visitor experiences, as distinct from any one case study's research) is logged in `docs/portfolio-feedback.md` at the repo root. **Read it before making changes to `index.html` or either case study's `index.html`** — it carries the open feedback items and the decisions already made about them, including a case-study restructure that is agreed but not yet built. Add new feedback there as a dated round rather than starting a new file, and append repeat mentions to the existing item so weight of evidence stays visible.
+- `docs/video-scripts.md` holds drafted 90-second scripts for the case study intro videos (Flexy homeowner, Flexy utility, SunnySideUp). The videos are deferred to a later stage; the scripts are committed so the work isn't repeated.
 - `spallavi-stack/flexy` (the old standalone Flexy repo) has been superseded by `projects/flexy/` here and is being deprecated/deleted. Do not treat it as a source of truth going forward.
 - Every case study runs on an invented company/product. Market research is real and cited; personas, interviews, and user data are synthetic — keep that distinction clear in any new project's docs.
