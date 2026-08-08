@@ -157,19 +157,6 @@
   }
   .proto-actions{display:flex;gap:12px;justify-content:center;margin-top:18px;flex-wrap:wrap;}
 
-  .doc-category{margin-top:28px;}
-  .doc-category:first-child{margin-top:0;}
-  .doc-category h3{font-size:14.5px;margin:0 0 12px;color:var(--ink);}
-  .doc-links{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;}
-  @media(max-width:760px){.doc-links{grid-template-columns:repeat(2,1fr);}}
-  .doc-link{
-    background:#fff;border:1px solid var(--border);border-radius:10px;padding:14px;text-decoration:none;
-    color:var(--ink);font-size:13px;font-weight:600;text-align:center;
-  }
-  .doc-link:hover{border-color:var(--teal);color:var(--teal-dark);}
-  .doc-link .ic{display:block;font-size:20px;margin-bottom:6px;}
-  .doc-empty{background:var(--paper-soft);border:1px dashed var(--border);border-radius:10px;padding:16px;font-size:13px;color:var(--ink-soft);text-align:center;}
-
   .skills-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;}
   .skill-chip{background:#fff;border:1px solid var(--border);border-radius:999px;padding:6px 14px;font-size:12.5px;color:var(--ink-soft);}
 
@@ -507,48 +494,7 @@
 <section id="documents">
   <div class="wrap">
     <div class="section-kicker">Full documentation</div>
-    <p class="lede">For anyone who wants to go deeper than this page, the full source documents are linked below.</p>
-
-    <details class="section-collapse doc-category">
-    <summary>
-      <div class="summary-head"><h3 style="margin:0;">Product development</h3></div>
-      <span class="toggle-ic"></span>
-    </summary>
-      <div class="doc-links">
-        <a class="doc-link" href="docs/product-brief.html"><span class="ic">📄</span>Product Brief</a>
-        <a class="doc-link" href="docs/personas.html"><span class="ic">🧑‍🤝‍🧑</span>Personas</a>
-        <a class="doc-link" href="docs/synthetic-interviews.html"><span class="ic">🎙️</span>Interviews</a>
-        <a class="doc-link" href="docs/roadmap.html"><span class="ic">🗺️</span>Roadmap</a>
-        <a class="doc-link" href="docs/calculation-logic.html"><span class="ic">🧮</span>Calculation Logic</a>
-      </div>
-    </details>
-
-    <details class="section-collapse doc-category">
-    <summary>
-      <div class="summary-head"><h3 style="margin:0;">Platform &amp; Technical</h3></div>
-      <span class="toggle-ic"></span>
-    </summary>
-      <div class="doc-links">
-        <a class="doc-link" href="docs/price-integration-guide.html"><span class="ic">🔌</span>Price Integration Guide</a>
-      </div>
-    </details>
-
-    <details class="section-collapse doc-category">
-    <summary>
-      <div class="summary-head"><h3 style="margin:0;">Growth</h3></div>
-      <span class="toggle-ic"></span>
-    </summary>
-      <div class="doc-empty">Nothing here yet.</div>
-    </details>
-
-    <details class="section-collapse doc-category">
-    <summary>
-      <div class="summary-head"><h3 style="margin:0;">Product Analytics</h3></div>
-      <span class="toggle-ic"></span>
-    </summary>
-      <div class="doc-empty">Nothing here yet.</div>
-    </details>
-
+    <p class="lede">For anyone interested in documents on product development, platform and technical integration, growth, or product analytics, <a href="../../contact.html">get in touch</a>.</p>
   </div>
 </section>
 
