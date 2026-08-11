@@ -24,7 +24,7 @@ Every figure below is taken from the case study pages and is already sourced the
 
 **On screen:** scroll the market signal section of the case study, sources visible.
 
-> Average US electric bills are up 26 percent in five years, and 22 percent of Americans say they do not know how their bill is calculated. Around seven in ten homes already have a smart meter. That data rarely turns into anything a household can act on.
+> US electricity prices are up nearly 40 percent since 2021, and 22 percent of Americans say they do not know how their bill is calculated. Around seven in ten homes already have a smart meter. That data rarely turns into anything a household can act on.
 
 ### 0:32 to 0:42, what it is
 
