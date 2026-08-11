@@ -2,7 +2,7 @@
 
 Drafted August 2026 against feedback items 3 to 5 in `portfolio-feedback.md`. The videos themselves are deliberately deferred; these exist so the scripting work doesn't get redone when they get made.
 
-Three scripts, 90 seconds each, same five-beat structure. Narration is written to be read at a natural pace, around 150 words a minute.
+Flexy's utility view and SunnySideUp are 90 seconds each, five-beat structure. Flexy's homeowner view was revised in August 2026 to a six-beat MVP-overview structure running about 2 minutes (what it is and why, the problem, what mattered for the MVP, what's not in it yet, a quick demo, and a close). Narration is written to be read at a natural pace, around 150 words a minute.
 
 Every figure below is taken from the case study pages and is already sourced there. Nothing here needs fresh fact-checking.
 
@@ -12,43 +12,43 @@ Every figure below is taken from the case study pages and is already sourced the
 
 ## Flexy, homeowner view
 
-**Runtime target 1:30. Narration 224 words.**
+**Runtime ~2:02. Narration ~257 words. Revised August 2026 to an MVP-overview structure (what it is and why, the problem, what mattered for the MVP, what's not in it yet, a quick demo, close) rather than the persona-led structure originally used here.**
 
-### 0:00 to 0:15, the problem
+### 0:00 to 0:24, what it is, and why
 
-**On screen:** the Flexy home screen, then the price-by-hour chart with the 6PM bar highlighted in red.
+**On screen:** Flexy home screen, then the live price chart.
 
-> Marcus Webb plugs his car in when he gets home from work. That is usually around six, which in Northern Illinois is close to the most expensive hour of the day. He has no particular reason to think about it.
+> This is Flexy, a companion app a utility hands to its own customers alongside their existing account. I built it because dynamic electricity pricing is spreading. ComEd already runs a real hourly rate, with 38,591 residential customers on it today, and Illinois has a mandatory time-of-use rollout coming in 2026. Most households have no way to actually act on that.
 
-### 0:15 to 0:32, why this, why now
+### 0:24 to 0:47, the problem
 
-**On screen:** scroll the market signal section of the case study, sources visible.
+**On screen:** the 40% bill-increase stat, then the smart-meter stat, sources visible.
 
-> US electricity prices are up nearly 40 percent since 2021, and 22 percent of Americans say they do not know how their bill is calculated. Around seven in ten homes already have a smart meter. That data rarely turns into anything a household can act on.
+> US electricity prices are up nearly 40 percent since 2021. About seven in ten homes already have a smart meter, but that data almost never reaches a household in a form they can use. And anyone who plugs in their EV the moment they get home is usually charging during the most expensive hour of the day.
 
-### 0:32 to 0:42, what it is
+### 0:47 to 1:03, what mattered for the MVP
 
-**On screen:** the Price and Cost view, live prices updating.
+**On screen:** ComEd's price API response, then the Smartcar Connect flow.
 
-> Flexy is a companion app a utility offers alongside your existing account. It shows what electricity costs right now and moves EV charging into the cheapest hours on its own.
+> For the MVP, two things had to be technically proven, and I could prove both without a partnership. Fetching live prices straight from ComEd's public API. And controlling EV charging across every major brand through one Smartcar integration, hardware-agnostic by design.
 
-### 0:42 to 1:05, the research
+### 1:03 to 1:23, what's not in it
 
-**On screen:** the four persona cards, then the synthetic interviews document, then the roadmap with ICE scores.
+**On screen:** the technical feasibility doc, the "not yet proven" row on smart meter data.
 
-> I built it around four personas and a set of synthetic interviews, run against real ComEd tariff data and labelled as synthetic throughout. Two findings changed the product. Everyone who wanted automation still wanted to see why a decision was made. And everyone was more anxious about the car not being ready than they were excited about saving money, so readiness outranks maximum savings by default.
+> What's not in the MVP yet: a live smart meter feed. Households can already export their own usage data from ComEd manually, but pulling it in automatically needs a formal partnership with the utility, the same one Flexy's business model is already built around. That's sequenced next, not proven yet.
 
-### 1:05 to 1:22, the prototype
+### 1:23 to 1:53, the prototype
 
-**On screen:** click the real flow. ComEd email, install, connect account, connect a car through the manufacturer login, set preferences, land on Smart Charging.
+**On screen:** click the real flow. Connect a ComEd account, connect a car through a manufacturer login, set a ready-by time, land on live pricing and smart charging.
 
-> Here is the prototype. Connecting a ComEd account, connecting a car through a manufacturer login, setting preferences, and the live price and smart charging screens.
+> Here's the prototype itself. Connecting a ComEd account, connecting a car through a manufacturer login, setting a ready-by time, and landing on live pricing and smart charging.
 
-### 1:22 to 1:30, close
+### 1:53 to 2:02, close
 
-**On screen:** the documents section, titles scrolling past.
+**On screen:** the prototype full view, then the documents section.
 
-> Flexy is invented. The market data, the tariff, and the regulatory timeline are real and cited.
+> Go ahead and click through the prototype yourself. And if you want the research behind it, or have any questions, reach out.
 
 ---
 
