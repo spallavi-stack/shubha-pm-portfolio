@@ -107,21 +107,21 @@ Self-hosting fits comfortably. Two minutes of 1080p screen recording lands rough
 
 ### 7. The prototype layout question (August 2026, follow-up)
 
-**Status:** Partially built, and inconsistent with what shipped. SunnySideUp's video and prototype (built August 2026) match the resulting decision below exactly: stacked, video full width, laptop frame full width beneath it, frame unchanged. Flexy's video and prototype (built earlier the same day, #135/#136) also shipped stacked rather than the even split this item calls for below, video and phone-frame prototype are both full-width blocks stacked vertically, not two columns. That's a real gap between this decision and what's live: either Flexy's layout should be rebuilt as an even split, or this decision should be updated to stacked-for-both. Not resolved in this pass, since it surfaced while adding SunnySideUp's video rather than while working on Flexy's.
+**Status:** Superseded, then done. This item originally called for the two case studies to differ (Flexy even-split, SunnySideUp stacked, see the reasoning and the now-superseded resulting decision below). Shubha's call: make everything the same, stacked, matching how Flexy already looked. Both Flexy (#135, #136) and SunnySideUp (August 2026) now ship stacked, video full width with the prototype full width directly beneath it, one layout pattern across the whole portfolio rather than a per-project exception.
 
 Two further points came up after the layout decision above and change it:
 
 - **An even split is fine when there is room for it.** Both case study pages currently cap at `max-width:920px` (`projects/flexy/index.html:35`, `projects/sunnysideup/index.html:28`), which is 872px of content, or 424px per column in an even split. That is cramped regardless of the visitor's monitor, because the page caps itself. Clearing SunnySideUp's 640px breakpoint per column would need the top section to break out to roughly 1360px, which needs about a 1400px viewport.
 - **SunnySideUp should keep its laptop frame.** Reverting it to a phone frame to save width would contradict the page's own copy at `projects/sunnysideup/index.html:418`, which states the prototype is "built as a desktop web tool rather than a mobile app, so it's shown here on a laptop rather than in a phone frame." That is a documented product decision, so the layout should bend around it.
 
-**Resulting decision: let the layout follow each prototype's shape, so the two case studies differ.**
+**Resulting decision (superseded, see Status above): let the layout follow each prototype's shape, so the two case studies differ.**
 
 - **Flexy:** even split. Its prototype is a 390px-wide phone, which fits a ~430px column with no changes to the frame at all.
 - **SunnySideUp:** stacked. Video full width, laptop frame full width below it, laptop frame untouched.
 
 Both pages should stack below roughly 1400px viewport width so a visitor on a smaller laptop never gets the squeezed version.
 
-One known imperfection in Flexy's even split: the phone frame is 780px tall against a video around 376px tall at that column width. The space under the video takes the framing copy and the buttons, so the two columns will not end flush.
+One known imperfection this would have caused in an even-split Flexy: the phone frame is 780px tall against a video around 376px tall at that column width, so the two columns would not end flush. Moot now that Flexy stays stacked instead.
 
 ### 6. Put the source documents behind a password
 
