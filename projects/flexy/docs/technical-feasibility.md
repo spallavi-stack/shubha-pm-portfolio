@@ -66,6 +66,7 @@ Every external data source above can fail or go stale in a way that's invisible 
 | ComEd's price data is real and fetchable without a partnership | Proven - fetched directly against the live API during prototype build |
 | Flexy can receive and parse real smart meter (interval usage) data | Not yet proven - Green Button "Download My Data" is a real self-service export, but no parser or ingestion path has been built and tested against it yet |
 | Flexy is EV-brand agnostic | Proven - real Smartcar app, real Connect flow, real access token and vehicle data pulled from Smartcar's live API (Tesla tested; other brands rely on Smartcar's own multi-brand support, not independently re-tested per brand) |
+| Flexy can actually start/stop a vehicle's charging remotely | Not yet proven - Smartcar's API documents this as a supported capability, but no call has been made to Smartcar's charge-control endpoints against a real or simulated vehicle. Everything tested so far (Connect flow, access token, connection list, vehicle detail) is authentication and read-only data, not control |
 | Flexy is charging-equipment agnostic | Proven by standard - SAE J1772/CCS puts start/stop inside the vehicle, not the charger, so this doesn't depend on Flexy's own build |
 
 ## Status
