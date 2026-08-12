@@ -151,6 +151,11 @@
   .video-play-overlay:hover{background:rgba(0,0,0,0.75);transform:translate(-50%,-50%) scale(1.06);}
   .video-play-overlay .play-icon{font-size:24px;color:#fff;margin-left:4px;}
   .video-play-overlay.is-hidden{display:none;}
+  .video-label{
+    position:absolute;top:14px;left:14px;z-index:2;
+    background:rgba(0,0,0,0.55);color:#fff;font-weight:700;font-size:13px;
+    padding:6px 12px;border-radius:6px;letter-spacing:0.02em;
+  }
 
   .proto-frame-wrap{
     background:#0E1116;border-radius:14px;padding:20px;margin-top:24px;
@@ -317,7 +322,6 @@
       <button type="button" class="audience-btn" data-audience-btn="homeowner">For homeowners</button>
       <button type="button" class="audience-btn" data-audience-btn="utility">For utilities</button>
     </div>
-    <p class="audience-hint aud-homeowner">Flexy's homeowner-facing case study: what it saves you and how it works.</p>
     <p class="audience-hint aud-utility">Flexy's utility-facing case study: what it does for your customers, your program, and your rollout.</p>
   </div>
 </section>
@@ -333,6 +337,7 @@
           <source src="assets/video-homeowner.mp4" type="video/mp4">
           <track kind="captions" src="assets/captions-homeowner.vtt" srclang="en" label="English" default>
         </video>
+        <span class="video-label">Introduction to Flexy case study</span>
         <button type="button" class="video-play-overlay" data-video-play aria-label="Play video">
           <span class="play-icon" aria-hidden="true">▶</span>
         </button>
