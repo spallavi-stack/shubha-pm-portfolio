@@ -89,7 +89,7 @@
 <p><strong>Real constraint worth naming:</strong> the achievable-at-setup check (does the target charge level fit in the time available) is pure math once state of charge and charging speed are known, genuinely low technical risk. The harder problem is state of charge reliability itself: some vehicles report it with a delay, or don't report it at all while off and unplugged from a network connection.</p>
 <h2>Cross-cutting risk: staleness and failure handling</h2>
 <p>Every external data source above can fail or go stale in a way that's invisible unless it's designed for explicitly: ComEd's feed can have an outage, Smartcar's state-of-charge report can lag. Flexy's UI needs to distinguish live data from fallback data visibly across both cases; the price feed is currently the only one with that pattern built into the prototype. See the Price Integration Guide for how that's implemented for pricing specifically.</p>
-<h2>What's proven versus assumed, honestly</h2>
+<h2>Proven vs. yet to prove</h2>
 <table>
 <thead>
 <tr>
