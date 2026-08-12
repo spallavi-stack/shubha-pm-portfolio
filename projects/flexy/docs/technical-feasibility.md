@@ -57,7 +57,7 @@ sequenceDiagram
 
 Every external data source above can fail or go stale in a way that's invisible unless it's designed for explicitly: ComEd's feed can have an outage, Smartcar's state-of-charge report can lag. Flexy's UI needs to distinguish live data from fallback data visibly across both cases; the price feed is currently the only one with that pattern built into the prototype. See the Price Integration Guide for how that's implemented for pricing specifically.
 
-## What's proven versus assumed, honestly
+## Proven vs. yet to prove
 
 | Claim | Status |
 |---|---|
