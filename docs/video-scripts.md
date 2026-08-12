@@ -2,53 +2,41 @@
 
 Drafted August 2026 against feedback items 3 to 5 in `portfolio-feedback.md`. The videos themselves are deliberately deferred; these exist so the scripting work doesn't get redone when they get made.
 
-Flexy's utility view and SunnySideUp are 90 seconds each, five-beat structure. Flexy's homeowner view was revised in August 2026 to a six-beat MVP-overview structure running about 2 minutes (what it is and why, the problem, what mattered for the MVP, what's not in it yet, a quick demo, and a close). Narration is written to be read at a natural pace, around 150 words a minute.
+Flexy's homeowner view is the exception: it has actually been recorded, and the transcript below is the real closed-caption text, kept here as the source of truth rather than the earlier draft (an MVP-overview structure) that was written before recording and never used. It's a short, casual, first-person orientation clip, spoken to the reader before they get into the case study's reading material, not a persona-led or feature-benefit pitch. SunnySideUp's script (still a draft, not recorded) is written to match that same voice and shape. Flexy's utility view remains its own separate 90-second draft, five-beat structure, not yet recorded.
 
 Every figure below is taken from the case study pages and is already sourced there. Nothing here needs fresh fact-checking.
 
-**Before recording, check two things.** The SunnySideUp script says DIY plug-in self-install becomes legal "at the end of this month," which is accurate only until 27 August 2026; state the date instead if recording later. And Flexy is scripted as two separate videos, one per audience toggle state on that page. A single video covering both the homeowner app and the utility dashboard runs long and serves neither well.
+**Before recording, check one thing.** Flexy is scripted as two separate videos, one per audience toggle state on that page. A single video covering both the homeowner app and the utility dashboard runs long and serves neither well. (SunnySideUp's draft states the plug-in self-install legal date as "27 August" rather than a relative phrase like "the end of this month," so it doesn't go stale if recording slips past that date.)
 
 ---
 
 ## Flexy, homeowner view
 
-**Runtime ~2:02. Narration ~257 words. Revised August 2026 to an MVP-overview structure (what it is and why, the problem, what mattered for the MVP, what's not in it yet, a quick demo, close) rather than the persona-led structure originally used here.**
+**Status: recorded. Runtime 1:13. Text below is the actual closed-caption transcript of the recorded video, not a draft.**
 
-### 0:00 to 0:24, what it is, and why
+### 0:02 to 0:10, intro
 
-**On screen:** Flexy home screen, then the live price chart.
+> Hi. Before you get into the reading material for this case study, here's a super quick introduction to help you navigate Flexy.
 
-> This is Flexy, a companion app a utility hands to its own customers alongside their existing account. I built it because dynamic electricity pricing is spreading. ComEd already runs a real hourly rate, with 38,591 residential customers on it today, and Illinois has a mandatory time-of-use rollout coming in 2026. Most households have no way to actually act on that.
+### 0:10 to 0:20, what it is
 
-### 0:24 to 0:47, the problem
+> Flexy is a dummy product built as a pilot MVP for ComEd. ComEd is an electricity supply company covering the north of Illinois.
 
-**On screen:** the 40% bill-increase stat, then the smart-meter stat, sources visible.
+### 0:20 to 0:36, the market signal, and the problem
 
-> US electricity prices are up nearly 40 percent since 2021. About seven in ten homes already have a smart meter, but that data almost never reaches a household in a form they can use. And anyone who plugs in their EV the moment they get home is usually charging during the most expensive hour of the day.
+> ComEd already offers an hourly dynamic tariff to around thirty-eight thousand customers and will soon start supplying time of use tariff as well. Households, however, express anxiety around these tariffs and are unsure about how to avoid higher electricity bills.
 
-### 0:47 to 1:03, what mattered for the MVP
+### 0:36 to 0:44, the aside
 
-**On screen:** ComEd's price API response, then the Smartcar Connect flow.
+> Funny thing is that most households in US already have a smart meter as well.
 
-> For the MVP, two things had to be technically proven, and I could prove both without a partnership. Fetching live prices straight from ComEd's public API. And controlling EV charging across every major brand through one Smartcar integration, hardware-agnostic by design.
+### 0:44 to 0:52, scope of this case study
 
-### 1:03 to 1:23, what's not in it
+> With this case study, I have focused on establishing viability of most of the features necessary for a product like Flexy to exist.
 
-**On screen:** the technical feasibility doc, the "not yet proven" row on smart meter data.
+### 0:52 to 1:13, what was proven, and close
 
-> What's not in the MVP yet: a live smart meter feed. Households can already export their own usage data from ComEd manually, but pulling it in automatically needs a formal partnership with the utility, the same one Flexy's business model is already built around. That's sequenced next, not proven yet.
-
-### 1:23 to 1:53, the prototype
-
-**On screen:** click the real flow. Connect a ComEd account, connect a car through a manufacturer login, set a ready-by time, land on live pricing and smart charging.
-
-> Here's the prototype itself. Connecting a ComEd account, connecting a car through a manufacturer login, setting a ready-by time, and landing on live pricing and smart charging.
-
-### 1:53 to 2:02, close
-
-**On screen:** the prototype full view, then the documents section.
-
-> Go ahead and click through the prototype yourself. And if you want the research behind it, or have any questions, reach out.
+> First one was the ability to fetch the live prices from ComEd directly. Next one was the ability to control EVs regardless of their brand or the brand of their charger, and that was done using the Smartcar API. And the last is the ability to fetch consumption data from the smart meters of households. As you go through this case study, you can dive into Flexy's competition, go to market strategy and prioritized roadmap.
 
 ---
 
@@ -96,40 +84,36 @@ Every figure below is taken from the case study pages and is already sourced the
 
 ## SunnySideUp
 
-**Runtime target 1:30. Narration 229 words.**
+**Status: draft, not recorded. Target runtime ~1:22. Written August 2026 to match the actual recorded Flexy homeowner clip above: a short, casual, first-person orientation spoken to the reader before the case study's reading material, not a persona-led pitch. Replaces the earlier five-beat draft that was written before the real Flexy transcript was available.**
 
-### 0:00 to 0:08, the problem
+### 0:00 to 0:08, intro
 
-**On screen:** two quote documents side by side, the totals circled.
+> Hi. Before you get into the reading material for this case study, here's a super quick introduction to help you navigate SunnySideUp.
 
-> Denise Okafor got two solar quotes four thousand pounds apart. Neither company explained the difference.
+### 0:08 to 0:16, what it is
 
-### 0:08 to 0:28, how widespread this is
+> SunnySideUp is a dummy product, an independent solar viability check for UK homes, covering both rooftop and plug-in solar.
 
-**On screen:** the CMA finding, then the Which? survey line, sources visible.
+### 0:16 to 0:29, the market signal, and the problem
 
-> The UK Competition and Markets Authority flagged this in 2022, naming inaccurate and unrealistic headline prices in the solar sector. A Which? survey found more than a third of solar panel owners had been cold-called with false claims, including bogus government-required checks.
+> The UK just had its biggest year yet for solar installations, up 31 to 37 percent in 2025. Every comparison site in the country runs on lead generation or referral fees.
 
-### 0:28 to 0:42, the structural reason
+### 0:29 to 0:42, the problem, continued
 
-**On screen:** the competitive landscape table, the referral-fee column held on screen.
+> Households, however, are wary of quotes that can differ by thousands of pounds with no real explanation, and renters have it even harder, since they can't put anything on a roof they don't own.
 
-> Every UK solar comparison site I could find runs on lead generation or referral fees. They are paid per lead, so their incentive is to produce quotes. SunnySideUp takes no referral fees and sells nothing. It answers one question. Is this worth it for your specific house.
+### 0:42 to 0:51, the aside
 
-### 0:42 to 1:08, the research
+> Funny thing is, plug-in solar only just became legal for them, and whether their tenancy agreement actually allows it is still genuinely unresolved.
 
-**On screen:** the three persona cards, then the legal timeline, then the honest "still unresolved" flag in the prototype.
+### 0:51 to 0:59, scope of this case study
 
-> I built it around three personas and synthetic interviews. All three said they would accept a negative result and act on it, specifically because nothing is being sold to them. The third persona is a renter, and her case surfaced something the product cannot fix. Plug-in solar became legal for electrician install in April, and DIY self-install becomes legal at the end of this month, but tenancy consent is still unresolved. Her ceiling is capped by law, so the product says that out loud.
+> With this case study, I have focused on establishing viability of most of the features necessary for a product like SunnySideUp to exist.
 
-### 1:08 to 1:22, the prototype
+### 0:59 to 1:15, what was proven
 
-**On screen:** run a real check. Postcode, segment, inputs, then the amber result with the assumptions panel opened.
+> First one was the ability to fetch live data directly: a postcode's region, its solar irradiance, and current electricity prices. Next one was a viability engine that scores a home green, amber, or red, and shows every assumption behind that score.
 
-> Here is the check. Postcode, segment, your consumption and tariff, and a green, amber or red result with every assumption behind it shown.
+### 1:15 to 1:22, close
 
-### 1:22 to 1:30, close
-
-**On screen:** the market opportunity cards, then the documents section.
-
-> The company is invented. The regulations and the market data are real and cited.
+> As you go through this case study, you can dive into SunnySideUp's competition, personas and research, and prioritized roadmap.
