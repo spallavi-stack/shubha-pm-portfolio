@@ -47,7 +47,7 @@ There are other buyers who could hire this work and are not addressed anywhere o
 
 ### 3. Case studies bury the prototype under a wall of text
 
-**Status:** Open. High priority, and the largest structural change of this round.
+**Status:** Done (August 2026, #135). The prototype now sits directly under the hero on all three views (Flexy homeowner, Flexy utility, SunnySideUp), ahead of the TL;DR, research, and roadmap content described below as the old order.
 
 **What was said.** A visitor entering a case study is met with text. By the time they reach the prototype, realistically they have lost interest.
 
@@ -57,7 +57,7 @@ There are other buyers who could hire this work and are not addressed anywhere o
 
 ### 4. Add a short marketing-style video to each case study
 
-**Status:** Open. High priority, paired with item 3.
+**Status:** Partially done. Flexy homeowner (#135, #136) and SunnySideUp (August 2026) both have a recorded, captioned intro video embedded above the prototype. Flexy utility's prototype was moved into its new position at the same time as item 3 but has no video yet, since it hasn't been recorded, still open for that view.
 
 **What was said.** Each case study should open with a video, roughly two minutes, in a marketing style: an introduction to the product and a showcase of the work behind it.
 
@@ -67,7 +67,7 @@ There are other buyers who could hire this work and are not addressed anywhere o
 
 ### 5. The detailed work moves below
 
-**Status:** Open. Same change as items 3 and 4.
+**Status:** Done, same change as item 3.
 
 **What was said.** All the real work behind the case study should sit below the video and prototype.
 
@@ -103,25 +103,25 @@ Self-hosting fits comfortably. Two minutes of 1080p screen recording lands rough
 
 **Two things to check before recording.** Whether the bundle tier exports without a watermark, and whether any licensed asset gets baked into the video. Your own screen recording and your own narration are yours permanently. Stock music, an AI voiceover, or stock footage may be licensed only while subscribed, in which case the MP4 keeps playing but the licence behind part of it has ended. Sticking to your own recording and narration avoids the question.
 
-**Length: 90 seconds, with 2 minutes as a ceiling.** Roughly 225 words of narration. Flexy gets two videos, one per audience toggle state, since one video covering both the homeowner app and the utility dashboard runs long and serves neither well. Scripts are drafted in `docs/video-scripts.md`.
+**Length: 90 seconds, with 2 minutes as a ceiling.** Roughly 225 words of narration. Flexy gets two videos, one per audience toggle state, since one video covering both the homeowner app and the utility dashboard runs long and serves neither well. Scripts, and the actual recorded transcripts for the two videos that now exist, are in `docs/video-scripts.md`.
 
 ### 7. The prototype layout question (August 2026, follow-up)
 
-**Status:** Decided, not built.
+**Status:** Superseded, then done. This item originally called for the two case studies to differ (Flexy even-split, SunnySideUp stacked, see the reasoning and the now-superseded resulting decision below). Shubha's call: make everything the same, stacked, matching how Flexy already looked. Both Flexy (#135, #136) and SunnySideUp (August 2026) now ship stacked, video full width with the prototype full width directly beneath it, one layout pattern across the whole portfolio rather than a per-project exception.
 
 Two further points came up after the layout decision above and change it:
 
 - **An even split is fine when there is room for it.** Both case study pages currently cap at `max-width:920px` (`projects/flexy/index.html:35`, `projects/sunnysideup/index.html:28`), which is 872px of content, or 424px per column in an even split. That is cramped regardless of the visitor's monitor, because the page caps itself. Clearing SunnySideUp's 640px breakpoint per column would need the top section to break out to roughly 1360px, which needs about a 1400px viewport.
 - **SunnySideUp should keep its laptop frame.** Reverting it to a phone frame to save width would contradict the page's own copy at `projects/sunnysideup/index.html:418`, which states the prototype is "built as a desktop web tool rather than a mobile app, so it's shown here on a laptop rather than in a phone frame." That is a documented product decision, so the layout should bend around it.
 
-**Resulting decision: let the layout follow each prototype's shape, so the two case studies differ.**
+**Resulting decision (superseded, see Status above): let the layout follow each prototype's shape, so the two case studies differ.**
 
 - **Flexy:** even split. Its prototype is a 390px-wide phone, which fits a ~430px column with no changes to the frame at all.
 - **SunnySideUp:** stacked. Video full width, laptop frame full width below it, laptop frame untouched.
 
 Both pages should stack below roughly 1400px viewport width so a visitor on a smaller laptop never gets the squeezed version.
 
-One known imperfection in Flexy's even split: the phone frame is 780px tall against a video around 376px tall at that column width. The space under the video takes the framing copy and the buttons, so the two columns will not end flush.
+One known imperfection this would have caused in an even-split Flexy: the phone frame is 780px tall against a video around 376px tall at that column width, so the two columns would not end flush. Moot now that Flexy stays stacked instead.
 
 ### 6. Put the source documents behind a password
 
