@@ -6,7 +6,7 @@ Flexy's homeowner view is the exception: it has actually been recorded, and the 
 
 Every figure below is taken from the case study pages and is already sourced there. Nothing here needs fresh fact-checking.
 
-**Before recording, check one thing.** Flexy is scripted as two separate videos, one per audience toggle state on that page. A single video covering both the homeowner app and the utility dashboard runs long and serves neither well. (SunnySideUp's draft states the plug-in self-install legal date as "27 August" rather than a relative phrase like "the end of this month," so it doesn't go stale if recording slips past that date.)
+**Before recording, check one thing.** Flexy is scripted as two separate videos, one per audience toggle state on that page. A single video covering both the homeowner app and the utility dashboard runs long and serves neither well. (SunnySideUp's plug-in cost figure, "a few hundred pounds," comes from `grounding-research.md`'s £400-£900 range for an 800W kit, itself flagged there as the weakest-sourced data in that document — fine for a casual aside, but don't tighten it into a more specific number without re-checking that section.)
 
 ---
 
@@ -84,7 +84,7 @@ Every figure below is taken from the case study pages and is already sourced the
 
 ## SunnySideUp
 
-**Status: draft, not recorded. Target runtime ~1:22. Written August 2026 to match the actual recorded Flexy homeowner clip above: a short, casual, first-person orientation spoken to the reader before the case study's reading material, not a persona-led pitch. Replaces the earlier five-beat draft that was written before the real Flexy transcript was available.**
+**Status: draft, not recorded. Target runtime ~1:25. Written August 2026 to match the actual recorded Flexy homeowner clip above: a short, casual, first-person orientation spoken to the reader before the case study's reading material, not a persona-led pitch. Replaces the earlier five-beat draft that was written before the real Flexy transcript was available.**
 
 ### 0:00 to 0:08, intro
 
@@ -102,18 +102,18 @@ Every figure below is taken from the case study pages and is already sourced the
 
 > Households, however, are wary of quotes that can differ by thousands of pounds with no real explanation, and renters have it even harder, since they can't put anything on a roof they don't own.
 
-### 0:42 to 0:51, the aside
+### 0:42 to 0:54, the aside
 
-> Funny thing is, plug-in solar only just became legal for them, and whether their tenancy agreement actually allows it is still genuinely unresolved.
+> Funny thing is, most renters don't even know plug-in solar exists as an option, and it can cost as little as a few hundred pounds, less than most people would guess.
 
-### 0:51 to 0:59, scope of this case study
+### 0:54 to 1:02, scope of this case study
 
 > With this case study, I have focused on establishing viability of most of the features necessary for a product like SunnySideUp to exist.
 
-### 0:59 to 1:15, what was proven
+### 1:02 to 1:18, what was proven
 
 > First one was the ability to fetch live data directly: a postcode's region, its solar irradiance, and current electricity prices. Next one was a viability engine that scores a home green, amber, or red, and shows every assumption behind that score.
 
-### 1:15 to 1:22, close
+### 1:18 to 1:25, close
 
 > As you go through this case study, you can dive into SunnySideUp's competition, personas and research, and prioritized roadmap.
