@@ -289,6 +289,8 @@
     flex:1;border:none;background:none;padding:10px 4px;border-radius:9px;font-size:13px;font-weight:700;color:var(--gray);cursor:pointer;
   }
   .seg button.active{background:#fff;color:var(--flexy-ink);box-shadow:0 1px 4px rgba(0,0,0,.08);}
+  .seg-sub{padding:3px;margin-bottom:14px;background:#E3E6ED;}
+  .seg-sub button{padding:7px 4px;font-size:12px;}
 
   /* --- main app --- */
   .app-header{
@@ -416,6 +418,8 @@
   .data-badge.fallback{background:#FBF0DC;color:#8A5A0A;border-color:#F0DFB8;}
   .data-badge.fallback::before{content:"●";color:#B45309;}
   .data-badge.modeled{background:#F7F4EC;color:#5C5445;border-color:#E5DFD2;}
+  .data-badge.pending{background:#F7F4EC;color:#5C5445;border-color:#E5DFD2;}
+  .data-badge.pending::before{content:"○";color:#8A8272;}
   .chart-note{font-size:10.5px;color:#8A8272;margin:6px 2px 0;line-height:1.4;}
 
   .scroll-hint{
@@ -1124,13 +1128,19 @@
       <div class="avatar">MW</div>
     </div>
     <div class="content" style="padding-top:8px;">
-      <div class="seg">
-        <button class="active" onclick="setRange(this,'today')">Today</button>
+      <div class="seg seg-main">
+        <button class="active" onclick="setRange(this,'today')">Latest</button>
         <button onclick="setRange(this,'week')">Week</button>
         <button onclick="setRange(this,'month')">Month</button>
         <button onclick="setRange(this,'year')">Year</button>
       </div>
 
+      <div class="seg seg-sub" id="latestSubSeg">
+        <button class="active" data-view="today" onclick="setLatestSubView('today')">Today</button>
+        <button data-view="tomorrow" onclick="setLatestSubView('tomorrow')">Tomorrow</button>
+      </div>
+
+      <div id="rangeContent">
       <div class="stat-row">
         <div class="stat primary"><div class="val" id="costVal">$2.64</div><div class="lbl" id="costLbl">Cost so far (real price × modeled load)</div></div>
         <div class="stat"><div class="val" id="avgVal">21.4¢</div><div class="lbl">Avg price paid / kWh</div></div>
@@ -1182,6 +1192,29 @@
       <div class="data-footnote">
         <a id="dataBadge" class="data-badge" href="#" target="_blank" rel="noopener">Loading real ComEd pricing&#8230;</a>
         <div id="consumptionNote" class="consumption-note"></div>
+      </div>
+      </div>
+
+      <div id="tomorrowContent" style="display:none;">
+        <div class="stat-row" id="tomorrowStatRow" style="display:none;">
+          <div class="stat"><div class="val" id="tomorrowAvgVal">&#8211;</div><div class="lbl">Avg day-ahead price</div></div>
+          <div class="stat"><div class="val" id="tomorrowCheapestVal">&#8211;</div><div class="lbl">Cheapest hour tomorrow</div></div>
+        </div>
+
+        <div class="card chart-card" id="tomorrowChartCard" style="display:none;">
+          <div class="chart-title"><span>Price by hour (day-ahead)</span><span class="axis-tag">&#162;/kWh</span></div>
+          <svg id="chartTomorrow" viewBox="0 0 320 130" width="100%" height="130"></svg>
+          <p class="chart-footnote">A real, published PJM day-ahead price for tomorrow, not a Flexy estimate, but advisory only. Your bill is still based on the real-time price shown on the Today tab.</p>
+        </div>
+
+        <div class="card" id="tomorrowPending">
+          <div style="font-size:13px;color:var(--flexy-ink);font-weight:600;margin-bottom:4px;">Tomorrow's prices aren't posted yet</div>
+          <div style="font-size:12px;color:var(--gray);line-height:1.5;">ComEd publishes PJM day-ahead hourly prices around 4:30pm CT each day. Check back after then.</div>
+        </div>
+
+        <div class="data-footnote">
+          <a id="dataBadgeTomorrow" class="data-badge" href="https://hourlypricing.comed.com/api?type=daynexttomorrow" target="_blank" rel="noopener">Checking for tomorrow's day-ahead prices&#8230;</a>
+        </div>
       </div>
     </div>
 
@@ -1601,8 +1634,9 @@ const COMED_STANDARD_DELIVERY_CENTS = 5.9;
 const COMED_FIXED_MONTHLY = 19.07;
 
 const FALLBACK_DATE_STR = '20260731';
-let priceState = { hours: FALLBACK_COMED_PRICES, source: 'fallback', isToday: false, label: FALLBACK_LABEL, dateStr: FALLBACK_DATE_STR, touMode: false };
+let priceState = { hours: FALLBACK_COMED_PRICES, source: 'fallback', isToday: false, label: FALLBACK_LABEL, dateStr: FALLBACK_DATE_STR, touMode: false, tomorrowHours: null, tomorrowSource: 'not-posted' };
 let currentRange = 'today';
+let latestSubView = 'today';
 
 // Week/Month/Year hourly price curves, each an average of real ComEd days pulled via
 // https://hourlypricing.comed.com/api?type=day&date=YYYYMMDD, not a single day reused or
@@ -1886,15 +1920,112 @@ async function loadRealComedData(){
       priceState.dateStr = FALLBACK_DATE_STR;
     }
   }
-  const active = document.querySelector('#s8 .seg button.active');
-  if(!active || active.textContent.trim()==='Today') renderTodayStats();
+  if (currentRange === 'today' && latestSubView === 'today') renderTodayStats();
+}
+
+// ComEd's day-ahead PJM feed, a separate feed from the type=day one above: fixed 24 hours for
+// tomorrow once posted (unlike today's, it doesn't get revised through the day), typically
+// appearing around 4:30pm CT. Returns [] before it's posted, which parseComedDayResponse
+// correctly rejects (fewer than 6 hours filled), no separate "not posted yet" detection needed.
+async function fetchComedDayAhead(){
+  const res = await fetch('https://hourlypricing.comed.com/api?type=daynexttomorrow', {cache:'no-store'});
+  if(!res.ok) throw new Error('bad status ' + res.status);
+  const hours = parseComedDayResponse(await res.text());
+  if(!hours || hours.length < 24) throw new Error('day-ahead prices not fully posted yet');
+  return hours;
+}
+async function loadDayAheadData(){
+  try{
+    priceState.tomorrowHours = await fetchComedDayAhead();
+    priceState.tomorrowSource = 'live';
+  } catch(e){
+    priceState.tomorrowHours = null;
+    priceState.tomorrowSource = 'not-posted';
+  }
+  if (currentRange === 'today' && latestSubView === 'tomorrow') renderTomorrowStats();
+}
+function drawTomorrowChart(prices){
+  const svg = document.getElementById('chartTomorrow');
+  const padTop=8, padLeft=26, padRight=10, plotH=88, plotW=320-padLeft-padRight, axisLabelY=padTop+plotH+16;
+  const bw = plotW/24;
+  const sorted = [...prices].sort((a,b)=>a-b);
+  const maxP = Math.max(...prices) || 1;
+  let grid='', ylabels='', bars='', xlabels='';
+  [0,0.5,1].forEach(f=>{
+    const y = padTop + plotH - f*plotH;
+    grid += `<line x1="${padLeft}" y1="${y}" x2="${padLeft+plotW}" y2="${y}" stroke="#E3E1EC" stroke-width="1"/>`;
+    ylabels += `<text x="${padLeft-5}" y="${y+3}" font-size="8" fill="#8A8272" text-anchor="end">${(f*maxP).toFixed(0)}&#162;</text>`;
+  });
+  prices.forEach((p,i)=>{
+    const bh = (p/maxP)*plotH;
+    const x = padLeft + i*bw;
+    const y = padTop + plotH - bh;
+    bars += `<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${(bw-1).toFixed(1)}" height="${bh.toFixed(1)}" fill="${RTP_COLORS[priceTier(p,sorted)]}" rx="1"><title>${hourLabel(i)}: ${p.toFixed(1)}&#162;/kWh day-ahead</title></rect>`;
+  });
+  [0,6,12,18].forEach(h=>{
+    const x = padLeft + h*bw;
+    xlabels += `<text x="${x.toFixed(1)}" y="${axisLabelY}" font-size="8" fill="#8A8272">${hourLabel(h)}</text>`;
+  });
+  svg.innerHTML = grid + bars + ylabels + xlabels;
+}
+function renderTomorrowStats(){
+  const badge = document.getElementById('dataBadgeTomorrow');
+  const pendingEl = document.getElementById('tomorrowPending');
+  const statRow = document.getElementById('tomorrowStatRow');
+  const chartCard = document.getElementById('tomorrowChartCard');
+  const tomorrow = new Date(); tomorrow.setDate(tomorrow.getDate() + 1);
+  const tomorrowLabel = labelFor(tomorrow);
+
+  if (priceState.tomorrowSource === 'live' && priceState.tomorrowHours){
+    pendingEl.style.display = 'none';
+    chartCard.style.display = 'block';
+    statRow.style.display = 'flex';
+    const hours = priceState.tomorrowHours;
+    let cheapestIdx = 0;
+    hours.forEach((p,i)=>{ if (p < hours[cheapestIdx]) cheapestIdx = i; });
+    const avg = hours.reduce((a,b)=>a+b,0)/hours.length;
+    document.getElementById('tomorrowAvgVal').textContent = avg.toFixed(1) + '¢';
+    document.getElementById('tomorrowCheapestVal').textContent = hourLabel(cheapestIdx);
+    drawTomorrowChart(hours);
+    badge.className = 'data-badge live';
+    badge.textContent = 'Live ComEd day-ahead pricing for ' + tomorrowLabel + ' →';
+  } else {
+    chartCard.style.display = 'none';
+    statRow.style.display = 'none';
+    pendingEl.style.display = 'block';
+    badge.className = 'data-badge pending';
+    badge.textContent = "Day-ahead prices for " + tomorrowLabel + " typically post ~4:30pm CT →";
+  }
+}
+function setLatestSubView(view){
+  latestSubView = view;
+  document.querySelectorAll('#latestSubSeg button').forEach(b=>b.classList.remove('active'));
+  document.querySelector('#latestSubSeg button[data-view="' + view + '"]').classList.add('active');
+  if (view === 'tomorrow'){
+    document.getElementById('rangeContent').style.display = 'none';
+    document.getElementById('tomorrowContent').style.display = 'block';
+    renderTomorrowStats();
+  } else {
+    document.getElementById('rangeContent').style.display = 'block';
+    document.getElementById('tomorrowContent').style.display = 'none';
+    renderTodayStats();
+  }
 }
 
 function setRange(btn, range){
-  document.querySelectorAll('#s8 .seg button').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('#s8 .seg-main button').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
   document.getElementById('touSwitch').checked = priceState.touMode;
-  if (range === 'today'){ currentRange = 'today'; renderTodayStats(); return; }
+  const subSeg = document.getElementById('latestSubSeg');
+  if (range === 'today'){
+    currentRange = 'today';
+    subSeg.style.display = 'flex';
+    setLatestSubView(latestSubView);
+    return;
+  }
+  subSeg.style.display = 'none';
+  document.getElementById('rangeContent').style.display = 'block';
+  document.getElementById('tomorrowContent').style.display = 'none';
   currentRange = range;
   renderRangeStats(range);
 }
@@ -2097,6 +2228,7 @@ function deleteRule(){
 
 renderTodayStats();
 loadRealComedData();
+loadDayAheadData();
 renderDial();
 initDialDrag();
 renderRulesList();

@@ -4,11 +4,13 @@ What each core feature actually needs to be built for real, which real APIs and 
 
 ## Price & Cost view
 
-**Data source:** ComEd's Hourly Pricing program publishes a real, public API. Two endpoints matter for this feature: `type=5minutefeed` (documented, supports custom date ranges via `datestart`/`dateend`) for granular pricing, and `type=day&date=YYYYMMDD` (functional but undocumented) for a full day's prices in one call. Both are free and require no API key.
+**Data source:** ComEd's Hourly Pricing program publishes a real, public API. Three endpoints matter for this feature: `type=5minutefeed` (documented, supports custom date ranges via `datestart`/`dateend`) for granular pricing, `type=day&date=YYYYMMDD` (functional but undocumented) for a full day's prices in one call, and `type=daynexttomorrow` (functional but undocumented) for tomorrow's PJM day-ahead hourly prices. All three are free and require no API key.
 
 **Feasibility:** High. This is the one piece of Flexy's data stack that's genuinely a solved problem today, ComEd already publishes exactly the data this feature needs, at no cost, with no partnership required.
 
 **Real constraint worth naming:** the price feed is one shared series for the entire ComEd territory rather than a per-customer feed. That's actually a scaling advantage (fetch once, serve to every user) but it also means the "See this on Time-of-Use" toggle can't show a household's real TOU bill, since ComEd's TOU rate isn't live yet; it can only replay the household's real historical usage against ComEd's proposed TOU rate structure from the 2026 filing.
+
+**Day-ahead prices, and the one real difference from Tibber:** ComEd's day-ahead feed is the same kind of forward-looking price signal Tibber shows its Nordic and European customers from Nord Pool and EPEX SPOT, a real, published market price for the next day, posted once (typically ~4:30pm CT) rather than updated through the day like the real-time feed. The difference that matters: Tibber's customers are actually billed on that day-ahead price. ComEd's residential Real-Time Pricing customers are billed on the real-time price; the day-ahead price is advisory only, useful for planning, not what shows up on the bill. Flexy's prototype surfaces it as a separate "Tomorrow" view for exactly that reason, labeled day-ahead rather than folded into the same real-time chart.
 
 ## Real-time consumption view
 
