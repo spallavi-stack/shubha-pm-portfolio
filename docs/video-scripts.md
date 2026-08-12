@@ -84,7 +84,7 @@ Every figure below is taken from the case study pages and is already sourced the
 
 ## SunnySideUp
 
-**Status: draft, not recorded. Target runtime ~1:25. Written August 2026 to match the actual recorded Flexy homeowner clip above: a short, casual, first-person orientation spoken to the reader before the case study's reading material, not a persona-led pitch. Replaces the earlier five-beat draft that was written before the real Flexy transcript was available.**
+**Status: draft, not recorded. Target runtime ~1:37. Written August 2026 to match the actual recorded Flexy homeowner clip above: a short, casual, first-person orientation spoken to the reader before the case study's reading material, not a persona-led pitch. Replaces the earlier five-beat draft that was written before the real Flexy transcript was available.**
 
 ### 0:00 to 0:08, intro
 
@@ -110,10 +110,10 @@ Every figure below is taken from the case study pages and is already sourced the
 
 > With this case study, I have focused on establishing viability of most of the features necessary for a product like SunnySideUp to exist.
 
-### 1:02 to 1:18, what was proven
+### 1:02 to 1:30, what was proven
 
-> First one was the ability to fetch live data directly: a postcode's region, its solar irradiance, and current electricity prices. Next one was a viability engine that scores a home green, amber, or red, and shows every assumption behind that score.
+> First one was the ability to fetch live data directly from three real sources: a postcode's region and coordinates from postcodes.io, solar irradiance from Open-Meteo, and current electricity prices from Octopus Energy's API. Next one was a viability engine that covers both rooftop and plug-in solar, scoring a home green, amber, or red. And the last is that every assumption behind that score gets shown to the user, right in the result.
 
-### 1:18 to 1:25, close
+### 1:30 to 1:37, close
 
 > As you go through this case study, you can dive into SunnySideUp's competition, personas and research, and prioritized roadmap.
