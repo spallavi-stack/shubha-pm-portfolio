@@ -116,6 +116,27 @@
   .theme h4{margin:4px 0 6px;font-size:14.5px;}
   .theme p{margin:0;font-size:13.5px;color:var(--ink-soft);}
 
+  .video-frame-wrap{
+    background:#0E1116;border-radius:14px;padding:16px;margin-top:24px;
+  }
+  video.proto-video{width:100%;max-height:520px;border-radius:10px;display:block;background:#000;}
+  .video-overlay-wrap{position:relative;}
+  .video-play-overlay{
+    position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+    width:72px;height:72px;border-radius:50%;
+    background:rgba(0,0,0,0.55);border:2px solid rgba(255,255,255,0.85);
+    display:flex;align-items:center;justify-content:center;cursor:pointer;
+    transition:transform .15s ease,background .15s ease;
+  }
+  .video-play-overlay:hover{background:rgba(0,0,0,0.75);transform:translate(-50%,-50%) scale(1.06);}
+  .video-play-overlay .play-icon{font-size:24px;color:#fff;margin-left:4px;}
+  .video-play-overlay.is-hidden{display:none;}
+  .video-label{
+    position:absolute;top:14px;left:14px;z-index:2;
+    background:rgba(0,0,0,0.55);color:#fff;font-weight:700;font-size:13px;
+    padding:6px 12px;border-radius:6px;letter-spacing:0.02em;
+  }
+
   .proto-frame-wrap{
     background:linear-gradient(180deg,#1A1D23,#0E1116);border-radius:16px;padding:36px 20px 24px;margin-top:24px;
     display:flex;justify-content:center;
@@ -251,6 +272,41 @@
     </div>
   </div>
 </header>
+
+<section id="prototype">
+  <div class="wrap">
+    <div class="video-frame-wrap">
+      <div class="video-overlay-wrap">
+        <video class="proto-video" controls preload="metadata" playsinline poster="assets/poster-intro.jpg">
+          <source src="assets/video-intro.mp4" type="video/mp4">
+          <track kind="captions" src="assets/captions-intro.vtt" srclang="en" label="English" default>
+        </video>
+        <span class="video-label">Introduction to SunnySideUp case study</span>
+        <button type="button" class="video-play-overlay" data-video-play aria-label="Play video">
+          <span class="play-icon" aria-hidden="true">▶</span>
+        </button>
+      </div>
+    </div>
+    <div class="section-kicker">Prototype</div>
+    <p class="lede">A working, coded viability-check calculator: postcode and segment (rooftop or plug-in) selection, self-reported consumption/tariff/occupancy inputs, and a green/amber/red result with the assumptions behind it shown openly. Built as a desktop web tool rather than a mobile app, so it's shown here on a laptop rather than in a phone frame.</p>
+    <div class="proto-frame-wrap">
+      <div class="laptop">
+        <div class="laptop-screen">
+          <div class="laptop-camera"></div>
+          <iframe class="proto" src="prototype.html" title="SunnySideUp interactive prototype"></iframe>
+        </div>
+        <div class="laptop-base"></div>
+      </div>
+    </div>
+    <div class="proto-mobile-cta">
+      <span class="proto-mobile-cta-icon" aria-hidden="true">☀️</span>
+      <p class="proto-mobile-cta-text">The calculator is a full working tool. Open it full-screen for the real experience on your phone.</p>
+    </div>
+    <div class="proto-actions">
+      <a class="btn" data-magnetic href="prototype.html" target="_blank">Open prototype full-screen</a>
+    </div>
+  </div>
+</section>
 
 <section id="tldr">
   <div class="wrap">
@@ -426,29 +482,6 @@
   </div>
 </section>
 
-<section id="prototype">
-  <div class="wrap">
-    <div class="section-kicker">Prototype</div>
-    <p class="lede">A working, coded viability-check calculator: postcode and segment (rooftop or plug-in) selection, self-reported consumption/tariff/occupancy inputs, and a green/amber/red result with the assumptions behind it shown openly. Built as a desktop web tool rather than a mobile app, so it's shown here on a laptop rather than in a phone frame.</p>
-    <div class="proto-frame-wrap">
-      <div class="laptop">
-        <div class="laptop-screen">
-          <div class="laptop-camera"></div>
-          <iframe class="proto" src="prototype.html" title="SunnySideUp interactive prototype"></iframe>
-        </div>
-        <div class="laptop-base"></div>
-      </div>
-    </div>
-    <div class="proto-mobile-cta">
-      <span class="proto-mobile-cta-icon" aria-hidden="true">☀️</span>
-      <p class="proto-mobile-cta-text">The calculator is a full working tool. Open it full-screen for the real experience on your phone.</p>
-    </div>
-    <div class="proto-actions">
-      <a class="btn" data-magnetic href="prototype.html" target="_blank">Open prototype full-screen</a>
-    </div>
-  </div>
-</section>
-
 <section id="limitations">
   <div class="wrap">
     <div class="section-kicker">Limitations</div>
@@ -529,6 +562,15 @@
   } else {
     openTarget();
   }
+})();
+(function(){
+  document.querySelectorAll('[data-video-play]').forEach(function(btn){
+    var video = btn.closest('.video-overlay-wrap').querySelector('video');
+    btn.addEventListener('click', function(){ video.play(); });
+    video.addEventListener('play', function(){ btn.classList.add('is-hidden'); });
+    video.addEventListener('pause', function(){ btn.classList.remove('is-hidden'); });
+    video.addEventListener('ended', function(){ btn.classList.remove('is-hidden'); });
+  });
 })();
 </script>
 

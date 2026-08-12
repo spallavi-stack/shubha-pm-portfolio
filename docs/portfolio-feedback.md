@@ -47,7 +47,7 @@ There are other buyers who could hire this work and are not addressed anywhere o
 
 ### 3. Case studies bury the prototype under a wall of text
 
-**Status:** Open. High priority, and the largest structural change of this round.
+**Status:** Done (August 2026, #135). The prototype now sits directly under the hero on all three views (Flexy homeowner, Flexy utility, SunnySideUp), ahead of the TL;DR, research, and roadmap content described below as the old order.
 
 **What was said.** A visitor entering a case study is met with text. By the time they reach the prototype, realistically they have lost interest.
 
@@ -57,7 +57,7 @@ There are other buyers who could hire this work and are not addressed anywhere o
 
 ### 4. Add a short marketing-style video to each case study
 
-**Status:** Open. High priority, paired with item 3.
+**Status:** Partially done. Flexy homeowner (#135, #136) and SunnySideUp (August 2026) both have a recorded, captioned intro video embedded above the prototype. Flexy utility's prototype was moved into its new position at the same time as item 3 but has no video yet, since it hasn't been recorded, still open for that view.
 
 **What was said.** Each case study should open with a video, roughly two minutes, in a marketing style: an introduction to the product and a showcase of the work behind it.
 
@@ -67,7 +67,7 @@ There are other buyers who could hire this work and are not addressed anywhere o
 
 ### 5. The detailed work moves below
 
-**Status:** Open. Same change as items 3 and 4.
+**Status:** Done, same change as item 3.
 
 **What was said.** All the real work behind the case study should sit below the video and prototype.
 
@@ -103,11 +103,11 @@ Self-hosting fits comfortably. Two minutes of 1080p screen recording lands rough
 
 **Two things to check before recording.** Whether the bundle tier exports without a watermark, and whether any licensed asset gets baked into the video. Your own screen recording and your own narration are yours permanently. Stock music, an AI voiceover, or stock footage may be licensed only while subscribed, in which case the MP4 keeps playing but the licence behind part of it has ended. Sticking to your own recording and narration avoids the question.
 
-**Length: 90 seconds, with 2 minutes as a ceiling.** Roughly 225 words of narration. Flexy gets two videos, one per audience toggle state, since one video covering both the homeowner app and the utility dashboard runs long and serves neither well. Scripts are drafted in `docs/video-scripts.md`.
+**Length: 90 seconds, with 2 minutes as a ceiling.** Roughly 225 words of narration. Flexy gets two videos, one per audience toggle state, since one video covering both the homeowner app and the utility dashboard runs long and serves neither well. Scripts, and the actual recorded transcripts for the two videos that now exist, are in `docs/video-scripts.md`.
 
 ### 7. The prototype layout question (August 2026, follow-up)
 
-**Status:** Decided, not built.
+**Status:** Partially built, and inconsistent with what shipped. SunnySideUp's video and prototype (built August 2026) match the resulting decision below exactly: stacked, video full width, laptop frame full width beneath it, frame unchanged. Flexy's video and prototype (built earlier the same day, #135/#136) also shipped stacked rather than the even split this item calls for below, video and phone-frame prototype are both full-width blocks stacked vertically, not two columns. That's a real gap between this decision and what's live: either Flexy's layout should be rebuilt as an even split, or this decision should be updated to stacked-for-both. Not resolved in this pass, since it surfaced while adding SunnySideUp's video rather than while working on Flexy's.
 
 Two further points came up after the layout decision above and change it:
 

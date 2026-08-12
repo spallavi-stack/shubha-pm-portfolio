@@ -1,0 +1,37 @@
+WEBVTT
+
+00:00:00.000 --> 00:00:09.900
+Hi. Before you get into the reading material for this case study, here's a super quick introduction to help you navigate Sunnyside Up.
+
+00:00:10.000 --> 00:00:18.900
+Sunnyside Up is a dummy product and an independent solar viability check for UK homes, covering both rooftops and plug-in solar.
+
+00:00:19.000 --> 00:00:26.900
+The UK just had its biggest year yet for solar installation, up thirty-one to thirty-seven percent in twenty-twenty five.
+
+00:00:27.000 --> 00:00:31.900
+Every comparison site in the country runs on lead generation or a referral fee.
+
+00:00:32.000 --> 00:00:44.900
+Households, however, are very wary of quotes that can differ by thousands of pounds with no real explanation, and renters have it even harder since they can't put anything on a roof they don't own.
+
+00:00:45.000 --> 00:00:52.900
+Most renters don't even know that a plug-in solar option exists for them, and it can cost as little as a few hundred pounds, less than most people would have guessed.
+
+00:00:53.000 --> 00:01:03.900
+With this case study, I have focused on establishing viability of most of the features necessary for a product like Sunnyside Up to exist.
+
+00:01:04.000 --> 00:01:19.900
+First was the ability to fetch live data directly from three sources: a postcode's region and coordinates from postcodes.io, solar irradiance from Open Meteo, and current electricity prices from Octopus Energy's API.
+
+00:01:20.000 --> 00:01:29.900
+Next one was a viability engine that covers both rooftops and plug-in solar, scoring a home green, amber, or red.
+
+00:01:30.000 --> 00:01:37.900
+And the last is every assumption behind the score that gets shown to the user right in the results.
+
+00:01:38.000 --> 00:01:45.900
+As you go through this case study, you can dive directly into Sunnyside Up's competition, personas, and research, as well as the roadmap.
+
+00:01:46.000 --> 00:01:55.285
+Feel free to click around with the prototype, check the solar viability for your own home as well.

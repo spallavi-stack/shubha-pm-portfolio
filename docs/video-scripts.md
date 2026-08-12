@@ -2,11 +2,13 @@
 
 Drafted August 2026 against feedback items 3 to 5 in `portfolio-feedback.md`. The videos themselves are deliberately deferred; these exist so the scripting work doesn't get redone when they get made.
 
-Flexy's homeowner view is the exception: it has actually been recorded, and the transcript below is the real closed-caption text, kept here as the source of truth rather than the earlier draft (an MVP-overview structure) that was written before recording and never used. It's a short, casual, first-person orientation clip, spoken to the reader before they get into the case study's reading material, not a persona-led or feature-benefit pitch. SunnySideUp's script (still a draft, not recorded) is written to match that same voice and shape. Flexy's utility view remains its own separate 90-second draft, five-beat structure, not yet recorded.
+Flexy's homeowner view and SunnySideUp have both actually been recorded now; the transcripts below are the real closed-caption text for each, kept here as the source of truth rather than the earlier drafts written before recording. Both are short, casual, first-person orientation clips, spoken to the reader before they get into the case study's reading material, not a persona-led or feature-benefit pitch. Flexy's utility view remains its own separate 90-second draft, five-beat structure, not yet recorded.
+
+Each video is embedded on its case study page (`assets/video-*.mp4`, with a poster frame and a toggleable WebVTT captions track at `assets/captions-*.vtt`), positioned directly under the hero, above everything else on the page. Flexy set this pattern (#135, #136, #138); SunnySideUp's video, poster, and captions were added the same way, matching Flexy's `.video-frame-wrap` / `.video-overlay-wrap` markup, CSS, and play-button JS exactly.
 
 Every figure below is taken from the case study pages and is already sourced there. Nothing here needs fresh fact-checking.
 
-**Before recording, check one thing.** Flexy is scripted as two separate videos, one per audience toggle state on that page. A single video covering both the homeowner app and the utility dashboard runs long and serves neither well. (SunnySideUp's plug-in cost figure, "a few hundred pounds," comes from `grounding-research.md`'s £400-£900 range for an 800W kit, itself flagged there as the weakest-sourced data in that document — fine for a casual aside, but don't tighten it into a more specific number without re-checking that section.)
+**Before recording (Flexy utility view only).** Flexy is scripted as two separate videos, one per audience toggle state on that page. A single video covering both the homeowner app and the utility dashboard runs long and serves neither well.
 
 ---
 
@@ -84,36 +86,36 @@ Every figure below is taken from the case study pages and is already sourced the
 
 ## SunnySideUp
 
-**Status: draft, not recorded. Target runtime ~1:37. Written August 2026 to match the actual recorded Flexy homeowner clip above: a short, casual, first-person orientation spoken to the reader before the case study's reading material, not a persona-led pitch. Replaces the earlier five-beat draft that was written before the real Flexy transcript was available.**
+**Status: recorded. Runtime 1:55. Text below is the actual closed-caption transcript of the recorded video, not a draft. Replaces the earlier draft that was written before recording (which itself replaced an even earlier five-beat draft written before the real Flexy transcript was available).**
 
-### 0:00 to 0:08, intro
+### 0:00 to 0:10, intro
 
-> Hi. Before you get into the reading material for this case study, here's a super quick introduction to help you navigate SunnySideUp.
+> Hi. Before you get into the reading material for this case study, here's a super quick introduction to help you navigate Sunnyside Up.
 
-### 0:08 to 0:16, what it is
+### 0:10 to 0:19, what it is
 
-> SunnySideUp is a dummy product, an independent solar viability check for UK homes, covering both rooftop and plug-in solar.
+> Sunnyside Up is a dummy product and an independent solar viability check for UK homes, covering both rooftops and plug-in solar.
 
-### 0:16 to 0:29, the market signal, and the problem
+### 0:19 to 0:32, the market signal, and the problem
 
-> The UK just had its biggest year yet for solar installations, up 31 to 37 percent in 2025. Every comparison site in the country runs on lead generation or referral fees.
+> The UK just had its biggest year yet for solar installation, up thirty-one to thirty-seven percent in twenty-twenty five. Every comparison site in the country runs on lead generation or a referral fee.
 
-### 0:29 to 0:42, the problem, continued
+### 0:32 to 0:45, the problem, continued
 
-> Households, however, are wary of quotes that can differ by thousands of pounds with no real explanation, and renters have it even harder, since they can't put anything on a roof they don't own.
+> Households, however, are very wary of quotes that can differ by thousands of pounds with no real explanation, and renters have it even harder since they can't put anything on a roof they don't own.
 
-### 0:42 to 0:54, the aside
+### 0:45 to 0:53, the aside
 
-> Most renters don't even know plug-in solar exists as an option, and it can cost as little as a few hundred pounds, less than most people would guess.
+> Most renters don't even know that a plug-in solar option exists for them, and it can cost as little as a few hundred pounds, less than most people would have guessed.
 
-### 0:54 to 1:02, scope of this case study
+### 0:53 to 1:04, scope of this case study
 
-> With this case study, I have focused on establishing viability of most of the features necessary for a product like SunnySideUp to exist.
+> With this case study, I have focused on establishing viability of most of the features necessary for a product like Sunnyside Up to exist.
 
-### 1:02 to 1:30, what was proven
+### 1:04 to 1:38, what was proven, and close
 
-> First one was the ability to fetch live data directly from three real sources: a postcode's region and coordinates from postcodes.io, solar irradiance from Open-Meteo, and current electricity prices from Octopus Energy's API. Next one was a viability engine that covers both rooftop and plug-in solar, scoring a home green, amber, or red. And the last is that every assumption behind that score gets shown to the user, right in the result.
+> First was the ability to fetch live data directly from three sources: a postcode's region and coordinates from postcodes.io, solar irradiance from Open Meteo, and current electricity prices from Octopus Energy's API. Next one was a viability engine that covers both rooftops and plug-in solar, scoring a home green, amber, or red. And the last is every assumption behind the score that gets shown to the user right in the results. As you go through this case study, you can dive directly into Sunnyside Up's competition, personas, and research, as well as the roadmap.
 
-### 1:30 to 1:37, close
+### 1:38 to 1:55, invitation to try it
 
-> As you go through this case study, you can dive into SunnySideUp's competition, personas and research, and prioritized roadmap.
+> Feel free to click around with the prototype, check the solar viability for your own home as well.
