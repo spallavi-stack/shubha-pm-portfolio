@@ -1,0 +1,34 @@
+WEBVTT
+
+00:00:02.000 --> 00:00:09.900
+Hi. Before you get into the reading material for this case study, here's a super quick introduction to help you navigate Flexy.
+
+00:00:10.000 --> 00:00:14.900
+Flexy is a dummy product built as a pilot MVP for ComEd.
+
+00:00:15.000 --> 00:00:19.900
+ComEd is an electricity supply company covering the north of Illinois.
+
+00:00:20.000 --> 00:00:27.900
+ComEd already offers an hourly dynamic tariff to around thirty-eight thousand customers and will soon start supplying time of use tariff as well.
+
+00:00:28.000 --> 00:00:35.900
+Households, however, express anxiety around these tariffs and are unsure about how to avoid higher electricity bills.
+
+00:00:36.000 --> 00:00:43.900
+Funny thing is that most households in the US already have a smart meter as well.
+
+00:00:44.000 --> 00:00:51.900
+With this case study, I have focused on establishing viability of most of the features necessary for a product like Flexy to exist.
+
+00:00:52.000 --> 00:00:56.900
+First one was the ability to fetch the live prices from ComEd directly.
+
+00:00:57.000 --> 00:01:06.900
+Next one was the ability to control EVs regardless of their brand or the brand of their charger, and that was done using the Smartcar API.
+
+00:01:07.000 --> 00:01:12.900
+And the last is the ability to fetch consumption data from the smart meters of households.
+
+00:01:13.000 --> 00:01:21.990
+As you go through this case study, you can dive into Flexy's competition, go-to-market strategy and prioritized roadmap.

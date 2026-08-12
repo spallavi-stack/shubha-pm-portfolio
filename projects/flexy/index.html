@@ -140,6 +140,17 @@
     background:#0E1116;border-radius:14px;padding:16px;margin-top:24px;
   }
   video.proto-video{width:100%;max-height:520px;border-radius:10px;display:block;background:#000;}
+  .video-overlay-wrap{position:relative;}
+  .video-play-overlay{
+    position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+    width:72px;height:72px;border-radius:50%;
+    background:rgba(0,0,0,0.55);border:2px solid rgba(255,255,255,0.85);
+    display:flex;align-items:center;justify-content:center;cursor:pointer;
+    transition:transform .15s ease,background .15s ease;
+  }
+  .video-play-overlay:hover{background:rgba(0,0,0,0.75);transform:translate(-50%,-50%) scale(1.06);}
+  .video-play-overlay .play-icon{font-size:24px;color:#fff;margin-left:4px;}
+  .video-play-overlay.is-hidden{display:none;}
 
   .proto-frame-wrap{
     background:#0E1116;border-radius:14px;padding:20px;margin-top:24px;
@@ -314,15 +325,20 @@
 <section id="prototype" data-reveal>
   <div class="wrap">
     <div class="section-kicker">Prototype</div>
-    <p class="lede aud-homeowner">A full coded phone-frame prototype covering the entire MVP flow: discovering Flexy through a ComEd email, installing it, connecting a ComEd account, an intro carousel, connecting an EV (brand selection → manufacturer login → permissions, matching how Smartcar-style integrations actually work), setting charging preferences, and the live Price &amp; Cost and Smart Charging dashboards.</p>
-    <p class="lede aud-utility">Flexy for Utilities - your team's operator dashboard, tracking enrollment, aggregated flexible capacity, dispatch reliability, consumer savings, and cost-avoided reporting.</p>
 
     <div class="aud-homeowner">
     <div class="video-frame-wrap">
-      <video class="proto-video" controls preload="metadata" playsinline>
-        <source src="assets/video-homeowner.mp4" type="video/mp4">
-      </video>
+      <div class="video-overlay-wrap">
+        <video class="proto-video" controls preload="metadata" playsinline poster="assets/poster-homeowner.jpg">
+          <source src="assets/video-homeowner.mp4" type="video/mp4">
+          <track kind="captions" src="assets/captions-homeowner.vtt" srclang="en" label="English" default>
+        </video>
+        <button type="button" class="video-play-overlay" data-video-play aria-label="Play video">
+          <span class="play-icon" aria-hidden="true">▶</span>
+        </button>
+      </div>
     </div>
+    <p class="lede aud-homeowner">A full coded phone-frame prototype covering the entire MVP flow: discovering Flexy through a ComEd email, installing it, connecting a ComEd account, an intro carousel, connecting an EV (brand selection → manufacturer login → permissions, matching how Smartcar-style integrations actually work), setting charging preferences, and the live Price &amp; Cost and Smart Charging dashboards.</p>
     <div class="proto-frame-wrap">
       <iframe class="proto" src="prototype.html" title="Flexy interactive prototype"></iframe>
     </div>
@@ -336,6 +352,7 @@
     </div>
 
     <div class="aud-utility">
+    <p class="lede aud-utility">Flexy for Utilities - your team's operator dashboard, tracking enrollment, aggregated flexible capacity, dispatch reliability, consumer savings, and cost-avoided reporting.</p>
     <div class="proto-frame-wrap-wide">
       <iframe class="proto-wide" src="utility-dashboard.html" title="Flexy for Utilities operator dashboard prototype"></iframe>
     </div>
@@ -698,6 +715,15 @@
   } else {
     openTarget();
   }
+})();
+(function(){
+  document.querySelectorAll('[data-video-play]').forEach(function(btn){
+    var video = btn.closest('.video-overlay-wrap').querySelector('video');
+    btn.addEventListener('click', function(){ video.play(); });
+    video.addEventListener('play', function(){ btn.classList.add('is-hidden'); });
+    video.addEventListener('pause', function(){ btn.classList.remove('is-hidden'); });
+    video.addEventListener('ended', function(){ btn.classList.remove('is-hidden'); });
+  });
 })();
 </script>
 
