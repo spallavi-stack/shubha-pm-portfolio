@@ -104,7 +104,7 @@ Every figure below is taken from the case study pages and is already sourced the
 
 ### 0:42 to 0:54, the aside
 
-> Funny thing is, most renters don't even know plug-in solar exists as an option, and it can cost as little as a few hundred pounds, less than most people would guess.
+> Most renters don't even know plug-in solar exists as an option, and it can cost as little as a few hundred pounds, less than most people would guess.
 
 ### 0:54 to 1:02, scope of this case study
 
