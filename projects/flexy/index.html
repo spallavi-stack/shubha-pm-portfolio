@@ -696,6 +696,13 @@
       params.set('audience', aud);
       history.replaceState(null, '', location.pathname + '?' + params.toString() + location.hash);
     }
+    // Switching audience shows/hides whole sections, so every scroll-reveal
+    // trigger position cached by motion.js is now stale and the reveals below
+    // the fold never fire, leaving those sections invisible until a reload.
+    // Recompute them once the new layout has been laid out.
+    if(window.ScrollTrigger){
+      requestAnimationFrame(function(){ window.ScrollTrigger.refresh(); });
+    }
   }
   var initial = new URLSearchParams(location.search).get('audience') === 'utility' ? 'utility' : 'homeowner';
   setAudience(initial, false);
