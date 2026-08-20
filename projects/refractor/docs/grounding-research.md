@@ -235,3 +235,47 @@ No affiliate fee, no commission, no paid placement. That forecloses the mechanis
 8. Find a count of indie brands specifically, or state the SME proxy's limitations in the brief.
 9. Confirm whether individual large retailers impose carbon reporting through their own supplier programmes.
 10. Monetization stays deliberately open. Nothing in this pass tests the public funding direction.
+
+---
+
+## Appendix A: the rest of Europe, out of scope
+
+Researched in the same pass before the scope narrowed to five countries. Kept because it is tedious to rebuild and because widening scope is a live option. Nothing here is load-bearing for the current product.
+
+The cross-cutting rule holds everywhere: there is no single EU packaging registration, so a producer registers, reports and pays in every member state where its packaging reaches a customer.
+
+| Country | Register and PRO | Threshold | Label language |
+|---|---|---|---|
+| Austria | ARA, Reclay UFH, Interzero, ERP, Austria Glas | Not established | German |
+| Belgium | Fost Plus household, Valipac industrial | Not established | Dutch, French, German |
+| Bulgaria | Not established | Not established | Bulgarian |
+| Croatia | Not established | Not established | Croatian |
+| Cyprus | Single monopoly scheme, still mandates the Green Dot | Not established | Greek or English |
+| Czechia | VISOH2 register, EKO-KOM | Applies | Czech |
+| Denmark | DPA via virk.dk | ~500 kg | Danish |
+| Estonia | PAKIS register, ETO | 25 kg plastic or 50 kg other per quarter | Estonian |
+| Finland | Rinki, Pirkanmaa ELY | ~€1M turnover | Finnish and Swedish |
+| Greece | HERRCO/EEAA, annual contract | Not established | Greek |
+| Hungary | ÖKO-Pannon | 300 kg | Hungarian |
+| Ireland | Repak | Not established | English |
+| Latvia | Latvijas Zaļais Punkts | Applies | Latvian |
+| Lithuania | Pakuočių tvarkymo organizacija | Applies | Lithuanian |
+| Luxembourg | Valorlux, sole PRO, no individual option | Not established | French, German, Luxembourgish |
+| Malta | GreenPak or Green MT | 100 kg | Maltese or English |
+| Netherlands | Verpact | Not established | Dutch |
+| Portugal | Sociedade Ponto Verde | Not established | Portuguese |
+| Romania | Not established | Not established | Romanian |
+| Slovakia | Ministry of Environment, NATUR-PACK | Applies | Slovak |
+| Slovenia | Slopak | None | Slovenian |
+| Sweden | NPA, TMResponsibility | Not established | Swedish |
+| Norway (EEA) | Approved PRO | None since 1 July 2025 | Norwegian |
+
+Denmark, the Netherlands and Sweden are reported as tolerating English for non-mandatory label elements. That is interpretation, and no product recommendation should rest on it.
+
+**Conflict, unresolved.** The Netherlands PRO appears as both Verpact and Verpakt across sources.
+
+**Outside the EU and EEA.** The UK runs a full parallel stack: separate UK Responsible Person, separate SCPN notification portal, UK RP name and address on the label since 31 December 2022, and its own packaging EPR. A brand in both markets runs two Responsible Persons and a dual-labelling strategy. Switzerland and Liechtenstein were never researched.
+
+**Retail buyers, chat-only research now recorded.** Douglas and Sephora both operate brand submission portals with no open buying route. Sephora carries roughly 500 brands globally, takes very few new ones each year and favours proven demand, running operational supply chain compliance (EDI, on-time delivery, correct labelling) alongside product and ingredient compliance against its own standards, with sustainability increasingly weighted. Douglas lists directly to its own warehouse on DDP terms. Both come from trade guidance and not from either retailer's supplier portal, so treat them as directional.
+
+Sources for this appendix are the same as section 2.3: [Compliance Gate](https://www.compliancegate.com/epr-organisations-european-union/), [Eldris](https://epr.eldris.ai/data-centre/eu-regulation/epr-packaging-regulations-eu-guide-by-country-2025/), [Lovat](https://vatcompliance.co/blog/epr-packaging-thresholds-in-europe-2025-compliance-guide/), [JTI Ventures](https://jtiventures.se/guide-epr-fees-deadlines-nordics.html), [Biorius](https://biorius.com/cosmetic-news/eu-cosmetic-language-requirements/), plus [RangeMe on Sephora](https://www.rangeme.com/sephora) and [Douglas Group](https://douglas.group/en/become-our-partner).
