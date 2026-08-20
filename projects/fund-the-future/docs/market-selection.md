@@ -25,7 +25,7 @@ Every claim below is tagged **Fact** (cited), **Inference** (reasoned from state
 | # | Criterion | Origin |
 |---|---|---|
 | 1 | Impact of the climate crisis on the country | User |
-| 2 | Number of registered climate or adaptation NGOs, with an explicit flag where the registration regime likely hides a large informal sector | User |
+| 2 | Size and documentability of the nonprofit sector, measured by total registered NPO count, with an explicit flag where the registration regime likely hides a large informal sector | User, restated August 2026 |
 | 3 | Population in or near poverty, measured both as a rate and as an absolute count, reported separately | User |
 | 4 | Whether a public NGO registry exists that can actually be queried | Added |
 | 5 | Whether an established, documented payout rail already reaches organisations in the country | Added |
@@ -34,7 +34,11 @@ Every claim below is tagged **Fact** (cited), **Inference** (reasoned from state
 
 **[Inference]** With diaspora removed, criteria 4 and 5 carry more weight than before, because they are the two that map directly onto the product's two hard problems. That is a defensible reweighting rather than a convenient one: the product's difficulty is proving an organisation is real and getting money to it, and these are the two criteria that measure exactly that.
 
-**Criterion 2 has never been satisfiable.** No registered climate or environment NGO count was obtained for any candidate market in any pass. Kenya, now eliminated, is the only country where a government-published sector breakdown exists at all. Criterion 2 currently functions as a proxy applied from Kenya rather than as a criterion, and it is flagged here rather than quietly dropped.
+**Criterion 2 was restated in August 2026 because its original form was never satisfiable.** It previously asked for the number of registered climate or adaptation NGOs. That figure was not obtainable for any candidate market in any of three research passes, and Kenya, now eliminated, is the only country where a government-published sector breakdown exists at all. A scoring criterion that scores nobody is decorative, which is the problem this document exists to fix.
+
+The criterion now measures **total registered NPO count**, which is available and already collected for the leading candidates. **[Inference]** This preserves what the criterion was actually asking, meaning whether a real pool of organisations exists and whether the state keeps track of them, while making it answerable. It also strengthens the Philippines, which holds the largest verified count of any candidate, so the restatement is declared here rather than left to look like a convenient adjustment made after the selection.
+
+**The informal-sector flag survives the restatement and matters more under it.** Registered counts systematically undercount this product's target user, because the product exists for organisations too small or too informal to appear on a register at all.
 
 ---
 
@@ -75,7 +79,7 @@ The Philippines was removed in February 2025, and Nigeria and Mozambique in Octo
 | | Philippines | Honduras | Nigeria | Kenya |
 |---|---|---|---|---|
 | **1. Climate impact** | Top ten CRI long-term; 2nd on composite risk at 83.1 | **Strongest.** 3rd in the world in both CRI editions | Weakest. Real exposure, absent from top rankings | Moderate |
-| **2. Climate NGO count** | Not found | Not found, likely small | Not found | **Only market with any data**, and it is sector-level |
+| **2. Registered NPO count** | **Strongest.** 64,087 NPOs | Not found, likely small | Not found | 12,643 registered, 10,279 active |
 | **3. Poverty** | 15.5%, 17.54m people | 50.3% rate | **Strongest on absolute count.** ~12% of the world's extreme poor | Moderate |
 | **4. Queryable registry** | **Strongest.** SEC register, annual GIS and audited financial statements | URSAC, closed list of requirements | Name search only | Strong |
 | **5. Payout rail** | **Strongest verified.** Banks plus 7 wallets, two like-for-like providers | **Weakest.** 16 banks, no wallet, single-rail | Strong. 100+ institutions including fintech | Strongest infrastructure, but grey-listed |
@@ -92,7 +96,7 @@ The Philippines was removed in February 2025, and Nigeria and Mozambique in Octo
 - **Registry, criterion 4.** The SEC register of non-stock corporations operates a dedicated NPO regime under SEC Memorandum Circular 25 series of 2019. Organisations file annual General Information Sheets and audited financial statements. (**Fact**, per [Council on Foundations](https://cof.org/sites/default/files/2025-08/Nonprofit-Law-in-Philippines.pdf).) **[Inference]** This is the decisive advantage. Verification is the product's stated pillar, and the Philippines is the only candidate whose register carries a continuing filing obligation rather than a one-off record of existence. A register that shows an organisation filed accounts last year proves something a register of names cannot.
 - **Payout rail, criterion 5.** dLocal documents both bank transfers and real-time wallet transfers into the Philippines, in PHP and USD, covering GCash, PayMaya, Coins, GrabPay, Starpay, TayoCash and PalawanPay, with wallet transfers capped at PHP 50,000 per transaction. (**Fact**, primary source, [dLocal Philippines payouts documentation](https://docs.dlocal.com/docs/philippines-payouts-v3).) Xendit provides a like-for-like alternative across 94+ banks and 13 e-wallets. **[Inference]** The wallet channel matters more than the bank channel, because an organisation with no bank account can still be paid, and that organisation is precisely the target user. Two like-for-like providers also removes the single-provider concentration risk that Honduras carries.
 - **Climate impact, criterion 1.** Among the ten most affected countries in the Climate Risk Index long-term ranking, one of five lower-middle-income countries in that top ten, and second on composite climate-risk scoring at 83.1 behind only Bangladesh. (**Fact**, per [Germanwatch CRI 2025](https://www.germanwatch.org/sites/default/files/2025-02/Climate%20Risk%20Index%202025.pdf); the 83.1 composite figure is secondary-sourced and needs a primary check.)
-- **Registered NGOs, criterion 2.** 64,087 NPOs registered across classifications as of 31 December 2020, the largest verified count of any candidate. (**Fact**, search-snippet sourced to SEC data; re-verify against the [AMLC NPO Risk Assessment](http://www.amlc.gov.ph/images/PDFs/NPO%20Risk%20Assessment.pdf) and obtain a current figure.) A climate or environment subset was not found and remains an open task.
+- **Registered NPOs, criterion 2.** 64,087 NPOs registered across classifications as of 31 December 2020, the largest verified count of any candidate. (**Fact**, search-snippet sourced to SEC data; re-verify against the [AMLC NPO Risk Assessment](http://www.amlc.gov.ph/images/PDFs/NPO%20Risk%20Assessment.pdf) and obtain a current figure.) A climate or environment subset was not found. Under the restated criterion this is no longer a gap in the scoring, though it remains useful for sizing the addressable population.
 - **Poverty, criterion 3.** 15.5% of the population, 17.54 million people, in 2023, down from 19.99 million in 2021. Substantial in absolute terms and moderate as a rate, making it the weakest of the candidates on this criterion. (**Fact**, verified, per [PSA 2023 Full Year Official Poverty Statistics](https://psa.gov.ph/sites/default/files/phdsd/2023%20FY%20Official%20Poverty%20Statistics%20Publication_15August2024.pdf).)
 - **Foreign donations.** Permitted. Receiving foreign grants triggers additional SEC, BIR and AMLA reporting rather than an approval gate. (**Fact**, same Council on Foundations source.)
 - **Supporting evidence found after selection.** Asia and Oceania received under 10% of foundation adaptation funding between 2021 and 2024 while holding more than half the world's population, and disaster risk management and infrastructure were the least funded sectors over that period. (**Fact**, [ClimateWorks](https://www.climateworks.org/press-release/funding-for-climate-adaptation-and-resilience-hits-record-of-870-million/), see `grounding-research.md` section 13.) **[Inference]** The pilot market sits in the region most exposed by population and least served by adaptation philanthropy, and the work most common among target organisations falls in the least-funded sectors.
@@ -162,7 +166,7 @@ A second figure from the same report bears directly on the verification pillar: 
 
 ## Open verification tasks
 
-1. **Philippines: registered climate or environment NGO count.** Never obtained. Criterion 2 rests on applying Kenya's environment-sector share as a cross-country proxy.
+1. **Philippines: registered climate or environment NGO count.** Never obtained, in any market, across three passes. No longer blocking, since criterion 2 was restated to total registered NPO count, but still wanted for the addressable-population estimate in `grounding-research.md` section 2.
 2. **Philippines: whether the SEC register supports programmatic lookup.** Decides whether verification is an automated check or a manual per-organisation cost, which decides the unit economics under a percentage fee.
 3. **Philippines: current NPO count.** The 64,087 figure is as of December 2020 and search-snippet sourced.
 4. **Philippines: payment provider onboarding timelines** for dLocal and Xendit. Caps any claim about how fast an organisation can start receiving money.
