@@ -3,7 +3,10 @@
 Status as of 20 August 2026. Everything below is committed on `claude/nifty-rubin-6czdga`. Read this first in a new session, then `scope.md`, then `market-selection.md`, then `grounding-research.md`.
 
 ## What this project is
-A campaign-building and fundraising platform for grassroots climate-adaptation organisations. An organisation enters who they are and what they need money for, and gets a shareable campaign page with a working donation path.
+
+**The user's own statement of purpose, August 2026:** *"I want grassroots organizations doing honest work in adaptation to have a way to fund their activities through retail giving."*
+
+In product terms: a campaign-building and fundraising platform for grassroots climate-adaptation organisations. An organisation enters who they are and what they need money for, and gets a shareable campaign page with a working donation path. Each phrase of the purpose statement maps to a locked decision. *Grassroots* is the user below the documentation floor. *Honest work* is why verification is a pillar and why the page shows evidence rather than a badge. *Retail giving* is the channel, chosen in full knowledge that retail giving is about 2% of this sector's income today.
 
 ## Read this before anything else: what was corrected on 20 August 2026
 

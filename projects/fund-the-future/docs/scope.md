@@ -1,5 +1,11 @@
 # Fund the Future: Discovery Scope
 
+## Purpose
+
+**"I want grassroots organizations doing honest work in adaptation to have a way to fund their activities through retail giving."** (User, August 2026.)
+
+Recorded verbatim because it settles three things the research kept circling. *Grassroots* names the user as organisations below the documentation floor that institutional funders and existing platforms use for eligibility. *Honest work* is why verification is a product pillar rather than a compliance chore, and why locked decision 6 shows evidence rather than a badge. *Retail giving* is the channel, chosen knowing that retail giving is currently around 2% of this sector's income, because the product exists to change that rather than to follow it.
+
 ## Project basics
 - **Problem area:** A fast campaign-building and fundraising platform for grassroots organisations, small municipalities, and NGOs doing climate *adaptation* work in the Global South. An organisation enters who they are and what they need money for, and gets back a complete, shareable campaign landing page with a working donation path attached to it.
 - **Target user (campaign side):** Small climate-adaptation actors that are too small, too informal, or too under-resourced to compete for institutional climate finance: community flood-response groups, water and drought-resilience projects, mangrove and coastal restoration groups, heat-resilience and early-warning initiatives, and municipal-scale adaptation projects in small local government.
