@@ -1,5 +1,17 @@
 # Fund the Future: Pilot Market Selection
 
+## Decision, August 2026: the pilot is the Philippines alone
+
+**The pilot was narrowed from three markets to one.** Everything below documents the three-market selection that produced the Philippines, Nigeria and Honduras, and it is retained in full. The narrowing does not overturn that analysis. It reflects that researching payout rails and verification to the depth this product needs produced three partial answers rather than one complete one, and a single-market MVP is the honest shape for a pilot.
+
+**The Philippines was selected because it was the only candidate scoring well on all six criteria**, because it is the only one of the three with two like-for-like local-currency payout providers, because its SEC register is both queryable and tied to an annual filing obligation, which is what makes the verification pillar buildable, and because its diaspora is the largest of the three and concentrated in the largest giving pool in the world. Section 13 of [`grounding-research.md`](grounding-research.md) adds a further argument found after this selection was made: Asia and Oceania received under 10% of foundation adaptation funding between 2021 and 2024 while holding more than half the world's population.
+
+**Nigeria and Honduras are the leading expansion candidates and their research below stands.** Nigeria holds the largest absolute population in extreme poverty of any country and was ranked first in the world by share of income donated in the 2025 CAF World Giving Report, which makes it the strongest candidate for a domestic-giving variant of the product rather than a diaspora one. Honduras carries the strongest climate-impact signal of the three, and its two caveats, meaning single-rail local-currency payout and a government that has administratively restricted foreign donations during natural disasters, are the reasons it is not the sole pilot.
+
+**Verification tasks still open against Nigeria and Honduras are no longer blocking** and should be treated as expansion research rather than gaps in the current pass.
+
+---
+
 ## Why this document exists
 
 The first pass at choosing pilot markets named Kenya, the Philippines, and India, and then swapped India for Maldives. Kenya and the Philippines were chosen by association rather than by evidence: they are the countries that come up most often in climate-finance conversation, which is a bias, not a criterion. This document redoes the selection against stated criteria, applied to a longlist, with the data sourced.
