@@ -436,6 +436,54 @@ Section 10 sized the flows. This section describes the mechanism that carries th
 
 ---
 
+## 15. Philippine verification and onboarding mechanics
+
+Added August 2026, after the pilot narrowed to the Philippines and the user decided that the campaign page shows verification evidence rather than a badge. That decision made the question of what can actually be retrieved from the SEC register load-bearing rather than theoretical.
+
+### What the SEC register returns, free and paid
+
+**[Fact]** The free public search, available through eSPARC, the SEC eSEARCH facility and the official SEC Check App, accepts a company name or an SEC registration number and returns the company's **status, address, and record of reportorial submissions, including General Information Sheets and Audited Financial Statements**. Basic searches require no account. Status values include Registered, Revoked, Suspended and Dissolved, alongside the registered name, SEC number and date of incorporation. (Source: [Respicio & Co. commentary](https://www.respicio.ph/commentaries/how-to-check-if-a-company-is-legally-registered-with-the-sec-in-the-philippines) and [Respicio & Co. verification guide](https://www.lawyer-philippines.com/articles/how-to-verify-sec-registration-of-a-philippine-corporation-online).)
+
+**[Fact]** The documents themselves are a paid service. Certified copies of GIS, AFS and Articles of Incorporation are obtained through the SEC Express System for a fee, delivered by courier or digital download, and are certified by the Commission as definitive proof of status. (Same sources.)
+
+**[Fact]** "Revoked" status commonly results from failure to file GIS and AFS. (Same source.)
+
+**[Inference]** This is the most favourable possible answer for the product, and it is worth being explicit about why. The verification decision requires the page to show that an organisation is registered and that it has filed. Both of those are in the free tier. The paid tier holds the certified documents, which the platform does not need in order to make its display honest, and which a sceptical donor can obtain independently. The platform can therefore state a checkable fact without becoming a document broker.
+
+**[Inference]** The revocation mechanism adds a second signal at no cost. Because non-filing leads to revocation, a current status of Registered is itself weak evidence of continuing compliance, not merely of past existence. This is exactly the property the Philippines was selected for in [`market-selection.md`](market-selection.md), now confirmed rather than assumed.
+
+**[Assumption]** No public API for the register was documented. The SEC lists an "API Marketplace" among its online services, but its scope, access conditions and whether it covers company records could not be established: sec.gov.ph returned HTTP 403 to automated fetching, and the eSEARCH front end is a JavaScript application that returned no readable content. **Whether verification is an automated check or a manual per-organisation lookup is therefore still open**, and it is the single remaining question with material consequences for operating cost.
+
+**[Inference]** The cost consequence is now smaller than it was. Under the donor-tip model the platform earns nothing from the organisation, so verification cost is a fixed cost of operating rather than a margin question on each campaign. A manual lookup that takes a staff member two minutes is tolerable at pilot scale and is a scaling problem later, not a viability problem now.
+
+### Payment provider onboarding timelines
+
+**[Fact]** Xendit reviews KYC submissions within **5 to 10 business days**. E-wallet activation responses arrive within 5 business days, QR partner registration within 7 business days, and virtual accounts activate automatically once KYC completes. (Source: [Xendit Help Center](https://help.xendit.co/hc/en-us/articles/11103239008793-PH-What-are-the-legal-documents-required-to-register-to-Xendit-for-Philippine-Merchants).)
+
+**[Assumption]** No equivalent published timeline was found for dLocal.
+
+**[Inference]** This puts a number on the constraint section 8 identified without one. An organisation can create and share a campaign page immediately, and cannot receive money for one to two weeks. Any product claim about speed has to be stated against page creation rather than against money arriving, and the campaign page needs to work and be shareable during the gap. That is a product requirement rather than a caveat.
+
+---
+
+## 16. Who the climate donor is
+
+Added August 2026, after the donor was defined as a climate-motivated retail donor. Section 12 established donor behaviour across all causes. This section asks whether donors to environmental and climate causes differ.
+
+**[Fact]** Climate-giving donors are the highest-due-diligence segment in the IRS donor database, researching environmental charities at close to the rate at which donors research veteran, medical and direct-aid charities. (Source: [Nonprofits Source](https://nonprofitssource.com/online-giving-statistics/). Search-snippet sourced.)
+
+**[Fact]** Donation amount is strongly affected by the donor's perception of how effective the charity is at addressing climate change, and framing an environmental nonprofit as a source of climate solutions significantly increased intent to donate. (Source: [Journal of Economics and Behavioral Studies](https://ojs.amhinternational.com/index.php/jebs/article/view/3996) and [experimental evidence from the United Kingdom](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC10836214/). Search-snippet sourced.)
+
+**[Fact]** Environmental nonprofits recorded 34% online revenue growth, above the sector average. First-gift donor retention runs at 25% and repeat-donor retention at 60%. (Source: [Nonprofits Source](https://nonprofitssource.com/online-giving-statistics/), [CCS Fundraising](https://www.ccsfundraising.com/insights/donor-acquisition-and-retention-strategies/). Search-snippet sourced.)
+
+**[Inference]** The due-diligence finding is the most useful thing in this section, because it independently supports a decision already made for other reasons. The verification display was chosen on evidence that donors respond to financial transparency more than to badges. This finding says the specific donor this product targets is unusually likely to go looking. A page built to be checked suits a donor who checks, and a badge would suit that donor least of all.
+
+**[Inference]** The effectiveness finding cuts against a naive reading of the adaptation story. Donors give more when they believe the organisation is effective at addressing climate change, and adaptation work protects against consequences rather than reducing emissions. The costed line-by-line budget already required by the verification decision is the available answer, because it lets a donor evaluate effectiveness at the level of a specific project rather than at the level of a claim about the climate.
+
+**[Assumption]** All figures in this section are search-snippet sourced and US-centric, and none compares environmental donors against other cause areas on retention directly. No source located measures whether climate donors retain better or worse than the all-cause average.
+
+---
+
 ## Open questions and lowest-confidence areas
 
 Updated August 2026, after sections 10 to 14 and the narrowing of the pilot to the Philippines alone. Questions resolved or made moot by that narrowing are marked rather than deleted, so the reasoning stays visible.
@@ -443,14 +491,14 @@ Updated August 2026, after sections 10 to 14 and the narrowing of the pilot to t
 1. **Whether retail giving works for this sector at all.** In Kenya, the only market with a government-published breakdown, individual donors were 2.3% of NGO income in FY 2022/23 and fell 10% year on year, against affiliates at 27.6% and foreign government agencies at 21.2% (**[Fact]**, [Annual NGO Sector Report 2022/2023](https://www.pbora.go.ke/sites/default/files/2025-09/Annual%20NGOS%20Sector%20Report%202022-2023.pdf)). **Partially addressed, still open.** Sections 10 and 13 reframe it: retail giving to this sector is small because cross-border philanthropy as a whole is small, roughly 3% of global giving, and because adaptation is under 10% of climate finance within that. Section 13 also shows adaptation philanthropy more than doubling between 2021 and 2024 with a 55% rise in the number of funders, so the category is expanding. What remains unresolved is whether individual donors will fund adaptation work specifically, as distinct from disaster relief, and no source examined measures that directly.
 2. ~~**Honduras has one real rail, not two.**~~ **Moot.** Honduras is no longer a pilot market. Retained in [`market-selection.md`](market-selection.md) as part of the selection reasoning.
 3. ~~**Money transmitter classification.**~~ **Resolved by decision, August 2026.** The user has chosen direct settlement: donations pass from the donor through a licensed payment provider straight to the organisation, and the platform never holds funds. The platform is therefore software rather than a money transmitter, and no state-by-state licensing question arises. The accepted consequences are no refunds, no holding funds pending investigation, no pooling of small donations, and no all-or-nothing goals. The underlying legal reasoning in section 4 is still drawn from general principles rather than a donation-platform-specific analysis, which now matters less because the architecture avoids the question rather than answering it.
-4. **Registry machine-readability.** The Philippine SEC register is queryable by a person. Whether it offers programmatic lookup is unverified, and it decides whether verification is a per-organisation manual cost or an automated check. With a single pilot market this is now a tractable question rather than a three-country one, and it should be answered before the brief claims any verification unit economics.
+4. **Registry machine-readability.** **Narrowed, still open.** Section 15 establishes that the free SEC search returns status and a record of GIS and AFS submissions, which is everything the verification display needs. What remains unverified is whether a public API exists: the SEC lists an API Marketplace among its online services, but sec.gov.ph returns 403 to automated fetching and eSEARCH is a JavaScript front end that yielded no readable content. The consequence is now operational rather than existential, since the donor-tip model makes verification a fixed operating cost rather than a per-campaign margin question.
 5. **How the locally-led finance figures are phrased publicly.** The 0.17% figure is verified directly, but it counts keyword mentions in finance descriptions rather than tracked flows. Stating it as "0.17% of climate finance reaches local organisations" would overclaim. The problem statement needs wording that carries the force of the finding without misrepresenting the method.
 6. **Registered climate NGO counts.** Not obtainable for the Philippines. The addressable-population estimate in section 2 rests on applying Kenya's environment-sector share to the Philippine NPO count, which is a cross-country proxy applied to a different regulatory regime.
-7. **Payment provider onboarding timelines.** Unverified, and they cap any claim about how fast an organisation can start receiving money. Now a single-market question: dLocal and Xendit in the Philippines.
+7. ~~**Payment provider onboarding timelines.**~~ **Answered for Xendit.** KYC review takes 5 to 10 business days, with e-wallet activation within 5 and QR partner registration within 7. See section 15. No published dLocal timeline was found, which is the residual gap.
 8. **Whether donors accept structured disclosure in place of audited financials.** The user has decided (August 2026) that the page shows evidence rather than a badge, so this question now sits directly under a locked product decision rather than beside it. **Partially answered.** Section 14 separates two things that section 7 had treated together: audited financial statements, which the target organisation cannot produce, and structured disclosure of accountable person, costed budget, operating history and post-campaign reporting, which it can. The evidence supports the second as the trust mechanism. What remains open is whether donors accept structured disclosure as a substitute for audited financials, which no source examined tests directly.
 9. **Retail climate donors have no benchmark set of their own.** Every per-donor figure in section 12, covering gift size, retention, conversion and channel, comes from general US and Western online fundraising data across all causes. Whether donors who give to environmental and climate causes behave differently on any of those four dimensions was not established, and the product's donor is defined as exactly that person.
 10. **Time from deciding to fundraise to receiving a first donation.** No measured benchmark was found for any platform in any market. This is the number the product's core speed claim would be judged against.
-11. **Cross-border philanthropy total is a 2020 figure.** The ~$70bn Global Philanthropy Tracker figure anchors the narrowing chain in section 10 and is six years old. A newer edition should be located before the figure appears in anything public-facing.
+11. ~~**Cross-border philanthropy total is a 2020 figure.**~~ **Closed: no newer edition exists.** The 2023 Global Philanthropy Tracker is the 11th and most recent edition, published April 2023 and reporting 2020 data across 47 countries representing 61% of the global population and 85% of global GDP. (**[Fact]**, [Indiana University Lilly Family School of Philanthropy](https://globalindices.indianapolis.iu.edu/tracker/index.html).) The lag is inherent to the publication rather than a failure to find something current. The figure can be used with its year stated.
 12. **The transparency evidence is published by an interested party.** The 53% and 62% contribution-lift figures in section 14 come from Candid, which operates the seal being evaluated, and the studies are observational rather than experimental. The direction is consistent with independent findings in section 7, and the effect size should not be quoted as established.
 
 ### Sources requiring upgrade from search snippet to primary
