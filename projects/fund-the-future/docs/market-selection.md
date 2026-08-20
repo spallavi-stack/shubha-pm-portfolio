@@ -128,6 +128,32 @@ A second figure from the same report is directly relevant to the verification pi
 6a. ~~Confirm an alternative payout provider per market.~~ **Done.** Philippines has Xendit (94+ banks, 13 e-wallets) alongside dLocal, and Nigeria has Flutterwave alongside dLocal, both like-for-like. Honduras' alternative, Nium, pays a Visa card in HNL or wires over SWIFT in USD, so it reaches a different destination type rather than substituting for dLocal's local HNL bank transfer. **Honduras is effectively single-rail for local bank payout**, which is a concentration risk in the market already weakest on criterion 6. Full detail in `grounding-research.md` section 5.
 7. ~~Update Nigeria's remittance figure.~~ **Done. $20.93bn, 2024.**
 
+## Could anything replace Honduras?
+
+Honduras carries more caveats than either other market: bank-transfer-only payout to 16 institutions, single-rail for local currency, and a government that has administratively restricted foreign donations during natural disasters. Three replacements were tested against all six criteria, using the same primary-source standard. **None is a clear upgrade, and the reasons differ in each case.**
+
+### Guatemala: the same trade with no gain
+The obvious swap, and it fails for a specific reason. Guatemala's payout rail has the same shape as Honduras': bank transfers only, in GTQ and USD, reaching 19 financial institutions against Honduras' 16, with a 13-digit CUI document required of beneficiaries. No wallet channel. (**Fact**, primary source, [dLocal Guatemala payouts documentation](https://docs.dlocal.com/docs/guatemala-payouts-v3).)
+
+Swapping Honduras for Guatemala would carry over the exact weakness that motivated the question, since an organisation would still need a formal bank account to receive anything. Guatemala also ranks lower on the criterion the user ranked first: it placed 14th among the twenty most affected countries for 1998 to 2017, against Honduras' third place across both current editions of the Climate Risk Index. (**Fact**, search-snippet sourced, per [CGIAR CCAFS](https://ccafs.cgiar.org/regions/latin-america/guatemala).) It is clean on FATF, has no foreign-funding restrictions, and has a large US diaspora, so it is a reasonable market. It is not a fix.
+
+### Kenya: fixes the rail, blocked by the grey list
+Kenya's payout rail is confirmed as the strongest of any candidate examined. dLocal documents both bank transfers and real-time wallet transfers to **M-Pesa, Airtel Money, and Equitel**, addressed by phone number, settling in KES with USD accepted as a source currency. (**Fact**, primary source, [dLocal Kenya payouts documentation](https://docs.dlocal.com/docs/kenya-payouts-v3).) Combined with Kenya being the only market in this research with a government-published NGO count and sector breakdown, it would score first or second on criteria 2, 5, and 6.
+
+It remains blocked by the same thing as before. Kenya is on the FATF grey list as of June 2026, and grey-listing drives correspondent-bank de-risking and heightened scrutiny of nonprofit payment flows, which is the exact operation a payout rail performs. A better rail into a jurisdiction under increased monitoring is not straightforwardly better.
+
+### Ghana: fixes the rail, loses the story
+Ghana is the strongest replacement on payout and the weakest on why the case study exists. Its rail matches the Philippines' shape: bank transfers plus real-time mobile money to **MTN, Vodafone, AirtelTigo, and G-Money**, in GHS and USD, with a Ghana Card 13-digit national ID for certain transaction types. (**Fact**, primary source, [dLocal Ghana payouts documentation](https://docs.dlocal.com/docs/ghana-payouts-v3).) Ghana is also clean on FATF.
+
+It loses on three of the user's own criteria. Its climate-impact ranking sits well below Honduras', its poverty rate is roughly half Honduras' 50.3%, and its diaspora is far smaller in both absolute terms and as a share of GDP than Honduras' 31%. Its foreign-funding position could not be verified in this pass, so it also has an open hard filter. Choosing Ghana would additionally remove Latin America from the pilot entirely, leaving two African markets and one South East Asian one.
+
+### Recommendation: keep Honduras
+No candidate both repairs the payout weakness and preserves what Honduras contributes. Guatemala repairs nothing. Kenya and Ghana repair the rail and each give up the climate-impact and diaspora strength that earned Honduras the slot, with Kenya carrying a grey-listing that lands directly on the payout operation.
+
+**[Inference]** Honduras' weaknesses are real and they are documentable rather than disqualifying, which makes them useful to a case study. A pilot market where the payout requirement itself excludes part of the intended user base, and where the government restricts foreign donations during the disasters that drive demand, is a market that forces the product brief to be honest about limits. Every alternative trades that honesty for a smoother market with a weaker reason to exist.
+
+**Override conditions, stated plainly.** Swap to Kenya if you decide payout maturity and registry data quality outrank climate impact, and you accept the grey-list exposure. Swap to Ghana if you want three markets that all have wallet-based payout, and accept a materially weaker climate and poverty story. Guatemala is not worth the swap under any weighting tested here.
+
 ## Countries considered and set aside
 **Mozambique** ranks third on composite climate risk at 82.2, carries a very high extreme-poverty rate, and was removed from the FATF grey list in October 2025. It was set aside for a weak diaspora in higher-income markets, which is the criterion this product depends on most given its link-only distribution, and for the Cabo Delgado insurgency. It is the right choice if you want a deliberately hard-mode third market.
 
