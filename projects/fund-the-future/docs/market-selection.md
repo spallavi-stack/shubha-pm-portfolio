@@ -57,38 +57,35 @@ Strongest candidate on the combined criteria, and the only country that scores w
 - **Registry:** SEC register of non-stock corporations, with a dedicated NPO regime under SEC Memorandum Circular 25 series of 2019. Organisations file annual General Information Sheets and audited financial statements, which gives verification more to check than existence alone. (**Fact**, per [Council on Foundations](https://cof.org/sites/default/files/2025-08/Nonprofit-Law-in-Philippines.pdf).)
 - **Foreign donations:** Permitted. Receiving foreign grants triggers additional SEC, BIR, and AMLA reporting rather than an approval gate. (**Fact**, same source.)
 - **FATF:** Clean since February 2025.
-- **Poverty:** Not verified in this pass. Substantial in absolute terms and moderate as a rate, which makes it the weakest of the three on criterion 3. **This figure must be sourced before the selection is final.**
+- **Poverty:** 15.5% of the population, or 17.54 million Filipinos, in 2023, down from 19.99 million in 2021. Substantial in absolute terms and moderate as a rate, which makes it the weakest of the three on criterion 3. (**Fact**, verified, per [PSA 2023 Full Year Official Poverty Statistics](https://psa.gov.ph/sites/default/files/phdsd/2023%20FY%20Official%20Poverty%20Statistics%20Publication_15August2024.pdf).)
 
 ### 2. Nigeria
 Wins criterion 3 outright and brings the second-strongest diaspora.
 
 - **Poverty:** Holds the largest absolute number of people in extreme poverty of any country in the world, roughly 12% of the global total, and is projected with DRC to account for a quarter of global extreme poverty by 2030. (**Fact**, search-snippet sourced to World Bank reporting; re-verify against the [Nigeria Poverty and Equity Brief](https://documents1.worldbank.org/curated/en/099253204222517873/txt/IDU-3e010784-3371-4dcb-b923-112e98052ed9.txt).)
-- **Diaspora:** Received $20.1bn in remittances, around 38% of all inflows to sub-Saharan Africa. (**Fact**, but the figure is 2022 and needs updating.)
+- **Diaspora:** Received $20.93bn in remittances in 2024, up 8.9% year on year, and $21.8bn in 2025. Nigeria's 2023 inflow of $19.5bn was 35% of sub-Saharan Africa's total. (**Fact**, secondary-sourced, per [Nairametrics](https://nairametrics.com/2025/07/26/diaspora-remittances-to-nigeria-hit-20-93b-in-2024/). Canonical figure for this project: $20.93bn for 2024.)
 - **Registry:** Corporate Affairs Commission, Incorporated Trustees under Part F of the Companies and Allied Matters Act 2020, sections 825 to 829. A public name search exists. Whether full organisational records are publicly queryable was not established. (**Fact** on the legal framework, **open question** on registry depth, per [Council on Foundations](https://cof.org/country-notes/nonprofit-law-nigeria).)
-- **Foreign donations:** No approval gate found for domestic organisations. Repeated attempts to pass an NGO Regulatory Commission bill have not succeeded. (**Inference**, needs verification.)
+- **Foreign donations:** No formal restrictions on CSOs receiving foreign funding. Repeated legislative proposals over nearly two decades to increase oversight of foreign-funded NGOs have not been enacted. (**Fact**, verified, per [ICNL Nigeria](https://www.icnl.org/resources/civic-freedom-monitor/nigeria).)
 - **FATF:** Clean since October 2025.
 - **Climate impact:** The weakest of the three on this criterion. Nigeria carries serious exposure through flooding, Lake Chad desiccation, and desertification, but does not appear near the top of the Climate Risk Index or ND-GAIN vulnerability rankings the way the other two do. (**Inference**, from its absence from those rankings.) It is included because it wins criterion 3 by a margin no other country approaches, and because losing it would remove the largest concentration of poverty in the world from a product aimed at the poor.
 - **Registered climate NGO count:** Not found. Gap.
 
-### 3. Honduras (recommended, and the slot most open to your override)
+### 3. Honduras (confirmed: the hard filter it was conditional on has been cleared)
 Honduras displaces Kenya on the user's own stated criteria, which was not the expected result.
 
 - **Climate impact:** Third most affected country in the world in the Climate Risk Index long-term ranking, and third in the previous edition as well. It is the only candidate that appears in the top three of both editions, making it the strongest long-term climate-impact signal on the entire longlist. (**Fact**, per [Germanwatch CRI 2026](https://www.germanwatch.org/en/cri) for 1995 to 2024 and [CRI 2025](https://www.germanwatch.org/sites/default/files/2025-02/Climate%20Risk%20Index%202025.pdf) for 1993 to 2022.)
 - **Diaspora:** Remittances reached $12.2bn in 2025, roughly 31% of GDP, up 27% year on year, overwhelmingly from Hondurans in the United States. Among the highest remittance dependencies in the world. (**Fact**, search-snippet sourced; re-verify against central bank or World Bank data.)
 - **Registry:** URSAC, the Unit for Registering and Monitoring Civil Associations, operating under the 2011 NGO-D Law and its 2013 Regulations, which established a closed list of registration requirements specifically to limit official discretion. Honduras also has a Special Law for the Promotion of Non-Governmental Development Organizations that explicitly covers organisations working on environmental protection, which is directly relevant to this product's user base. (**Fact**, per [ICNL Honduras](https://www.icnl.org/resources/civic-freedom-monitor/honduras).)
 - **FATF:** Not on the June 2026 list.
-- **Foreign donations:** **Not established.** No restriction surfaced, but absence of evidence is not evidence of absence, and this is a hard filter. **Verify before confirming Honduras.**
+- **Foreign donations:** **Confirmed clear.** ICNL states there are no significant legal barriers to CSOs accessing resources, including foreign funding. The hard filter is satisfied. One serious caveat applies: the government has restricted foreign donations administratively through the tax authority (SAR) during the COVID-19 pandemic and in response to natural disasters, which is precisely when this product would see peak demand. (**Fact**, verified, per [ICNL Honduras](https://www.icnl.org/resources/civic-freedom-monitor/honduras). Full treatment in `grounding-research.md` section 3.)
 - **Registered climate NGO count:** Not found, and likely small in absolute terms. Weakest of the three on criterion 2.
 - **Risk to weigh:** Violent crime, and a general election in November 2025 with associated pressure on civil society transparency. (**Fact** on the election timing, per [CEPR](https://cepr.net/publications/honduras-social-economic-indicators-ahead-of-2025-general-election/).)
 
-## Conflicting statistic flagged for your decision
+## Conflicting statistic: resolved
 
-Honduras' poverty rate carries two live numbers from this pass:
+Honduras' poverty rate came back with two live values in this pass: **50.5% in 2024, projected 50.3% in 2025** (World Bank Macro Poverty Outlook reporting), and **63% of the population** (other 2024 reporting). Both were surfaced rather than resolved unilaterally, per the portfolio's standing rule.
 
-- **50.5% in 2024, projected 50.3% in 2025**, per World Bank Macro Poverty Outlook reporting.
-- **63% of the population**, per other 2024 reporting.
-
-Per the portfolio's standing rule, both are surfaced rather than one being picked. The likely explanation is a different poverty line or a national versus international measure, which would mean neither is wrong. **Decide which is canonical before either number is written into any Fund the Future document**, and once decided, use only that one throughout.
+**Decision (user, August 2026): the World Bank figure is canonical. Honduras' poverty rate is 50.3%.** Every Fund the Future document uses this figure and no other. The 63% value is not to be used anywhere, including in passing. (Source: [World Bank Macro Poverty Outlook, Honduras](https://thedocs.worldbank.org/en/doc/e408a7e21ba62d843bdd90dc37e61b57-0500032021/related/mpo-hnd.pdf).)
 
 ## Why Kenya was dropped, and why that was uncomfortable
 
@@ -109,13 +106,13 @@ Fund the Future is a retail-giving product aimed at a sector where retail giving
 A second figure from the same report is directly relevant to the verification pillar: only 2,829 of 10,279 active NGOs filed annual reports that year. Registration status alone therefore proves less about an organisation than it appears to, even in the best-documented market on the longlist. (**Fact**, same report.)
 
 ## Open verification tasks before this selection is final
-1. Honduras: confirm foreign donations are legally receivable by small organisations. This is a hard filter and it is currently unverified.
-2. Philippines: source a poverty rate and absolute poor population figure.
-3. Honduras: resolve the 50.3% versus 63% poverty conflict above.
+1. ~~Honduras: confirm foreign donations are legally receivable.~~ **Done. Cleared, with an administrative-restriction caveat during disasters.**
+2. ~~Philippines: source poverty figures.~~ **Done. 15.5%, 17.54 million.**
+2a. Honduras: confirm a working payout rail exists. This hard filter is still assumed rather than demonstrated, and is now the last unverified filter in the selection.
 4. All three: find registered climate or environment NGO counts. Only Kenya, now dropped, yielded a sector breakdown, which suggests this data is thin everywhere and criterion 2 may need to rely on proxies.
-5. Nigeria: confirm no foreign-funding approval gate, and establish whether CAC records are publicly queryable beyond a name search.
+5. ~~Nigeria: confirm no foreign-funding approval gate.~~ **Done, cleared.** Still open: whether CAC records are publicly queryable beyond a name search.
 6. Re-verify the FATF grey list against FATF's own published statement rather than secondary summaries.
-7. Update Nigeria's remittance figure from the 2022 number used here.
+7. ~~Update Nigeria's remittance figure.~~ **Done. $20.93bn, 2024.**
 
 ## Countries considered and set aside
 **Mozambique** ranks third on composite climate risk at 82.2, carries a very high extreme-poverty rate, and was removed from the FATF grey list in October 2025. It was set aside for a weak diaspora in higher-income markets, which is the criterion this product depends on most given its link-only distribution, and for the Cabo Delgado insurgency. It is the right choice if you want a deliberately hard-mode third market.
