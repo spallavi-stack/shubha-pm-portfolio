@@ -21,8 +21,10 @@ These were decided by the user at kickoff and are inputs to the research, not qu
 3. **Monetization:** A small platform fee on funds raised. Whether this is defensible against the target user's ability to pay is a research question, but fee-on-funds is the model being tested.
 4. **This pass:** Scope and grounding research only. No product brief yet.
 
-## Anchor jurisdictions
-"The Global South" cannot be researched as a single regulatory unit, so the regulatory and payments research is anchored in three markets and everything else is labelled as generalisation from them. The three are chosen to differ on the axes that matter: foreign-funding permissiveness, payout infrastructure, and scale.
+## Anchor jurisdictions (pilot and MVP only)
+**These three countries are the pilot and MVP launch markets, not the product's intended limit.** The long-term ambition is to serve grassroots climate-adaptation organisations across the Global South. Three markets are named here because "the Global South" cannot be researched as a single regulatory unit: foreign-donation law, NGO registration, verification registries, and payout rails differ enough between countries that a generic answer would be worthless, and a pilot that launches everywhere at once cannot be compliant anywhere. So the regulatory, verification, and payments research is anchored in three markets, everything beyond them is labelled as generalisation, and expanding the market list is a post-MVP roadmap decision rather than a scope cut.
+
+The three are chosen to differ on the axes that matter: foreign-funding permissiveness, payout infrastructure, and scale. Between them they cover sub-Saharan Africa, South East Asia, and a Small Island Developing State, which is deliberate: if the platform works across three regimes this different, the pattern for adding a fourth market is a known quantity rather than a guess.
 
 - **Kenya.** Sub-Saharan Africa, mature mobile-money payout infrastructure, an active NGO regulatory regime, and a large existing base of community drought and flood-resilience groups. The volume market of the three.
 - **Philippines.** A climate-vulnerability frontline market with heavy typhoon-driven adaptation need, a very large diaspora remittance corridor into it, and a regulatory shape distinct from the other two.
@@ -88,7 +90,7 @@ The core promise is that a small amount of entered information becomes a complet
 Real fee benchmarks from comparable platforms, and evidence on whether a percentage fee on funds raised is workable for organisations raising small amounts. The stacked-fee figure above feeds directly into this, as does the cost of running verification, which is the main variable cost the platform would carry per organisation.
 
 ### Limitations section
-Explicit boundaries stated up front: what the platform does not do (no grant-writing, no institutional funder matching, no fund administration or spend tracking, no impact verification after the money lands), what verification can and cannot prove, and the honest statement that a fictional case study has not tested any live payment integration.
+Explicit boundaries stated up front: what the platform does not do (no grant-writing, no institutional funder matching, no fund administration or spend tracking, no impact verification after the money lands), what verification can and cannot prove, that the three pilot markets are a starting point rather than the served market, and the honest statement that a fictional case study has not tested any live payment integration.
 
 ## Riskiest-assumption log
 1. **The binding constraint for these organisations is campaign-creation friction, not distribution.** The locked scope is a builder plus a link, which assumes organisations can get that link in front of donors themselves. If the real constraint is donor access, a faster page builder solves the wrong problem. This is the single riskiest assumption in the project and research should actively look for evidence either way.
@@ -97,6 +99,7 @@ Explicit boundaries stated up front: what the platform does not do (no grant-wri
 4. Organisations raising small totals will accept a percentage fee on funds raised, from a platform positioned as serving the under-resourced.
 5. Adaptation, as distinct from mitigation, is a fundable story for retail donors. Adaptation work is often less visually dramatic and less legible to a general audience than either disaster relief or renewable energy.
 6. Maldives' permissive foreign-funding regime is stable enough for the life of the case study, and its small NGO sector is large enough to be a meaningful anchor rather than a symbolic one.
+7. What the platform learns in three pilot markets generalises to a fourth. Each new country brings its own foreign-donation law, its own registries, and its own payout rails, so an expansion cost that stays roughly flat per market is an assumption, not a given. Research should form an early view on whether adding a market is mostly configuration or mostly rebuild.
 
 ## Out of scope for this pass
 - **No product brief yet.** This pass ends at audited grounding research, so the evidence base can be reviewed before any product decisions are built on top of it.
@@ -106,4 +109,4 @@ Explicit boundaries stated up front: what the platform does not do (no grant-wri
 - No funder-side discovery, directory, or matching research, per the locked product-surface decision.
 - No crypto or on-chain giving rails, unless payments research finds that this is the only viable payout path in an anchor market, in which case it gets one honest paragraph rather than a section.
 - No paid proprietary market-intelligence databases. Public, citable sources only.
-- No fourth anchor jurisdiction. Three is the boundary, and findings beyond them are labelled as generalisation.
+- No fourth anchor jurisdiction **in this pass**. Three is the research boundary for the pilot, and findings beyond them are labelled as generalisation. Additional markets are a post-MVP expansion question, and the research should note, where it cheaply can, which findings look portable to other countries and which are specific to the anchor market they came from.
