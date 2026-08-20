@@ -21,6 +21,7 @@ These were decided by the user at kickoff and are inputs to the research, not qu
 2. **Product surface:** Campaign builder plus a shareable public link. The platform does **not** provide a funder-facing discovery surface, a browsable campaign directory, or algorithmic matching to grantmakers. Institutional funders are treated as visitors who arrive via a link the organisation sent them.
 3. **Monetization:** A small platform fee on funds raised. Whether this is defensible against the target user's ability to pay is a research question, but fee-on-funds is the model being tested.
 4. **This pass:** Scope and grounding research only. No product brief yet.
+5. **Country selection in the product is a single live option with the expansion roadmap visible.** When an organisation signs up and picks its country, **the Philippines is the only selectable option**. Other markets appear in the list and are **greyed out and unselectable**, labelled as markets coming next. Kenya, Ghana and Mozambique are the named candidates to show greyed out, per the analysis in [`market-selection.md`](market-selection.md). The point is to make the pilot's boundary honest and visible rather than hiding it, and to show a visitor that single-market launch is a sequencing decision rather than the product's limit. **This is a build instruction for the prototype and a design decision the brief should carry.** Decided by the user, August 2026.
 
 ## Pilot jurisdiction: the Philippines
 
