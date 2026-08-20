@@ -46,13 +46,13 @@ Per the standing rule that market sizing does not stop at historical volumes, th
 
 **Informal-sector flag.** **[Inference]** Registered counts systematically undercount this product's target user, because the product exists for organisations too small or too informal to compete for institutional finance, which are the organisations least likely to appear on a register. In Kenya, only 2,829 of 10,279 active NGOs filed annual reports in FY 2022/23 (**[Fact]**, same primary source), so even registration itself is a weak signal of an organisation being active and documented. The true addressable population is larger than any registry count and is not directly measurable.
 
-**Comparable market with a head start.** **[Fact]** Global remittance flows reached approximately US$905bn in 2024, having grown 4.6% from US$865bn in 2023, and remittances have been the largest source of external finance to low- and middle-income countries other than China since 2015, exceeding official development assistance. (Source: [IOM World Migration Report](https://worldmigrationreport.iom.int/what-we-do/world-migration-report-2026/chapter-2/international-remittances).)
+**Comparable market with a head start.** **[Fact]** Foundation funding for climate adaptation and resilience reached an estimated $870m in 2024, more than double the $404m tracked in 2021, and the number of foundations making adaptation-related grants grew 55%. (Source: [ClimateWorks](https://www.climateworks.org/press-release/funding-for-climate-adaptation-and-resilience-hits-record-of-870-million/). Full treatment in section 13.)
 
-**[Inference]** Diaspora remittance is the closest proven analog for the behaviour this product needs: individuals in higher-income countries sending money across borders to a specific recipient they care about, at scale, sustained over decades. It demonstrates the willingness and the rails. It does not demonstrate willingness to send to an organisation rather than to family, which is the untested step.
+**[Inference]** This is the closest thing to a proven market for what the product sells. It is institutional rather than retail money, so it does not demonstrate individual willingness to give, but it establishes that adaptation work is fundable, that funders are entering the category rather than leaving it, and that the constraint on the category is supply of money rather than absence of fundable organisations.
 
-**Forward-looking target.** **[Fact]** The Central Bank of Nigeria is targeting official diaspora remittances of about US$1bn per month by end-2026, up from more than US$600m currently, and reformed the International Money Transfer Operator framework in 2024 to that end. (Source: [Ecofin Agency](https://www.ecofinagency.com/news-finances/1707-57469-nigeria-targets-1-billion-in-monthly-diaspora-remittances-to-bolster-fx-reserves), search-snippet sourced.)
+**Forward-looking target.** **[Fact]** Total climate mitigation funding from foundations and individuals reached $11.7bn to $18.4bn in 2024, about 2.1% of total global philanthropic giving, crossing the 2% threshold for the first time. (Source: [ClimateWorks Funding Trends](https://www.climateworks.org/report/funding-trends-2026/).)
 
-**[Inference]** A government actively working to move remittance volume into formal, traceable channels is favourable for this product, because a platform payout is a formal channel by construction. Policy is pushing in the same direction the product needs.
+**[Inference]** Climate philanthropy as a whole is growing as a share of all giving, and adaptation is the fastest-growing slice of it from the smallest base. A product entering now is entering a category in expansion. The size of that category, at under $1bn for adaptation, also caps how large this product can plausibly become on its current framing.
 
 ---
 
@@ -61,14 +61,12 @@ Per the standing rule that market sizing does not stop at historical volumes, th
 ### Philippines
 - **[Fact]** Poverty incidence among population was 15.5% in 2023, equal to 17.54 million Filipinos, down from 19.99 million in 2021. Poverty incidence among families was 10.9%, or 3.0 million families. (Source: [Philippine Statistics Authority, 2023 Full Year Official Poverty Statistics](https://psa.gov.ph/sites/default/files/phdsd/2023%20FY%20Official%20Poverty%20Statistics%20Publication_15August2024.pdf).) **Canonical figure for this project: 15.5% and 17.54 million.** PSA also publishes a first-semester 2023 figure of 22.4% and 25.24 million, which is a different measure covering a different period. To prevent the same fact carrying two numbers, the full-year figure is the only one used in Fund the Future documents.
 - **[Fact]** Among the ten most affected countries in the Climate Risk Index long-term ranking, and one of five lower-middle-income countries in that top ten. (Source: [Germanwatch CRI 2025](https://www.germanwatch.org/sites/default/files/2025-02/Climate%20Risk%20Index%202025.pdf).)
-- **[Fact]** Third largest remittance recipient in the world in 2024, after India and Mexico. (Source: [IOM World Migration Report](https://worldmigrationreport.iom.int/what-we-do/world-migration-report-2026/chapter-2/international-remittances).)
 - **[Fact]** Foreign donations are permitted. Receiving foreign grants triggers additional SEC, BIR, and AMLA reporting obligations rather than an approval gate, and does not change the entity's Philippine character. Foreign NPOs may not fund political parties, candidates, or partisan political activity. (Source: [Council on Foundations, Nonprofit Law in the Philippines, June 2025](https://cof.org/sites/default/files/2025-08/Nonprofit-Law-in-Philippines.pdf).)
 - **[Fact]** NPOs are defined and regulated under SEC Memorandum Circular 25 series of 2019, and must file annual General Information Sheets and audited financial statements. (Same source.)
 - **[Fact]** Removed from the FATF grey list in February 2025 after nearly four years. (Source: [The Diplomat](https://thediplomat.com/2025/02/philippines-removed-from-watchdogs-money-laundering-grey-list/).)
 
 ### Nigeria
 - **[Fact]** Holds the largest absolute number of people in extreme poverty of any country, roughly 12% of the global total, and is projected together with DR Congo to account for a quarter of global extreme poverty by 2030. (Source: World Bank reporting, search-snippet sourced; verify against the [Nigeria Poverty and Equity Brief, October 2025](https://documents1.worldbank.org/curated/en/099253204222517873/txt/IDU-3e010784-3371-4dcb-b923-112e98052ed9.txt).)
-- **[Fact]** Received US$20.93bn in diaspora remittances in 2024, an 8.9% increase year on year, and US$21.8bn in 2025. In 2023 Nigeria's US$19.5bn represented 35% of sub-Saharan Africa's total. (Sources: [Nairametrics](https://nairametrics.com/2025/07/26/diaspora-remittances-to-nigeria-hit-20-93b-in-2024/), [Brand Spur](https://brandspurng.com/2026/05/19/nigerias-diaspora-remittances-hold-steady-at-21-8bn-in-2025-despite-global-economic-pressures/), [Arise](https://www.arise.tv/nigerias-diaspora-remittance-hits-19-5bn-in-2023-35-of-sub-saharan-africas-total-world-bank-says/). All secondary; verify against World Bank or CBN primary data. **Canonical figure for this project: US$20.93bn for 2024.**)
 - **[Fact]** No formal restrictions on CSOs receiving foreign funding. Repeated legislative proposals over nearly two decades to increase government oversight of foreign-funded NGOs have not been enacted. Officials have historically labelled critical CSOs foreign-sponsored, though ICNL reports this has diminished. (Source: [ICNL Nigeria Civic Freedom Monitor](https://www.icnl.org/resources/civic-freedom-monitor/nigeria).)
 - **[Fact]** NGOs register as Incorporated Trustees under Part F of the Companies and Allied Matters Act 2020, sections 825 to 829, administered by the Corporate Affairs Commission. (Source: [Council on Foundations, Nigeria](https://cof.org/country-notes/nonprofit-law-nigeria).)
 - **[Fact]** Removed from the FATF grey list in October 2025, alongside South Africa, Mozambique, and Burkina Faso. (Source: [Aluko & Oyebode](https://www.aluko-oyebode.com/insights/nigeria-fatf-grey-list-removal-2025/).)
@@ -76,7 +74,6 @@ Per the standing rule that market sizing does not stop at historical volumes, th
 ### Honduras
 - **[Fact]** Poverty is projected at 50.5% in 2024 and 50.3% in 2025. (Source: [World Bank Macro Poverty Outlook, Honduras](https://thedocs.worldbank.org/en/doc/e408a7e21ba62d843bdd90dc37e61b57-0500032021/related/mpo-hnd.pdf).) **Canonical figure for this project: 50.3%**, per user decision, August 2026. A 63% figure circulates in other 2024 reporting and is not used anywhere in this project.
 - **[Fact]** Third most affected country in the world in the Climate Risk Index long-term ranking for 1995 to 2024, and third in the previous edition covering 1993 to 2022. It is the only country on this project's longlist appearing in the top three of both editions. (Sources: [Germanwatch CRI 2026](https://www.germanwatch.org/en/cri), [CRI 2025](https://www.germanwatch.org/sites/default/files/2025-02/Climate%20Risk%20Index%202025.pdf).)
-- **[Fact]** Remittances reached US$12.2bn in 2025, roughly 31% of GDP, up 27% year on year, overwhelmingly from Hondurans in the United States. (Search-snippet sourced; verify against Banco Central de Honduras or World Bank data.)
 - **[Fact]** There are no formal legal restrictions on foreign funding for civil society organisations. ICNL states: "While there are no significant legal barriers to accessing resources, in practice CSOs, particularly those providing humanitarian assistance, have faced serious obstacles." (Source: [ICNL Honduras Civic Freedom Monitor](https://www.icnl.org/resources/civic-freedom-monitor/honduras).) **This clears the hard filter that Honduras' inclusion was conditional on.**
 - **[Fact]** The obstacles are administrative and discretionary rather than codified. ICNL: "During the COVID-19 pandemic and in response to natural disasters, organizations have reported difficulties providing aid to affected communities. Instead of facilitating their efforts, the government has imposed taxes and restricted foreign donations through the Ministry of Finance and Administration and Income Services (SAR)." (Same source.)
 - **[Inference]** This is the most product-relevant finding in the Honduras profile and it cuts against the product directly. Honduras restricts foreign donations administratively **during natural disasters**, which is precisely when a climate-adaptation and disaster-response fundraising platform would see peak demand. A campaign platform whose traffic spikes after a hurricane would meet its worst payout friction at exactly that moment. This belongs in the product brief as a named risk, and any roadmap should assume payouts can stall during the events that drive the fundraising.
@@ -256,20 +253,255 @@ The core promise is that a small amount of entered information becomes a complet
 
 **[Inference]** The variable cost of manual verification, per section 7, is the platform's main per-organisation cost and is largely independent of amount raised. A percentage fee therefore recovers verification cost well from large campaigns and poorly from small ones. This is a direct conflict between the monetization model and the target user, and it is a stronger argument against fee-on-funds than the fairness objection.
 
-**[Inference]** The donor-tip model resolves both problems: it moves the cost to the better-resourced party and decouples revenue from campaign size. Its weakness is revenue unpredictability. The locked decision is fee-on-funds, and this research does not overturn it, but the tension is sharp enough that the product brief should carry an explicit comparison rather than presenting fee-on-funds as settled.
+**[Inference]** The donor-tip model resolves both problems: it moves the cost to the better-resourced party and decouples revenue from campaign size. Its weakness is revenue unpredictability.
+
+**Decision (user, August 2026): donor tips. The organisation pays nothing.** This overturns the fee-on-funds model locked at kickoff, on the evidence in this section. All platform revenue now depends on voluntary donor top-ups, which makes tip uptake the assumption the business model rests on entirely.
+
+---
+
+## 10. Where philanthropic money actually goes
+
+Sections 1 and 2 sized the need and the addressable population. This section sizes the supply and traces where it lands, because the product's donor-side premise depends on it. Added August 2026, after the sections above.
+
+### The global totals
+
+| Flow | Amount | Year | Label |
+|---|---|---|---|
+| Global giving, all sources, money and volunteered time | ~$2.3tn | 2024 | **[Fact]**, [GivingTuesday](https://www.nonprofitpro.com/article/what-2-3-trillion-in-global-giving-tells-us-about-donors/), corroborated by [Citi GPS](https://www.citigroup.com/global/insights/philanthropy) at just under 3% of global GDP |
+| Global individual monetary donations, excluding time | ~$770bn | 2024 | **[Fact]**, same sources |
+| US total charitable giving | $617.2bn | 2025 | **[Fact]**, [Giving USA](https://givingusa.org/giving-usa-charitable-giving-rose-to-617-20-billion-in-2025-surpassing-the-600-billion-mark-for-the-first-time/) |
+| US total charitable giving | $592.5bn | 2024 | **[Fact]**, [Giving USA](https://givingusa.org/giving-usa-2025-u-s-charitable-giving-grew-to-592-50-billion-in-2024-lifted-by-stock-market-gains/). This is the denominator for the cause table below, which reports 2024 data. |
+| US giving from individuals | $392bn | 2024 | **[Fact]**, same source, 64% of the US total |
+| ODA from OECD DAC governments | $174.3bn | 2025 | **[Fact]**, [OECD](https://www.oecd.org/en/about/news/press-releases/2026/04/international-aid-fell-sharply-in-2025-says-oecd.html) |
+| Cross-border philanthropy, 47 reporting countries | ~$70bn | 2020 | **[Fact]**, [Global Philanthropy Tracker](https://globalindices.indianapolis.iu.edu/tracker/historical-data/gpt-2020/index.html) |
+
+**[Inference]** The $2.3tn headline should not be used as this product's market. It includes roughly $560bn of volunteered time, which cannot be transferred through a payment rail, and money sent between family members, which is a private transfer rather than a donation. The figure this product is addressed to is charitable cash given by individuals, which is ~$770bn.
+
+**Numeric conflict: resolved.** Three measures of "individual giving worldwide" were found, and they count different things. $770bn counts cash donated to charity. $1.3tn counts that cash plus an estimated dollar value for volunteered hours. $1.5tn counts a wider set that folds in money people send to their own families abroad.
+
+**Decision (user, August 2026): $770bn is canonical.** The product concerns donations to charity. It does not concern volunteering, transfers between family members, or remittances. **$1.3tn and $1.5tn are not to be used anywhere in this project's material**, and $2.3tn may be quoted only as the all-sources, money-and-time total it is, never as this product's market.
+
+### Where it lands, by cause
+
+The US is the only pool with a published cause breakdown at this granularity, and it is the single largest national pool, so it is used as the structural proxy. **The cause figures below are 2024 data and are therefore stated as shares of the 2024 US total of $592.5bn, not of the 2025 total.**
+
+| Cause | 2024 | Share of 2024 US total |
+|---|---|---|
+| Religion | $146.54bn | 24.7% |
+| Human services | $91.15bn | 15.4% |
+| Education | $88.32bn | 14.9% |
+| Foundations | $71.92bn | 12.1% |
+| Health | $60.51bn | 10.2% |
+| International affairs | $35.54bn | 6.0% |
+| Arts, culture and humanities | $25.13bn | 4.2% |
+| Environment and animals | $21.57bn | 3.6% |
+
+**[Fact]** Source: [Giving USA 2025](https://givingusa.org/giving-usa-2025-u-s-charitable-giving-grew-to-592-50-billion-in-2024-lifted-by-stock-market-gains/). International affairs grew 17.7% and environment and animals grew 7.7%, both faster than the total.
+
+**[Inference]** Internal check: the eight categories above sum to $540.68bn against a 2024 total of $592.5bn, leaving roughly $52bn in public-society benefit and unallocated giving. The categories reconcile to the published total, which is a basic consistency check on the figures being used correctly.
+
+**[Inference]** Giving is overwhelmingly domestic and overwhelmingly institutional in its destinations. Religion, education, human services and health are 65% of US giving and almost entirely fund domestic organisations. This is the answer to where a $392bn individual pool goes, and it is not evidence of leakage or inefficiency. Giving is local by default.
+
+### The narrowing chain
+
+**[Inference]** Applying the shares above in sequence gives the realistic size of the flow this product competes in:
+
+1. Global individual charitable cash: ~$770bn.
+2. Crossing a border as philanthropy: ~$70bn, roughly 9% of it. Cross-border philanthropy was 8% of the $841bn in total capital flows to developing countries in 2020, the remainder being private transfers and official development assistance rather than charitable giving (**[Fact]**, Global Philanthropy Tracker).
+3. Of cross-border philanthropy, education and health are the most supported causes (**[Fact]**, same source). Environment is 3.6% of giving even domestically.
+4. Of what crosses, very little reaches local organisations directly. In humanitarian funding, the best-tracked analog, $1.7bn went directly to local and national actors in 2023, 4.5% of trackable humanitarian funding, and Grand Bargain donors managed 0.6% direct (**[Fact]**, [Development Initiatives](https://devinit.org/resources/falling-short-humanitarian-funding-reform/funding-local-national-actors/)). The 25% target set in 2016 has never been met.
+
+**[Inference]** Compounding those shares puts individual cross-border giving currently reaching small local climate and environment organisations in the hundreds of millions of dollars globally, rather than billions. This is an order-of-magnitude estimate built by multiplying independently-sourced shares, and no source measures this flow directly.
+
+**Year-mismatch caveat.** **[Inference]** The chain combines a 2020 cross-border figure with 2024 giving totals and 2023 humanitarian figures, because those are the most recent editions of each. The ratios are therefore approximate and should be described as "roughly" rather than quoted to a decimal place. Section 13's adaptation figures are internally consistent on year and are the better ones to lead with in anything public-facing.
+
+### Cross-check
+
+**[Inference]** US international affairs giving of $35.54bn in 2024 against ~$70bn of global cross-border philanthropy from 47 countries in 2020 puts the US at roughly half the world total. The four-year gap between the two figures means this is a sanity check rather than a precise ratio. That is consistent with the US being the largest single giving pool and with the Tracker's finding that high-income countries contribute about 95% of measured cross-border flows. Two independently produced figures agreeing at this level raises confidence in both.
+
+### What this establishes for the product
+
+**[Inference]** Two consequences follow, and each one lands directly on a decision in the product brief.
+
+1. **The product is not redistributing a large existing flow.** Cross-border philanthropy is roughly 3% of global giving and declined 0.5% between 2018 and 2020. Any framing that positions the opportunity as capturing a slice of a $392bn or $2.3tn pool misstates the market by two orders of magnitude.
+2. **Institutional funding is contracting sharply right now.** ODA fell 23.1% in real terms in 2025 to $174.3bn, the largest annual decline ever recorded, taking aid back to pre-2015 levels. The United States alone accounted for 75.1% of the fall, cutting its own ODA by 56.9%, and the five largest providers accounted for 95.7% of the total decrease (**[Fact]**, [OECD](https://www.oecd.org/en/about/news/press-releases/2026/04/international-aid-fell-sharply-in-2025-says-oecd.html)). The funding these organisations have historically depended on is being withdrawn as the need grows.
+
+**[Assumption]** The $70bn cross-border philanthropy figure is from 2020 and is the most recent edition of the Global Philanthropy Tracker located. A newer edition may exist and should be checked before the figure is used in any public-facing document.
+
+---
+
+## 11. How money moves through the philanthropy sector
+
+Section 10 sized the flows. This section describes the mechanism that carries them, because the product's core proposition is to shorten that mechanism.
+
+### The chain
+
+**[Fact]** Philanthropic intermediaries are entities that regrant philanthropic money, and include fiscal sponsors, community foundations, pooled and collaborative funds, donor-advised funds, giving circles and regranting organisations. (Source: [PEAK Grantmaking](https://www.peakgrantmaking.org/insights/an-introduction-to-intermediaries/), [Inside Philanthropy](https://www.insidephilanthropy.com/explainers/what-is-a-philanthropic-intermediary).)
+
+**[Fact]** A donor-advised fund is a US charitable vehicle where the donor deposits cash or securities, surrenders legal ownership in exchange for an immediate tax deduction, and retains advisory rights over how the balance is invested and when it is distributed. DAFs move billions of dollars a year into the nonprofit sector as an intermediate step. (Source: [Penn SP2 working paper](https://sp2.upenn.edu/wp-content/uploads/2019/02/Heist-Vance-McMullen_Understanding-Donor-Advised-Funds_working-paper-002.pdf), with structural description corroborated by [Wikipedia](https://en.wikipedia.org/wiki/Donor-advised_fund). Search-snippet sourced. **Weak sourcing:** the mechanism is uncontroversial and widely documented, but no primary regulatory or IRS source was consulted, and no DAF volume figure is quoted here for that reason.)
+
+**[Inference]** A dollar given by an individual in a high-income country and spent by a community group in a low-income country typically passes through some sequence of: a giving vehicle such as a DAF, a grantmaking foundation, an international NGO, a national affiliate, and finally the local implementer. Each hop imposes its own eligibility requirements, reporting obligations and administrative cost, and each hop is a point at which an organisation without formal documentation is filtered out. This is the structural explanation for section 10's narrowing chain and for the 4.5% direct-funding figure in humanitarian aid.
+
+**[Fact]** Some intermediaries offer fiscal sponsorship, which allows an organisation that is not itself registered to receive charitable funding under another entity's legal status. Regranting funds such as the CLIMA Fund and Global Greengrants Fund exist specifically to move money to grassroots climate groups. (Source: [Alliance magazine](https://www.alliancemagazine.org/blog/localising-philanthropy-what-does-it-entail/), [CAF America](https://cafamerica.org/blog/challenges-of-localization/). Search-snippet sourced.)
+
+**[Inference]** Fiscal sponsorship is the existing answer to the problem this product addresses, and it works. Its limits are that it requires finding a willing sponsor, it adds a fee layer, and it makes the sponsor rather than the organisation the accountable party to the donor. Fiscal sponsorship is therefore the closest existing substitute for what this product does, and the benchmark any speed or directness claim should be measured against.
+
+**[Inference]** Every intermediary in the chain performs a control function as well as a cost function. Section 6 established the same point about GlobalGiving's eligibility floor. Shortening the chain therefore transfers control work to the platform rather than eliminating it, and section 14 is where that cost has to be met.
+
+---
+
+## 12. Why people give, and how much
+
+### The behavioural evidence
+
+**[Fact]** The identifiable victim effect is the tendency to give more when an appeal names and depicts a specific individual than when it describes an unidentified group, and the effect is mediated by affect rather than reasoning. In a neuroimaging study, subjects gave more to orphans shown in photographs than in silhouettes, and nucleus accumbens activity statistically accounted for the increase. (Source: [Journal of Neuroscience](https://www.jneurosci.org/content/33/43/17188.full).)
+
+**[Fact]** Warm glow describes donors deriving utility from the act of giving itself rather than only from the outcome produced. Happier people give more, and giving more increases reported happiness. (Source: [Global Council for Behavioral Science](https://gc-bs.org/articles/behavioral-economics-in-charitable-giving-motivations-and-barriers/). Search-snippet sourced.)
+
+**[Fact]** Overhead aversion is well documented, and framing administrative cost positively, for example "90% goes directly to programs", yields more donations than disclosing the same cost negatively. (Same source.)
+
+**[Inference]** These three findings point the campaign page in a consistent direction: a named person, a specific and bounded project, and a positive framing of where the money goes. This is favourable for the product, because a small local organisation with one identifiable leader and one concrete project is closer to the ideal appeal structure than a large NGO with a diversified programme portfolio. Scale is a disadvantage in this particular respect, and the target user has the advantage.
+
+**[Inference]** Overhead aversion is a direct constraint on the fee decision in section 9. A platform fee is overhead from the donor's point of view, and the stacked cross-border cost of 7% to 12% is invisible to the donor but real to the organisation. How the page presents total deductions is a design decision with revenue consequences.
+
+### Per-donor benchmarks
+
+**[Fact]** Online fundraising benchmarks for 2025: average monthly gift $30; 1.6% of nonprofit website visitors made a donation, generating an average of $1.33 per visitor; 43% of online donations were made on a mobile device; monthly giving accounted for 27% of all online revenue. Small nonprofits raised $6.15 per email contact against $0.88 for large nonprofits. (Source: [Nonprofit Tech for Good](https://www.nptechforgood.com/101-best-practices/online-fundraising-statistics-for-nonprofits/), [M+R Benchmarks](https://mrbenchmarks.com/fundraising/). Search-snippet sourced.)
+
+**[Fact]** Donor retention sits between 43.3% and 54.7% depending on source and year, and new-donor retention is 24%. Donors giving $1 to $100 were 57.0% of all donors in Q1 2025 and that group fell 11.1% year on year. (Source: [AFP Fundraising Effectiveness Project](https://afpglobal.org/news/fundraising-effectiveness-project-data-q1-2025-shows-increases-dollars-raised-declining), [Virtuous](https://virtuous.org/blog/understanding-donor-retention/). Search-snippet sourced. These are US-centric benchmarks applied here as sector proxies.)
+
+**[Inference]** Three consequences for the product. First, a 1.6% visitor-to-donor conversion rate means fundraising outcomes are dominated by traffic volume, which sharpens riskiest assumption 1 in [`scope.md`](scope.md): a builder plus a link puts the entire traffic problem on an organisation that has no audience. Second, 24% new-donor retention means a single campaign raises money once, while monthly giving accounts for 27% of online revenue, so the evidence favours recurring gifts over one-off ones. Third, small organisations out-earn large ones per contact by a factor of seven, which is evidence that small lists are more responsive and that the target user's disadvantage is list size rather than list quality.
+
+**[Assumption]** All per-donor benchmarks above are drawn from US and Western online fundraising data across all causes. No equivalent benchmark set was found for donors to environmental or climate causes specifically, and no source examined established whether they differ from the all-cause average on gift size, retention or conversion.
+
+---
+
+## 13. The climate and environment slice, and the five-year mismatch
+
+### How much philanthropy goes to climate
+
+**[Fact]** Total climate mitigation funding from foundations and individuals reached an estimated $11.7bn to $18.4bn in 2024, a record, representing about 2.1% of total global philanthropic giving and crossing the 2% threshold for the first time. (Source: [ClimateWorks Foundation, Funding Trends](https://www.climateworks.org/report/funding-trends-2026/).)
+
+**[Fact]** Foundation funding specifically for climate adaptation and resilience reached an estimated **$870m in 2024**, a historic high and more than double the $404m tracked in 2021. The number of foundations making adaptation-related grants grew 55%. (Source: [ClimateWorks, Foundation funding for climate change adaptation and resilience 2025](https://www.climateworks.org/press-release/funding-for-climate-adaptation-and-resilience-hits-record-of-870-million/), published 11 November 2025.)
+
+**[Fact]** Less than 10% of total climate finance supports adaptation. (Source: [ClimateWorks](https://www.climateworks.org/report/funding-trends-2026/).)
+
+**[Fact]** Asia and Oceania received less than 10% of adaptation funding between 2021 and 2024, despite being home to more than half the world's population. By sector, disaster risk management and infrastructure received the least funding over that period. (Same ClimateWorks adaptation source.)
+
+**[Inference]** The last finding is the single strongest evidence for the Philippines pilot in this document. The pilot market sits in the region that is both most exposed by population and least served by adaptation philanthropy, and the work most common among the target organisations, which is flood response, early warning and community infrastructure, falls in the sector categories ClimateWorks identifies as least funded. The gap is specific and nameable rather than general.
+
+### The mismatch over the next five years
+
+**[Fact]** Adaptation finance needs in developing countries are projected at $310bn per year by 2035 on modelled costs, rising to $365bn on needs extrapolated from Nationally Determined Contributions and National Adaptation Plans. International public adaptation finance was $26bn in 2023, down from $28bn in 2022. Needs are 12 to 14 times current flows, and the Glasgow Climate Pact doubling goal will be missed. (Source: [UNEP Adaptation Gap Report 2025](https://www.unep.org/resources/adaptation-gap-report-2025), via [SEI](https://www.sei.org/publications/uneps-adaptation-gap-report-2025/). Corroborated by two independent searches, both search-snippet sourced. Primary verification still outstanding, see section 1.)
+
+**[Fact]** ODA from OECD DAC members fell 23.1% in real terms in 2025 to $174.3bn, the largest annual decline on record. (Source: [OECD](https://www.oecd.org/en/about/news/press-releases/2026/04/international-aid-fell-sharply-in-2025-says-oecd.html), cited in full in section 10.)
+
+**[Inference]** Put the two sides together and the arithmetic is stark. Philanthropic adaptation funding of $870m sits against a projected annual need of $310bn, which is **0.28%**. Over the next five years the need rises toward the 2035 projection while both of its current funding sources contract: international public adaptation finance fell between 2022 and 2023, and total ODA fell 23.1% in 2025. The gap widens from both directions at once.
+
+**[Inference]** Philanthropy cannot close a $310bn gap and the product brief must not imply otherwise. What the numbers do support is a narrower and defensible claim: adaptation philanthropy is small, growing fast, more than doubling in three years, and structurally misallocated away from the region and the sectors where exposure is highest. A product that increases the number of fundable organisations and the number of people giving to them is acting on the growth and the misallocation, which is a real contribution at a scale a platform can plausibly affect.
+
+**[Inference]** This is also where the pie-growth goal earns its evidence. Adaptation philanthropy more than doubled between 2021 and 2024 and the funder count grew 55%, so this is a category in expansion rather than a fixed pot being divided. Growing it further is consistent with the observed trend rather than contrary to it.
+
+---
+
+## 14. The small-organisation problem: trust, effort, and transparency
+
+### Why small organisations struggle to raise
+
+**[Inference]** Combining findings above, a small local organisation faces three compounding disadvantages. It sits below the documentation floor that intermediaries and platforms use for eligibility (section 6 and section 11). It has no audience, and conversion at 1.6% of visitors means outcomes track traffic (section 12). It is unknown to the donor, and the donor is being asked to send money across a border to a name they cannot verify (section 7).
+
+**[Fact]** Small nonprofits raise $6.15 per email contact against $0.88 for large nonprofits (section 12 source).
+
+**[Inference]** The third disadvantage is therefore not matched by a proportional disadvantage in donor responsiveness. Small organisations convert their contacts far better than large ones. The binding constraint is reach and credibility rather than appeal quality, which supports building for distribution and trust rather than for better campaign copy.
+
+### What the evidence says about transparency
+
+**[Fact]** Researchers at Villanova University and the University of Wisconsin-Milwaukee found that nonprofits earning a GuideStar Seal of Transparency averaged 53% more in contributions the following year than organisations without one. Candid's later study reports a 62% increase. Profiles with Gold or Platinum seals receive twice the views, and contributions to them were 11% larger than to Bronze or Silver seal holders. (Source: [Candid](https://learn.guidestar.org/transparency), [Candid study summary](https://candid.org/blogs/study-confirms-nonprofit-transparency-candid-seals-boost-donor-contributions/).)
+
+**Source-quality warning, and a conflict with section 7.** **[Inference]** These figures need three caveats before use. Candid operates the seal and publishes the research demonstrating its value, so the source is not disinterested. The design is observational, and organisations that choose to complete a transparency profile plausibly differ from those that do not on capability, staffing and professionalism, so selection effects could account for much of the measured difference. And the seals rate disclosure completeness rather than verified accuracy, so what is being measured is willingness to publish rather than truthfulness.
+
+**[Inference]** With those caveats the evidence still points the same way as section 7's finding that financial-transparency signals outperform certification badges, and it strengthens it. The mechanism that appears to work is publishing structured, specific information about the organisation and its money. The mechanism with weak and contradictory support is displaying a third-party mark of approval. These are different product features and the brief should treat them separately.
+
+**[Inference]** The evidence therefore separates two things that are easily conflated. Audited financial statements are what the target organisation cannot produce, and section 6 established that as the barrier at GlobalGiving. Structured disclosure, meaning a named accountable person, a line-by-line account of what the money buys, a record of what the organisation has done before, and reporting after the fact, is a different artefact, and it is the one the transparency evidence actually measures. Whether the product should be built on structured disclosure is a decision for the brief.
+
+**[Inference]** Section 12's behavioural evidence points at the same artefact from a different direction. The identifiable victim effect favours a named person and a specific bounded project, and the transparency evidence favours a named accountable person and a costed budget. Two independent bodies of evidence converge on the same page contents, which is the strongest internal consistency in this research.
+
+### How hard it currently is to start
+
+**[Fact]** GlobalGiving requires formal registration, two years of financial statements, a documented board and a prior-funder track record (section 6). Payment providers independently require legal entity status, registration number, identity documents for a responsible person, beneficial ownership and a name-matched payout account (section 8).
+
+**[Inference]** The floor is therefore set twice, by the platform and by the payment provider, and the provider's floor cannot be lowered by any product decision. The realistic product shape stated in section 8 holds: page creation can be immediate and payout activation cannot. The honest version of the simplicity claim is that the product removes the platform's floor and makes the provider's floor navigable, rather than that it removes documentation requirements altogether.
+
+**[Assumption]** No measured data was found on how long it takes a small organisation in any market to go from deciding to fundraise online to receiving a first donation, on any existing platform. This is the benchmark the product's speed claim would be measured against and it is currently unavailable.
+
+---
+
+## 15. Philippine verification and onboarding mechanics
+
+Added August 2026, after the pilot narrowed to the Philippines and the user decided that the campaign page shows verification evidence rather than a badge. That decision made the question of what can actually be retrieved from the SEC register load-bearing rather than theoretical.
+
+### What the SEC register returns, free and paid
+
+**[Fact]** The free public search, available through eSPARC, the SEC eSEARCH facility and the official SEC Check App, accepts a company name or an SEC registration number and returns the company's **status, address, and record of reportorial submissions, including General Information Sheets and Audited Financial Statements**. Basic searches require no account. Status values include Registered, Revoked, Suspended and Dissolved, alongside the registered name, SEC number and date of incorporation. (Source: [Respicio & Co. commentary](https://www.respicio.ph/commentaries/how-to-check-if-a-company-is-legally-registered-with-the-sec-in-the-philippines) and [Respicio & Co. verification guide](https://www.lawyer-philippines.com/articles/how-to-verify-sec-registration-of-a-philippine-corporation-online).)
+
+**[Fact]** The documents themselves are a paid service. Certified copies of GIS, AFS and Articles of Incorporation are obtained through the SEC Express System for a fee, delivered by courier or digital download, and are certified by the Commission as definitive proof of status. (Same sources.)
+
+**[Fact]** "Revoked" status commonly results from failure to file GIS and AFS. (Same source.)
+
+**[Inference]** This is the most favourable possible answer for the product, and it is worth being explicit about why. The verification decision requires the page to show that an organisation is registered and that it has filed. Both of those are in the free tier. The paid tier holds the certified documents, which the platform does not need in order to make its display honest, and which a sceptical donor can obtain independently. The platform can therefore state a checkable fact without becoming a document broker.
+
+**[Inference]** The revocation mechanism adds a second signal at no cost. Because non-filing leads to revocation, a current status of Registered is itself weak evidence of continuing compliance, not merely of past existence. This is exactly the property the Philippines was selected for in [`market-selection.md`](market-selection.md), now confirmed rather than assumed.
+
+**[Assumption]** No public API for the register was documented. The SEC lists an "API Marketplace" among its online services, but its scope, access conditions and whether it covers company records could not be established: sec.gov.ph returned HTTP 403 to automated fetching, and the eSEARCH front end is a JavaScript application that returned no readable content. **Whether verification is an automated check or a manual per-organisation lookup is therefore still open**, and it is the single remaining question with material consequences for operating cost.
+
+**[Inference]** The cost consequence is now smaller than it was. Under the donor-tip model the platform earns nothing from the organisation, so verification cost is a fixed cost of operating rather than a margin question on each campaign. A manual lookup that takes a staff member two minutes is tolerable at pilot scale and is a scaling problem later, not a viability problem now.
+
+### Payment provider onboarding timelines
+
+**[Fact]** Xendit reviews KYC submissions within **5 to 10 business days**. E-wallet activation responses arrive within 5 business days, QR partner registration within 7 business days, and virtual accounts activate automatically once KYC completes. (Source: [Xendit Help Center](https://help.xendit.co/hc/en-us/articles/11103239008793-PH-What-are-the-legal-documents-required-to-register-to-Xendit-for-Philippine-Merchants).)
+
+**[Assumption]** No equivalent published timeline was found for dLocal.
+
+**[Inference]** This puts a number on the constraint section 8 identified without one. An organisation can create and share a campaign page immediately, and cannot receive money for one to two weeks. Any product claim about speed has to be stated against page creation rather than against money arriving, and the campaign page needs to work and be shareable during the gap. That is a product requirement rather than a caveat.
+
+---
+
+## 16. Who the climate donor is
+
+Added August 2026, after the donor was defined as a climate-motivated retail donor. Section 12 established donor behaviour across all causes. This section asks whether donors to environmental and climate causes differ.
+
+**[Fact]** Climate-giving donors are the highest-due-diligence segment in the IRS donor database, researching environmental charities at close to the rate at which donors research veteran, medical and direct-aid charities. (Source: [Nonprofits Source](https://nonprofitssource.com/online-giving-statistics/). Search-snippet sourced.)
+
+**[Fact]** Donation amount is strongly affected by the donor's perception of how effective the charity is at addressing climate change, and framing an environmental nonprofit as a source of climate solutions significantly increased intent to donate. (Source: [Journal of Economics and Behavioral Studies](https://ojs.amhinternational.com/index.php/jebs/article/view/3996) and [experimental evidence from the United Kingdom](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC10836214/). Search-snippet sourced.)
+
+**[Fact]** Environmental nonprofits recorded 34% online revenue growth, above the sector average. First-gift donor retention runs at 25% and repeat-donor retention at 60%. (Source: [Nonprofits Source](https://nonprofitssource.com/online-giving-statistics/), [CCS Fundraising](https://www.ccsfundraising.com/insights/donor-acquisition-and-retention-strategies/). Search-snippet sourced.)
+
+**[Inference]** The due-diligence finding is the most useful thing in this section, because it independently supports a decision already made for other reasons. The verification display was chosen on evidence that donors respond to financial transparency more than to badges. This finding says the specific donor this product targets is unusually likely to go looking. A page built to be checked suits a donor who checks, and a badge would suit that donor least of all.
+
+**[Inference]** The effectiveness finding cuts against a naive reading of the adaptation story. Donors give more when they believe the organisation is effective at addressing climate change, and adaptation work protects against consequences rather than reducing emissions. The costed line-by-line budget already required by the verification decision is the available answer, because it lets a donor evaluate effectiveness at the level of a specific project rather than at the level of a claim about the climate.
+
+**[Assumption]** All figures in this section are search-snippet sourced and US-centric, and none compares environmental donors against other cause areas on retention directly. No source located measures whether climate donors retain better or worse than the all-cause average.
 
 ---
 
 ## Open questions and lowest-confidence areas
 
-1. **Whether retail giving works for this sector at all.** In Kenya, the only market with a government-published breakdown, individual donors were 2.3% of NGO income in FY 2022/23 and fell 10% year on year, against affiliates at 27.6% and foreign government agencies at 21.2% (**[Fact]**, [Annual NGO Sector Report 2022/2023](https://www.pbora.go.ke/sites/default/files/2025-09/Annual%20NGOS%20Sector%20Report%202022-2023.pdf)). This product is a retail-giving tool aimed at a sector where retail giving is marginal and shrinking. Nothing in this research resolves whether the channel is small because no usable tool exists or because retail donors do not fund this work. It is the single most important open question and it sits upstream of every other decision.
-2. **Honduras has one real rail, not two.** Provider concentration is resolved for the Philippines (dLocal or Xendit) and Nigeria (dLocal or Flutterwave), where the alternatives are like-for-like. Honduras' second provider, Nium, reaches a card or a SWIFT-addressable account rather than a local HNL bank account, so it is a different rail rather than a substitute one. Honduras is single-rail for local bank payout, and that is a concentration risk in the market that is already weakest on payout.
-3. **Money transmitter classification.** The reasoning in section 4 is drawn from general principles rather than a legal analysis specific to donation platforms, and it determines the product's entire architecture.
-4. **Registry machine-readability.** If any pilot market offers programmatic registry lookup, the verification unit economics change materially. Currently assumed unavailable in all three.
-5. **How the locally-led finance figures are phrased publicly.** The 0.17% figure is now verified directly, but it counts keyword mentions in finance descriptions rather than tracked flows. Stating it as "0.17% of climate finance reaches local organisations" would overclaim. The problem statement needs wording that carries the force of the finding without misrepresenting the method.
-6. **Registered climate NGO counts.** Not obtainable for any pilot market. Criterion 2 of the market selection currently rests on a cross-country proxy from Kenya.
-7. **Payment provider onboarding timelines.** Unverified, and they cap any claim about how fast an organisation can start receiving money.
-8. **Whether financial transparency can be produced by organisations without accounting capacity.** Section 7 shows donors respond to it and section 6 shows it is exactly what these organisations cannot supply. The product has no answer to this yet.
+Updated August 2026, after sections 10 to 14 and the narrowing of the pilot to the Philippines alone. Questions resolved or made moot by that narrowing are marked rather than deleted, so the reasoning stays visible.
+
+1. **Whether retail giving works for this sector at all.** In Kenya, the only market with a government-published breakdown, individual donors were 2.3% of NGO income in FY 2022/23 and fell 10% year on year, against affiliates at 27.6% and foreign government agencies at 21.2% (**[Fact]**, [Annual NGO Sector Report 2022/2023](https://www.pbora.go.ke/sites/default/files/2025-09/Annual%20NGOS%20Sector%20Report%202022-2023.pdf)). **Partially addressed, still open.** Sections 10 and 13 reframe it: retail giving to this sector is small because cross-border philanthropy as a whole is small, roughly 3% of global giving, and because adaptation is under 10% of climate finance within that. Section 13 also shows adaptation philanthropy more than doubling between 2021 and 2024 with a 55% rise in the number of funders, so the category is expanding. What remains unresolved is whether individual donors will fund adaptation work specifically, as distinct from disaster relief, and no source examined measures that directly. **[Inference]** The question should be split rather than asked whole. Adaptation with a countable physical output, meaning mangroves planted or hectares restored, has visible retail-funding precedent in tree-planting campaigns and shares the concreteness that section 12's identifiable victim effect and section 16's effectiveness finding both reward. Adaptation without a countable output, such as early-warning governance or institutional capacity, has neither. The open question is therefore how much of the target user base falls into the first group, which determines whether the product's fundable set is narrower than the population it is built for.
+2. ~~**Honduras has one real rail, not two.**~~ **Moot.** Honduras is no longer a pilot market. Retained in [`market-selection.md`](market-selection.md) as part of the selection reasoning.
+3. ~~**Money transmitter classification.**~~ **Resolved by decision, August 2026.** The user has chosen direct settlement: donations pass from the donor through a licensed payment provider straight to the organisation, and the platform never holds funds. The platform is therefore software rather than a money transmitter, and no state-by-state licensing question arises. The accepted consequences are no refunds, no holding funds pending investigation, no pooling of small donations, and no all-or-nothing goals. The underlying legal reasoning in section 4 is still drawn from general principles rather than a donation-platform-specific analysis, which now matters less because the architecture avoids the question rather than answering it.
+4. **Registry machine-readability.** **Narrowed, still open.** Section 15 establishes that the free SEC search returns status and a record of GIS and AFS submissions, which is everything the verification display needs. What remains unverified is whether a public API exists: the SEC lists an API Marketplace among its online services, but sec.gov.ph returns 403 to automated fetching and eSEARCH is a JavaScript front end that yielded no readable content. The consequence is now operational rather than existential, since the donor-tip model makes verification a fixed operating cost rather than a per-campaign margin question.
+5. **How the locally-led finance figures are phrased publicly.** The 0.17% figure is verified directly, but it counts keyword mentions in finance descriptions rather than tracked flows. Stating it as "0.17% of climate finance reaches local organisations" would overclaim. The problem statement needs wording that carries the force of the finding without misrepresenting the method.
+6. **Registered climate NGO counts.** Not obtainable for the Philippines. The addressable-population estimate in section 2 rests on applying Kenya's environment-sector share to the Philippine NPO count, which is a cross-country proxy applied to a different regulatory regime.
+7. ~~**Payment provider onboarding timelines.**~~ **Answered for Xendit.** KYC review takes 5 to 10 business days, with e-wallet activation within 5 and QR partner registration within 7. See section 15. No published dLocal timeline was found, which is the residual gap.
+8. **Whether donors accept structured disclosure in place of audited financials.** The user has decided (August 2026) that the page shows evidence rather than a badge, so this question now sits directly under a locked product decision rather than beside it. **Partially answered.** Section 14 separates two things that section 7 had treated together: audited financial statements, which the target organisation cannot produce, and structured disclosure of accountable person, costed budget, operating history and post-campaign reporting, which it can. The evidence supports the second as the trust mechanism. What remains open is whether donors accept structured disclosure as a substitute for audited financials, which no source examined tests directly.
+9. **Retail climate donors have no benchmark set of their own.** Every per-donor figure in section 12, covering gift size, retention, conversion and channel, comes from general US and Western online fundraising data across all causes. Whether donors who give to environmental and climate causes behave differently on any of those four dimensions was not established, and the product's donor is defined as exactly that person.
+10. **Time from deciding to fundraise to receiving a first donation.** No measured benchmark was found for any platform in any market. This is the number the product's core speed claim would be judged against.
+11. ~~**Cross-border philanthropy total is a 2020 figure.**~~ **Closed: no newer edition exists.** The 2023 Global Philanthropy Tracker is the 11th and most recent edition, published April 2023 and reporting 2020 data across 47 countries representing 61% of the global population and 85% of global GDP. (**[Fact]**, [Indiana University Lilly Family School of Philanthropy](https://globalindices.indianapolis.iu.edu/tracker/index.html).) The lag is inherent to the publication rather than a failure to find something current. The figure can be used with its year stated.
+12. **The transparency evidence is published by an interested party.** The 53% and 62% contribution-lift figures in section 14 come from Candid, which operates the seal being evaluated, and the studies are observational rather than experimental. The direction is consistent with independent findings in section 7, and the effect size should not be quoted as established.
 
 ### Sources requiring upgrade from search snippet to primary
-UNEP Adaptation Gap Report 2025 figures (blocked by bot protection, needs a human); World Bank Remittance Prices Worldwide Q3 2025; Philippine SEC NPO count; Nigeria poverty and remittance figures; Honduras remittance figures; Stripe country and Connect coverage; GoFundMe and Chuffed fee schedules; the FATF June 2026 grey list, whose own page returned 403 to automated fetching.
+UNEP Adaptation Gap Report 2025 figures (blocked by bot protection, needs a human, though now corroborated by two independent searches); World Bank Remittance Prices Worldwide Q3 2025; Philippine SEC NPO count; Stripe country and Connect coverage; GoFundMe and Chuffed fee schedules; the FATF June 2026 grey list, whose own page returned 403 to automated fetching; ClimateWorks Funding Trends and adaptation-funding reports; Giving USA cause-level data tables; Global Philanthropy Tracker; the online fundraising and donor-retention benchmarks in section 12; DAF structure and volume figures in section 11.
+
+Nigeria and Honduras verification tasks from the earlier three-market pass are retained in [`market-selection.md`](market-selection.md) and are no longer blocking.
