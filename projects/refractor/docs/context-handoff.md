@@ -1,5 +1,8 @@
 # Refractor: context handoff
 
+> **Superseded, 20 August 2026.** This file records the concept as it stood after two spec stress-test rounds, and the reasoning that produced it. The product has since changed: it is now free to small brands, packaging only, scoped to five countries, and built around swap recommendations. The paid Tier 1 / Tier 2 model, the ISO 14067 positioning and the three-node formula scope below are all superseded. Current scope is in `scope.md`, current research in `grounding-research.md`. Kept as the record of how the concept moved.
+
+
 Internal working note. Captures the state of the Refractor concept after two spec stress-test rounds and a follow-up discussion, so the next session can pick up without re-deriving anything. Not portfolio-facing.
 
 Date: August 2026. Status: pre-research. `discovery-scope` has not been run yet.

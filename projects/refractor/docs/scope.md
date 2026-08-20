@@ -1,56 +1,65 @@
-# Refractor — Discovery Scope
+# Refractor: Discovery Scope
 
-Written after two spec stress-test rounds and a follow-up discussion, so it starts from a product concept that already has locked decisions rather than a blank page. Those decisions are recorded in `context-handoff.md` and restated here only where they change what research has to establish. Research validates them; it does not reopen them.
+Rewritten 20 August 2026. An earlier version of this file described a paid two-tier product built around ISO 14067 compliance readiness. Research commissioned by that version contradicted its own problem statement, and the concept changed in response. `context-handoff.md` holds the superseded model and the reasoning that produced it.
+
+## What Refractor is now
+
+A brand tells Refractor what it is putting on shelf and what that product is packaged in. Refractor recommends packaging material substitutions that cut carbon without changing unit cost, tooling or timeline, then connects the brand to suppliers who can make the substitution.
+
+The formula is out of scope. Small brands are not charged.
 
 ## Project basics
 
-- **Problem area:** Indie consumer-product brands face two converging pressures. EU Directive 2024/825 tightens what an environmental claim has to be backed by, and retail buyers increasingly ask for carbon documentation as part of onboarding. A small brand has neither an in-house LCA function nor the budget for a consultancy engagement. Refractor ingests the documents such a brand already holds (BOM, packaging specs, SDS, supplier invoices), produces a compliance-readiness position against ISO 14067, and decomposes the product into three nodes with ranked material swaps.
-- **Target user:** The owner or operator of an indie skincare/cosmetics brand who is the Responsible Person placing the product on the EU market. Two plausible buying triggers sit behind that one job title, and separating them is research question 5 below: a compliance buyer facing a retailer deadline, and an optimization buyer choosing to reduce impact. The first is a grudge purchase on a clock, the second is discretionary.
-- **Status:** New project, pre-research. Concept spec exists and has been stress-tested twice; no research has been run.
-- **Known constraints:**
-  - EU cosmetics regulation, carbon accounting standards, and packaging material science all sit outside personal domain experience. Grounding research goes deep on all three and nothing in this area is pre-trusted.
-  - The product's core value is a calculation (per-node CO2e plus a ranked swap recommendation across four axes), so the runtime inputs behind it are a first-class research target rather than something to specify later. See "Calculation inputs" below.
-  - Cosmetics only for the case study. The other three verticals stay a documented expansion thesis.
+- **Problem area.** Packaging is where a small cosmetics brand's carbon sits and where its regulatory costs land, and it is the part nobody helps them with. Existing carbon tools sell to companies with an ERP to integrate and a sustainability hire to run it. Packaging converters give design advice and recommend their own catalogue. Between those two there is a brand of eight people who would change their jar if someone told them which change was free.
+- **Target user.** The founder or operator of an indie cosmetics brand, acting as the EU Responsible Person, buying packaging in batches from a small number of suppliers, with no compliance function and no sustainability budget.
+- **Status.** Pre-brief. Grounding research covers the regulatory terrain, the eco-modulation finding, a first competitive read and the emission factor sources. Personas have not started.
+- **Known constraints.** EU cosmetics regulation, national packaging law and material science all sit outside personal domain experience, so nothing in this area is pre-trusted. The product's core output is a calculation, so its runtime inputs are a first-class research target.
 
-## Locked decisions carried in
+## Geographic scope: five countries
 
-Restated compactly. Full reasoning is in `context-handoff.md` §2.
+France, Italy, Germany, Spain and Poland. Together they hold 5,157 of Europe's 8,988 cosmetics manufacturing SMEs, which is 57% of the addressable base.
 
-1. **Tier 1 is the Mirror, Tier 2 is the Passport.** Tier 1 is automated, near-zero marginal cost, and deliberately not submittable. Tier 2 is a €200 to €300 human-attested document. Tier 1's quality is a direct margin lever on Tier 2, since better parsing means fewer expert minutes.
-2. **Design system first.** The token layer is specified before research, because it is largely problem-agnostic and is itself a portfolio deliverable.
-3. **Cradle-to-gate plus primary distribution logistics.** Consumer use phase excluded and named as excluded.
-4. **Zero affiliate kickbacks or sponsored vendor placement.** This forecloses the obvious marketplace revenue line and is stated in the brief as a chosen tradeoff.
-5. **Glassmorphism confined to structural chrome.** Every data surface is 100% opaque.
+France leads on every dimension that matters here. It has 1,917 cosmetics SMEs, more than twice the next country, and it is the best-instrumented market for this product: ADEME publishes an open emission factor API, Citeo publishes eco-modulated packaging tariffs, and the Triman mark gives packaging changes a visible national consequence.
 
-Monetization is therefore a design decision that research pressure-tests, rather than an open question research discovers. The one genuinely open commercial variable is Tier 2's price ceiling, which depends on substitutability (research question 4).
+Three of the five require a national packaging mark and two do not, which is enough spread to show the fragmentation without documenting 27 variants of it.
+
+The UK is excluded despite ranking second by company count. It runs a full parallel regulatory stack after Brexit, with its own Responsible Person, its own notification portal and its own packaging EPR. One extra market for a duplicate of every requirement is a poor trade this early.
+
+## Decisions carried in
+
+1. **No charge to small brands.** Monetization is deliberately open. Public or institutional funding is the stated candidate direction. Nothing is being sold through the supplier connection.
+2. **No affiliate fees, commissions or paid placement.** This forecloses the obvious revenue line on the supplier screen and is a chosen tradeoff.
+3. **Formula excluded.** Packaging only. This removes the hardest data to obtain and the swaps nobody can act on.
+4. **Deltas, not footprints.** The product compares two materials. It does not produce an absolute product carbon footprint, which would need transport, manufacturing energy, allocation decisions and a defensible position on every gap.
+5. **Design system first.** The token layer is specified before research because it is largely problem-agnostic and is itself a portfolio deliverable.
 
 ## In scope for this pass
 
-- **Problem statement** — establishes what a small brand is actually up against: which claims Directive 2024/825 catches, what a retail buyer asks for at onboarding, and what the alternatives cost today. Must be specific enough that the compliance deadline and the optimization impulse are visibly different problems, since the brief later has to say whether they are one product or two.
-- **Grounding research — regulatory** — Regulation 1223/2009's PIF and CPSR obligations and what quantitative composition the Responsible Person is required to hold; Directive 2024/825's scope, substantive requirements, and timing; ISO 14067's actual requirements for a product carbon footprint and what level of verification a third party expects. Also whether a packaging change triggers compatibility or stability retesting and a PIF update, since the whole swap friction gradient rests on that.
-- **Grounding research — data availability** — the single most load-bearing input research question, and split in two because the two halves have different answers. Formula-side availability is close to settled by the Responsible Person obligation and needs verification rather than discovery, plus a read on what shape the data is in (a toxicologist's PDF, an RP-as-a-service firm holding the file). Packaging-side availability is the likely real gap: component weights, resin identification, recycled content percentages, and closure materials, which are exactly what Nodes 2 and 3 need.
-- **Grounding research — competitive** — Makersite, Greenly, Carbonfact, Sphera, and any industry consortium work on shared cosmetics scoring methodology. Per `grounding-research`'s own rule the question is what the closest analog does **not** do. The working wedge is that the field measures and reports where Refractor recommends and prices alternatives. That is a hypothesis to verify, not a finding.
-- **Grounding research — pricing and substitutability** — the consultant-cost baseline (working hypothesis €2,000 to €4,000 for equivalent work) and, more sharply, whether a retail buyer accepts a 15-minute expert attestation where they would accept a consultant's output. If named retailers require accredited third-party verification against a standard, Tier 2 is preparation for that rather than a substitute, which moves the price ceiling.
-- **Calculation inputs** — a written inventory of every runtime input the three-node CO2e figure and the four-axis swap ranking need, and where each one plausibly comes from. Emission-factor databases (ecoinvent, DEFRA, Agribalyse) cover carbon and do not cover material physical properties, so the barrier, durability, and drop-test axes need a separately named source or an honest user-supplied escalation path. Also covers the two undefined pipeline behaviours: cross-document conflict resolution when the BOM and the packaging spec disagree on a component weight, and whether the 85% confidence threshold stays an asserted design lever or gets derived.
-- **Swap friction gradient verification** — whether swap difficulty really does increase from Node 3 to Node 1, and what specifically each step triggers. This determines which node the hero demo leads on, so it shapes the product surface rather than sitting in the appendix.
-- **Personas** — at minimum the compliance-triggered buyer and the optimization-motivated buyer, kept separate until research says whether they are one person under two conditions or two segments. Grounded in the research above rather than drafted alongside it.
-- **Design system spec** — the two-tier token inheritance model written up as a document, since design-system-first is a locked decision and the spec currently exists only in conversation. Carries one known correction to apply on the way in: Emerald and Amber are semantic status colors sitting under the Cosmetics vertical override, and they belong in Core, split into a Semantic/Status class that is invariant across verticals and a Brand Accent class that is not.
-- **Limitations section** — the scope boundary (cradle-to-gate, use phase excluded, which matters most for the apparel expansion thesis), CO2e presented as uncertainty ranges rather than point estimates, and Tier 1's draft/pre-audit status stated plainly rather than implied.
+- **Problem statement.** What a small brand is actually up against on packaging across the five countries, specific enough that the reader can see why generic sustainability advice fails.
+- **Grounding research, regulatory.** Done. National packaging registers, fee schedules, labelling marks and language requirements across the five, plus PPWR's Declaration of Conformity and its 2030 recycled content threshold.
+- **Grounding research, eco-modulation.** Quantify the fee saving a realistic indie volume would see in each of the five markets. This decides whether the commercial argument holds.
+- **Grounding research, competitive.** Verify directly what the named carbon platforms and PPWR tooling do, and whether any recommends specific swaps to small brands. The current read is the weakest claim in the research.
+- **Calculation inputs.** Done. DEFRA bundled as the core factor table, ADEME called live for glass and aluminium, with the production and end-of-life boundary trap documented.
+- **The constraint model.** Six gates a swap must clear to reach the screen: tooling, formula contact, artwork, minimum order quantity, lead time, landed cost. Needs verification against real supplier catalogues.
+- **Supplier data.** Whether a brand's incumbent supplier commonly offers a recycled-content version of the same component. The conversion argument rests entirely on this.
+- **Personas.** Grounded in the research above, written after it lands.
+- **Design system spec.** Two-tier token inheritance written up, carrying one correction: the semantic status colours currently sit under a vertical override and belong in the core layer.
+- **Limitations.** DEFRA's three-year lag and UK basis, the comparison-not-footprint boundary, and the fact that Refractor cannot observe whether a recommended swap ever happened.
 
-## Riskiest-assumption log
+## Riskiest assumptions
 
-1. An indie brand can actually retrieve its own PIF and CPSR content in usable form and within a useful timeframe, even where an RP-as-a-service firm holds the file.
-2. Packaging data exists somewhere retrievable at all. If component weights and resin types are genuinely absent rather than merely scattered, Nodes 2 and 3 depend on manual entry, which changes what Tier 1 can promise.
-3. A retail buyer accepts a 15-minute expert attestation. If accredited third-party verification is required, Tier 2's positioning and price both move.
-4. The free tier converts. A brand that gets a working dashboard, a gap list, and supplier contacts at no cost has been given real value with no forcing function beyond the buyer deadline.
-5. Compliance and optimization are one product. If the deadline-driven buyer never engages with swap recommendations, half the product is serving a different customer.
-6. Recommending swaps without kickbacks stays commercially viable once the marketplace line is foreclosed.
+1. A brand's incumbent packaging supplier offers recycled-content versions of the components it already sells them. Without this, every recommendation becomes a supplier switch.
+2. The eco-modulated EPR saving is large enough at indie volumes to motivate action. A brand shipping three thousand units may see a number too small to care about.
+3. Brands reorder packaging often enough for Refractor to be relevant more than once. The reorder point is the only moment a swap is close to free.
+4. A founder will act on a recommendation that arrives without a compliance deadline attached.
+5. Recycled-content substitutions clear production validation on existing tooling reliably enough to recommend them.
 
 ## Out of scope for this pass
 
-- **No roadmap, user stories, synthetic interviews, or technical feasibility doc yet.** These come after the product brief and personas.
-- **No prototype.** The exploded Product Mirror is the eventual centrepiece, and building it before the swap friction gradient is verified risks demoing the wrong node.
-- **No expansion into beverage, coffee, apparel, or food.** Documented as an expansion thesis with named seams, not researched. The unresolved question of whether an exploded-CAD metaphor survives contact with apparel, where fiber to construction to packaging is a processing sequence rather than three separable objects, is logged and deferred with it.
-- **No supplier database or vendor sourcing work.** The supplier bridge is a stated Tier 1 feature; populating it is a build concern.
-- **No use-phase or end-of-life modelling**, per the locked scope boundary.
-- **No paid proprietary LCA or market-intelligence databases.** Research works from public regulation, standards documentation, published emission-factor databases, and vendor material.
+- **No roadmap, user stories, synthetic interviews or technical feasibility doc yet.** These follow the brief and personas.
+- **No prototype.** Building the mirror before the constraint model is verified risks demonstrating swaps nobody can make.
+- **No expansion beyond cosmetics.** Beverage, coffee, apparel and food stay a documented expansion thesis.
+- **No countries beyond the five.** The remaining 22 are a documented scaling question.
+- **No supplier database build.** Curated for the demo. Populating it properly is a build concern.
+- **No use-phase or end-of-life modelling.**
+- **No paid LCA or market-intelligence databases.** Public regulation, standards, published emission factors and vendor material only.
