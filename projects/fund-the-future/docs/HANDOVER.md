@@ -86,7 +86,7 @@ None of these blocks the product brief. Each is a flagged Assumption in `groundi
 
 **Probably unanswerable**
 11. **Whether donors accept structured disclosure in place of audited financials.** No source tests it. It sits directly under locked decision 6 as a named assumption.
-12. **Whether individual donors will fund adaptation specifically**, as distinct from disaster relief. Nothing examined measures this, and it is the deepest assumption in the project.
+12. **Whether individual donors will fund adaptation specifically**, as distinct from disaster relief. Nothing examined measures this, and it is the deepest assumption in the project. **Split it before testing it.** Adaptation with a countable physical output (mangroves planted, hectares restored, wells dug) has retail-funding precedent and suits the costed budget required by locked decision 6. Adaptation without one (early-warning governance, institutional capacity) has neither, and is equally adaptation. The real question is what share of the target user base does work of the first kind, and therefore whether the product's fundable set is narrower than the user base it is designed for. This is answerable with a sample of real Philippine organisations and is worth doing before the roadmap.
 
 ## Process notes
 - UNEP, FATF, Reddit, niceic.com and sec.gov.ph all block automated fetching. Reddit and similar bot-walled sites are unreachable regardless of network settings.
