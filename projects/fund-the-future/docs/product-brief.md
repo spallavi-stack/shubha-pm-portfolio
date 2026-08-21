@@ -4,7 +4,7 @@
 
 ## One-line pitch
 
-Fund the Future gives a grassroots climate-adaptation organisation a shareable campaign page and a working donation path in an afternoon, without the registration history, audited accounts and funder track record that every existing platform asks for first.
+Fund the Future verifies a grassroots climate-adaptation organisation once, in about a week, and then lets it publish a designed campaign page with a working donation path in an afternoon, without the registration history, audited accounts and funder track record that every existing platform asks for first.
 
 ## Problem
 
@@ -48,7 +48,9 @@ The realistic flow is small, and stating it honestly is the point of this sectio
 
 ## Solution
 
-An organisation enters who it is, what it needs money for, and what the money buys, line by line, and gets a shareable campaign page with a one-off and a monthly donation path. The page displays evidence rather than a badge: the SEC register entry and filing record, the named person accountable for the money, the costed budget, prior work, and what will be reported back.[^5]
+Eligibility is settled once, before any campaign exists. The organisation answers the bureaucratic questions, the platform vets them by API where it can and by human contact where it cannot, and issues a green light in about five business days, running alongside the payment provider's own KYC so the week costs nothing in elapsed time.[^10] After that, campaigns are fast and repeatable. The organisation picks the kind of work it does from seven themes, and the page is generated from that theme's structure, which already knows what that work is counted in; the organisation supplies a photograph, a logo, its own words, and a named accountable person, who is required rather than optional. The page displays evidence rather than a badge: the SEC register entry and filing record, the named person, the costed budget, prior work, and what will be reported back.[^5]
+
+**Why the gate sits on the organisation rather than the campaign.** Because the platform never holds the money, there is no freezing, no reversal and no holding pending investigation, so there is no remedy after the fact and the only available fraud control is at the entrance. Vetting per organisation also matches the cost structure, since verification costs roughly the same per organisation regardless of what any campaign raises.[^14] Full reasoning is in [`design-brief.md`](design-brief.md).
 
 **What the verification display depends on, input by input.** The core mechanism is a check, so its data model is named here rather than assumed:
 
@@ -62,6 +64,8 @@ An organisation enters who it is, what it needs money for, and what the money bu
 | Prior work | Self-reported photos and links | Decided |
 | Reporting commitment | Self-reported | Decided |
 | Payout readiness | dLocal or Xendit KYC status[^10] | Decided |
+| Work category, one of seven | Self-reported at pre-onboarding, selects the theme | Decided |
+| Named accountable person | Required to publish, prompted with an explanation of why | Decided |
 
 The distinction between the checked rows and the self-reported rows is the product. Because the platform holds no money, every claim it makes is about what was checked, never about what is guaranteed.
 
@@ -117,11 +121,12 @@ Donor tips. The organisation pays nothing, which is a positioning decision as mu
 
 ## Critical success factors
 
-1. **A payout rail that accepts the target user.** dLocal and Xendit both reserve the right to reject without giving reasons, and dLocal deactivates an account if KYC is not completed within 30 days.[^10] Some legitimate organisations will be refused a rail for reasons the platform cannot see or appeal.
-2. **The SEC register staying free to check.** The verification display depends on it. Automating it is priced and affordable; losing free access to status and filing history would change the product.[^10]
-3. **The platform never touching the money.** Direct settlement is what keeps this software rather than a money transmitter, and it is what removes state-by-state licensing.[^13] It also removes refunds, pooling and all-or-nothing goals, and those are accepted consequences rather than gaps to fix later.
-4. **Tip uptake.** See assumption 4.
-5. **Stripe being unavailable, and the architecture reflecting it.** Stripe Connect supports none of the candidate markets as payout recipients, so the default marketplace architecture cannot pay this product's users.[^3]
+1. **The gate holding, because nothing behind it can.** Direct settlement removes every remedy after a donation is made, so pre-onboarding is the only fraud control the product has. It also has to stay light enough that a genuine grassroots organisation clears it, which is the tension the whole product lives inside.
+2. **A payout rail that accepts the target user.** dLocal and Xendit both reserve the right to reject without giving reasons, and dLocal deactivates an account if KYC is not completed within 30 days.[^10] Some legitimate organisations will be refused a rail for reasons the platform cannot see or appeal.
+3. **The SEC register staying free to check.** The gate depends on it. Automating it is priced and affordable; losing free access to status and filing history would change the product.[^10]
+4. **The platform never touching the money.** Direct settlement is what keeps this software rather than a money transmitter, and it is what removes state-by-state licensing.[^13] It also removes refunds, pooling and all-or-nothing goals, and those are accepted consequences rather than gaps to fix later.
+5. **Tip uptake.** See assumption 4.
+6. **Stripe being unavailable, and the architecture reflecting it.** Stripe Connect supports none of the candidate markets as payout recipients, so the default marketplace architecture cannot pay this product's users.[^3]
 
 ## Not yet covered (separate artifacts, sequenced next)
 
@@ -129,13 +134,13 @@ Everything below is a matter of sequencing. Each is a separate artifact to be bu
 
 - **Personas, jobs-to-be-done and synthetic interviews.** Not started. The concept test above depends on them.
 - **Roadmap and user stories.** Not started.
-- **Design brief and prototype**, including the country selector where the Philippines is the only selectable market and Kenya, Ghana and Mozambique appear greyed out as markets coming next.
+- **The prototype.** [`design-brief.md`](design-brief.md) now exists and specifies the two surfaces, the page skeleton, the content model and the seven themes. The build itself is next, including the country selector where the Philippines is the only selectable market and Kenya, Ghana and Mozambique appear greyed out as markets coming next.
 - **Technical feasibility**, including which of the SEC lookup routes is used and how KYC status is received.
 - **A second pilot market.** A post-MVP expansion question. Kenya is the live override on registry quality and payout maturity, held out on FATF grey-listing and the 2024 referral of 16 civil society organisations to the Directorate of Criminal Investigations.
 
 ## Open questions
 
-**Runtime inputs, per the data model above.** Every input the verification display needs is named, and one source is undecided: whether the SEC lookup runs through the free SEC Number API, the paid Company Information Lookup, or a manual eSEARCH check. The free tier's response fields are not published, so the deciding task is to register and inspect one response.[^10] The cost consequence is small under donor tips, where verification is a fixed operating cost rather than a per-campaign margin question.
+**Runtime inputs, per the data model above.** Every input the verification display needs is named, and one source is undecided: whether the SEC lookup runs through the free SEC Number API, the paid Company Information Lookup, or a manual eSEARCH check. The free tier's response fields are not published, so the deciding task is to register and inspect one response.[^10] This matters more than it did when the lookup only fed a display. It is now the gate, and the gate is the only fraud control the product has, so a lookup that cannot confirm current registration status would need replacing with a manual check rather than dropped.
 
 **Whether individual donors fund adaptation specifically, as distinct from disaster relief.** The deepest assumption in the project. Two data points bear on it and point opposite ways: a Philippine mangrove-rehabilitation campaign raised PHP 2.9m through GlobalGiving for a countable output, though it dates from 2014 and the organisation is a large corporate-backed foundation; and only 11 of 604 accredited Philippine NGOs are Environment/Biodiversity, with 2 naming disaster or resilience work.[^2] A sample of real Philippine organisations would settle whether the fundable set is narrower than the target user base, and it is worth assembling before the roadmap.
 

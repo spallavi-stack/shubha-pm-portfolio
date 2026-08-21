@@ -1,8 +1,8 @@
 # Fund the Future: handover
 
-Status as of 21 August 2026. Read this first in a new session, then `scope.md`, then `market-selection.md`, then `grounding-research.md`.
+Status as of 21 August 2026. Read this first in a new session, then `scope.md`, then `market-selection.md`, then `product-brief.md`, then `design-brief.md`. `grounding-research.md` is the full backing material behind all of it.
 
-**Latest pass, 21 August 2026: verification, not drafting.** Every open research question in this handover was worked through. Several sources previously recorded as permanently blocked by bot protection turned out to be reachable, which changed three figures and reopened one question that had been closed on incorrect grounds. The results are folded into the documents and summarised under "Missing research areas" below. **No product brief was started.**
+**Where the project stands.** Research is closed. The product brief is drafted and audited. The design brief is written and is ready to be taken into a design tool. Nothing is blocked. The next piece of work is visual design, then the prototype.
 
 ## What this project is
 
@@ -33,10 +33,31 @@ Three things in the earlier version of this project were wrong and have been fix
 
 ## Where things stand
 
-- `scope.md` — current. Carries all locked decisions, the restated criteria, the in-scope research list and the riskiest-assumption log.
-- `market-selection.md` — rewritten 20 August 2026. Five criteria, criterion 4 deleted, criterion 2 restated to total registered NPO count. The Philippines is re-derived on the registry and payout-rail criteria. Kenya's override condition is stated plainly.
-- `grounding-research.md` — sixteen sections, every claim tagged Fact, Inference or Assumption. Sections 10 to 16 were added 20 August 2026.
-- **No product brief yet.** This is the next deliverable and nothing blocks it.
+- `scope.md`. Current. Locked decisions, restated criteria, in-scope research list, riskiest-assumption log. Assumption 8 is now largely answered.
+- `market-selection.md`. Current. Five criteria, the Philippines re-derived on registry and payout rails. The unsourced 83.1 climate-risk figure was deleted on 21 August 2026 and must not be reintroduced.
+- `grounding-research.md`. Sixteen sections, every claim tagged Fact, Inference or Assumption. A verification pass on 21 August 2026 upgraded most of the weak sourcing to primary and corrected three figures.
+- `product-brief.md`. **Drafted 21 August 2026**, against the frozen template, audited before presenting. Recommendation is GO to prototype and concept test. Not GO to build.
+- `design-brief.md`. **Written 21 August 2026**. Carries the user's dictated direction verbatim, the onboarding model, the seven-theme library, the page skeleton, the content model, and the four aesthetic decisions deliberately left to be made by eye in a design tool.
+- **No personas, jobs-to-be-done, roadmap, prototype or case-study page yet.**
+
+## Decisions taken on 21 August 2026
+
+These came out of drafting the brief and are locked unless the user reopens them.
+
+1. **Recurring giving ships in the MVP.** The environmental-sector evidence carries it: monthly giving is 32% of environmental online revenue, and new-donor retention of 24% to 28% means a single campaign raises money roughly once.
+2. **The United States is the pilot donor market.** Chosen because it is the only pool with a published cause breakdown and the market every benchmark in the research describes. No US-specific donor research was done, which is stated in the brief.
+3. **Fiscal sponsorship is positioned against on cost and control**, since it is the substitute that already works.
+4. **Two onboarding flows.** Pre-onboarding vets the organisation once, budgeted at five business days, running in parallel with the payment provider's own KYC, which already takes 5 to 10 days. Campaign creation is then fast and repeatable. **The gate sits on the organisation, never on the campaign.**
+5. **Because the platform holds no money, there is no remedy after the fact, so the gate is the only fraud control the product has.** This is the single most important structural finding of the day and it drove decision 4.
+6. **Vetting may be thorough about anything the platform can check, and must not demand documents a grassroots organisation cannot produce.** Hard to verify is acceptable. Hard for a grassroots group to supply is not. If the mandatory list drifts toward GlobalGiving's, the product keeps the friction and loses its purpose.
+7. **Seven themes**, down from a proposed ten. A theme earns its place when it changes the setting, the counting unit and the register at once.
+8. **A theme is a content structure that knows what the work is measured in**, rather than a palette swap. That structure is what the target organisation cannot produce for itself.
+9. **A named human being on the page is a requirement**, and the builder explains why at the point it asks.
+10. **The campaign page is the case-study hero screen.** The design pass covers the campaign page and the builder only.
+
+## Edge cases recorded rather than designed
+
+The prototype demonstrates the happy path. Each of these gets a line and no screen: rejection (reasons given, route to reapply), drafting during the wait (not supported, the wait is five days and a single status screen), green-light expiry (twelve months or until SEC status changes), and human vetting at scale (a known pilot limit).
 
 ## Why the Philippines won, without diaspora
 
@@ -64,14 +85,12 @@ Selected on the two criteria that map to the product's two hard problems.
 
 ## Next steps, in order
 
-1. **Draft `product-brief.md`** against `templates/product-brief-template.md`. Every claim-bearing section cites back to `grounding-research.md`. Do not re-derive the research. Nothing blocks this.
-   - Note for the brief: the go-to-market section has no named donor market to stand on, because the user chose global donor-behaviour research without country depth. It should describe mechanisms rather than channels. Section 10's US cause breakdown is the available structural proxy. Worth raising with the user when that section is reached.
-   - Product decisions deliberately left to the brief rather than settled in research: whether the product is built on structured disclosure, whether recurring giving ships in the MVP, and how it positions against fiscal sponsorship, which is the closest existing substitute.
-2. **Run `research-auditor` on the brief draft before presenting it**, per the standing rule. Include the cross-document numeric-conflict check.
-3. **Build the case study page** at `projects/fund-the-future/index.html`, following the `index.html` / `prototype.html` / `docs/` / `assets/` convention.
-4. **Add a `fund-the-future` entry to `scripts/build_docs.py`**'s `PROJECTS` dict to render the docs to HTML. Note that `grounding-research.md` stays markdown-only and is never rendered or linked publicly.
-5. **Link the project from the portfolio hub** `index.html`. It is currently unlinked. Read `docs/portfolio-feedback.md` first, per the repo instruction.
-6. **Prototype**, including the greyed-out country selector from locked decision 8.
+1. **Visual design, in a design tool.** `design-brief.md` section 6 is the handoff. The four decisions left open there are the three typefaces, the photographic grade strength, the accent family per theme, and the impact module's form. All four need something rendered to judge against, which is why they were not settled in markdown.
+2. **Personas, jobs-to-be-done and synthetic interviews.** The concept test in the brief's success-metrics section depends on them.
+3. **Prototype**, including the country selector where the Philippines is the only selectable market and Kenya, Ghana and Mozambique are greyed out.
+4. **The case study page** at `projects/fund-the-future/index.html`, following the `index.html` / `prototype.html` / `docs/` / `assets/` convention.
+5. **Add a `fund-the-future` entry to `scripts/build_docs.py`** to render the docs. `grounding-research.md` stays markdown-only and is never rendered or linked publicly. `design-brief.md` is internal working material and should not be rendered either.
+6. **Link the project from the portfolio hub.** It is still unlinked. Read `docs/portfolio-feedback.md` first, per the repo instruction.
 
 ## Missing research areas
 
