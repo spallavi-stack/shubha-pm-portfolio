@@ -97,13 +97,81 @@ This is also where the product answers its own hardest research finding. The cat
 
 **Theme 6 is the one to design first or second, despite being the least photogenic.** It is the only theme whose job is to invent legibility rather than present it, and if the model works there it works everywhere.
 
-## 6. Still open
+## 6. Handoff to Claude Design
 
-- **Visual direction proper.** Palettes, typography, imagery treatment and the impact module's form, for seven themes on one skeleton.
+This section is the brief to design against. Everything above is context; everything below is instruction.
+
+### The two surfaces
+
+**The campaign page.** Public, shareable, the case-study hero. It has to work for a donor deciding in ninety seconds and survive a programme officer who arrived through a shared link and reads everything.
+
+**The builder.** Private, used by an organisation with low administrative capacity, on a phone as often as a laptop. It is only reachable by an organisation that has already passed pre-onboarding, so it never has to carry eligibility questions.
+
+### The page skeleton, one order for all seven themes
+
+1. **Hero.** Organisation photo, logo, campaign title, and the named accountable person present at the top rather than buried.
+2. **The ask.** One sentence, the amount, and both giving paths. Recurring ships in the MVP, so one-off and monthly sit at the same decision point.
+3. **The impact module.** The theme's unit, filled with this campaign's numbers.
+4. **The costed budget.** Line by line. This is the page's substantive content, not an appendix.
+5. **The person.** Named, photographed, in their own words.
+6. **What was checked.** The platform's verification result and the facts behind it.
+7. **What gets reported back.** The commitment, before any money moves.
+
+### The content model, by section
+
+| Section | Fields | Origin |
+|---|---|---|
+| Hero | Photo, logo, campaign title, organisation name, person name and role | Organisation, within theme constraints |
+| The ask | One-sentence need, target amount, one-off or monthly | Organisation |
+| Impact module | Unit type, quantity, short qualifier | Unit from theme, numbers from organisation |
+| Budget | Line item, cost, quantity, subtotal | Organisation |
+| Person | Name, role, photo, quote | Organisation |
+| What was checked | SEC number, registration status, latest GIS and AFS filing dates, PCNC accreditation and expiry where held, verification date | Platform, from the pre-onboarding vet |
+| Reporting | What will be reported, and when | Organisation |
+
+### Rules that must hold across all seven themes
+
+1. **A named human being appears on every page.** This is a requirement rather than a recommendation, and the builder has to explain to the organisation why while they are filling the form in, at the point where it asks.
+2. **Facts the platform checked look different from things the organisation says.** One consistent visual treatment, applied without exception, so a donor learns the distinction within a single page. This replaces the badge that locked decision 6 rules out.
+3. **The donation action looks identical in every theme.** If each theme recolours its own call to action, seven themes produce seven strengths of it, and the weakest ones cost real money.
+4. **The theme carries the structure, the organisation carries the content.** An organisation supplies photo, logo and words. It does not choose layout, type or colour.
+5. **Uploaded photographs are treated, not used raw.** Fixed aspect ratios per slot and a consistent grade, because these will be phone photographs taken in bad light and the gap between that and an agency-made page is mostly photographic.
+
+### Type roles, three of them
+
+The faces are open. The roles are not.
+
+- **Interface.** Navigation, labels, buttons, structure.
+- **The organisation's own words.** Their story and the named person's quote.
+- **Facts the platform checked.** Register numbers, filing dates, accreditation expiry, verified amounts.
+
+Whether roles two and three get genuinely distinct faces, or whether one face covers two roles by weight and treatment, is a decision to make by looking.
+
+### Colour model
+
+Constant across all seven themes: page ground, ink, rule lines, and the donation action colour. Variable per theme: one accent family and the photographic grade paired with it.
+
+### What must not happen
+
+Fund the Future's product UI is its own visual language. It should not look like the other two products in this portfolio, which are a soft phone-app treatment on a system font stack, and a neo-brutalist treatment with hard offset shadows on Space Grotesk with Inter and Space Mono.[^1] The depth of SunnySideUp's token scale is the bar to match. Its appearance is not.
+
+### Decisions to make by eye, in Claude Design
+
+These are deliberately unresolved here, because they cannot be judged in prose.
+
+| Decision | Starting position |
+|---|---|
+| The three typefaces | Three roles specified above. Faces open. |
+| Photographic grade strength | Moderate. A token with a tunable value, set against a real photograph. |
+| Accent family per theme | Seven, drawn from each theme's setting. |
+| The impact module's form | It has to work for a countable unit and for theme 6, where the theme supplies the unit. |
+
+## 7. Still open, outside the design handoff
+
 - **How much an organisation can change within a theme.** Photo, logo and copy are agreed. The limits are not set.
 - **AI assistance in the builder.** Content enhancement and image handling were raised and need a decision before they go in or out.
 
-## 7. The work-type taxonomy: research result and proposal
+## 8. The work-type taxonomy: research result and proposal
 
 Researched 21 August 2026 at the user's request, to decide the builder's category question and the theme library. Sources are secondary (sector overviews and NGO directories) rather than a government sector classification, so this is a **proposal for review** rather than an established taxonomy.
 
@@ -128,7 +196,7 @@ Ten categories cover what Philippine grassroots environmental and adaptation org
 
 **Consequence for the theme library.** Ten categories map cleanly onto the five-to-ten themes described in the direction above. The open design question is whether a theme is keyed one-to-one to a category, or whether a smaller number of themes each serve a family of categories.
 
-## 8. The legitimacy question: the reasoning that led to the two-flow model
+## 9. The legitimacy question: the reasoning that led to the two-flow model
 
 The user's challenge stands, and one fact from the research makes it sharper than a page-design problem.
 
@@ -144,7 +212,7 @@ That reframes the original question. "How should the page display a missing PCNC
 
 **Recommendation, for the user to accept or reject:** 1 and 2 together. A checkable floor keeps the worst cases off the platform without recreating the documentation barrier, and a raise cap converts "how much evidence exists" into a number the platform applies rather than a warning the donor has to weigh. Option 3 is not recommended, because the moment the platform states a conclusion about an organisation whose money it never touches, it is making a promise it has no mechanism to keep.
 
-## 9. Deliberately not decided yet
+## 10. Deliberately not decided yet
 
 Palette, typography and component specs. Those follow the theme-library decision rather than preceding it, because a library of ten distinct themes is a different type system from a single page skin.
 
