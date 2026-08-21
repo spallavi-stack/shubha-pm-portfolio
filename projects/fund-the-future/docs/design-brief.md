@@ -34,7 +34,7 @@ Three things follow immediately, and each one is a departure from what the produ
 
 1. **The campaign page is generated from a themed template library, rather than being one page filled with variable content.** Five to ten agency-quality themes, chosen from a dropdown, keyed to the kind of work the organisation does. The organisation customises within a theme (photo, logo, its own copy) instead of designing anything.
 2. **A named human on the page is a requirement rather than a recommendation**, and the builder has to teach the organisation why while they fill the form in.
-3. **"Show the absence plainly" is not settled.** The open question is no longer how to display a gap; it is whether an organisation with gaps should be publishable at all, and whether displaying a gap offloads a judgment the donor is not equipped to make.
+3. **"Show the absence plainly" is superseded.** The question was never how to display a gap. It was whether an organisation with gaps should be publishable at all. Resolved by the two-flow onboarding model in section 4: the gate sits on the organisation before it can create any campaign, so the donor is never handed a judgment they are not equipped to make.
 
 ## 3. Decisions already taken by the user
 
@@ -48,14 +48,62 @@ Carried from the answers that did survive.
 | Visual language ownership | Fund the Future's product UI is its own language. Portfolio rule: each fictional product should look like its own thing.[^1] |
 | Quality bar for tokens | SunnySideUp's prototype token scale (5-step spacing, 5-step radius, 4-step shadow) is the depth to match, without copying its neo-brutalist look.[^1] |
 
-## 4. Open, and being worked on now
+## 4. The onboarding model: two flows, decided 21 August 2026
 
-- **The work-type taxonomy.** What categories of grassroots environmental and adaptation work actually exist in the Philippines, which decides both the builder's category question and the theme library. Research in progress.
-- **The theme library.** How many themes, what distinguishes them, and how much an organisation can change within one.
-- **The legitimacy question.** Whether gaps are publishable, and how a donor who cannot tell a real organisation from a fake one is meant to use what the page shows.
-- **AI assistance in the builder.** Content enhancement and image handling were raised as possibilities and need more thought before they go in or out.
+The user's model, and it resolves the legitimacy question by moving the gate off the campaign and onto the organisation.
 
-## 5. The work-type taxonomy: research result and proposal
+**Flow 1, pre-onboarding.** The organisation answers the bureaucratic questions once. The platform vets them, by API where possible and by human contact where not, and issues a green light. Budget five business days.
+
+**Flow 2, campaign creation.** Only available to a green-lit organisation, and fast. Every campaign after the first costs the organisation an afternoon and costs the platform almost nothing.
+
+**Why this is the right shape.**
+
+1. **It uses a week that already exists.** Xendit's KYC review takes 5 to 10 business days and dLocal enforces a 30-day KYC window, so the organisation is already waiting about a week before it can receive money. Running vetting in parallel with payment-provider KYC costs nothing in elapsed time.
+2. **It makes the speed claim precise.** Vetting once, up front, about a week. Every campaign after that in an afternoon. Since new-donor retention runs at 24 to 28%, a single campaign raises money roughly once, so organisations must run repeat campaigns and the amortised experience is the real one.
+3. **It matches the cost structure.** Verification costs roughly the same per organisation regardless of what a campaign raises, which is why the percentage fee was dropped. Vetting per organisation rather than per campaign puts the cost where it belongs.
+
+**The constraint that keeps this honest.** Vetting may be as slow and as thorough as it likes about things the platform can check. It must not demand documents the organisation cannot produce. Hard to verify is acceptable; hard for a grassroots group to supply is not. If the mandatory list drifts toward GlobalGiving's (two years of financial statements, a documented board, a prior-funder track record), the product keeps the friction and loses its reason to exist.
+
+**Edge cases, recorded rather than designed.** These get a line here and no screen in the prototype, because the click dummy demonstrates the happy path.
+
+| Case | Decision |
+|---|---|
+| Rejection | Reasons given, with a route to fix and reapply. Not in the prototype. |
+| Drafting during the wait | Not supported. At five business days it earns too little to justify a draft state. The wait is a single status screen. |
+| Green light expiry | Valid twelve months, or until SEC status changes, whichever comes first. Lapsed means re-running eligibility before publishing again. |
+| Human vetting at scale | A known limit of the pilot, not the steady state. Recorded, not solved. |
+
+## 5. The theme library: model and count
+
+**A theme is a content structure that knows what the work is measured in.** Palette and photographic treatment are the smaller half. The larger half is that a mangrove theme already knows about hectares and seedlings, a water theme about households served, a waste theme about tonnes diverted. That structure is the thing a grassroots organisation without a communications team cannot produce for itself, and supplying it is what makes a page read as agency-made rather than templated.
+
+This is also where the product answers its own hardest research finding. The categories with no natural countable output are the ones where the theme has to supply a unit, so the organisation is never asked to invent a metric on a blank form.
+
+**Each theme carries four things:** a palette and imagery treatment drawn from its setting; a pre-structured impact module with the right unit already in it; a layout rhythm; and placeholder copy shaped for that kind of work. The organisation supplies photo, logo and words.
+
+**Seven themes, decided 21 August 2026.** The test applied: a theme earns its place when it changes the setting a photograph is taken in, the unit the work is counted in, and the register the page speaks in. Where two categories share all three, they share a theme.
+
+| # | Theme | Covers | Unit | Setting |
+|---|---|---|---|---|
+| 1 | Coastal and mangrove | Mangrove restoration, coastal protection | Hectares restored, seedlings planted | Tidal, silt, low horizon |
+| 2 | Sea and fisheries | Marine protected areas, reefs, sustainable gear, marine wildlife | Area protected, sites, gear replaced | Underwater and boat-level |
+| 3 | Forest and watershed | Rainforestation with native species, upland reforestation, habitat and wildlife | Native trees planted, hectares | Upland, canopy |
+| 4 | Farms and food security | Climate-resilient agriculture, agroforestry, seed banks | Farms converted, households supported | Farmland |
+| 5 | Community infrastructure | Rainwater harvesting, potable water, small community energy | Systems built, households served | Village, built structures |
+| 6 | Preparedness and capacity | Disaster risk management, early warning, evacuation, training, education, advocacy | Supplied by the theme: drills run, households with a plan, people trained | People and community spaces |
+| 7 | Waste and plastics | Collection, recovery facilities, shoreline and urban cleanup | Tonnes diverted, facilities built | Urban and shoreline |
+
+**Two judgment calls, open to reversal.** Coastal was split from marine because mangrove restoration is the flagship Philippine grassroots activity and because above-water and below-water photography share nothing. Community renewable energy was folded into infrastructure rather than given its own theme, because grassroots energy work is thin in the Philippines relative to the rest of this list.
+
+**Theme 6 is the one to design first or second, despite being the least photogenic.** It is the only theme whose job is to invent legibility rather than present it, and if the model works there it works everywhere.
+
+## 6. Still open
+
+- **Visual direction proper.** Palettes, typography, imagery treatment and the impact module's form, for seven themes on one skeleton.
+- **How much an organisation can change within a theme.** Photo, logo and copy are agreed. The limits are not set.
+- **AI assistance in the builder.** Content enhancement and image handling were raised and need a decision before they go in or out.
+
+## 7. The work-type taxonomy: research result and proposal
 
 Researched 21 August 2026 at the user's request, to decide the builder's category question and the theme library. Sources are secondary (sector overviews and NGO directories) rather than a government sector classification, so this is a **proposal for review** rather than an established taxonomy.
 
@@ -80,7 +128,7 @@ Ten categories cover what Philippine grassroots environmental and adaptation org
 
 **Consequence for the theme library.** Ten categories map cleanly onto the five-to-ten themes described in the direction above. The open design question is whether a theme is keyed one-to-one to a category, or whether a smaller number of themes each serve a family of categories.
 
-## 6. The legitimacy question: why it is harder than a display choice
+## 8. The legitimacy question: the reasoning that led to the two-flow model
 
 The user's challenge stands, and one fact from the research makes it sharper than a page-design problem.
 
@@ -96,7 +144,7 @@ That reframes the original question. "How should the page display a missing PCNC
 
 **Recommendation, for the user to accept or reject:** 1 and 2 together. A checkable floor keeps the worst cases off the platform without recreating the documentation barrier, and a raise cap converts "how much evidence exists" into a number the platform applies rather than a warning the donor has to weigh. Option 3 is not recommended, because the moment the platform states a conclusion about an organisation whose money it never touches, it is making a promise it has no mechanism to keep.
 
-## 7. Deliberately not decided yet
+## 9. Deliberately not decided yet
 
 Palette, typography and component specs. Those follow the theme-library decision rather than preceding it, because a library of ten distinct themes is a different type system from a single page skin.
 
