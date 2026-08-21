@@ -1,6 +1,8 @@
 # Fund the Future: handover
 
-Status as of 20 August 2026. Everything below is committed on `claude/nifty-rubin-6czdga`. Read this first in a new session, then `scope.md`, then `market-selection.md`, then `grounding-research.md`.
+Status as of 21 August 2026. Read this first in a new session, then `scope.md`, then `market-selection.md`, then `grounding-research.md`.
+
+**Latest pass, 21 August 2026: verification, not drafting.** Every open research question in this handover was worked through. Several sources previously recorded as permanently blocked by bot protection turned out to be reachable, which changed three figures and reopened one question that had been closed on incorrect grounds. The results are folded into the documents and summarised under "Missing research areas" below. **No product brief was started.**
 
 ## What this project is
 
@@ -12,7 +14,7 @@ In product terms: a campaign-building and fundraising platform for grassroots cl
 
 Three things in the earlier version of this project were wrong and have been fixed. A new session should not reintroduce them.
 
-1. **The diaspora thesis is deleted.** An earlier pass built the donor side on diaspora giving, reasoning that remittances are $905bn against $70bn of cross-border philanthropy, so the bigger rail should be used. **That conflated two different behaviours.** Remittance is money sent to one's own family under obligation. This product asks for charitable giving to strangers. Proximity to a country is not proximity to a cause. Diaspora was also criterion 4 of six in the market selection, so the selection was re-run without it. Do not reintroduce remittance volume as evidence of willingness to donate.
+1. **The diaspora thesis is deleted.** An earlier pass built the donor side on diaspora giving, reasoning that remittances are $905bn against roughly $82bn of cross-border philanthropy (2023), so the bigger rail should be used. **That conflated two different behaviours.** Remittance is money sent to one's own family under obligation. This product asks for charitable giving to strangers. Proximity to a country is not proximity to a cause. Diaspora was also criterion 4 of six in the market selection, so the selection was re-run without it. Do not reintroduce remittance volume as evidence of willingness to donate.
 2. **The pilot is one country, the Philippines.** It was three (Philippines, Nigeria, Honduras). Three markets produced three partial answers on payout and verification rather than one complete one.
 3. **Monetization reversed from a platform fee to donor tips.** See locked decisions below.
 
@@ -47,13 +49,17 @@ Selected on the two criteria that map to the product's two hard problems.
 
 ## The findings that should shape the brief
 
-1. **The product grows a category rather than splitting one.** Cross-border philanthropy is ~$70bn against ~$770bn of global individual charitable giving, roughly 9%, and it has been broadly flat since 2018. Any framing that positions the opportunity as capturing a slice of $392bn or $2.3tn misstates the market by two orders of magnitude.
+1. **The product grows a category rather than splitting one.** Cross-border philanthropy is **~$82bn in 2023** against ~$770bn of global individual charitable giving, roughly 11%. (Updated 21 August 2026: the previous $70bn/2020 figure came from an edition that has since been superseded, and the user has made $82bn canonical.) Any framing that positions the opportunity as capturing a slice of $392bn or $2.3tn misstates the market by two orders of magnitude.
 2. **The mismatch is the story.** Foundation funding for climate adaptation and resilience was **$870m in 2024** against a projected adaptation need of **$310bn per year by 2035**. That is 0.28%. Meanwhile adaptation philanthropy more than doubled from $404m in 2021 and the number of funders grew 55%, so the category is expanding, which is what makes the grow-the-pie goal evidence-backed rather than aspirational.
 3. **There is a strong "why now".** ODA fell 23.1% in real terms in 2025 to $174.3bn, the largest annual decline on record, with the United States alone accounting for 75.1% of the fall. The institutional money these organisations depend on is being withdrawn as the need grows.
 4. **Asia and Oceania receive under 10% of adaptation funding** while holding more than half the world's population, and disaster risk management and community infrastructure are the least funded sectors. The pilot market sits in the least-served region doing the least-funded work.
 5. **The competitive gap is documentation, not geography.** GlobalGiving already operates in 175+ countries. What it does not do is serve organisations without formal registration, two years of financial statements, a documented board and a prior-funder track record. Every requirement removed to reach them is a fraud control GlobalGiving chose to keep.
 6. **Two independent bodies of evidence converge on the same page design.** The identifiable victim effect favours a named person and a specific bounded project. The transparency evidence favours a named accountable person and a costed budget. Section 16 adds a third: climate donors are the highest-due-diligence segment in the IRS donor database, so a page built to be checked suits a donor who checks.
-7. **Page creation is instant and payout is not.** Xendit KYC review takes 5 to 10 business days. The campaign page must work and be shareable during that gap, which is a product requirement rather than a caveat. Any speed claim must be stated against page creation, never against money arriving.
+7. **Page creation is instant and payout is not.** Xendit KYC review takes 5 to 10 business days. dLocal publishes no review time but does impose a hard 30-day KYC completion window after which the account deactivates, and reserves the right to reject an applicant without giving reasons. The campaign page must work and be shareable during that gap, which is a product requirement rather than a caveat. Any speed claim must be stated against page creation, never against money arriving.
+
+9. **The environmental donor gives less and stays longer.** M+R Benchmarks 2026 publishes an Environmental cut: average one-time gift $93 against $139 across all causes, retention 53% against 48%, new-donor retention 28% against 24%, and monthly giving 32% of environmental online revenue against 27%. This is the strongest single argument in the research for shipping recurring giving in the MVP rather than deferring it, and it matters doubly under donor tips, where platform revenue tracks donor volume rather than gift size.
+
+10. **Stripe cannot pay this product's users, in any market considered.** Stripe's own Connect documentation limits cross-border payout recipients to the US, UK, EEA, Canada and Switzerland. The default architecture a developer would reach for is unavailable, which makes dLocal and Xendit load-bearing rather than convenient.
 8. **One finding cuts against the product and must not be buried.** Donation size is strongly driven by perceived effectiveness at addressing climate change, and adaptation protects against consequences rather than reducing emissions. The costed line-by-line budget is the available answer, because it lets a donor judge effectiveness at project level instead of at the level of a climate claim.
 
 ## Next steps, in order
@@ -69,29 +75,33 @@ Selected on the two criteria that map to the product's two hard problems.
 
 ## Missing research areas
 
-None of these blocks the product brief. Each is a flagged Assumption in `grounding-research.md`.
+Rewritten 21 August 2026 after a full verification pass. Nothing here blocks the product brief.
 
-**Worth chasing**
-1. **Whether the Philippine SEC register has a public API.** The SEC lists an "API Marketplace" among its online services, but sec.gov.ph returns HTTP 403 to automated fetching and the eSEARCH front end is a JavaScript application that returned no readable content. Decides whether verification is an automated check or a manual lookup. Lower stakes than it was, because under donor tips verification is a fixed operating cost rather than a per-campaign margin question.
-2. **A current Philippine NPO count.** The 64,087 figure is as of December 2020 and search-snippet sourced. The AMLC NPO Risk Assessment PDF returned HTTP 503 when fetched, and no current figure was published elsewhere that could be found.
-3. **A Philippine climate or environment NGO subset.** Never obtained in any market across three passes. The addressable-population estimate in section 2 applies Kenya's environment-sector share as a cross-country proxy, which is order-of-magnitude only.
-4. **dLocal's onboarding timeline.** Xendit's is known at 5 to 10 business days. dLocal's is not published anywhere found.
-5. **Time from deciding to fundraise to receiving a first donation** on any existing platform. This is the benchmark the product's core speed claim would be judged against and no measured figure exists.
+**Answered in this pass**
+1. ~~Philippine SEC register API.~~ **It exists and it is priced.** The SEC API Marketplace sells a nine-API Company Information Lookup bundle covering registration status, AFS and GIS at PHP 10,000 per 100 calls a year or PHP 50,000 per 1,000, roughly PHP 50 to 100 per lookup. A separate SEC Number API is free at 10 calls a day. Verification can be automated. Residual task: register for the free tier and inspect one response, since its exact fields are undocumented.
+2. ~~A current Philippine NPO count.~~ **Answered negatively, which is itself the answer.** The SEC publishes no aggregate. Answering a 2025 FOI request it quoted PHP 1,000 plus PHP 4 per minute for a raw data extract. The 64,087 figure from December 2020 stands with its date attached.
+3. ~~A Philippine climate or environment NGO subset.~~ **Answered at the accredited tier.** Of 604 PCNC-accredited NGOs, 11 are Environment/Biodiversity, against 306 social welfare, 117 education and 36 health. Only 2 organisations in the whole register name disaster or resilience work. PCNC accreditation sits at roughly the documentation floor this product exists to reach below, so 11 is close to the number of Philippine environmental organisations that do **not** need it. PCNC also turns out to be a free second verification signal with a dated public register.
+4. ~~dLocal's onboarding timeline.~~ **Partly answered.** No published review SLA, but a hard 30-day KYC window, no funds until KYC completes, and rejection without stated reasons.
+6. ~~UNEP Adaptation Gap Report 2025.~~ **Verified primary.** Every figure matched: $310bn modelled and $365bn extrapolated by 2035, $26bn in 2023, 12 to 14 times, Glasgow doubling goal missed, private sector realistically ~$50bn.
+7. ~~The FATF June 2026 grey list.~~ **Verified primary** against FATF's own 19 June 2026 statement. Kenya is listed. The Philippines, Nigeria, Ghana, Mozambique and Honduras are not.
+9. ~~Search-snippet sources needing upgrade.~~ **Mostly done.** World Bank Remittance Prices, Stripe Connect coverage, GoFundMe and Chuffed pricing, ClimateWorks, Giving USA, the Global Philanthropy Tracker and the M+R benchmarks are all now primary. Still weakly sourced: conversion rate and mobile share in section 12, the AFP donor-band figures, the donor-behaviour findings in section 16, and DAF figures in section 11.
+11. ~~Whether climate donors have benchmarks of their own.~~ **Answered.** M+R's Environmental cut, see finding 9 above.
 
-**Verification tasks on existing citations**
-6. **UNEP Adaptation Gap Report 2025** figures are corroborated by two independent searches but still search-snippet sourced. unep.org, sei.org, weadapt.org, iisd.org and the report PDF on wedocs.unep.org all returned HTTP 403 to automated fetching. **Needs a human to open the report.**
-7. **The FATF June 2026 grey list** is secondary-sourced. FATF's own page returns 403.
-8. **The Philippines' 83.1 composite climate-risk figure** is secondary-sourced and needs a primary check.
-9. Also search-snippet sourced and worth upgrading: World Bank Remittance Prices Worldwide Q3 2025, Stripe country and Connect coverage, GoFundMe and Chuffed fee schedules, ClimateWorks reports, Giving USA cause-level data tables, the donor benchmarks in section 12, and everything in section 16.
+**Still open**
+5. **Time from deciding to fundraise to receiving a first donation.** A fourth attempt found nothing. Treat it as unpublished rather than unfound: instrument it from the platform's own data and state speed claims against page creation.
+8. **The Philippines' 83.1 composite climate-risk figure has no locatable source** and is not a Germanwatch CRI value. **Recommended for deletion**, struck through in `market-selection.md` pending the user's decision. Criterion 1 stands on the CRI top-ten placement without it.
+10. **Ghana's foreign-funding position.** The ICNL page reached is an overview of ICNL's own work rather than a legal analysis, and the Council on Foundations country note now 404s. Expansion-market question only.
+12. **Whether donors accept structured disclosure in place of audited financials.** Untested by any source. Sits directly under locked decision 6.
+13. **Whether individual donors will fund adaptation specifically.** Still the deepest assumption in the project. Two data points now bear on it and point opposite ways: a Philippine mangrove campaign that raised PHP 2.9m through GlobalGiving for a countable output, from 2014 and by a large corporate-backed foundation; and the PCNC finding that the certified tier of this whole category is roughly a dozen organisations. The sample of real Philippine organisations that would settle it has still not been assembled, and it remains worth doing before the roadmap.
 
-**Expansion, not needed for the MVP**
-10. **Ghana's foreign-funding position.** Ghanaian NGOs register under the Companies Act and no restriction was located, but nothing positively confirms that foreign donations are receivable without an approval gate. Ghana was previously dismissed partly for a small diaspora, which is no longer a reason for anything, so this is a live question rather than a closed one.
-
-**Probably unanswerable**
-11. **Whether donors accept structured disclosure in place of audited financials.** No source tests it. It sits directly under locked decision 6 as a named assumption.
-12. **Whether individual donors will fund adaptation specifically**, as distinct from disaster relief. Nothing examined measures this, and it is the deepest assumption in the project. **Split it before testing it.** Adaptation with a countable physical output (mangroves planted, hectares restored, wells dug) has retail-funding precedent and suits the costed budget required by locked decision 6. Adaptation without one (early-warning governance, institutional capacity) has neither, and is equally adaptation. The real question is what share of the target user base does work of the first kind, and therefore whether the product's fundable set is narrower than the user base it is designed for. This is answerable with a sample of real Philippine organisations and is worth doing before the roadmap.
+**Three numeric conflicts, resolved by the user on 21 August 2026**
+- Cross-border philanthropy: **$82bn (2023)** is canonical. $70bn (2020) survives only in trend descriptions, with its year stated.
+- Remittance costs: the **Q3 2025 primary set** is canonical, 6.36% global, 8.46% Sub-Saharan Africa, 4.59% digital, 7.30% non-digital. The stacked-cost floor rises accordingly, so total leakage before any platform charge is **8% to 12%**, not 7% to 12%.
+- Per-donor benchmarks: **M+R Benchmarks 2026 is canonical** wherever it publishes a figure, including its Environmental cut. Nonprofit Tech for Good survives only for conversion rate and mobile share, flagged as weaker.
 
 ## Process notes
-- UNEP, FATF, Reddit, niceic.com and sec.gov.ph all block automated fetching. Reddit and similar bot-walled sites are unreachable regardless of network settings.
+- **Corrected 21 August 2026: "blocked by bot protection" described the tool, not the source.** UNEP, FATF and sec.gov.ph were all recorded as unreachable in earlier passes and all three were read directly in this one, through a scraping service using a stealth proxy. Three figures changed as a result and one closed question reopened. Before recording a source as unreachable, try a different fetching route.
+- Genuinely unreachable: Reddit and similar bot-walled platforms. The AMLC NPO Risk Assessment PDF now returns 404 at its cited address, and GlobalGiving's search and country pages render client-side and yield nothing to a plain scrape.
+- **A question closed on the grounds that nothing newer exists deserves re-checking.** The Global Philanthropy Tracker question was closed with more confidence than the evidence supported, and a 12th edition existed.
 - If a PDF extraction tool fails to install, run `apt-get update` before `apt-get install poppler-utils`. A stale package list has previously been misdiagnosed as a broken environment.
 - The `scope.md`, `grounding-research.md`, `research-auditor` sequence is the repo's standing process. Run the auditor on your own draft before presenting it, not only when asked.
