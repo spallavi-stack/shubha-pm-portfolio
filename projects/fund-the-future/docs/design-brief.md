@@ -194,7 +194,7 @@ Ten categories cover what Philippine grassroots environmental and adaptation org
 
 **Why this list is shaped this way.** The categories are ordered so that the ones with the clearest countable physical output come first. That is deliberate, because the project's deepest open assumption is whether adaptation without a countable output can be funded retail at all. Categories 1 to 5, 7 and 9 have a natural unit to put in a costed budget. Categories 6 and 10 do not, and they are the ones where the theme design has to work hardest, since a theme is the only place a product can supply concreteness that the work itself does not hand over.
 
-**Consequence for the theme library.** Ten categories map cleanly onto the five-to-ten themes described in the direction above. The open design question is whether a theme is keyed one-to-one to a category, or whether a smaller number of themes each serve a family of categories.
+**Consequence for the theme library, now settled.** These ten categories are the work taxonomy, and they resolve into the seven themes in section 5. A theme serves a family of categories rather than a single one, because forest restoration and habitat work share a setting and a unit, and because disaster preparedness, education and advocacy share the same design problem of having no countable output.
 
 ## 9. The legitimacy question: the reasoning that led to the two-flow model
 
