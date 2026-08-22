@@ -1,0 +1,1163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fund the Future - Prototype</title>
+<meta name="description" content="Clickable prototype for Fund the Future, a campaign-building and fundraising platform for grassroots climate-adaptation organisations in the Philippines. Fictional case study.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   Fund the Future - design tokens
+   Three-layer: primitive -> semantic -> component.
+   Art direction v2: cream ground, Playfair Display, DM Sans.
+   ============================================================ */
+:root{
+  /* --- primitive: colour --- */
+  --c-cream:#F4F0EA; --c-paper:#FCFBF9; --c-paper-2:#F9F7F3; --c-paper-3:#EFE9DF;
+  --c-ink:#1A202C; --c-ink-2:#5B5750; --c-ink-3:#8A7F72; --c-ink-4:#B0A79A;
+  --c-rule:#DED8CE; --c-rule-2:#E8E3DA; --c-rule-3:#C9C1B4;
+  --c-terra:#D95D39; --c-terra-deep:#C24E2E; --c-terra-wash:#FBEDE8;
+  --c-sage:#8A9A86; --c-sage-deep:#5F7059; --c-sage-mid:#6B7A66; --c-sage-wash:#EEF1EB;
+  --c-amber:#B5822E; --c-amber-wash:#F8F0DF;
+
+  /* --- semantic: surface + text --- */
+  --ground:var(--c-cream); --surface:var(--c-paper); --surface-sunk:var(--c-paper-2);
+  --text:var(--c-ink); --text-soft:var(--c-ink-2); --text-mute:var(--c-ink-3); --text-faint:var(--c-ink-4);
+  --rule:var(--c-rule); --rule-soft:var(--c-rule-2);
+  /* the donation action is one constant colour across every theme, by design rule 3 */
+  --action:var(--c-terra); --action-press:var(--c-terra-deep); --action-on:#FFFFFF;
+  /* verified facts are one constant treatment across every theme, by design rule 2 */
+  --checked:var(--c-sage-deep); --checked-bg:var(--c-sage-wash); --checked-rule:var(--c-sage);
+  --stated:var(--c-ink-2);
+  --flag:var(--c-amber); --flag-bg:var(--c-amber-wash);
+
+  /* --- primitive: space, 5 steps --- */
+  --s1:6px; --s2:12px; --s3:20px; --s4:32px; --s5:56px;
+  /* --- primitive: radius, 5 steps --- */
+  --r1:8px; --r2:12px; --r3:18px; --r4:24px; --r5:999px;
+  --r-arch:260px; /* the signature arch-topped image frame */
+  /* --- primitive: elevation, 4 steps --- */
+  --e1:0 1px 2px rgba(90,60,40,.08);
+  --e2:0 2px 10px rgba(90,60,40,.10);
+  --e3:0 10px 30px rgba(90,60,40,.14);
+  --e4:0 24px 60px rgba(40,25,15,.30);
+
+  /* --- type roles, three of them, per design brief --- */
+  --f-ui:'DM Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;      /* interface */
+  --f-voice:'Playfair Display',Georgia,'Times New Roman',serif;                  /* the organisation's own words */
+  --f-fact:'DM Mono','SFMono-Regular',Consolas,'Liberation Mono',monospace;      /* facts the platform checked */
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--ground); color:var(--text); font-family:var(--f-ui);
+  font-size:16px; line-height:1.6; -webkit-font-smoothing:antialiased;
+}
+img{max-width:100%;display:block}
+button{font-family:inherit;font-size:inherit;cursor:pointer;border:none;background:none;color:inherit}
+input,textarea,select{font-family:var(--f-ui);font-size:15px;color:var(--text)}
+input::placeholder,textarea::placeholder{color:var(--c-ink-4)}
+h1,h2,h3,h4{margin:0;font-family:var(--f-voice);font-weight:600;letter-spacing:-.012em;line-height:1.16}
+p{margin:0 0 var(--s2)}
+a{color:var(--action)}
+.em{font-style:italic;color:var(--action)}
+
+/* ---------- layout ---------- */
+.wrap{max-width:1120px;margin:0 auto;padding:0 var(--s4)}
+.wrap-narrow{max-width:720px;margin:0 auto;padding:0 var(--s4)}
+.stack>*+*{margin-top:var(--s3)}
+.row{display:flex;align-items:center;gap:var(--s2);flex-wrap:wrap}
+.spread{display:flex;align-items:center;justify-content:space-between;gap:var(--s3);flex-wrap:wrap}
+.grid{display:grid;gap:var(--s3)}
+@media(min-width:760px){.grid-2{grid-template-columns:1fr 1fr}.grid-3{grid-template-columns:repeat(3,1fr)}}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+
+/* ---------- chrome ---------- */
+.topbar{position:sticky;top:0;z-index:40;background:rgba(244,240,234,.94);backdrop-filter:blur(10px);border-bottom:1px solid rgba(90,60,40,.10)}
+.topbar-in{max-width:1120px;margin:0 auto;padding:14px var(--s4);display:flex;align-items:center;justify-content:space-between;gap:var(--s2) var(--s3);flex-wrap:wrap}
+.logo{font-family:var(--f-voice);font-size:22px;font-weight:600;letter-spacing:-.01em;white-space:nowrap;flex:0 0 auto}
+.tabs{display:flex;gap:4px;flex-wrap:wrap}
+.tab{font-size:13px;font-weight:500;padding:7px 13px;border-radius:var(--r5);color:var(--text-mute);transition:.15s}
+.tab:hover{background:rgba(90,60,40,.06);color:var(--text)}
+.tab[aria-current="true"]{background:var(--c-ink);color:#fff}
+.ghost{font-size:12px;color:var(--text-mute);border:1px solid var(--rule);border-radius:var(--r5);padding:6px 13px;background:var(--surface)}
+.ghost:hover{border-color:var(--c-rule-3);color:var(--text)}
+
+/* demo scaffolding is visually distinct from the product itself */
+.demobar{background:var(--c-ink);color:#E9E3D9;font-size:12.5px;letter-spacing:.01em}
+.demobar-in{max-width:1120px;margin:0 auto;padding:9px var(--s4);display:flex;align-items:center;justify-content:space-between;gap:var(--s3);flex-wrap:wrap}
+.demobar b{color:#fff;font-weight:500}
+.demobar .dot{width:6px;height:6px;border-radius:50%;background:var(--c-terra);display:inline-block;margin-right:7px;vertical-align:middle}
+
+/* ---------- buttons ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-weight:500;font-size:15px;padding:13px 24px;border-radius:var(--r5);transition:.15s;text-decoration:none}
+.btn-give{background:var(--action);color:var(--action-on);box-shadow:0 2px 10px rgba(150,70,40,.24)}
+.btn-give:hover{background:var(--action-press)}
+.btn-give:disabled{opacity:.45;cursor:not-allowed}
+.btn-line{border:1px solid var(--c-rule-3);color:var(--text);background:var(--surface)}
+.btn-line:hover{border-color:var(--text-mute)}
+.btn-ink{background:var(--c-ink);color:#fff}
+.btn-ink:hover{background:#000}
+.btn-sm{font-size:13.5px;padding:9px 17px}
+.btn-block{width:100%}
+
+/* ---------- cards + surfaces ---------- */
+.card{background:var(--surface);border:1px solid var(--rule-soft);border-radius:var(--r3);box-shadow:var(--e1)}
+.pad{padding:var(--s4)}
+.pad-sm{padding:var(--s3)}
+.sunk{background:var(--surface-sunk);border-radius:var(--r2)}
+.eyebrow{font-family:var(--f-ui);font-size:11.5px;font-weight:500;letter-spacing:.13em;text-transform:uppercase;color:var(--text-mute)}
+.lede{font-size:18px;line-height:1.62;color:var(--text-soft)}
+.small{font-size:13.5px;color:var(--text-mute);line-height:1.55}
+.hr{height:1px;background:var(--rule);border:0;margin:var(--s4) 0}
+
+/* the signature arch-topped photograph */
+.arch{border-radius:var(--r-arch) var(--r-arch) var(--r2) var(--r2);overflow:hidden;background:var(--c-paper-3)}
+.arch-sm{border-radius:120px 120px var(--r2) var(--r2);overflow:hidden;background:var(--c-paper-3)}
+.photo{width:100%;height:100%;object-fit:cover;display:block}
+
+/* ---------- the two evidence treatments (design rule 2) ---------- */
+/* a fact the platform checked */
+.fact{font-family:var(--f-fact);font-size:13px;letter-spacing:-.01em;color:var(--checked)}
+.checkrow{display:flex;gap:var(--s2);align-items:flex-start;padding:var(--s2) 0;border-bottom:1px dashed var(--c-rule)}
+.checkrow:last-child{border-bottom:0}
+.checkrow .k{flex:1 1 auto;font-size:14px;color:var(--text-soft)}
+.checkrow .v{flex:0 0 auto;text-align:right}
+.tick{flex:0 0 auto;width:18px;height:18px;border-radius:50%;background:var(--checked-bg);color:var(--checked);display:inline-flex;align-items:center;justify-content:center;font-size:11px;margin-top:3px}
+.tick.miss{background:var(--flag-bg);color:var(--flag)}
+/* something the organisation said about itself */
+.stated-block{font-family:var(--f-voice);font-size:19px;line-height:1.55;font-style:italic;color:var(--text)}
+.label-checked{display:inline-flex;align-items:center;gap:6px;font-family:var(--f-ui);font-size:11px;font-weight:500;letter-spacing:.11em;text-transform:uppercase;color:var(--checked);background:var(--checked-bg);border-radius:var(--r5);padding:4px 11px}
+.label-stated{display:inline-flex;align-items:center;gap:6px;font-family:var(--f-ui);font-size:11px;font-weight:500;letter-spacing:.11em;text-transform:uppercase;color:var(--text-mute);background:var(--c-paper-3);border-radius:var(--r5);padding:4px 11px}
+.label-flag{display:inline-flex;align-items:center;gap:6px;font-family:var(--f-ui);font-size:11px;font-weight:500;letter-spacing:.11em;text-transform:uppercase;color:var(--flag);background:var(--flag-bg);border-radius:var(--r5);padding:4px 11px}
+
+/* ---------- forms ---------- */
+.field{display:block;margin-bottom:var(--s3)}
+.field>span{display:block;font-size:13.5px;font-weight:500;color:var(--text-soft);margin-bottom:6px}
+.field .hint{font-weight:400;color:var(--text-mute);font-size:12.5px;margin-top:5px;display:block}
+.inp{width:100%;padding:12px 14px;border:1px solid var(--c-rule-3);border-radius:var(--r1);background:var(--surface);outline:none;transition:.15s}
+.inp:focus{border-color:var(--c-sage);box-shadow:0 0 0 3px rgba(138,154,134,.24)}
+textarea.inp{min-height:96px;resize:vertical;line-height:1.55}
+.why{background:var(--checked-bg);border-left:3px solid var(--c-sage);border-radius:0 var(--r1) var(--r1) 0;padding:var(--s2) var(--s3);font-size:13.5px;color:var(--c-sage-deep);line-height:1.55;margin:calc(var(--s1)*-1) 0 var(--s3)}
+.why b{font-weight:600}
+
+/* ---------- progress + meters ---------- */
+.meter{height:7px;border-radius:var(--r5);background:var(--c-paper-3);overflow:hidden}
+.meter>i{display:block;height:100%;border-radius:var(--r5);background:var(--action)}
+.meter.cap>i{background:var(--c-sage)}
+.steps{display:flex;gap:5px;margin-bottom:var(--s3)}
+.steps>i{flex:1;height:3px;border-radius:var(--r5);background:var(--c-rule)}
+.steps>i.on{background:var(--c-ink)}
+
+/* ---------- chips ---------- */
+.chip{font-size:13px;padding:8px 15px;border-radius:var(--r5);border:1px solid var(--c-rule-3);background:var(--surface);color:var(--text-soft);transition:.15s}
+.chip:hover{border-color:var(--text-mute)}
+.chip[aria-pressed="true"]{background:var(--c-ink);border-color:var(--c-ink);color:#fff}
+.chip-sage[aria-pressed="true"]{background:var(--c-sage-deep);border-color:var(--c-sage-deep)}
+
+/* ---------- overlays ---------- */
+.scrim{position:fixed;inset:0;background:rgba(26,32,44,.44);z-index:60;display:flex;align-items:flex-end;justify-content:center;animation:fade .18s ease}
+@media(min-width:720px){.scrim{align-items:center}}
+.sheet{background:var(--ground);width:100%;max-width:520px;max-height:92vh;overflow:auto;border-radius:var(--r4) var(--r4) 0 0;box-shadow:var(--e4);animation:rise .26s cubic-bezier(.2,.8,.2,1)}
+@media(min-width:720px){.sheet{border-radius:var(--r4)}}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+@keyframes rise{from{transform:translateY(22px);opacity:0}to{transform:none;opacity:1}}
+.riser{animation:rise .3s cubic-bezier(.2,.8,.2,1) both}
+
+/* ---------- footer ---------- */
+.foot{margin-top:var(--s5);border-top:1px solid var(--rule);background:var(--c-paper-2)}
+.foot-in{max-width:1120px;margin:0 auto;padding:var(--s4);font-size:13px;color:var(--text-mute);line-height:1.6}
+@media(max-width:560px){
+  .wrap,.wrap-narrow{padding:0 var(--s3)}
+  .topbar-in,.demobar-in,.foot-in{padding-left:var(--s3);padding-right:var(--s3)}
+  .pad{padding:var(--s3)}
+  h1{font-size:32px!important}
+  .tabs{width:100%;overflow-x:auto;flex-wrap:nowrap;-webkit-overflow-scrolling:touch}
+  .tab{white-space:nowrap}
+}
+</style>
+</head>
+<body>
+<div class="demobar">
+  <div class="demobar-in">
+    <span><span class="dot"></span><b>Prototype.</b> Fictional product, invented organisations, simulated donations. No money moves at any point.</span>
+    <button class="ghost" style="background:transparent;border-color:#4a443c;color:#E9E3D9" onclick="restart()">Restart demo</button>
+  </div>
+</div>
+<div class="topbar">
+  <div class="topbar-in">
+    <button class="logo" onclick="go('home')">Fund the <span class="em">Future</span></button>
+    <nav class="tabs" id="tabs"></nav>
+  </div>
+</div>
+<main id="app"></main>
+<footer class="foot"><div class="foot-in">
+  <b>Fund the Future</b> is a fictional case study built for a product portfolio. Market research behind it is real and cited; the organisations, people, campaigns and donations in this prototype are synthetic.
+  Donations are simulated end to end. There is no payment provider, no account and no money.
+</div></footer>
+<script>
+/* ============================================================
+   Fund the Future - prototype logic
+   All state is in memory. Nothing persists, nothing is sent
+   anywhere, and no payment provider exists behind any button.
+   ============================================================ */
+
+/* ---------- themes -------------------------------------------------
+   A theme is a content structure that knows what the work is measured
+   in. Palette and imagery are the smaller half. The unit is the half a
+   grassroots organisation cannot produce for itself.
+------------------------------------------------------------------- */
+const THEMES = {
+  coastal:{name:"Coastal and mangrove", covers:"Mangrove restoration, coastal protection",
+    accent:"#3F6F63", wash:"#E9F0ED", setting:"Tidal, silt, low horizon",
+    units:[{k:"hectares",label:"hectares restored"},{k:"seedlings",label:"seedlings planted"}],
+    lines:["Propagule collection","Nursery labour","Boat fuel","Site coordinator"]},
+  sea:{name:"Sea and fisheries", covers:"Marine protected areas, reefs, sustainable gear",
+    accent:"#2F6B84", wash:"#E7EFF3", setting:"Underwater and boat level",
+    units:[{k:"hectares",label:"hectares protected"},{k:"sites",label:"reef sites monitored"},{k:"gear",label:"gear sets replaced"}],
+    lines:["Marker buoys","Patrol fuel","Gear exchange","Warden stipend"]},
+  forest:{name:"Forest and watershed", covers:"Rainforestation, upland reforestation, habitat",
+    accent:"#4F6B33", wash:"#EDF1E7", setting:"Upland, canopy",
+    units:[{k:"trees",label:"native trees planted"},{k:"hectares",label:"hectares reforested"}],
+    lines:["Native seedlings","Nursery construction","Planting labour","Two-year maintenance"]},
+  farm:{name:"Farms and food security", covers:"Climate-resilient agriculture, agroforestry, seed banks",
+    accent:"#8A6B22", wash:"#F5F0E2", setting:"Farmland",
+    units:[{k:"farms",label:"farms converted"},{k:"households",label:"households supported"}],
+    lines:["Seed stock","Soil testing","Farmer training days","Storage build"]},
+  infra:{name:"Community infrastructure", covers:"Rainwater harvesting, potable water, small community energy",
+    accent:"#5C6484", wash:"#ECEEF4", setting:"Village, built structures",
+    units:[{k:"systems",label:"systems built"},{k:"households",label:"households served"}],
+    lines:["Tanks and guttering","Concrete and hardware","Plumber labour","Water quality testing"]},
+  prepare:{name:"Preparedness and capacity", covers:"Disaster risk management, early warning, evacuation, training",
+    accent:"#9E5236", wash:"#F7ECE7", setting:"People and community spaces",
+    /* the only theme whose job is to invent legibility rather than present it */
+    units:[{k:"drills",label:"drills run"},{k:"households",label:"households with a plan"},{k:"people",label:"people trained"}],
+    lines:["Radio units","Boat fuel for drills","Assembly point tarpaulins","Volunteer meals on drill days"],
+    supplies_unit:true},
+  waste:{name:"Waste and plastics", covers:"Collection, recovery facilities, shoreline and urban cleanup",
+    accent:"#4E6A74", wash:"#EAEFF1", setting:"Urban and shoreline",
+    units:[{k:"tonnes",label:"tonnes diverted"},{k:"facilities",label:"facilities built"}],
+    lines:["Shredder unit","Collection sacks","Collector wages","Facility roofing"]}
+};
+const THEME_KEYS = Object.keys(THEMES);
+
+/* ---------- generated imagery ---------------------------------------
+   No photographs exist for a fictional organisation, so each theme
+   renders an abstract scene in its own accent family. Design rule 5
+   says uploaded photographs are treated rather than used raw; the
+   fixed aspect ratio and the single grade are what that rule means.
+------------------------------------------------------------------- */
+function scene(themeKey, seed){
+  const t = THEMES[themeKey], a = t.accent, sky = t.wash;
+  const rnd = n => { const x = Math.sin((seed||1)*(n+1)*12.9898)*43758.5453; return x - Math.floor(x); };
+  const O = (v)=>v.toFixed(2);
+  let body = "";
+
+  if(themeKey==="sea"){
+    body = `<rect width="400" height="400" fill="${a}"/>
+      ${[...Array(5)].map((_,i)=>`<path d="M${40+i*80} 0 l${18+rnd(i)*22} 0 l-${50+rnd(i)*40} 400 l-${18} 0Z" fill="#fff" opacity="${O(.05+rnd(i+9)*.04)}"/>`).join("")}
+      <path d="M0 300 q60 -34 130 -14 t140 -6 t130 16 V400 H0Z" fill="#0d3a4d" opacity=".34"/>
+      ${[...Array(9)].map((_,i)=>`<circle cx="${28+rnd(i)*344}" cy="${300+rnd(i+3)*80}" r="${9+rnd(i+5)*16}" fill="#fff" opacity="${O(.07+rnd(i+7)*.07)}"/>`).join("")}
+      ${[...Array(7)].map((_,i)=>`<path d="M${40+i*52} ${140+rnd(i)*120} l16 -7 l-16 -7 q9 7 0 14Z" fill="#fff" opacity="${O(.16+rnd(i+2)*.14)}"/>`).join("")}
+      <path d="M126 44 q74 -26 148 0 l-24 26 h-100Z" fill="#0d3a4d" opacity=".3"/>`;
+  }
+  else if(themeKey==="forest"){
+    body = `<rect width="400" height="400" fill="${sky}"/>
+      <circle cx="300" cy="80" r="42" fill="#fff" opacity=".55"/>
+      <path d="M0 250 l90 -78 l84 60 l70 -50 l156 84 V400 H0Z" fill="${a}" opacity=".42"/>
+      <path d="M0 300 l110 -70 l96 56 l194 -46 V400 H0Z" fill="${a}" opacity=".7"/>
+      ${[...Array(16)].map((_,i)=>{const x=10+i*26+rnd(i)*10, h=70+rnd(i+3)*90, y=400-rnd(i+5)*40;
+        return `<path d="M${x} ${y} l${11+rnd(i)*4} -${h} l${11+rnd(i+1)*4} ${h}Z" fill="#1f3315" opacity="${O(.24+rnd(i+2)*.3)}"/>`;}).join("")}
+      <rect y="376" width="400" height="24" fill="#1f3315" opacity=".3"/>`;
+  }
+  else if(themeKey==="farm"){
+    body = `<rect width="400" height="400" fill="${sky}"/>
+      <circle cx="312" cy="76" r="38" fill="#fff" opacity=".6"/>
+      <path d="M0 190 l400 -34 V400 H0Z" fill="${a}" opacity=".38"/>
+      <path d="M0 246 l400 -22 V400 H0Z" fill="${a}" opacity=".72"/>
+      ${[...Array(9)].map((_,i)=>`<path d="M-20 ${262+i*17} q210 -${16+i*2} 440 ${2+i}" stroke="#5b451a" stroke-width="${2+rnd(i)*2}" fill="none" opacity="${O(.16+rnd(i)*.16)}"/>`).join("")}
+      ${[...Array(6)].map((_,i)=>`<g opacity=".3"><path d="M${34+i*68} ${300+rnd(i)*60} v-30" stroke="#3d2f12" stroke-width="4"/><circle cx="${34+i*68}" cy="${268+rnd(i)*60}" r="11" fill="#3d2f12"/></g>`).join("")}`;
+  }
+  else if(themeKey==="infra"){
+    body = `<rect width="400" height="400" fill="${sky}"/>
+      ${[...Array(14)].map((_,i)=>`<line x1="${rnd(i)*400}" y1="0" x2="${rnd(i)*400-40}" y2="220" stroke="#fff" stroke-width="2" opacity="${O(.14+rnd(i+4)*.12)}"/>`).join("")}
+      <rect y="300" width="400" height="100" fill="${a}" opacity=".72"/>
+      <rect x="28" y="188" width="132" height="114" rx="4" fill="${a}" opacity=".9"/>
+      <path d="M14 188 L94 128 L174 188Z" fill="#2c3048" opacity=".8"/>
+      <rect x="62" y="232" width="34" height="70" fill="#fff" opacity=".22"/>
+      <rect x="238" y="196" width="86" height="106" rx="43" fill="#fff" opacity=".42"/>
+      <rect x="238" y="196" width="86" height="26" rx="13" fill="#2c3048" opacity=".5"/>
+      <path d="M174 176 h74 v14 h-74Z" fill="#2c3048" opacity=".6"/>
+      ${[...Array(10)].map((_,i)=>`<line x1="${281+rnd(i)*4-2}" y1="${306+i*9}" x2="${281+rnd(i+2)*4-2}" y2="${312+i*9}" stroke="#fff" stroke-width="2" opacity=".3"/>`).join("")}`;
+  }
+  else if(themeKey==="prepare"){
+    body = `<rect width="400" height="400" fill="${sky}"/>
+      <rect y="292" width="400" height="108" fill="${a}" opacity=".78"/>
+      <rect x="112" y="96" width="176" height="96" rx="8" fill="${a}" opacity=".32"/>
+      <path d="M200 118 v52 M200 182 v10" stroke="#fff" stroke-width="7" opacity=".7" stroke-linecap="round"/>
+      ${[...Array(8)].map((_,i)=>{const x=30+i*48+rnd(i)*8, s=1+rnd(i+3)*.35;
+        return `<g opacity="${O(.5+rnd(i+1)*.4)}" transform="translate(${x} ${292-rnd(i+2)*24}) scale(${O(s)})">
+          <circle cx="0" cy="-84" r="14" fill="#59281a"/>
+          <path d="M-15 0 v-62 q15 -20 30 0 V0Z" fill="#59281a"/></g>`;}).join("")}
+      <rect y="384" width="400" height="16" fill="#59281a" opacity=".28"/>`;
+  }
+  else if(themeKey==="waste"){
+    body = `<rect width="400" height="400" fill="${sky}"/>
+      <rect y="150" width="400" height="86" fill="${a}" opacity=".45"/>
+      <path d="M0 236 q70 -20 140 -6 t130 4 t130 -8 V400 H0Z" fill="${a}" opacity=".8"/>
+      <path d="M228 118 h150 v40 h-150Z" fill="${a}" opacity=".55"/>
+      <path d="M214 118 L303 74 L392 118Z" fill="#2c3f46" opacity=".7"/>
+      ${[...Array(22)].map((_,i)=>{const x=8+rnd(i)*380, y=252+rnd(i+4)*136;
+        return `<rect x="${O(x)}" y="${O(y)}" width="${8+rnd(i+1)*20}" height="${6+rnd(i+2)*12}" rx="3" transform="rotate(${O(rnd(i+3)*90-45)} ${O(x)} ${O(y)})" fill="#fff" opacity="${O(.2+rnd(i+5)*.35)}"/>`;}).join("")}`;
+  }
+  else { /* coastal and mangrove */
+    body = `<rect width="400" height="400" fill="${sky}"/>
+      <circle cx="86" cy="72" r="34" fill="#fff" opacity=".5"/>
+      <path d="M0 214 h400 v34 H0Z" fill="${a}" opacity=".28"/>
+      <path d="M0 248 q66 -16 132 -4 t134 2 t134 -10 V400 H0Z" fill="${a}" opacity=".82"/>
+      ${[...Array(11)].map((_,i)=>{const x=6+i*38+rnd(i)*10, h=86+rnd(i+2)*104, top=252-h;
+        return `<g opacity="${O(.34+rnd(i+1)*.42)}" stroke="#1d3b33" fill="none" stroke-width="4" stroke-linecap="round">
+          <path d="M${O(x)} 262 V${O(top)}"/>
+          <path d="M${O(x)} ${O(top+16)} l-15 -19 M${O(x)} ${O(top+16)} l15 -19 M${O(x)} ${O(top+44)} l-19 -16 M${O(x)} ${O(top+44)} l19 -16"/>
+          <path d="M${O(x)} 262 l-17 26 M${O(x)} 262 l17 26 M${O(x)} 268 l-7 22 M${O(x)} 268 l7 22"/></g>`;}).join("")}
+      <path d="M0 316 q60 -12 120 0 t120 0 t170 0" stroke="#fff" stroke-width="2" fill="none" opacity=".26"/>
+      <path d="M0 350 q60 -12 120 0 t120 0 t170 0" stroke="#fff" stroke-width="2" fill="none" opacity=".2"/>`;
+  }
+  return `<svg viewBox="0 0 400 400" preserveAspectRatio="xMidYMid slice" style="width:100%;height:100%;display:block" role="img" aria-label="Illustrative scene: ${t.setting}">
+    ${body}<rect width="400" height="400" fill="#D9C9A8" opacity=".10"/></svg>`;
+}
+
+/* ---------- money ---------- */
+const FX = 58; /* illustrative PHP per USD, fixed for the demo */
+const peso = n => "₱" + Math.round(n).toLocaleString("en-US");
+const usd  = n => "$" + Math.round(n/FX).toLocaleString("en-US");
+const both = n => `${peso(n)} <span style="color:var(--text-mute)">≈ ${usd(n)}</span>`;
+
+/* ---------- the SEC register, as fixtures --------------------------
+   The live Philippine SEC register is the product's only fraud control
+   and its free API tier allows ten calls a day, which is why the real
+   build would cache and why this prototype ships recorded responses.
+------------------------------------------------------------------- */
+const REGISTER = {
+  "CN201612345":{name:"Bantay Bakawan Inc.", status:"Registered", incorporated:"2016-04-19",
+    gis:"2026-03-11", afs:"2023-09-30", afsMissing:2, pcnc:null, address:"Bantayan, Cebu"},
+  "CN202154321":{name:"Handa Guiuan Foundation Inc.", status:"Registered", incorporated:"2021-02-08",
+    gis:"2026-04-02", afs:"2026-04-02", afsMissing:0, pcnc:"2027-05-30", address:"Guiuan, Eastern Samar"},
+  "CN201800777":{name:"Tubig Para sa Lahat Inc.", status:"Registered", incorporated:"2018-07-25",
+    gis:"2026-02-19", afs:"2025-10-14", afsMissing:1, pcnc:null, address:"Tanauan, Batangas"},
+  "CN201911223":{name:"Samahan sa Kabundukan Inc.", status:"Registered", incorporated:"2019-03-14",
+    gis:"2026-01-22", afs:"2024-11-08", afsMissing:1, pcnc:null, address:"Baybay, Leyte"},
+  "CN202233445":{name:"Bulig Dagat Inc.", status:"Registered", incorporated:"2022-06-30",
+    gis:"2026-05-14", afs:"2026-05-14", afsMissing:0, pcnc:null, address:"Taytay, Palawan"},
+  "CN202066778":{name:"Baybay Linis Inc.", status:"Registered", incorporated:"2020-09-01",
+    gis:"2025-12-03", afs:"2022-10-19", afsMissing:3, pcnc:null, address:"Iloilo City"},
+  "CN200987654":{name:"Kalikasan Ridge Foundation Inc.", status:"Revoked", incorporated:"2009-11-03",
+    gis:"2019-06-12", afs:"2018-08-30", afsMissing:7, pcnc:null, address:"Baguio City"}
+};
+
+/* The floor and the cap, decided 22 August 2026.
+   Registered and not revoked is the floor. Missing filings lower the
+   amount a campaign may raise rather than blocking publication. */
+const CAP_FULL = 1200000;
+function assess(rec){
+  if(!rec) return {ok:false, reason:"no-record"};
+  if(rec.status !== "Registered") return {ok:false, reason:"revoked", rec};
+  let cap = CAP_FULL, why = [];
+  if(rec.afsMissing >= 3){ cap = 250000; why.push(`${rec.afsMissing} years of audited financial statements are not on file`); }
+  else if(rec.afsMissing === 2){ cap = 400000; why.push("two years of audited financial statements are not on file"); }
+  else if(rec.afsMissing === 1){ cap = 750000; why.push("the most recent audited financial statements are not on file"); }
+  if(rec.pcnc) { cap = Math.round(cap*1.5); why.push("PCNC accreditation is current"); }
+  return {ok:true, cap, why, rec};
+}
+</script>
+<script>
+/* ---------- seeded campaigns ---------- */
+function seedCampaigns(){ return [
+ {id:"bakawan", theme:"coastal", seed:3, sec:"CN201612345",
+  org:"Bantay Bakawan", place:"Bantayan Island, Cebu",
+  title:"Give our coastline its roots back",
+  ask:"Replant 14 hectares of stripped mangrove before the October planting window closes.",
+  person:{name:"Elena Bacani", role:"Founder and executive director",
+    quote:"We planted the first four hectares with money from people who had visited the island. I am asking strangers this time because the season does not wait for a grant cycle."},
+  impact:[{k:"hectares",n:14,label:"hectares restored"},{k:"seedlings",n:31000,label:"seedlings planted"}],
+  budget:[["Propagule collection, 31,000 units",62000],["Nursery labour, 5 months",156000],
+          ["Boat fuel and transport",68000],["Site coordinator, 6 months at ₱21,000",126000],["Survival monitoring, year one",92000]],
+  report:"Photographs of every planted hectare and a line-by-line spend report, in April 2027, and a survival count at twelve months.",
+  prior:"Four hectares planted in 2023 and 2024, 71% survival at eighteen months.",
+  raised:268400, donors:214},
+
+ {id:"handa", theme:"prepare", seed:7, sec:"CN202154321",
+  org:"Handa Guiuan", place:"Guiuan, Eastern Samar",
+  title:"Two hundred and six names on the evacuation list",
+  ask:"Fund a year of drills, radios and a household preparedness programme for the barangays that flood first.",
+  person:{name:"Fr. Ruben Salazar", role:"Parish priest and programme lead",
+    quote:"I have run four hundred and ten drills and never written that number down, because nobody asked and it did not feel like a number. It was just Tuesdays."},
+  impact:[{k:"drills",n:48,label:"drills run"},{k:"households",n:206,label:"households with a plan"},{k:"people",n:820,label:"people trained"}],
+  budget:[["Handheld radio units, 12",96000],["Boat fuel for drill days",38000],
+          ["Assembly point tarpaulins and signage",29000],["Volunteer meals, 48 drill days",57000],["Printed household plans, 206",14000]],
+  report:"The drill log and the household plan register, published every quarter, with a spend report each June.",
+  prior:"Programme running since 2021. Zero casualties in the barangays covered during Typhoon Kristine.",
+  raised:214000, donors:143},
+
+ {id:"tubig", theme:"infra", seed:2, sec:"CN201800777",
+  org:"Tubig Para sa Lahat", place:"Tanauan, Batangas",
+  title:"Rainwater for 240 households in Sitio Malinis",
+  ask:"Build 24 shared rainwater harvesting systems where the dry season now runs six weeks longer than it did a decade ago.",
+  person:{name:"Josefa Lim", role:"Barangay water committee chair",
+    quote:"We carry water uphill for two hours in April and May. The tanks are not a dream, they are guttering and a concrete pad, and we can build them ourselves if someone buys the parts."},
+  impact:[{k:"systems",n:24,label:"systems built"},{k:"households",n:240,label:"households served"}],
+  budget:[["Tanks and guttering, 24 sets",312000],["Concrete, hardware, fixings",96000],
+          ["Plumber labour, 24 installs",108000],["Water quality testing, year one",42000],["Committee training",22000]],
+  report:"A photograph of each finished system with its household count, and a spend report in March 2027.",
+  prior:"Six systems built in 2024, all still in use.",
+  raised:584300, donors:391},
+
+ {id:"kabundukan", theme:"forest", seed:5, sec:"CN201911223",
+  org:"Samahan sa Kabundukan", place:"Baybay, Leyte",
+  title:"Rainforestation on the ridge above the town",
+  ask:"Plant 9,000 native seedlings on the slope that failed in the 2024 landslide.",
+  person:{name:"Dante Oreta", role:"Nursery lead",
+    quote:"Falcata grows fast and comes down faster. We are planting the trees that were here before, because those are the ones that hold in a typhoon."},
+  impact:[{k:"trees",n:9000,label:"native trees planted"},{k:"hectares",n:11,label:"hectares reforested"}],
+  budget:[["Native seedlings, 9,000",180000],["Nursery construction",74000],["Planting labour, 40 days",128000],["Two-year maintenance",96000]],
+  report:"A survival count at twelve and twenty-four months, with photographs from fixed points.",
+  prior:"3,200 seedlings planted in 2025, 68% survival at twelve months.",
+  raised:97500, donors:64},
+
+ {id:"buligdagat", theme:"sea", seed:11, sec:"CN202233445",
+  org:"Bulig Dagat", place:"Taytay, Palawan",
+  title:"Keep the reef closed long enough to come back",
+  ask:"Fund a year of warden patrols and marker buoys on a 60 hectare marine protected area.",
+  person:{name:"Marlon Bugaring", role:"Warden coordinator",
+    quote:"The closure is on paper already. What is missing is the boat that shows up when someone tests it."},
+  impact:[{k:"hectares",n:60,label:"hectares protected"},{k:"sites",n:8,label:"reef sites monitored"}],
+  budget:[["Marker buoys and anchors",118000],["Patrol boat fuel, 12 months",144000],["Warden stipends, 4 people",216000],["Reef survey equipment",62000]],
+  report:"Quarterly patrol logs and an annual reef survey with photographs.",
+  prior:"Area declared in 2022. Fish biomass survey pending funding.",
+  raised:41200, donors:29},
+
+ {id:"baybaylinis", theme:"waste", seed:8, sec:"CN202066778",
+  org:"Baybay Linis", place:"Iloilo City",
+  title:"A shredder, and two people paid properly",
+  ask:"Set up a small plastics recovery point at the river mouth and pay the two collectors who already do the work.",
+  person:{name:"Cherry Ann Dela Peña", role:"Collection coordinator",
+    quote:"We pull the same plastic out of the same bend every Saturday. Without a shredder we are just moving it somewhere else."},
+  impact:[{k:"tonnes",n:36,label:"tonnes diverted"},{k:"facilities",n:1,label:"recovery point built"}],
+  budget:[["Shredder unit",184000],["Facility roofing and slab",92000],["Collector wages, 2 people, 12 months",288000],["Collection sacks and sorting bins",26000]],
+  report:"Monthly weight logs published on the campaign page, with a spend report each January.",
+  prior:"Volunteer cleanups since 2022, roughly 4 tonnes a year recovered by hand.",
+  raised:128900, donors:88}
+];}
+
+/* ---------- state ---------- */
+let S;
+function restart(){
+  S = {
+    screen:"home",
+    campaigns:seedCampaigns(),
+    viewing:"bakawan",
+    /* donor side */
+    filters:{themes:[], need:"any"},
+    give:{open:false, amount:1500, mode:"once", tip:12, done:false, forId:null},
+    /* organisation side */
+    reg:{sec:"", contact:"", personName:"", personRole:"", theme:"", submitted:false, result:null, day:0},
+    build:{step:0, published:false, data:null}
+  };
+  go("home");
+}
+const el = id => document.getElementById(id);
+function go(screen){ S.screen = screen; window.scrollTo(0,0); render(); }
+function set(path, val){ /* tiny setter for "a.b.c" */
+  const p = path.split("."); let o = S;
+  while(p.length>1) o = o[p.shift()];
+  o[p[0]] = val; render();
+}
+function current(){ return S.campaigns.find(c=>c.id===S.viewing) || S.campaigns[0]; }
+const esc = s => String(s).replace(/[&<>"]/g, m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[m]));
+
+/* ---------- chrome ---------- */
+const TABS = [["home","Home"],["discover","Discover"],["campaign","Campaign page"],["register","Run an organisation"]];
+function renderTabs(){
+  const group = {home:"home", discover:"discover", campaign:"campaign",
+    register:"register", verifying:"register", approved:"register", rejected:"register",
+    builder:"register", published:"register"}[S.screen] || "home";
+  el("tabs").innerHTML = TABS.map(([k,label])=>
+    `<button class="tab" aria-current="${group===k}" onclick="go('${k}')">${label}</button>`).join("");
+}
+</script>
+<script>
+/* ---------- shared bits ---------- */
+function capOf(c){ const a = assess(REGISTER[c.sec]); return a.ok ? a.cap : 0; }
+function goalOf(c){ return c.budget.reduce((t,[,v])=>t+v,0); }
+function cardFor(c){
+  const goal = goalOf(c), cap = capOf(c), t = THEMES[c.theme];
+  const pct = Math.min(100, Math.round(c.raised/Math.min(goal,cap)*100));
+  return `<button class="card" style="text-align:left;padding:0;overflow:hidden;display:block;width:100%" onclick="S.viewing='${c.id}';go('campaign')">
+    <div style="aspect-ratio:4/3">${scene(c.theme,c.seed)}</div>
+    <div class="pad-sm">
+      <div class="eyebrow" style="color:${t.accent}">${esc(t.name)}</div>
+      <h3 style="font-size:19px;margin:6px 0 8px">${esc(c.title)}</h3>
+      <div class="small" style="margin-bottom:14px">${esc(c.org)} · ${esc(c.place)}</div>
+      <div class="meter" style="margin-bottom:8px"><i style="width:${pct}%"></i></div>
+      <div class="small"><b style="color:var(--text)">${peso(c.raised)}</b> of ${peso(Math.min(goal,cap))} · ${peso(Math.max(0,Math.min(goal,cap)-c.raised))} still needed</div>
+    </div></button>`;
+}
+
+/* ---------- home ---------- */
+function viewHome(){
+  const c = S.campaigns[0];
+  return `
+  <section style="padding:var(--s5) 0 var(--s4)"><div class="wrap">
+    <div class="grid grid-2" style="align-items:center;gap:var(--s5)">
+      <div class="riser">
+        <div class="eyebrow" style="margin-bottom:var(--s2)">Pilot market: the Philippines</div>
+        <h1 style="font-size:46px;margin-bottom:var(--s3)">Grassroots climate work,<br><span class="em">funded directly.</span></h1>
+        <p class="lede" style="margin-bottom:var(--s4)">A grassroots climate-adaptation organisation raises money from donors anywhere in the world. It is verified before it can publish, and every donation settles into its own account.</p>
+        <div class="row">
+          <button class="btn btn-give" onclick="go('discover')">Find work to fund</button>
+          <button class="btn btn-line" onclick="go('register')">Register your organisation</button>
+        </div>
+        <p class="small" style="margin-top:var(--s3)">The platform never holds the money, and takes nothing from what an organisation raises.</p>
+      </div>
+      <div class="arch riser" style="aspect-ratio:4/5;box-shadow:var(--e3)">${scene("coastal",3)}</div>
+    </div>
+  </div></section>
+
+  <section style="padding:var(--s4) 0"><div class="wrap">
+    <div class="grid grid-3">
+      ${[["We check the register, so the organisation does not assemble a dossier.",
+          "The Philippine SEC shows whether an organisation filed its annual officer sheet and its audited accounts, not only that it exists. We read it. The organisation never sends us a document it does not already have."],
+         ["What was checked looks different from what was said.",
+          "One treatment for facts confirmed against a public register. Another for everything the organisation tells you about itself. The difference is learnable within a single page."],
+         ["Missing paperwork lowers the ceiling. It does not close the door.",
+          "An organisation that is registered and not revoked can publish. Filings it has not made reduce how much a campaign may raise, and the page says which ones and by how much."]
+        ].map(([h,p])=>`<div class="card pad"><h3 style="font-size:19px;margin-bottom:var(--s2)">${h}</h3><p class="small" style="margin:0">${p}</p></div>`).join("")}
+    </div>
+  </div></section>
+
+  <section style="padding:var(--s4) 0 var(--s5)"><div class="wrap">
+    <div class="spread" style="margin-bottom:var(--s3)">
+      <h2 style="font-size:28px">Open campaigns</h2>
+      <button class="btn btn-line btn-sm" onclick="go('discover')">See all six</button>
+    </div>
+    <div class="grid grid-3">${S.campaigns.slice(0,3).map(cardFor).join("")}</div>
+  </div></section>`;
+}
+
+/* ---------- discover, the Matchmaker ----------------------------------
+   Kept in the MVP by the user's decision, which reverses the original
+   product-surface decision. The constraint that came with it: the list
+   may only be ordered by a fact the donor chose, because a platform
+   ranking does the job of the badge that was ruled out.
+--------------------------------------------------------------------- */
+function matches(){
+  const f = S.filters;
+  return S.campaigns.filter(c=>{
+    if(f.themes.length && !f.themes.includes(c.theme)) return false;
+    const remaining = Math.max(0, Math.min(goalOf(c),capOf(c)) - c.raised);
+    if(f.need==="small" && remaining > 200000) return false;
+    if(f.need==="mid" && (remaining <= 200000 || remaining > 500000)) return false;
+    if(f.need==="large" && remaining <= 500000) return false;
+    return true;
+  }).sort((a,b)=>{
+    const ra = Math.min(goalOf(a),capOf(a))-a.raised, rb = Math.min(goalOf(b),capOf(b))-b.raised;
+    return ra-rb; /* ordered on the amount still needed, a fact, chosen by the donor */
+  });
+}
+function toggleTheme(k){
+  const i = S.filters.themes.indexOf(k);
+  if(i<0) S.filters.themes.push(k); else S.filters.themes.splice(i,1);
+  render();
+}
+function viewDiscover(){
+  const list = matches();
+  return `<section style="padding:var(--s5) 0 var(--s4)"><div class="wrap-narrow" style="text-align:center">
+    <div class="eyebrow" style="margin-bottom:var(--s2)">Matchmaker</div>
+    <h1 style="font-size:38px;margin-bottom:var(--s3)">What kind of impact do you<br>want to fund <span class="em">today?</span></h1>
+    <p class="small" style="max-width:520px;margin:0 auto">Filter on the kind of work and on how much is still needed. Both are facts. Nothing here is ranked by us, and nothing is recommended.</p>
+  </div></section>
+
+  <section><div class="wrap">
+    <div class="card pad" style="margin-bottom:var(--s4)">
+      <div class="eyebrow" style="margin-bottom:var(--s2)">Kind of work</div>
+      <div class="row" style="margin-bottom:var(--s4)">
+        ${THEME_KEYS.map(k=>`<button class="chip chip-sage" aria-pressed="${S.filters.themes.includes(k)}" onclick="toggleTheme('${k}')">${esc(THEMES[k].name)}</button>`).join("")}
+      </div>
+      <div class="eyebrow" style="margin-bottom:var(--s2)">Amount still needed</div>
+      <div class="row">
+        ${[["any","Any amount"],["small","Under ₱200,000"],["mid","₱200,000 to ₱500,000"],["large","Over ₱500,000"]]
+          .map(([k,l])=>`<button class="chip" aria-pressed="${S.filters.need===k}" onclick="set('filters.need','${k}')">${l}</button>`).join("")}
+      </div>
+      ${(S.filters.themes.length||S.filters.need!=="any") ? `<div style="margin-top:var(--s3)"><button class="ghost" onclick="S.filters={themes:[],need:'any'};render()">Clear filters</button></div>`:""}
+    </div>
+
+    <div class="spread" style="margin-bottom:var(--s3)">
+      <p class="small" style="margin:0">${list.length} campaign${list.length===1?"":"s"}, closest to fully funded first.</p>
+      <p class="small" style="margin:0">Every organisation here has passed the register check.</p>
+    </div>
+    ${list.length ? `<div class="grid grid-3">${list.map(cardFor).join("")}</div>`
+      : `<div class="card pad" style="text-align:center"><p style="margin:0">Nothing matches those filters. <button class="ghost" onclick="S.filters={themes:[],need:'any'};render()">Clear them</button></p></div>`}
+    <div style="height:var(--s5)"></div>
+  </div></section>`;
+}
+</script>
+<script>
+/* ---------- campaign page ------------------------------------------
+   Section order is the page skeleton from the design brief, identical
+   across all seven themes. The theme changes the accent, the imagery
+   and the impact unit. It never changes the order, and it never
+   changes the donation action, which is one colour everywhere.
+------------------------------------------------------------------- */
+function viewCampaign(){
+  const c = current(), t = THEMES[c.theme], a = assess(REGISTER[c.sec]);
+  const goal = goalOf(c), cap = a.ok ? a.cap : 0, target = Math.min(goal, cap);
+  const pct = Math.min(100, Math.round(c.raised/target*100));
+  const capped = cap < goal;
+  const rec = a.rec;
+
+  return `
+  <!-- 1. hero -->
+  <section style="padding:var(--s4) 0 0"><div class="wrap">
+    <div class="grid grid-2" style="gap:var(--s5);align-items:center">
+      <div class="riser">
+        <div class="eyebrow" style="color:${t.accent};margin-bottom:var(--s2)">${esc(t.name)}</div>
+        <h1 style="font-size:42px;margin-bottom:var(--s3)">${esc(c.title)}</h1>
+        <div class="row" style="gap:var(--s2);flex-wrap:nowrap;align-items:center">
+          <div class="arch-sm" style="flex:0 0 44px;width:44px;height:44px;border-radius:50%;background:${t.wash};display:flex;align-items:center;justify-content:center;font-family:var(--f-voice);font-size:17px;color:${t.accent}">${esc(c.org.slice(0,1))}</div>
+          <div style="min-width:0">
+            <div style="font-weight:500;font-size:15px">${esc(c.org)}</div>
+            <div class="small">${esc(c.place)} · accountable: ${esc(c.person.name)}</div>
+          </div>
+        </div>
+      </div>
+      <div class="arch riser" style="aspect-ratio:4/5;box-shadow:var(--e3)">${scene(c.theme,c.seed)}</div>
+    </div>
+  </div></section>
+
+  <!-- 2. the ask -->
+  <section style="padding:var(--s5) 0 var(--s4)"><div class="wrap">
+    <div class="grid grid-2" style="gap:var(--s5)">
+      <div>
+        <span class="label-stated">The organisation says</span>
+        <p class="stated-block" style="margin-top:var(--s2)">${esc(c.ask)}</p>
+      </div>
+      <div class="card pad">
+        <div class="spread" style="margin-bottom:var(--s2)">
+          <div><div style="font-family:var(--f-voice);font-size:32px;line-height:1">${peso(c.raised)}</div>
+            <div class="small">raised from ${c.donors} donors</div></div>
+          <div style="text-align:right"><div style="font-size:15px;font-weight:500">${peso(target)}</div>
+            <div class="small">${capped ? "raise ceiling" : "target"}</div></div>
+        </div>
+        <div class="meter" style="margin-bottom:var(--s3)"><i style="width:${pct}%"></i></div>
+        ${capped ? `<div class="why" style="border-left-color:var(--flag);background:var(--flag-bg);color:#7a5514;margin-bottom:var(--s3)">
+          <b>This campaign may raise up to ${peso(cap)}.</b> Its costed budget comes to ${peso(goal)}. We set the lower ceiling because ${esc(a.why[0])}. That is our decision about our own risk, and we would rather show you the arithmetic than a rating.</div>`:""}
+        <button class="btn btn-give btn-block" style="margin-bottom:var(--s2)" onclick="openGive('${c.id}','once')">Give once</button>
+        <button class="btn btn-line btn-block" onclick="openGive('${c.id}','monthly')">Give monthly</button>
+        <p class="small" style="margin:var(--s3) 0 0">Your money settles into ${esc(c.org)}'s own account through a licensed payment provider. We never hold it, which also means we cannot refund it. No tax relief is available on this gift in any country.</p>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- 3. impact module -->
+  <section style="padding:var(--s4) 0"><div class="wrap">
+    <div class="card pad" style="background:${t.wash};border-color:${t.accent}33">
+      <div class="spread" style="margin-bottom:var(--s3)">
+        <span class="label-stated">The organisation says</span>
+        ${THEMES[c.theme].supplies_unit ? `<span class="small" style="margin:0">Counting units supplied by the ${esc(t.name.toLowerCase())} template</span>`:""}
+      </div>
+      <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr))">
+        ${c.impact.map(i=>`<div>
+          <div style="font-family:var(--f-voice);font-size:36px;line-height:1;color:${t.accent}">${i.n.toLocaleString("en-US")}</div>
+          <div class="small" style="margin-top:4px">${esc(i.label)}</div></div>`).join("")}
+      </div>
+      <hr class="hr" style="margin:var(--s3) 0;background:${t.accent}22">
+      <p class="small" style="margin:0"><b style="color:var(--text)">Previously:</b> ${esc(c.prior)}</p>
+    </div>
+  </div></section>
+
+  <!-- 4. the costed budget -->
+  <section style="padding:var(--s4) 0"><div class="wrap-narrow">
+    <span class="label-stated">The organisation says</span>
+    <h2 style="font-size:28px;margin:var(--s2) 0 var(--s3)">Where the money goes</h2>
+    <div class="card">
+      ${c.budget.map(([k,v])=>`<div class="spread" style="padding:14px var(--s3);border-bottom:1px solid var(--rule-soft);gap:var(--s2)">
+        <span style="font-size:15px">${esc(k)}</span><span class="fact" style="color:var(--text)">${peso(v)}</span></div>`).join("")}
+      <div class="spread" style="padding:16px var(--s3);background:var(--surface-sunk)">
+        <b style="font-size:15px">Total</b><b class="fact" style="color:var(--text);font-size:15px">${peso(goal)}</b></div>
+    </div>
+    <p class="small" style="margin-top:var(--s2)">Every line is stated by the organisation and none of it is checked by us. It is here because a donor can judge a list of costs, and cannot judge a claim about impact.</p>
+  </div></section>
+
+  <!-- 5. the person -->
+  <section style="padding:var(--s4) 0"><div class="wrap">
+    <div class="grid" style="grid-template-columns:minmax(0,1fr);gap:var(--s4)">
+      <div class="card pad" style="display:grid;gap:var(--s4);grid-template-columns:minmax(0,1fr)">
+        <div class="row" style="align-items:flex-start;gap:var(--s4);flex-wrap:nowrap">
+          <div class="arch-sm" style="flex:0 0 108px;width:108px;height:132px;box-shadow:var(--e1)">${scene(c.theme,(c.seed||1)+40)}</div>
+          <div style="min-width:0">
+            <span class="label-checked">Identity verified</span>
+            <h2 style="font-size:24px;margin:var(--s2) 0 2px">${esc(c.person.name)}</h2>
+            <div class="small" style="margin-bottom:var(--s3)">${esc(c.person.role)}, ${esc(c.org)}</div>
+            <p class="stated-block" style="margin:0">“${esc(c.person.quote)}”</p>
+          </div>
+        </div>
+        <p class="small" style="margin:0;border-top:1px solid var(--rule-soft);padding-top:var(--s3)">This person is named because they are accountable for the money, and every campaign on this platform has to name one. Their government identity document was checked during payment onboarding. Their words above are their own and are not checked by us.</p>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- 6. what was checked -->
+  <section style="padding:var(--s4) 0"><div class="wrap-narrow">
+    <span class="label-checked">We checked this</span>
+    <h2 style="font-size:28px;margin:var(--s2) 0 var(--s2)">What we checked, and what we found</h2>
+    <p class="small" style="margin-bottom:var(--s3)">Read against the Philippine SEC public register on 22 August 2026. You can check any of it yourself.</p>
+    <div class="card pad">
+      ${[["Registered name", rec.name, true],
+         ["SEC registration number", c.sec, true],
+         ["Registration status", rec.status, true],
+         ["Incorporated", rec.incorporated, true],
+         ["Registered address", rec.address, true],
+         ["General Information Sheet, last filed", rec.gis, true],
+         ["Audited financial statements, last filed", rec.afs, rec.afsMissing===0],
+         ["PCNC accreditation", rec.pcnc ? "Accredited to "+rec.pcnc : "Not accredited", !!rec.pcnc],
+         ["Sanctions and watchlist screening", "Clear, via payment provider", true],
+         ["Named person, identity document", "Verified, via payment provider", true]
+        ].map(([k,v,ok])=>`<div class="checkrow">
+          <span class="tick ${ok?"":"miss"}">${ok?"✓":"!"}</span>
+          <span class="k">${esc(k)}</span><span class="v fact" style="${ok?"":"color:var(--flag)"}">${esc(v)}</span></div>`).join("")}
+    </div>
+    ${rec.afsMissing ? `<div class="card pad" style="margin-top:var(--s3);background:var(--flag-bg);border-color:#E4D2A8">
+      <p style="margin:0;font-size:15px"><b>${["No","One","Two","Three","Four","Five","Six","Seven"][rec.afsMissing]||rec.afsMissing} year${rec.afsMissing===1?"":"s"} of audited financial statements ${rec.afsMissing===1?"is":"are"} not on file.</b> Filing them annually is a condition of SEC registration, so this organisation is behind on its own obligations. We publish it anyway, with a lower ceiling on what the campaign may raise, because the alternative excludes almost every organisation of this size. We would rather you saw the gap than trusted a badge.</p></div>`:""}
+    ${rec.pcnc ? `<p class="small" style="margin-top:var(--s2)">PCNC accreditation is a second, independent check by the Philippine Council for NGO Certification. It is held by roughly 600 organisations nationally, of which 11 work on environment and biodiversity.</p>`:""}
+    <p class="small" style="margin-top:var(--s2)">We are software, not a fund. We do not hold, forward or guarantee any donation, so everything above is a statement about what we read rather than a promise about what will happen.</p>
+  </div></section>
+
+  <!-- 7. what gets reported back -->
+  <section style="padding:var(--s4) 0 var(--s5)"><div class="wrap-narrow">
+    <span class="label-stated">The organisation commits</span>
+    <h2 style="font-size:28px;margin:var(--s2) 0 var(--s3)">What gets reported back</h2>
+    <div class="card pad"><p class="stated-block" style="margin:0">${esc(c.report)}</p></div>
+    <p class="small" style="margin-top:var(--s2)">Written before any money moves. This prototype does not carry the reporting itself, which is the largest gap between it and the product.</p>
+    <div class="row" style="margin-top:var(--s4)">
+      <button class="btn btn-give" onclick="openGive('${c.id}','once')">Give once</button>
+      <button class="btn btn-line" onclick="openGive('${c.id}','monthly')">Give monthly</button>
+    </div>
+  </div></section>`;
+}
+</script>
+<script>
+/* ---------- giving ---------------------------------------------------
+   One-off and monthly sit at the same decision point, because a second
+   decision later is a decision most donors do not make. Monetization is
+   a donor tip and the organisation pays nothing, so the tip is shown
+   plainly rather than pre-loaded out of sight.
+------------------------------------------------------------------- */
+function openGive(id, mode){ S.viewing=id; S.give={open:true,amount:1500,mode:mode,tip:12,done:false,forId:id}; render(); }
+function closeGive(){ S.give.open=false; render(); }
+function payNow(){
+  const c = current(), g = S.give;
+  c.raised += g.amount; c.donors += 1;      /* simulated: nothing leaves the browser */
+  g.done = true; render();
+}
+function viewGive(){
+  const c = current(), g = S.give, t = THEMES[c.theme];
+  const tipAmt = Math.round(g.amount * g.tip/100);
+  if(g.done){
+    return `<div class="scrim" onclick="if(event.target===this)closeGive()"><div class="sheet pad" style="text-align:center">
+      <div style="width:56px;height:56px;border-radius:50%;background:var(--checked-bg);color:var(--checked);display:flex;align-items:center;justify-content:center;font-size:24px;margin:0 auto var(--s3)">✓</div>
+      <h2 style="font-size:28px;margin-bottom:var(--s2)">Thank you</h2>
+      <p class="lede" style="margin-bottom:var(--s3)">${g.mode==="monthly"?`${peso(g.amount)} a month`:peso(g.amount)} to ${esc(c.org)}.</p>
+      <div class="card pad-sm" style="text-align:left;margin-bottom:var(--s3)">
+        <p class="small" style="margin:0 0 8px"><b style="color:var(--text)">What happens next.</b> ${esc(c.person.name)} receives this into ${esc(c.org)}'s account. We never touch it.</p>
+        <p class="small" style="margin:0"><b style="color:var(--text)">What you were promised.</b> ${esc(c.report)}</p>
+      </div>
+      <div class="card pad-sm" style="text-align:left;background:var(--c-paper-3);border:0;margin-bottom:var(--s3)">
+        <p class="small" style="margin:0"><b style="color:var(--text)">This was simulated.</b> No payment provider was contacted and no money moved. In the real product this is where a licensed provider would take the card and settle to the organisation in pesos.</p></div>
+      <button class="btn btn-line btn-block" onclick="closeGive()">Back to the campaign</button>
+    </div></div>`;
+  }
+  const amounts = [500,1500,3000,6000];
+  return `<div class="scrim" onclick="if(event.target===this)closeGive()"><div class="sheet pad">
+    <div class="spread" style="margin-bottom:var(--s3)">
+      <h2 style="font-size:24px">Give to ${esc(c.org)}</h2>
+      <button class="ghost" onclick="closeGive()">Close</button>
+    </div>
+    <div class="row" style="margin-bottom:var(--s3);gap:6px">
+      <button class="chip" style="flex:1" aria-pressed="${g.mode==='once'}" onclick="set('give.mode','once')">Once</button>
+      <button class="chip" style="flex:1" aria-pressed="${g.mode==='monthly'}" onclick="set('give.mode','monthly')">Every month</button>
+    </div>
+    <div class="eyebrow" style="margin-bottom:var(--s2)">Amount${g.mode==='monthly'?' per month':''}</div>
+    <div class="row" style="margin-bottom:var(--s3);gap:6px">
+      ${amounts.map(a=>`<button class="chip" style="flex:1" aria-pressed="${g.amount===a}" onclick="set('give.amount',${a})">${peso(a)}</button>`).join("")}
+    </div>
+    <label class="field"><span>Or another amount, in pesos</span>
+      <input class="inp" type="number" min="100" value="${g.amount}" oninput="S.give.amount=Math.max(0,+this.value||0);renderSheetTotals()">
+      <span class="hint" id="fxhint">Roughly ${usd(g.amount)}. Your card is charged in your own currency and settled in pesos.</span></label>
+
+    <div class="card pad-sm" style="margin-bottom:var(--s3)">
+      <div class="spread" style="margin-bottom:var(--s2)">
+        <b style="font-size:14px">Add a tip to keep this platform running</b>
+        <span class="fact" id="tipamt" style="color:var(--text)">${peso(tipAmt)}</span></div>
+      <input type="range" min="0" max="25" value="${g.tip}" style="width:100%;accent-color:var(--action)" oninput="S.give.tip=+this.value;renderSheetTotals()">
+      <p class="small" style="margin:8px 0 0">We take nothing from ${esc(c.org)}. This tip is the whole business model, and it is optional at any amount including zero.</p>
+    </div>
+
+    <div class="spread" style="padding:var(--s2) 0;border-top:1px solid var(--rule);margin-bottom:var(--s3)">
+      <b>Total ${g.mode==='monthly'?'per month':'today'}</b>
+      <b class="fact" id="total" style="color:var(--text);font-size:16px">${peso(g.amount+tipAmt)}</b></div>
+
+    <button class="btn btn-give btn-block" ${g.amount<100?"disabled":""} onclick="payNow()">
+      ${g.mode==='monthly'?`Start giving ${peso(g.amount)} a month`:`Give ${peso(g.amount)}`}</button>
+    <p class="small" style="margin:var(--s2) 0 0;text-align:center">Simulated. No card is taken and no money moves.</p>
+    <p class="small" style="margin:var(--s2) 0 0">Because we never hold your money there is no refund path, and no tax relief is available on this gift in any country we have checked.</p>
+  </div></div>`;
+}
+function renderSheetTotals(){
+  const g=S.give, tip=Math.round(g.amount*g.tip/100);
+  const t=el("tipamt"), tot=el("total"), fx=el("fxhint");
+  if(t) t.textContent=peso(tip);
+  if(tot) tot.textContent=peso(g.amount+tip);
+  if(fx) fx.textContent=`Roughly ${usd(g.amount)}. Your card is charged in your own currency and settled in pesos.`;
+}
+
+/* ---------- organisation: registration ------------------------------
+   Flow 1 of two. The gate sits on the organisation, once, and never on
+   the campaign. It runs in parallel with the payment provider's own
+   KYC, which the organisation is already waiting on.
+------------------------------------------------------------------- */
+function submitReg(){
+  const rec = REGISTER[S.reg.sec.trim().toUpperCase()];
+  S.reg.result = assess(rec);
+  S.reg.submitted = true; S.reg.day = 0;
+  go("verifying");
+}
+function syncReg(){
+  const b = el("regsubmit"); if(!b) return;
+  b.disabled = !(S.reg.sec && S.reg.theme && S.reg.personName);
+}
+function viewRegister(){
+  const r = S.reg;
+  return `<section style="padding:var(--s5) 0 var(--s4)"><div class="wrap-narrow">
+    <div class="eyebrow" style="margin-bottom:var(--s2)">Step 1 of 2 · once per organisation</div>
+    <h1 style="font-size:36px;margin-bottom:var(--s3)">Register your <span class="em">organisation</span></h1>
+    <p class="lede" style="margin-bottom:var(--s4)">We check you once, against the public register. After that every campaign you run takes an afternoon. We will not ask you for audited accounts, a board pack, or a list of funders who have backed you before.</p>
+
+    <div class="card pad">
+      <label class="field"><span>SEC registration number</span>
+        <input class="inp" placeholder="CN201612345" value="${esc(r.sec)}" oninput="S.reg.sec=this.value;syncReg()">
+        <span class="hint">The only document we require. We read the rest from the register ourselves.</span></label>
+      <div class="why"><b>Try these while you are in the prototype.</b>
+        <button class="ghost" style="margin:6px 6px 0 0" onclick="S.reg.sec='CN201612345';render()">CN201612345 · behind on filings</button>
+        <button class="ghost" style="margin:6px 6px 0 0" onclick="S.reg.sec='CN202154321';render()">CN202154321 · fully compliant</button>
+        <button class="ghost" style="margin:6px 6px 0 0" onclick="S.reg.sec='CN200987654';render()">CN200987654 · revoked</button>
+        <button class="ghost" style="margin:6px 6px 0 0" onclick="S.reg.sec='CN999000111';render()">Not on the register</button></div>
+
+      <label class="field"><span>What kind of work do you do?</span>
+        <select class="inp" onchange="S.reg.theme=this.value;render()">
+          <option value="">Choose one</option>
+          ${THEME_KEYS.map(k=>`<option value="${k}" ${r.theme===k?"selected":""}>${esc(THEMES[k].name)} · ${esc(THEMES[k].covers)}</option>`).join("")}
+        </select>
+        <span class="hint">This chooses the template your campaign pages are built from, including what your work gets counted in.</span></label>
+
+      <label class="field"><span>Who is accountable for the money?</span>
+        <input class="inp" placeholder="Full name" value="${esc(r.personName)}" oninput="S.reg.personName=this.value;syncReg()" style="margin-bottom:8px">
+        <input class="inp" placeholder="Their role in the organisation" value="${esc(r.personRole)}" oninput="S.reg.personRole=this.value;syncReg()"></label>
+      <div class="why"><b>Why we insist on a name.</b> Donors give more to a named person than to an organisation, and the people who research before giving look for someone to hold responsible. This person appears on every campaign page you publish, and their government ID is checked during payment onboarding.</div>
+
+      <label class="field"><span>Email or mobile number</span>
+        <input class="inp" placeholder="you@example.org or +63…" value="${esc(r.contact)}" oninput="S.reg.contact=this.value;syncReg()">
+        <span class="hint">For the vetting result. We will call if the register is unclear.</span></label>
+
+      <button class="btn btn-give btn-block" id="regsubmit" ${(!r.sec||!r.theme||!r.personName)?"disabled":""} onclick="submitReg()">Submit for verification</button>
+      <p class="small" style="margin:var(--s2) 0 0;text-align:center">Free, and it stays free. We take nothing from what you raise.</p>
+    </div>
+
+    <div class="card pad" style="margin-top:var(--s3);background:var(--surface-sunk)">
+      <b style="font-size:14px">Not registered with the SEC?</b>
+      <p class="small" style="margin:6px 0 0">You cannot publish here yet, and we would rather tell you now than on screen four. <button class="ghost" onclick="S.reg.sec='CN999000111';S.reg.theme=S.reg.theme||'waste';S.reg.personName=S.reg.personName||'Marisol Ocampo';submitReg()">See what we tell you</button></p>
+    </div>
+    <div style="height:var(--s5)"></div>
+  </div></section>`;
+}
+</script>
+<script>
+/* ---------- the wait -------------------------------------------------
+   Five business days, one status screen and no draft state. Drafting
+   during the wait earns too little to justify it, and the week is one
+   the organisation already spends waiting on payment KYC.
+------------------------------------------------------------------- */
+function advance(){
+  S.reg.day = Math.min(5, S.reg.day+1);
+  if(S.reg.day>=5) go(S.reg.result.ok ? "approved" : "rejected"); else render();
+}
+function viewVerifying(){
+  const d = S.reg.day, steps = [
+    ["Register lookup", "SEC public register, registration status and filing history", 1],
+    ["Sanctions and watchlist screening", "Organisation and named person, via the payment provider", 2],
+    ["Identity of the named person", "Government ID, via the payment provider's KYC", 3],
+    ["Payout account setup", "Bank or e-wallet, whichever you have", 4],
+    ["Ceiling set", "How much a campaign of yours may raise", 5]];
+  return `<section style="padding:var(--s5) 0"><div class="wrap-narrow">
+    <div class="eyebrow" style="margin-bottom:var(--s2)">Step 1 of 2 · in progress</div>
+    <h1 style="font-size:36px;margin-bottom:var(--s3)">We are checking <span class="em">${esc(REGISTER[S.reg.sec.trim().toUpperCase()]?.name || S.reg.sec || "your organisation")}</span></h1>
+    <p class="lede" style="margin-bottom:var(--s4)">About five business days. Your payment provider's own checks take five to ten, and we run alongside them rather than after them, so this week costs you nothing you were not already spending.</p>
+    <div class="card pad">
+      ${steps.map(([k,sub,n])=>{
+        const done = d>=n, live = d===n-1;
+        return `<div class="checkrow" style="align-items:center">
+          <span class="tick ${done?"":"miss"}" style="${done?"":"background:var(--c-paper-3);color:var(--text-faint)"}">${done?"✓":n}</span>
+          <span class="k"><b style="color:var(--text);font-weight:500">${esc(k)}</b><br><span class="small">${esc(sub)}</span></span>
+          <span class="v fact" style="${done?"":"color:var(--text-faint)"}">${done?"done":(live?"running":"queued")}</span></div>`;}).join("")}
+      <div class="meter cap" style="margin-top:var(--s3)"><i style="width:${d/5*100}%"></i></div>
+      <p class="small" style="margin-top:var(--s2)">Day ${d} of 5. There is nothing for you to do, and nothing to draft yet. We will message ${esc(S.reg.contact||"you")} when it is done.</p>
+    </div>
+    <div class="card pad" style="margin-top:var(--s3);background:var(--surface-sunk)">
+      <p class="small" style="margin:0 0 var(--s2)"><b style="color:var(--text)">Prototype control.</b> The real wait is five business days.</p>
+      <button class="btn btn-ink btn-sm" onclick="advance()">Advance one day</button>
+      <button class="btn btn-line btn-sm" onclick="S.reg.day=5;go(S.reg.result.ok?'approved':'rejected')">Skip to the result</button>
+    </div>
+  </div></section>`;
+}
+
+/* ---------- rejected ---------- */
+function viewRejected(){
+  const r = S.reg.result, revoked = r.reason==="revoked";
+  return `<section style="padding:var(--s5) 0"><div class="wrap-narrow">
+    <span class="label-flag">Not approved</span>
+    <h1 style="font-size:36px;margin:var(--s2) 0 var(--s3)">We cannot publish you ${revoked?"at the moment":"yet"}</h1>
+    <div class="card pad" style="margin-bottom:var(--s3)">
+      <p style="margin:0 0 var(--s2);font-size:16px"><b>What we found.</b> ${revoked
+        ? `The SEC register returns <span class="fact" style="color:var(--flag)">${esc(r.rec.name)}</span> with a status of <span class="fact" style="color:var(--flag)">Revoked</span>. Revocation commonly follows years of non-filing, and the last audited statements on file are from ${esc(r.rec.afs)}.`
+        : `The number <span class="fact" style="color:var(--flag)">${esc(S.reg.sec)}</span> does not return a record on the SEC register.`}</p>
+      <p style="margin:0;font-size:16px"><b>Why that stops us.</b> We never hold your donors' money, so once a donation is sent we cannot recall it, freeze it or investigate it. The register check before you publish is the only protection your donors get, which is why we cannot make an exception to it.</p>
+    </div>
+    <div class="card pad" style="margin-bottom:var(--s3)">
+      <h2 style="font-size:22px;margin-bottom:var(--s2)">What it would take</h2>
+      ${revoked
+        ? `<p class="small" style="margin:0 0 var(--s2)">A revoked registration can be lifted by petition to the SEC, with the missing General Information Sheets and audited financial statements filed and the penalties settled.</p>
+           <div class="checkrow"><span class="tick miss">!</span><span class="k">Filings to catch up</span><span class="v fact">${r.rec.afsMissing} years</span></div>
+           <div class="checkrow"><span class="tick miss">!</span><span class="k">Typical route</span><span class="v fact">Petition to lift revocation</span></div>`
+        : `<p class="small" style="margin:0 0 var(--s2)">Registering a non-stock corporation with the SEC is done online through the eSPARC system. These are the current published figures, and they are the whole answer as far as we know it.</p>
+           <div class="checkrow"><span class="tick miss">!</span><span class="k">SEC filing fees, non-stock</span><span class="v fact">roughly ₱3,000 to ₱6,000</span></div>
+           <div class="checkrow"><span class="tick miss">!</span><span class="k">Typical elapsed time</span><span class="v fact">2 to 6 weeks</span></div>
+           <div class="checkrow"><span class="tick miss">!</span><span class="k">Minimum incorporators</span><span class="v fact">5 people</span></div>
+           <div class="checkrow"><span class="tick miss">!</span><span class="k">Where</span><span class="v fact">SEC eSPARC, online</span></div>`}
+      <p class="small" style="margin:var(--s3) 0 0">We tell you this because we read the register all day and you should not have to find it out twice.</p>
+    </div>
+    <div class="row">
+      <button class="btn btn-line" onclick="S.reg.submitted=false;S.reg.result=null;go('register')">Try another number</button>
+      <button class="btn btn-ink" onclick="go('home')">Back to the start</button>
+    </div>
+  </div></section>`;
+}
+
+/* ---------- approved ---------- */
+function viewApproved(){
+  const r = S.reg.result, rec = r.rec, capped = r.cap < CAP_FULL;
+  return `<section style="padding:var(--s5) 0"><div class="wrap-narrow">
+    <span class="label-checked">Clear to publish</span>
+    <h1 style="font-size:36px;margin:var(--s2) 0 var(--s3)">You are clear to publish, <span class="em">${esc(rec.name.replace(/ Inc\.$/,""))}</span></h1>
+    <p class="lede" style="margin-bottom:var(--s4)">Good for twelve months, or until your SEC status changes. Every campaign you build from here takes an afternoon.</p>
+    <div class="card pad" style="margin-bottom:var(--s3)">
+      <div class="spread" style="margin-bottom:var(--s3)">
+        <div><div class="eyebrow">Your campaigns may raise up to</div>
+          <div style="font-family:var(--f-voice);font-size:36px;line-height:1.1">${peso(r.cap)}</div></div>
+        <div style="text-align:right"><div class="eyebrow">Full ceiling</div><div class="fact">${peso(CAP_FULL)}</div></div>
+      </div>
+      ${capped ? `<div class="why" style="border-left-color:var(--flag);background:var(--flag-bg);color:#7a5514">
+        <b>Your ceiling is lower than the full one because ${esc(r.why[0])}.</b> File them and the ceiling rises at your next check. We are telling you what the audit is worth in pesos, because nobody else does.</div>`
+        : `<div class="why"><b>You are at the full ceiling.</b> ${r.why.length?esc(r.why[0].charAt(0).toUpperCase()+r.why[0].slice(1))+", which raised it.":"Your filings are current."}</div>`}
+      <p class="small" style="margin:0">Your campaign pages will show your filing record exactly as we read it, including anything missing. Donors see the same thing we saw.</p>
+    </div>
+    <button class="btn btn-give btn-block" onclick="startBuild()">Build your first campaign</button>
+  </div></section>`;
+}
+
+/* ---------- the builder, flow 2 ---------- */
+const BSTEPS = ["Theme","Title and photo","The ask","Impact","Budget","The person","Reporting"];
+function startBuild(){
+  const t = S.reg.theme, th = THEMES[t], rec = S.reg.result.rec;
+  S.build = {step:0, published:false, data:{
+    id:"new", theme:t, seed:19, sec:S.reg.sec.trim().toUpperCase(),
+    org:rec.name.replace(/ Inc\.$/,""), place:rec.address,
+    title:"", ask:"",
+    person:{name:S.reg.personName, role:S.reg.personRole||"Accountable for the money", quote:""},
+    impact:th.units.map(u=>({k:u.k,n:0,label:u.label})),
+    budget:th.lines.map(l=>[l,0]),
+    report:"", prior:"", raised:0, donors:0}};
+  go("builder");
+}
+function bStep(n){ S.build.step = Math.max(0,Math.min(BSTEPS.length-1,n)); render(); }
+function publish(){
+  const d = S.build.data;
+  d.id = "new"+Date.now(); d.title = d.title||"Untitled campaign";
+  S.campaigns.unshift(d); S.viewing = d.id; S.build.published = true; go("published");
+}
+</script>
+<script>
+/* ---------- builder screens ------------------------------------------
+   The theme carries the structure. The organisation carries the content.
+   It supplies a photograph, a logo and words, and never chooses layout,
+   type or colour.
+------------------------------------------------------------------- */
+function viewBuilder(){
+  const b = S.build, d = b.data, t = THEMES[d.theme], step = b.step;
+  const total = d.budget.reduce((s,[,v])=>s+(+v||0),0);
+  const cap = S.reg.result.cap;
+  let body = "";
+
+  if(step===0){
+    body = `<h2 style="font-size:28px;margin-bottom:var(--s2)">Your template</h2>
+      <p class="small" style="margin-bottom:var(--s3)">Chosen from the kind of work you told us you do. It sets the layout, the photographic treatment and, most importantly, what your work gets counted in.</p>
+      <div class="card pad" style="background:${t.wash};border-color:${t.accent}33;margin-bottom:var(--s3)">
+        <div class="eyebrow" style="color:${t.accent}">${esc(t.name)}</div>
+        <p style="margin:var(--s2) 0;font-size:15px">${esc(t.covers)}</p>
+        <div class="row">${t.units.map(u=>`<span class="label-checked" style="color:${t.accent};background:#fff">${esc(u.label)}</span>`).join("")}</div>
+        ${t.supplies_unit?`<p class="small" style="margin:var(--s3) 0 0">Work like yours does not produce a number on its own, so this template supplies three. You will not be asked to invent a metric on a blank form.</p>`:""}
+      </div>
+      <label class="field"><span>Change it if we got it wrong</span>
+        <select class="inp" onchange="switchTheme(this.value)">
+          ${THEME_KEYS.map(k=>`<option value="${k}" ${d.theme===k?"selected":""}>${esc(THEMES[k].name)}</option>`).join("")}
+        </select></label>`;
+  }
+  else if(step===1){
+    body = `<h2 style="font-size:28px;margin-bottom:var(--s3)">Set the scene</h2>
+      <label class="field"><span>Campaign title</span>
+        <input class="inp" placeholder="Give our coastline its roots back" value="${esc(d.title)}" oninput="S.build.data.title=this.value;paintPreview()">
+        <span class="hint">One line. Say the thing, not the category.</span></label>
+      <label class="field"><span>Photograph</span>
+        <div class="arch" style="aspect-ratio:4/5;max-width:220px;box-shadow:var(--e1)">${scene(d.theme,d.seed)}</div>
+        <span class="hint">Cropped to a fixed shape and graded to match the template, because these are phone photographs taken in bad light and the difference between that and an agency page is mostly photographic. In this prototype the image is generated.</span></label>
+      <button class="ghost" onclick="S.build.data.seed=Math.floor(Math.random()*90)+1;render()">Try another photograph</button>`;
+  }
+  else if(step===2){
+    body = `<h2 style="font-size:28px;margin-bottom:var(--s3)">What do you need, and what will it do?</h2>
+      <label class="field"><span>One sentence</span>
+        <textarea class="inp" placeholder="Replant 14 hectares of stripped mangrove before the October planting window closes." oninput="S.build.data.ask=this.value;paintPreview()">${esc(d.ask)}</textarea>
+        <span class="hint">A specific, bounded thing. Donors give to a bounded project and stall on an open-ended one.</span></label>
+      <label class="field"><span>What you have done before</span>
+        <input class="inp" placeholder="Four hectares planted in 2023 and 2024, 71% survival at eighteen months." value="${esc(d.prior)}" oninput="S.build.data.prior=this.value"></label>`;
+  }
+  else if(step===3){
+    body = `<h2 style="font-size:28px;margin-bottom:var(--s2)">What this campaign delivers</h2>
+      <p class="small" style="margin-bottom:var(--s3)">The units come from your template. You supply the numbers.</p>
+      ${d.impact.map((i,ix)=>`<label class="field"><span>${esc(i.label)}</span>
+        <input class="inp" type="number" min="0" value="${i.n||""}" oninput="S.build.data.impact[${ix}].n=+this.value||0;paintPreview()"></label>`).join("")}
+      ${t.supplies_unit?`<div class="why"><b>These are the units for work that prevents something.</b> A count of drills is weaker than a list of names, and the strongest version of this section is the register itself. Publishing that list is a roadmap item and is not in this prototype.</div>`:""}`;
+  }
+  else if(step===4){
+    body = `<h2 style="font-size:28px;margin-bottom:var(--s2)">Where the money goes</h2>
+      <p class="small" style="margin-bottom:var(--s3)">Line by line. This is the part of the page a donor actually judges, because a donor can weigh a list of costs and cannot weigh a claim about impact.</p>
+      ${d.budget.map(([k,v],ix)=>`<div class="row" style="gap:8px;margin-bottom:8px;flex-wrap:nowrap">
+        <input class="inp" style="flex:1 1 auto" value="${esc(k)}" oninput="S.build.data.budget[${ix}][0]=this.value;paintPreview()">
+        <input class="inp" style="flex:0 0 130px" type="number" min="0" placeholder="₱" value="${v||""}" oninput="S.build.data.budget[${ix}][1]=+this.value||0;paintBudget();paintPreview()">
+        <button class="ghost" onclick="S.build.data.budget.splice(${ix},1);render()">Remove</button></div>`).join("")}
+      <button class="ghost" onclick="S.build.data.budget.push(['',0]);render()">Add a line</button>
+      <div class="spread" style="margin-top:var(--s3);padding-top:var(--s2);border-top:1px solid var(--rule)">
+        <b>Total</b><b class="fact" id="btot" style="color:var(--text)">${peso(total)}</b></div>
+      <div id="bcap">${total>cap?`<div class="why" style="border-left-color:var(--flag);background:var(--flag-bg);color:#7a5514"><b>Your budget is above your ceiling of ${peso(cap)}.</b> You can publish this, and the page will show donors both numbers and say why they differ. It will not raise more than the ceiling.</div>`:""}</div>`;
+  }
+  else if(step===5){
+    body = `<h2 style="font-size:28px;margin-bottom:var(--s2)">${esc(d.person.name||"Your accountable person")}, in their own words</h2>
+      <div class="why"><b>This is required, and here is why.</b> Donors give more to a named, photographed person than to an organisation. The people most likely to research you before giving are looking for someone to hold responsible. Their name is already on your registration with us; this is where they speak.</div>
+      <label class="field"><span>Name</span><input class="inp" value="${esc(d.person.name)}" oninput="S.build.data.person.name=this.value;paintPreview()"></label>
+      <label class="field"><span>Role</span><input class="inp" value="${esc(d.person.role)}" oninput="S.build.data.person.role=this.value;paintPreview()"></label>
+      <label class="field"><span>In their own words</span>
+        <textarea class="inp" placeholder="Two or three sentences, in the voice they actually speak in." oninput="S.build.data.person.quote=this.value">${esc(d.person.quote)}</textarea>
+        <span class="hint">Not checked by us, and shown as theirs rather than as ours.</span></label>`;
+  }
+  else {
+    body = `<h2 style="font-size:28px;margin-bottom:var(--s2)">What will you report, and when?</h2>
+      <p class="small" style="margin-bottom:var(--s3)">Written before any money moves, which is what makes it different from a thank-you email afterwards.</p>
+      <label class="field"><span>Your commitment</span>
+        <textarea class="inp" placeholder="Photographs of every planted hectare and a line-by-line spend report, in April 2027." oninput="S.build.data.report=this.value">${esc(d.report)}</textarea></label>
+      <div class="card pad" style="background:var(--surface-sunk)">
+        <p class="small" style="margin:0"><b style="color:var(--text)">Before you publish.</b> Your page will show your SEC filing record as we read it, including anything missing, and your ceiling of ${peso(cap)}. Donations settle into your own account. We take nothing from them.</p></div>`;
+  }
+
+  return `<section style="padding:var(--s4) 0 var(--s5)"><div class="wrap">
+    <div class="grid grid-2" style="gap:var(--s5);align-items:start">
+      <div>
+        <div class="eyebrow" style="margin-bottom:var(--s2)">Step 2 of 2 · ${esc(BSTEPS[step])} · ${step+1} of ${BSTEPS.length}</div>
+        <div class="steps">${BSTEPS.map((_,i)=>`<i class="${i<=step?"on":""}"></i>`).join("")}</div>
+        <div class="card pad">${body}</div>
+        <div class="row" style="margin-top:var(--s3)">
+          ${step>0?`<button class="btn btn-line btn-sm" onclick="bStep(${step-1})">Back</button>`:""}
+          ${step<BSTEPS.length-1
+            ? `<button class="btn btn-ink btn-sm" onclick="bStep(${step+1})">Continue</button>`
+            : `<button class="btn btn-give btn-sm" onclick="publish()">Publish campaign</button>`}
+          <span class="small" style="margin-left:auto">Saved as you type</span>
+        </div>
+      </div>
+      <div style="position:sticky;top:104px">
+        <div class="eyebrow" style="margin-bottom:var(--s2)">Live preview</div>
+        <div id="bpreview">${previewCard()}</div>
+      </div>
+    </div>
+  </div></section>`;
+}
+function previewCard(){
+  const d = S.build.data, t = THEMES[d.theme], cap = S.reg.result.cap;
+  const total = d.budget.reduce((s,[,v])=>s+(+v||0),0);
+  return `<div class="card" style="overflow:hidden">
+    <div style="aspect-ratio:4/3">${scene(d.theme,d.seed)}</div>
+    <div class="pad-sm">
+      <div class="eyebrow" style="color:${t.accent}">${esc(t.name)}</div>
+      <h3 style="font-size:20px;margin:6px 0 8px">${esc(d.title||"Your campaign title")}</h3>
+      <div class="small" style="margin-bottom:12px">${esc(d.org)} · accountable: ${esc(d.person.name||"a named person")}</div>
+      <p class="stated-block" style="font-size:16px;margin-bottom:12px">${esc(d.ask||"Your one sentence goes here.")}</p>
+      <div class="row" style="gap:14px;margin-bottom:12px">
+        ${d.impact.filter(i=>i.n).map(i=>`<div><div style="font-family:var(--f-voice);font-size:22px;color:${t.accent};line-height:1.1">${i.n.toLocaleString("en-US")}</div><div class="small">${esc(i.label)}</div></div>`).join("") || `<span class="small">Your impact numbers appear here.</span>`}
+      </div>
+      <div class="small">Target ${peso(Math.min(total,cap))}${total>cap?` (budget ${peso(total)}, ceiling ${peso(cap)})`:""}</div>
+    </div></div>`;
+}
+function paintPreview(){ const n = el("bpreview"); if(n) n.innerHTML = previewCard(); }
+function paintBudget(){
+  const total = S.build.data.budget.reduce((s,[,v])=>s+(+v||0),0), cap = S.reg.result.cap;
+  const t = el("btot"); if(t) t.textContent = peso(total);
+  const c = el("bcap"); if(c) c.innerHTML = total>cap
+    ? `<div class="why" style="border-left-color:var(--flag);background:var(--flag-bg);color:#7a5514"><b>Your budget is above your ceiling of ${peso(cap)}.</b> You can publish this, and the page will show donors both numbers and say why they differ. It will not raise more than the ceiling.</div>` : "";
+}
+function switchTheme(k){
+  const d = S.build.data, th = THEMES[k];
+  d.theme = k;
+  d.impact = th.units.map(u=>({k:u.k,n:0,label:u.label}));
+  if(d.budget.every(([,v])=>!v)) d.budget = th.lines.map(l=>[l,0]);
+  render();
+}
+
+/* ---------- published ---------- */
+function viewPublished(){
+  const c = current();
+  return `<section style="padding:var(--s5) 0"><div class="wrap-narrow" style="text-align:center">
+    <div style="width:56px;height:56px;border-radius:50%;background:var(--checked-bg);color:var(--checked);display:flex;align-items:center;justify-content:center;font-size:24px;margin:0 auto var(--s3)">✓</div>
+    <h1 style="font-size:36px;margin-bottom:var(--s2)">Your campaign is <span class="em">live</span></h1>
+    <p class="lede" style="margin-bottom:var(--s4)">Share the link. It works today, whether or not your payout account has finished its checks.</p>
+    <div class="card pad" style="text-align:left;margin-bottom:var(--s3)">
+      <div class="eyebrow" style="margin-bottom:8px">Your link</div>
+      <div class="fact" style="color:var(--text);word-break:break-all;background:var(--surface-sunk);padding:12px;border-radius:var(--r1)">fundthefuture.org/${esc((c.org||"org").toLowerCase().replace(/[^a-z0-9]+/g,"-"))}</div>
+      <p class="small" style="margin:var(--s3) 0 0">Page creation is instant. Money arriving is not, because your payment provider's checks take five to ten business days. We say it that way round on purpose.</p>
+    </div>
+    <div class="row" style="justify-content:center">
+      <button class="btn btn-give" onclick="go('campaign')">See your page as a donor sees it</button>
+      <button class="btn btn-line" onclick="go('discover')">See it in Discover</button>
+    </div>
+  </div></section>`;
+}
+
+/* ---------- router ---------- */
+function render(){
+  const views = {home:viewHome, discover:viewDiscover, campaign:viewCampaign,
+    register:viewRegister, verifying:viewVerifying, approved:viewApproved,
+    rejected:viewRejected, builder:viewBuilder, published:viewPublished};
+  el("app").innerHTML = (views[S.screen]||viewHome)() + (S.give.open ? viewGive() : "");
+  renderTabs();
+}
+restart();
+</script>
+</body>
+</html>

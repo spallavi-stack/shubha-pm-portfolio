@@ -53,6 +53,28 @@ PROJECTS = {
             ("price-integration-guide.md", "price-integration-guide.html", "Price Integration Guide"),
         ],
     },
+    "fund-the-future": {
+        "title": "Fund the Future",
+        "colors": {
+            "teal": "#C24E2E", "teal_dark": "#9E3E22", "navy": "#241F1B",
+            "ink": "#1F1B17", "ink_soft": "#5B5750", "paper": "#FFFFFF",
+            "paper_soft": "#F4F0EA", "border": "#E4DED4",
+            "footer_ink": "#D8D0C6", "footer_link": "#E8865F",
+        },
+        "footer_note": "Fund the Future is a fictional case study built for portfolio purposes. Market research is real and cited; personas, interviews, campaigns and donations are synthetic. No money moves at any point.",
+        "docs": [
+            ("product-brief.md", "product-brief.html", "Product Brief"),
+            ("market-selection.md", "market-selection.html", "Market Selection"),
+            ("personas.md", "personas.html", "Personas"),
+            ("jobs-to-be-done.md", "jobs-to-be-done.html", "Jobs to Be Done"),
+            ("synthetic-interviews.md", "synthetic-interviews.html", "Synthetic Interviews"),
+            ("roadmap.md", "roadmap.html", "Roadmap"),
+            ("user-stories.md", "user-stories.html", "User Stories & Use Cases"),
+            ("technical-feasibility.md", "technical-feasibility.html", "Technical Feasibility & Architecture"),
+            # grounding-research.md, design-brief.md, scope.md and HANDOVER.md are
+            # internal working material and are deliberately never rendered or linked.
+        ],
+    },
 }
 
 TEMPLATE = """<!DOCTYPE html>

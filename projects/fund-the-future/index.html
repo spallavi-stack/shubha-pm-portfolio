@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fund the Future - Product Case Study | Shubha's PM Portfolio</title>
+<meta name="description" content="Fund the Future: a campaign-building and fundraising platform that lets a grassroots climate-adaptation organisation in the Philippines raise money from donors anywhere in the world. A 0-to-1 PM case study with sourced market research, a verification data model, and a working prototype.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://spallavi-stack.github.io/shubha-pm-portfolio/projects/fund-the-future/">
+<meta property="og:title" content="Fund the Future - Product Case Study | Shubha's PM Portfolio">
+<meta property="og:description" content="A 0-to-1 case study on funding grassroots climate adaptation: sourced research, a verification model that shows evidence rather than a badge, and a working prototype.">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<link rel="preload" href="../../assets/fonts/fraunces-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../../assets/fonts/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../../assets/css/design-system.css">
+<style>
+  :root{
+    /* Fund the Future's case-study palette: warm paper and terracotta, drawn
+       from the product's own art direction so the page and the embedded
+       prototype read as one thing, and deliberately distant from the cool
+       teal and the amber the other two case studies use. */
+    --teal:#C24E2E;
+    --teal-dark:#9E3E22;
+    --navy:#241F1B;
+    --sage:#5F7059;
+    --sage-soft:#EEF1EB;
+    --ink:#1F1B17;
+    --ink-soft:#5B5750;
+    --paper:#FCFBF9;
+    --paper-soft:#F4F0EA;
+    --border:#E4DED4;
+    --now:#5F7059;
+    --next:#B5822E;
+    --later:#9A9186;
+    --accent:var(--teal);
+    --accent-dark:var(--teal-dark);
+    --font-mono:ui-monospace,'SF Mono','Cascadia Mono','JetBrains Mono',Menlo,Consolas,monospace;
+  }
+  header.hero{background:var(--navy);color:#fff;padding:76px 0 64px;}
+  header.hero .title{font-size:clamp(34px,5vw,54px);line-height:1.08;letter-spacing:-0.02em;max-width:15ch;}
+  header.hero .title em{font-style:italic;color:#E8865F;}
+  header.hero .subtitle{color:#D8D0C6;font-size:17px;line-height:1.6;max-width:62ch;margin:20px 0 28px;}
+  header.hero .btn{background:var(--accent);color:#fff;}
+  header.hero .btn:hover{background:var(--accent-dark);}
+  .hero-ctas{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:36px;}
+  .hero-meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:20px;border-top:1px solid rgba(255,255,255,.16);padding-top:24px;}
+  .hero-meta div{font-size:12.5px;letter-spacing:.1em;text-transform:uppercase;color:#A79C90;}
+  .hero-meta strong{display:block;margin-top:6px;font-size:14.5px;letter-spacing:0;text-transform:none;color:#fff;font-weight:500;}
+  section{padding:64px 0;}
+  section.alt{background:var(--paper-soft);}
+  h2{font-size:clamp(24px,3vw,32px);letter-spacing:-0.015em;margin-bottom:14px;}
+  h3{font-size:19px;margin-bottom:8px;}
+  p{margin:0 0 14px;line-height:1.65;}
+  .grid{display:grid;gap:20px;}
+  @media(min-width:800px){.g2{grid-template-columns:1fr 1fr;}.g3{grid-template-columns:repeat(3,1fr);}}
+  .card{padding:24px;}
+  .fig{font-family:var(--font-display);font-size:34px;line-height:1.05;color:var(--accent-dark);letter-spacing:-0.02em;}
+  .fig-label{font-size:13.5px;color:var(--ink-soft);margin-top:8px;line-height:1.5;}
+  /* Video slot, matching Flexy and SunnySideUp. Styles are in place so the
+     recorded file can be dropped in without touching CSS. See the commented
+     markup in the prototype section below. */
+  .video-frame-wrap{background:#181310;border-radius:16px;padding:16px;margin:24px 0 32px;}
+  video.proto-video{width:100%;max-height:520px;border-radius:10px;display:block;background:#000;}
+  .video-overlay-wrap{position:relative;}
+  .video-play-overlay{
+    position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+    width:72px;height:72px;border-radius:50%;
+    background:rgba(0,0,0,.55);border:2px solid rgba(255,255,255,.85);
+    display:flex;align-items:center;justify-content:center;cursor:pointer;
+    transition:transform .15s ease,background .15s ease;
+  }
+  .video-play-overlay:hover{background:rgba(0,0,0,.75);transform:translate(-50%,-50%) scale(1.06);}
+  .video-play-overlay .play-icon{font-size:24px;color:#fff;margin-left:4px;}
+  .video-play-overlay.is-hidden{display:none;}
+  .video-label{
+    position:absolute;top:14px;left:14px;z-index:2;
+    background:rgba(0,0,0,.55);color:#fff;font-weight:700;font-size:13px;
+    padding:6px 12px;border-radius:6px;letter-spacing:.02em;
+  }
+  .proto-frame{border:1px solid var(--border);border-radius:18px;overflow:hidden;box-shadow:0 18px 46px rgba(60,40,25,.13);background:#F4F0EA;}
+  iframe.proto{width:100%;height:760px;border:0;display:block;}
+  @media(max-width:700px){iframe.proto{height:600px;}}
+  .note{font-size:13.5px;color:var(--ink-soft);line-height:1.6;}
+  .tag{display:inline-block;font-size:11.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:5px 11px;border-radius:999px;background:var(--sage-soft);color:var(--sage);}
+  .tag.warn{background:#F8F0DF;color:#8A6516;}
+  table{width:100%;border-collapse:collapse;font-size:14.5px;}
+  th,td{text-align:left;padding:11px 12px;border-bottom:1px solid var(--border);vertical-align:top;}
+  th{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft);font-weight:600;}
+  .scroll{overflow-x:auto;}
+  ul.clean{margin:0 0 14px;padding-left:20px;}
+  ul.clean li{margin-bottom:9px;line-height:1.6;}
+  .doclist{display:grid;gap:10px;}
+  @media(min-width:760px){.doclist{grid-template-columns:1fr 1fr;}}
+  .doc{display:flex;gap:14px;align-items:flex-start;padding:16px 18px;border:1px solid var(--border);border-radius:14px;background:#fff;text-decoration:none;color:inherit;transition:transform .18s,border-color .18s;}
+  .doc:hover{transform:translateY(-2px);border-color:var(--accent);}
+  .doc b{display:block;font-size:15px;margin-bottom:3px;}
+  .doc span{font-size:13px;color:var(--ink-soft);line-height:1.5;}
+  .rail{border-left:3px solid var(--accent);padding-left:18px;margin:0 0 18px;}
+  .rail.sage{border-left-color:var(--sage);}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <a class="brand" href="../../index.html">Fund the <em>Future</em> - PM Case Study</a>
+    <ul>
+      <li><a href="../../index.html">← Home</a></li>
+      <li><a href="#prototype">Prototype</a></li>
+      <li><a href="#tldr">Summary</a></li>
+      <li><a href="#problem">Problem</a></li>
+      <li><a href="#research">Research</a></li>
+      <li><a href="#decisions">Decisions</a></li>
+      <li><a href="#limitations">Limitations</a></li>
+    </ul>
+  </div>
+</nav>
+
+<header class="hero grain">
+  <div class="wrap">
+    <h1 class="title">Getting money to the people doing <em>climate adaptation</em></h1>
+    <p class="subtitle">A 0-to-1 case study on a hard problem: how do you let a small Philippine organisation with no audited accounts raise money from strangers, when your platform never holds the funds and therefore has no way to put anything right afterwards?</p>
+    <div class="hero-ctas">
+      <a class="btn" href="#prototype">Try the prototype</a>
+      <a class="btn btn-ghost" href="../../index.html" style="background:rgba(255,255,255,.08);color:#fff;border-color:rgba(255,255,255,.25);">← Back to portfolio</a>
+    </div>
+    <div class="hero-meta">
+      <div>Pilot market<strong>The Philippines</strong></div>
+      <div>Status<strong>Prototype and concept test. Not a build</strong></div>
+      <div>Deliverables<strong>Brief · Market selection · Personas · JTBD · Interviews · Roadmap · Stories · Feasibility · Prototype</strong></div>
+    </div>
+  </div>
+</header>
+
+<!-- prototype first, per the portfolio's own layout decision -->
+<section id="prototype">
+  <div class="wrap">
+    <div class="section-kicker">The prototype</div>
+    <h2>Both sides of the product, end to end</h2>
+    <!-- ============================================================
+         VIDEO SLOT, deliberately empty for now.
+         The portfolio's layout decision is video full width with the
+         prototype full width directly beneath it. Flexy and SunnySideUp
+         both ship that way. Fund the Future has no recorded video yet.
+
+         To fill it: drop the three files into assets/ and delete this
+         comment wrapper. Nothing else needs changing, the CSS and the
+         play-overlay script are already in place.
+
+           assets/video-intro.mp4
+           assets/poster-intro.jpg
+           assets/captions-intro.vtt
+
+    <div class="video-frame-wrap">
+      <div class="video-overlay-wrap">
+        <video class="proto-video" controls preload="metadata" playsinline poster="assets/poster-intro.jpg">
+          <source src="assets/video-intro.mp4" type="video/mp4">
+          <track kind="captions" src="assets/captions-intro.vtt" srclang="en" label="English" default>
+        </video>
+        <span class="video-label">Introduction to Fund the Future</span>
+        <button type="button" class="video-play-overlay" data-video-play aria-label="Play video">
+          <span class="play-icon" aria-hidden="true">&#9654;</span>
+        </button>
+      </div>
+    </div>
+         ============================================================ -->
+
+    <p class="lede">Play the organisation's side and the donor's side. Under <b>Run an organisation</b>, the shortcut buttons let you register an organisation that is behind on its filings, one that is fully compliant, one whose registration has been revoked, and one that is not on the register at all. Each produces a different outcome on purpose.</p>
+    <div class="proto-frame">
+      <iframe class="proto" src="prototype.html" title="Fund the Future interactive prototype" loading="lazy"></iframe>
+    </div>
+    <p class="note" style="margin-top:14px;">Everything in it is invented and every donation is simulated. No payment provider is contacted and no money moves at any point. <a href="prototype.html" target="_blank" rel="noopener">Open the prototype full screen</a>.</p>
+  </div>
+</section>
+
+<section class="alt" id="tldr">
+  <div class="wrap">
+    <div class="section-kicker">In short</div>
+    <h2>What this is</h2>
+    <div class="grid g2">
+      <div>
+        <p><b>Fund the Future lets a grassroots climate-adaptation organisation raise money from donors anywhere in the world.</b> The organisation is verified before it can publish, and every donation settles directly into its own account.</p>
+        <p>It exists because the platforms that could carry these organisations' stories ask for what they do not have. GlobalGiving already operates in 175+ countries, so geography was never the barrier. Formal registration, two years of financial statements, a documented board and a prior-funder track record are.</p>
+        <p>The hard part is that every requirement you remove to reach these organisations is a fraud control that GlobalGiving chose to keep. That is the design problem this case study is actually about.</p>
+      </div>
+      <div class="grid" style="gap:18px;">
+        <div class="card"><div class="fig">$284bn to $339bn</div><div class="fig-label">The adaptation finance gap for developing countries, per year until 2035, per UNEP.</div></div>
+        <div class="card"><div class="fig">$870m</div><div class="fig-label">Foundation funding for adaptation and resilience in 2024. Roughly 0.3% of that annual gap.</div></div>
+        <div class="card"><div class="fig">25</div><div class="fig-label">Live projects returned by GlobalGiving's Philippines and Climate Action filters together, most raising under $10,000.</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="problem">
+  <div class="wrap">
+    <div class="section-kicker">The problem</div>
+    <h2>The money is being withdrawn while the need grows</h2>
+    <div class="grid g2">
+      <div>
+        <p>Official development assistance fell <b>23.1% in real terms in 2025</b> to $174.3bn, the largest annual decline on record, with the United States alone accounting for 75.1% of the fall. The institutional funding these organisations depend on is going away.</p>
+        <p>At the same time the category is expanding. Adaptation philanthropy more than doubled from $404m in 2021 to $870m in 2024, and the number of foundations making adaptation grants grew 55%. Two things are true at once, and the second is what makes a new entrant plausible rather than merely necessary.</p>
+        <p>Where the money does land, it lands away from the work. Asia and Oceania receive under 10% of adaptation funding while holding more than half the world's population, and disaster risk management and community infrastructure are the least funded sectors in the category.</p>
+      </div>
+      <div>
+        <div class="rail">
+          <h3>The honest size of the opportunity</h3>
+          <p class="note">Global individual charitable giving is roughly <b>$770bn</b>. Cross-border philanthropy is about <b>$82bn</b> of it. Environment and animals take 3.6% of US giving even domestically, and of what crosses a border very little reaches local organisations directly.</p>
+          <p class="note">Compounding those shares puts the flow this product competes for in the <b>hundreds of millions globally</b>, not billions. Any framing that reads this as a slice of $2.3tn misstates it by two orders of magnitude, and the brief says so rather than letting a bigger number stand.</p>
+          <p class="note" style="margin-bottom:0;">So the goal is stated as growing a category rather than taking a share of one. Adaptation philanthropy doubling in three years is the evidence that the category expands when it becomes fundable.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="alt" id="research">
+  <div class="wrap">
+    <div class="section-kicker">Research</div>
+    <h2>Every claim tagged Fact, Inference or Assumption</h2>
+    <p class="lede">The research ran through a three-step process built for this portfolio: scope the questions before drafting, source every claim with its confidence level stated, then audit the draft for unsupported claims, disconnected sections and padding. The backing document runs to sixteen sections and stays as internal reading material rather than being compressed away.</p>
+    <div class="grid g3" style="margin-top:28px;">
+      <div class="card">
+        <span class="tag">Held up</span>
+        <h3 style="margin-top:12px;">Donors ask for exactly this</h3>
+        <p class="note" style="margin-bottom:0;">Asked what would make them give more, donors worldwide put "be transparent around how the charity is run" first at <b>47%</b>, ahead of explaining impact at 40% and well ahead of making donation easier at 23%. Stated preference rather than observed behaviour, which is why it is a hypothesis to test rather than a proof.</p>
+      </div>
+      <div class="card">
+        <span class="tag">Held up</span>
+        <h3 style="margin-top:12px;">The environmental donor is a different donor</h3>
+        <p class="note" style="margin-bottom:0;">Average one-time gift <b>$93</b> against $139 across all causes, retention <b>53%</b> against 48%, and monthly giving <b>32%</b> of online revenue against 27%. Gives less per gift, stays longer. This is why recurring giving ships in the MVP rather than being deferred.</p>
+      </div>
+      <div class="card">
+        <span class="tag warn">Cut against it</span>
+        <h3 style="margin-top:12px;">Giving moves closer to home</h3>
+        <p class="note" style="margin-bottom:0;">A study of <b>1.23 million IRS Form 990 filings</b> found internationally-focused nonprofits losing donations as local climate risk rises. It is the strongest counter-evidence in the project and it is in the brief rather than a footnote. Read at source it narrowed: it measures US intermediaries against US county hazard exposure, never observes a donor, and the effect is 1.26% per standard deviation.</p>
+      </div>
+    </div>
+
+    <div class="rail sage" style="margin-top:34px;">
+      <h3>Two corrections worth showing</h3>
+      <p class="note">A claim carried through three documents for weeks, that 80% of disaster giving happens in the first 72 hours, turned out to be attributed to an article that does not contain it. Neither did the second figure beside it. Both were withdrawn and replaced with what the source actually supports. The process now carries a standing check: when a claim is sourced to a specific article rather than a dataset, open the article and find the sentence.</p>
+      <p class="note" style="margin-bottom:0;">An earlier version of this project built the donor side on diaspora giving, reasoning from $905bn of remittances against $82bn of cross-border philanthropy. That conflated two behaviours. Remittance is money sent to your own family under obligation; this product asks for charitable giving to strangers. The thesis was deleted and the market selection re-run without it.</p>
+    </div>
+  </div>
+</section>
+
+<section id="decisions">
+  <div class="wrap">
+    <div class="section-kicker">The decisions</div>
+    <h2>Four calls that shaped the product</h2>
+
+    <div class="grid g2" style="margin-top:24px;">
+      <div class="card">
+        <h3>1. The platform never holds the money</h3>
+        <p class="note">Donations settle from the donor, through a licensed payment provider, into the organisation's own account. That keeps it software rather than a money transmitter and avoids US state-by-state licensing.</p>
+        <p class="note" style="margin-bottom:0;"><b>The accepted cost is severe and it is stated up front:</b> no refunds, no holding funds pending investigation, no pooling, no all-or-nothing goals, and no tax relief for the donor in any market examined. Deductibility and custody turn out to be one decision seen from two sides.</p>
+      </div>
+      <div class="card">
+        <h3>2. So the gate is the only fraud control there is</h3>
+        <p class="note">With no ability to reverse a donation, there is no remedy after the fact. A platform that can claw back can afford a permissive front door. This one cannot.</p>
+        <p class="note" style="margin-bottom:0;">That drove the whole onboarding shape: vet the <b>organisation</b> once, never the campaign. It also matches the cost structure, since verification costs about the same per organisation regardless of what any campaign raises.</p>
+      </div>
+      <div class="card">
+        <h3>3. Verification is shown as evidence, never as a badge</h3>
+        <p class="note">The page displays the SEC register entry, the filing record, the named accountable person, a line-by-line budget and what will be reported back. No seal, no tier, no rating.</p>
+        <p class="note" style="margin-bottom:0;">Facts read from a register get one consistent visual treatment and things the organisation says get another, applied without exception, so a donor learns the difference inside a single page. Because the platform holds no money, every claim it makes is about what was checked rather than what is guaranteed.</p>
+      </div>
+      <div class="card">
+        <h3>4. Missing paperwork lowers the ceiling, it does not close the door</h3>
+        <p class="note">This was the hardest open question in the project. Audited financial statements are a mandatory annual SEC filing, so an organisation without them is out of compliance rather than merely unaccredited, and that is the most likely single result for the target user.</p>
+        <p class="note" style="margin-bottom:0;">The resolution: registered and not revoked is the publishing floor, and each year of missing statements lowers what the campaign may raise. The page states which filings are missing and why the ceiling was set. <b>The donor is never handed a judgment call, because the platform has already priced it.</b></p>
+      </div>
+    </div>
+
+    <h3 style="margin-top:40px;">Why the Philippines, and what it costs</h3>
+    <div class="scroll">
+      <table>
+        <thead><tr><th>Criterion</th><th>What decided it</th></tr></thead>
+        <tbody>
+          <tr><td>Registry quality</td><td>The SEC runs a dedicated NPO regime where organisations file annual information sheets and audited statements. Every other candidate offers a record that an organisation <em>exists</em>. This one shows whether it <em>filed</em>, and the free public search returns it.</td></tr>
+          <tr><td>Payout rails</td><td>Banks plus seven e-wallet providers through two like-for-like providers. The wallet channel matters most, because an organisation with no bank account can still be paid.</td></tr>
+          <tr><td>The honest weakness</td><td>The Philippines is the weakest candidate on poverty rate at 15.5% and does not lead on climate impact. The weighting toward the two product-critical criteria is deliberate and is stated in the selection document rather than hidden.</td></tr>
+          <tr><td>The live override</td><td>Kenya beats the Philippines on registry quality and payout maturity. It stays out on FATF grey-listing plus the 2024 referral of 16 civil society organisations to the Directorate of Criminal Investigations.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 style="margin-top:36px;">The constraint that surprised me most</h3>
+    <p><b>Stripe cannot pay this product's users, in any market considered.</b> Stripe Connect limits cross-border payout recipients to the US, UK, EEA, Canada and Switzerland. The default architecture a developer would reach for is simply unavailable, which turns the payment provider from a swappable detail into a load-bearing decision. Checking the second provider properly then showed that dLocal cannot collect from any of the proposed donor markets either, so collection rests on Xendit alone. That is written into the brief as a critical success factor rather than left as an assumption.</p>
+  </div>
+</section>
+
+<section class="alt" id="limitations">
+  <div class="wrap">
+    <div class="section-kicker">Limitations</div>
+    <h2>What this case study is not</h2>
+    <div class="grid g2">
+      <div>
+        <ul class="clean">
+          <li><b>The company is invented.</b> Fund the Future does not exist. The market research is real and cited; the organisations, people, campaigns and donations are synthetic.</li>
+          <li><b>No money moves, by design and permanently.</b> The prototype simulates every donation. Taking real money would need a real Philippine merchant account under a real legal entity, which a fictional organisation cannot have.</li>
+          <li><b>It is a prototype, not a product.</b> The architecture a real build would need is written up in the feasibility document rather than built, including the caching the register lookup requires and why the donor tip cannot ride inside the organisation's transaction.</li>
+          <li><b>The recommendation is GO to concept test, not GO to build.</b> The roadmap's first phase is entirely research, with kill criteria stated in advance.</li>
+        </ul>
+      </div>
+      <div>
+        <ul class="clean">
+          <li><b>The deepest assumption is untested.</b> Whether individual donors will fund adaptation specifically, as distinct from disaster relief. Disaster philanthropy concentrates on the visible emergency, and adaptation is the work done beforehand.</li>
+          <li><b>The donor research transfers weakly.</b> The benchmarks come overwhelmingly from US organisations with established digital programmes, and the strongest demand signal is stated preference rather than observed behaviour.</li>
+          <li><b>The interviews are synthetic.</b> Written from the personas as a design tool. They cannot falsify the product, because the process that wrote them designed it. Two of the six end with the person declining.</li>
+          <li><b>One real-world risk has no answer here.</b> The product requires a named individual on a public page, in a country where civil society organisations have faced state pressure. That is recorded in the feasibility document and not solved.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="rail" style="margin-top:26px;">
+      <p class="note" style="margin-bottom:0;"><b>One decision was reversed late and is recorded as a reversal.</b> The product surface was locked at kickoff as a campaign builder plus a shareable link, with no discovery surface. The design pass produced a donor-side Matchmaker and it was kept. That changes the go-to-market, because donors now also arrive at the platform first, and it changes the fraud surface, because appearing in a browsable list reads as selection by the platform. The constraint that came with it: the list may only be ordered by a fact the donor chose, since a platform ranking does the job of the badge the product ruled out.</p>
+    </div>
+  </div>
+</section>
+
+<section id="documents">
+  <div class="wrap">
+    <div class="section-kicker">The work</div>
+    <h2>Documents behind it</h2>
+    <p class="lede">Written in this order. Each one links back to the sourced research for its confidence levels.</p>
+    <div class="doclist" style="margin-top:24px;">
+      <a class="doc" href="docs/product-brief.html"><div><b>Product Brief</b><span>Opportunity assessment, market sizing, competitive position, the verification data model, hypotheses and success metrics.</span></div></a>
+      <a class="doc" href="docs/market-selection.html"><div><b>Market Selection</b><span>Five criteria, and why the Philippines won on registry quality and payout rails rather than on need.</span></div></a>
+      <a class="doc" href="docs/personas.html"><div><b>Personas</b><span>Seven, across three organisations, three donors and one institutional visitor. Includes the organisation the product turns away.</span></div></a>
+      <a class="doc" href="docs/jobs-to-be-done.html"><div><b>Jobs to Be Done</b><span>Nine jobs, a forces analysis on the two central ones, and a nine-step job map that fixes where the speed claim belongs.</span></div></a>
+      <a class="doc" href="docs/synthetic-interviews.html"><div><b>Synthetic Interviews</b><span>Six invented interviews used as a design tool. Two end with the person declining to use the product.</span></div></a>
+      <a class="doc" href="docs/roadmap.html"><div><b>Roadmap</b><span>Phase 0 is the research that decides whether to build, with kill criteria written in advance.</span></div></a>
+      <a class="doc" href="docs/user-stories.html"><div><b>User Stories &amp; Use Cases</b><span>Four epics with checkable acceptance criteria, and the six cases the prototype demonstrates end to end.</span></div></a>
+      <a class="doc" href="docs/technical-feasibility.html"><div><b>Technical Feasibility</b><span>The architecture a real build needs: payment routing, the register lookup and its cache, the data model, unit economics and ranked risks.</span></div></a>
+    </div>
+    <p class="note" style="margin-top:24px;">The full sourced research document sits behind all of these and stays internal, because it is reading material rather than a portfolio artifact. Every claim in it is tagged Fact, Inference or Assumption.</p>
+  </div>
+</section>
+
+<footer style="background:var(--navy);color:#A79C90;padding:36px 0;">
+  <div class="wrap" style="font-size:13.5px;line-height:1.6;">
+    <b style="color:#fff;">Fund the Future</b> is a fictional case study built for portfolio purposes. Market research is real and cited; personas, interviews, campaigns and donations are synthetic. No money moves at any point.
+    <div style="margin-top:14px;"><a href="../../index.html" style="color:#E8865F;">← Back to the portfolio</a></div>
+  </div>
+</footer>
+
+<script>
+  /* Play-overlay behaviour for the intro video. Harmless while the video slot
+     is empty; it binds to nothing until the markup above is uncommented. */
+  document.querySelectorAll('[data-video-play]').forEach(function(btn){
+    var video = btn.closest('.video-overlay-wrap').querySelector('video');
+    btn.addEventListener('click', function(){ video.play(); });
+    video.addEventListener('play', function(){ btn.classList.add('is-hidden'); });
+    video.addEventListener('pause', function(){ btn.classList.remove('is-hidden'); });
+  });
+</script>
+
+</body>
+</html>
