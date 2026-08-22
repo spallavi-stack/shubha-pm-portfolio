@@ -76,6 +76,15 @@ These came out of the user's review of the product brief. All are locked unless 
 - **Cross-border giving is a minority behaviour everywhere.** 60% of people globally donated in 2025, Africa gives the highest share of income at 1.6% and Europe the lowest at 0.6%, and only 22% of donors support charities working in other countries, a minority that skews to higher-income markets.
 - **Tax deductibility is unavailable in every market examined, and it is the same decision as custody.** US IRC section 170(c)(2) allows a deduction only for gifts to US-organised entities, and the conduit rule means a US intermediary must hold the funds and be free not to send them. That is the custody the product gave up to avoid money transmitter licensing. *Persche* covers giving inside the EU and EEA and does not reach the Philippines. UK Gift Aid needs an HMRC-recognised charity. Opening the donor market neither creates nor solves this.
 
+## Verified 22 August 2026: the donor side rests on Xendit alone
+
+A claim asserted during the donor-market reversal, that card and wallet acceptance from most countries is solved, was checked against both providers' own documentation. It was half right.
+
+- **Xendit can collect from the starting markets.** Multi-currency card processing lets a Philippine merchant accept foreign-issued Visa and Mastercard presented in USD, EUR or GBP and settled in PHP, with Xendit doing the FX. Philippine merchants are on a smaller currency subset than Hong Kong or Singapore merchants, and pair availability is confirmed per account rather than published.
+- **dLocal cannot.** Its pay-in coverage is emerging markets only and lists none of the United States, the United Kingdom, the Netherlands, Germany, Canada or Australia as countries a payer can pay from. For this product dLocal is a payout provider.
+- **So the two-provider redundancy exists on the payout leg and not on the pay-in leg.** This is now critical success factor 7 in the brief. A second collecting provider is unresearched, and a split architecture looks plausible, since what removed Stripe was payout to the Philippines rather than collection from the United States.
+- **The wallet rails are a payout-side asset.** GCash and its peers matter because an organisation with no bank account can be paid, and not because a donor abroad would use one. Any claim that "card and wallet acceptance is solved" overstates the wallet half.
+
 ## Edge cases recorded rather than designed
 
 The prototype demonstrates the happy path. Each of these gets a line and no screen: rejection (reasons given, route to reapply), drafting during the wait (not supported, the wait is five days and a single status screen), green-light expiry (twelve months or until SEC status changes), and human vetting at scale (a known pilot limit).

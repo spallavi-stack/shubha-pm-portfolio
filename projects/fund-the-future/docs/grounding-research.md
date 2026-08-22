@@ -140,6 +140,22 @@ Payout rail was upgraded from a hard filter to a scored selection criterion, and
 
 **[Inference]** A finding that cuts across the verification pillar: every market's payout documentation requires a beneficiary document number tied to a person or a legal entity, whether that is a Philippine PSN, a Nigerian NUBAN-validated account, or a Honduran DNI or RTN. Verification is therefore not a feature the platform chooses to add. The rail imposes an identity floor before it will move money, and the platform's verification ladder starts from that floor rather than from zero. Nigeria's NUBAN algorithm and account-name resolution are a free verification signal the product gets from the rail itself.
 
+### Donor-side acceptance, verified 22 August 2026
+
+Added after the user opened the donor market beyond the United States, to check a claim that had been asserted rather than sourced: that accepting a donation from a donor in most countries is a solved problem.
+
+**[Fact]** Xendit's card multi-currency processing lets a merchant accept Visa, Mastercard and other supported schemes with the charge presented in the cardholder's currency and settled in the merchant's. Philippine merchants currently support a subset of presentment currencies including USD, EUR, GBP, HKD, SGD, IDR, PHP, MYR, THB and VND, with Xendit handling the FX conversion to PHP. Hong Kong and Singapore merchants support all scheme-supported currencies, while the Philippines, Thailand and Malaysia are on the smaller subset, described as expanding. Currency-pair availability is confirmed per account rather than published as final. (Source: primary, [Xendit card multi-currency processing documentation](https://docs.xendit.co/docs/card-multi-currency-processing), read 22 August 2026.)
+
+**[Fact]** Xendit states it can accept foreign-issued cards regardless of the cardholder's currency where the charge goes through the card rails, supporting Visa, Mastercard, American Express and JCB. (Source: [Xendit help centre](https://help.xendit.co/hc/en-us/articles/360026383052), which returned HTTP 403 to direct fetching in this pass and is recorded from search results rather than read directly. The multi-currency documentation above is primary and carries the same point.)
+
+**[Fact]** dLocal's pay-in coverage is emerging markets only. Its payment-method documentation lists supported pay-in countries across Africa and the Middle East, Asia and Latin America, and **does not list the United States, the United Kingdom, the Netherlands, Germany, Canada or Australia as countries a payer can pay from**. (Source: primary, [dLocal coverage documentation](https://docs.dlocal.com/docs/payment-method), read 22 August 2026.)
+
+**[Inference] The claim was half right, and the correction matters.** A donor in the proposed starting markets can pay by card, and that side is genuinely solved, through Xendit. What is not true is that the two providers are interchangeable. dLocal was verified as a second payout provider and it cannot collect from donors in any of the proposed starting markets, so for this product dLocal is a payout provider and the donor side rests on Xendit alone. The redundancy established earlier exists on the payout leg and does not exist on the pay-in leg.
+
+**[Inference]** The wallet rails are a payout-side asset rather than a donor-side one. GCash, Maya and their peers are Philippine domestic wallets, so they matter because an organisation with no bank account can be paid, and not because a donor abroad would use one. Any statement that card and wallet acceptance is solved overstates the wallet half.
+
+**[Assumption]** A second pay-in provider for the donor side has not been researched. Stripe, Adyen, Checkout.com and PayPal all plausibly accept from the starting markets, and the constraint that removed Stripe was payout to the Philippines rather than pay-in from the United States, so a split architecture with one provider collecting and another paying out may be available. This is a technical-feasibility question and it is now load-bearing, because single-provider dependency on the donor side is a concentration risk the payout leg does not have.
+
 ### Second provider per market, verified
 
 The first pass established rail existence through a single vendor, dLocal, which proves a rail exists and not that the product is independent of one company. A second provider was verified per market against its own documentation.
