@@ -77,8 +77,8 @@ a{color:var(--action)}
 
 /* ---------- chrome ---------- */
 .topbar{position:sticky;top:0;z-index:40;background:rgba(244,240,234,.94);backdrop-filter:blur(10px);border-bottom:1px solid rgba(90,60,40,.10)}
-.topbar-in{max-width:1120px;margin:0 auto;padding:14px var(--s4);display:flex;align-items:center;justify-content:space-between;gap:var(--s3)}
-.logo{font-family:var(--f-voice);font-size:22px;font-weight:600;letter-spacing:-.01em;display:flex;align-items:baseline;gap:3px}
+.topbar-in{max-width:1120px;margin:0 auto;padding:14px var(--s4);display:flex;align-items:center;justify-content:space-between;gap:var(--s2) var(--s3);flex-wrap:wrap}
+.logo{font-family:var(--f-voice);font-size:22px;font-weight:600;letter-spacing:-.01em;white-space:nowrap;flex:0 0 auto}
 .tabs{display:flex;gap:4px;flex-wrap:wrap}
 .tab{font-size:13px;font-weight:500;padding:7px 13px;border-radius:var(--r5);color:var(--text-mute);transition:.15s}
 .tab:hover{background:rgba(90,60,40,.06);color:var(--text)}
@@ -170,6 +170,14 @@ textarea.inp{min-height:96px;resize:vertical;line-height:1.55}
 /* ---------- footer ---------- */
 .foot{margin-top:var(--s5);border-top:1px solid var(--rule);background:var(--c-paper-2)}
 .foot-in{max-width:1120px;margin:0 auto;padding:var(--s4);font-size:13px;color:var(--text-mute);line-height:1.6}
+@media(max-width:560px){
+  .wrap,.wrap-narrow{padding:0 var(--s3)}
+  .topbar-in,.demobar-in,.foot-in{padding-left:var(--s3);padding-right:var(--s3)}
+  .pad{padding:var(--s3)}
+  h1{font-size:32px!important}
+  .tabs{width:100%;overflow-x:auto;flex-wrap:nowrap;-webkit-overflow-scrolling:touch}
+  .tab{white-space:nowrap}
+}
 </style>
 </head>
 <body>
@@ -617,9 +625,9 @@ function viewCampaign(){
       <div class="riser">
         <div class="eyebrow" style="color:${t.accent};margin-bottom:var(--s2)">${esc(t.name)}</div>
         <h1 style="font-size:42px;margin-bottom:var(--s3)">${esc(c.title)}</h1>
-        <div class="row" style="gap:var(--s2)">
-          <div class="arch-sm" style="width:44px;height:44px;border-radius:50%;background:${t.wash};display:flex;align-items:center;justify-content:center;font-family:var(--f-voice);font-size:17px;color:${t.accent}">${esc(c.org.slice(0,1))}</div>
-          <div>
+        <div class="row" style="gap:var(--s2);flex-wrap:nowrap;align-items:center">
+          <div class="arch-sm" style="flex:0 0 44px;width:44px;height:44px;border-radius:50%;background:${t.wash};display:flex;align-items:center;justify-content:center;font-family:var(--f-voice);font-size:17px;color:${t.accent}">${esc(c.org.slice(0,1))}</div>
+          <div style="min-width:0">
             <div style="font-weight:500;font-size:15px">${esc(c.org)}</div>
             <div class="small">${esc(c.place)} · accountable: ${esc(c.person.name)}</div>
           </div>

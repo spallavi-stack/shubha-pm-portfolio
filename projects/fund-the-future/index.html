@@ -56,6 +56,27 @@
   .card{padding:24px;}
   .fig{font-family:var(--font-display);font-size:34px;line-height:1.05;color:var(--accent-dark);letter-spacing:-0.02em;}
   .fig-label{font-size:13.5px;color:var(--ink-soft);margin-top:8px;line-height:1.5;}
+  /* Video slot, matching Flexy and SunnySideUp. Styles are in place so the
+     recorded file can be dropped in without touching CSS. See the commented
+     markup in the prototype section below. */
+  .video-frame-wrap{background:#181310;border-radius:16px;padding:16px;margin:24px 0 32px;}
+  video.proto-video{width:100%;max-height:520px;border-radius:10px;display:block;background:#000;}
+  .video-overlay-wrap{position:relative;}
+  .video-play-overlay{
+    position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+    width:72px;height:72px;border-radius:50%;
+    background:rgba(0,0,0,.55);border:2px solid rgba(255,255,255,.85);
+    display:flex;align-items:center;justify-content:center;cursor:pointer;
+    transition:transform .15s ease,background .15s ease;
+  }
+  .video-play-overlay:hover{background:rgba(0,0,0,.75);transform:translate(-50%,-50%) scale(1.06);}
+  .video-play-overlay .play-icon{font-size:24px;color:#fff;margin-left:4px;}
+  .video-play-overlay.is-hidden{display:none;}
+  .video-label{
+    position:absolute;top:14px;left:14px;z-index:2;
+    background:rgba(0,0,0,.55);color:#fff;font-weight:700;font-size:13px;
+    padding:6px 12px;border-radius:6px;letter-spacing:.02em;
+  }
   .proto-frame{border:1px solid var(--border);border-radius:18px;overflow:hidden;box-shadow:0 18px 46px rgba(60,40,25,.13);background:#F4F0EA;}
   iframe.proto{width:100%;height:760px;border:0;display:block;}
   @media(max-width:700px){iframe.proto{height:600px;}}
@@ -116,6 +137,34 @@
   <div class="wrap">
     <div class="section-kicker">The prototype</div>
     <h2>Both sides of the product, end to end</h2>
+    <!-- ============================================================
+         VIDEO SLOT, deliberately empty for now.
+         The portfolio's layout decision is video full width with the
+         prototype full width directly beneath it. Flexy and SunnySideUp
+         both ship that way. Fund the Future has no recorded video yet.
+
+         To fill it: drop the three files into assets/ and delete this
+         comment wrapper. Nothing else needs changing, the CSS and the
+         play-overlay script are already in place.
+
+           assets/video-intro.mp4
+           assets/poster-intro.jpg
+           assets/captions-intro.vtt
+
+    <div class="video-frame-wrap">
+      <div class="video-overlay-wrap">
+        <video class="proto-video" controls preload="metadata" playsinline poster="assets/poster-intro.jpg">
+          <source src="assets/video-intro.mp4" type="video/mp4">
+          <track kind="captions" src="assets/captions-intro.vtt" srclang="en" label="English" default>
+        </video>
+        <span class="video-label">Introduction to Fund the Future</span>
+        <button type="button" class="video-play-overlay" data-video-play aria-label="Play video">
+          <span class="play-icon" aria-hidden="true">&#9654;</span>
+        </button>
+      </div>
+    </div>
+         ============================================================ -->
+
     <p class="lede">Play the organisation's side and the donor's side. Under <b>Run an organisation</b>, the shortcut buttons let you register an organisation that is behind on its filings, one that is fully compliant, one whose registration has been revoked, and one that is not on the register at all. Each produces a different outcome on purpose.</p>
     <div class="proto-frame">
       <iframe class="proto" src="prototype.html" title="Fund the Future interactive prototype" loading="lazy"></iframe>
@@ -295,6 +344,17 @@
     <div style="margin-top:14px;"><a href="../../index.html" style="color:#E8865F;">← Back to the portfolio</a></div>
   </div>
 </footer>
+
+<script>
+  /* Play-overlay behaviour for the intro video. Harmless while the video slot
+     is empty; it binds to nothing until the markup above is uncommented. */
+  document.querySelectorAll('[data-video-play]').forEach(function(btn){
+    var video = btn.closest('.video-overlay-wrap').querySelector('video');
+    btn.addEventListener('click', function(){ video.play(); });
+    video.addEventListener('play', function(){ btn.classList.add('is-hidden'); });
+    video.addEventListener('pause', function(){ btn.classList.remove('is-hidden'); });
+  });
+</script>
 
 </body>
 </html>
