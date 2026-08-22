@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jobs to Be Done, Fund the Future | Shubha's PM Portfolio</title>
+<style>
+  :root{
+    --teal:#C24E2E; --teal-dark:#9E3E22; --navy:#241F1B;
+    --ink:#1F1B17; --ink-soft:#5B5750; --paper:#FFFFFF; --paper-soft:#F4F0EA; --border:#E4DED4;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;color:var(--ink);background:var(--paper);line-height:1.7;}
+  .wrap{max-width:760px;margin:0 auto;padding:0 24px;}
+  nav{position:sticky;top:0;z-index:50;background:rgba(255,255,255,0.95);backdrop-filter:blur(8px);border-bottom:1px solid var(--border);}
+  nav .navwrap{max-width:920px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:14px 24px;}
+  nav a{color:var(--teal-dark);text-decoration:none;font-size:13.5px;font-weight:600;}
+  nav .brand{color:var(--navy);font-weight:700;font-size:15px;}
+  nav .brand span{color:var(--teal);}
+  article{padding:48px 0 64px;}
+  article h1{font-size:30px;letter-spacing:-0.01em;color:var(--navy);margin:0 0 8px;}
+  article h1 + p{color:var(--ink-soft);font-size:14px;margin-top:0;}
+  article h2{font-size:20px;margin:36px 0 12px;padding-bottom:8px;border-bottom:2px solid var(--teal);color:var(--navy);}
+  article h3{font-size:16px;margin:24px 0 8px;color:var(--navy);}
+  article p{font-size:15px;color:var(--ink);margin:0 0 14px;}
+  article ul, article ol{padding-left:22px;margin:0 0 14px;}
+  article li{font-size:15px;margin-bottom:6px;}
+  article strong{color:var(--navy);}
+  article blockquote{margin:16px 0;padding:10px 18px;border-left:3px solid var(--teal);background:var(--paper-soft);color:var(--navy);font-style:italic;}
+  article hr{border:none;border-top:1px solid var(--border);margin:32px 0;}
+  article table{width:100%;border-collapse:collapse;margin:16px 0;font-size:13.5px;}
+  article th, article td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--border);}
+  article th{font-size:11px;text-transform:uppercase;letter-spacing:0.04em;color:var(--ink-soft);}
+  article code{background:var(--paper-soft);padding:1px 5px;border-radius:4px;font-size:13px;}
+  article svg{max-width:100%;height:auto;display:block;margin:20px 0;border:1px solid var(--border);border-radius:12px;padding:10px;background:#fff;}
+  article pre.mermaid{background:none;border:none;padding:0;margin:20px 0;overflow-x:auto;text-align:center;}
+  article pre.mermaid svg{margin:0 auto;}
+  .doc-footer{margin-top:40px;padding-top:20px;border-top:1px solid var(--border);font-size:13px;color:var(--ink-soft);}
+  footer{background:var(--navy);color:#D8D0C6;padding:32px 0;text-align:center;font-size:13px;}
+  footer a{color:#E8865F;}
+</style>
+</head>
+<body>
+<nav>
+  <div class="navwrap">
+    <span class="brand">Fund the Future<span>.</span> Documentation</span>
+    <div style="display:flex;gap:18px;">
+      <a href="../index.html">← Case study</a>
+      <a href="../../../index.html">Portfolio</a>
+    </div>
+  </div>
+</nav>
+<article class="wrap">
+<h1>Fund the Future: Jobs to Be Done</h1>
+<p><em>Derived from <a href="personas.md"><code>personas.md</code></a> and the research in <a href="grounding-research.md"><code>grounding-research.md</code></a>. Drafted August 2026. The people are synthetic. The market facts each job rests on are real and cited in the research document.</em></p>
+<p>Nine jobs across the two sides of the product and the visitor who is not a user. Each is written as a situation, a motivation and an outcome, so the job stays separable from the feature that currently serves it.</p>
+<h2>The jobs</h2>
+<h3>The organisation</h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Job statement</th>
+<th>Persona</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>When I need money for a season of work, I want to put what we do and what it costs in front of people who have never heard of us, so the work happens this year rather than waiting on a grant cycle.</td>
+<td>Elena</td>
+</tr>
+<tr>
+<td>2</td>
+<td>When I ask for money for work that prevents a disaster rather than repairing one, I want to state it in terms a stranger can weigh, so I can compete with the photographs that arrive after the storm.</td>
+<td>Ruben</td>
+</tr>
+<tr>
+<td>3</td>
+<td>When I find a platform that says it funds groups like mine, I want to learn within a minute whether it will take me, so I can start the paperwork or stop wasting my week.</td>
+<td>Marisol</td>
+</tr>
+<tr>
+<td>4</td>
+<td>When money is raised for us, I want it to reach an account we can actually use, so having no bank account stops being the reason we cannot be funded.</td>
+<td>Elena</td>
+</tr>
+<tr>
+<td>5</td>
+<td>When the next season comes round, I want to raise again without repeating the bureaucracy, so asking becomes something we do rather than a project we survive.</td>
+<td>Elena, Ruben</td>
+</tr>
+</tbody>
+</table>
+<h3>The donor</h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Job statement</th>
+<th>Persona</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>6</td>
+<td>When I decide where this year's climate giving goes, I want to see what an independent party confirmed about an organisation separately from what the organisation says about itself, so I can fund small work without taking it on faith.</td>
+<td>Anders</td>
+</tr>
+<tr>
+<td>7</td>
+<td>When I find work worth supporting, I want to commit monthly in the same action rather than in a second decision later, so my giving continues without me having to remember it.</td>
+<td>Priya</td>
+</tr>
+<tr>
+<td>8</td>
+<td>When climate news leaves me feeling useless, I want to find a specific bounded piece of work I can fund tonight, so the concern turns into something that happened rather than something I felt.</td>
+<td>Tomas</td>
+</tr>
+</tbody>
+</table>
+<h3>The visitor</h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Job statement</th>
+<th>Persona</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>9</td>
+<td>When a link reaches me from outside my network, I want the organisation's registry identity and its accountable person available immediately, so I can decide whether to spend real diligence time on it.</td>
+<td>Grace</td>
+</tr>
+</tbody>
+</table>
+<h2>Job 1 in full: the forces on the organisation</h2>
+<p>Job 1 is the product's centre. Everything else either enables it or follows from it. The four forces are set out because three of them work against the product and only one works for it.</p>
+<p><strong>Push, away from the current situation.</strong> Official development assistance fell 23.1% in real terms in 2025 to $174.3bn, the largest annual decline on record. The institutional money this organisation depends on is being withdrawn while the need grows. Grant applications it can write are being rejected more often, and the foundation that funded Ruben in 2024 had no surplus in 2025.</p>
+<p><strong>Pull, toward the new solution.</strong> A page that publishes in an afternoon and can be shared to anyone, with no fee taken from what is raised, and with the organisation's own registry record shown rather than a dossier demanded. Adaptation philanthropy more than doubled from $404m in 2021 to $870m in 2024 with a 55% rise in the number of funders, so the category is expanding rather than static.</p>
+<p><strong>Anxiety about the new solution.</strong> Three specific fears, and each one is a design problem rather than a marketing problem.</p>
+<ol>
+<li><em>"Publishing our missing filings in public will be used against us."</em> The organisation is being asked to display its own non-compliance to strangers. The floor-and-cap model answers this by pricing the gap rather than editorialising about it, and by stating it in the platform's words rather than leaving the organisation to explain itself.</li>
+<li><em>"We will do the work and raise nothing."</em> Well founded. GlobalGiving's Philippines and Climate Action filters together return exactly 25 live projects, most raising under $10,000, one at $38 against a $72,126 goal, and all of them from organisations that already cleared a vetting gate.</li>
+<li><em>"There is no one to complain to if something goes wrong."</em> Also well founded. The platform holds no funds, so there are no refunds, no reversals and no holding of money pending investigation.</li>
+</ol>
+<p><strong>Habit, holding the organisation in place.</strong> A Facebook page and a personal wallet number posted in the comments already works, at small scale, with no verification and no forms. It costs nothing and it has never failed outright. This is the real competitor for job 1, ahead of every platform in the competitive table.</p>
+<p><strong>What the forces imply.</strong> Push is strong and getting stronger, pull is real, and both anxiety and habit are unusually well grounded in evidence. A product in this position wins on reducing anxiety rather than on increasing pull, which is why verification display and the costed budget are the centre of the design and why a bigger promise would be the wrong response.</p>
+<h2>The job map for job 1</h2>
+<p>Nine steps, from the moment the organisation decides to raise money to the moment it reports back. The product's speed claim has to be made against the right step, and the map is here to keep that honest.</p>
+<table>
+<thead>
+<tr>
+<th>Step</th>
+<th>What the organisation does</th>
+<th>Where it happens</th>
+<th>Elapsed</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Decide to raise money publicly</td>
+<td>Off-platform</td>
+<td>Unmeasured</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Discover the platform and check eligibility</td>
+<td>Landing and eligibility check</td>
+<td>Minutes</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Submit the organisation for vetting</td>
+<td>Registration</td>
+<td>Under an hour</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Wait while the register is checked and payment KYC runs in parallel</td>
+<td>Verification wait, one status screen</td>
+<td>About five business days</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Receive the green light and the raise cap</td>
+<td>Approval</td>
+<td>Immediate on completion</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Choose the theme matching the work</td>
+<td>Builder, step 1</td>
+<td>Minutes</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Build the campaign: photo, ask, impact numbers, costed budget, the named person, the reporting commitment</td>
+<td>Builder, steps 2 to 6</td>
+<td>An afternoon</td>
+</tr>
+<tr>
+<td>8</td>
+<td>Publish and share</td>
+<td>Campaign page and share</td>
+<td>Immediate</td>
+</tr>
+<tr>
+<td>9</td>
+<td>Report back to donors on what was promised</td>
+<td>Post-campaign, out of MVP scope</td>
+<td>Committed at step 7</td>
+</tr>
+</tbody>
+</table>
+<p><strong>The step that carries the speed claim is 7, not 4.</strong> Page creation is instant. Payout is not, because Xendit KYC review takes 5 to 10 business days and dLocal enforces a hard 30-day KYC window. Any claim about speed has to be stated against page creation and never against money arriving, and the campaign page has to work and be shareable during the gap, which makes it a product requirement rather than a caveat.</p>
+<p><strong>Step 4 is where the two-flow model earns itself.</strong> The vetting week is spent inside a wait the organisation already faces for payment KYC, so it costs nothing in elapsed time. Steps 3 to 5 happen once per organisation. Steps 6 to 8 happen once per campaign, which is what makes job 5 achievable and what matches the cost structure, since verification costs roughly the same per organisation regardless of what any campaign raises.</p>
+<p><strong>Step 9 is committed in the MVP and not delivered by it.</strong> The organisation states at step 7 what it will report and when. The product does not yet carry the reporting back. That gap is named in the roadmap rather than hidden, because new-donor retention of 24% to 28% means a campaign raises money roughly once, and what turns a one-off donor into Priya is step 9.</p>
+<h2>Job 6 in full: the forces on the donor</h2>
+<p>Job 6 is the donor-side centre, because Anders is the donor the whole verification design exists for.</p>
+<p><strong>Push.</strong> He gives to two large environmental organisations and cannot tell what his money did in either.</p>
+<p><strong>Pull.</strong> A named person, a bounded project, a line-by-line budget, and a registry record he can verify himself in a second tab. Two independent bodies of evidence point at this same page: the identifiable-victim effect favours a named person and a specific project, and the transparency evidence favours a named accountable person and a costed budget. Climate donors are separately the highest-due-diligence segment in the IRS donor database, so the page is built to be checked for a donor who checks.</p>
+<p><strong>Anxiety.</strong> No tax relief in any market examined, no refund if anything goes wrong, and an organisation he has never heard of in a country he has never visited. The deductibility position is structural rather than fixable: US IRC section 170(c)(2) allows a deduction only for gifts to US-organised entities and the conduit rule requires an intermediary that genuinely holds the funds, which is exactly the custody the product gave up.</p>
+<p><strong>Habit.</strong> Two existing direct debits that require no decision at all.</p>
+<p><strong>What the forces imply.</strong> The product cannot reduce his anxiety by promising, because it holds no money and can guarantee nothing. It can only reduce it by showing. That is the whole argument for evidence over a badge, and it is why the strongest demand signal in the research is the one the product is built on: asked what would encourage them to give more, donors worldwide put "be transparent around how the charity is run" first at 47%, ahead of "clearly explain how they are making change" at 40% and well ahead of making donation easier at 23%.</p>
+<h2>Outcome statements</h2>
+<p>What each side is trying to minimise or maximise, written so it could be measured. These are the candidate instrumentation for the concept test in the product brief.</p>
+<p><strong>Organisation</strong></p>
+<ol>
+<li>Minimise the time from deciding to raise money to having a shareable page.</li>
+<li>Minimise the number of documents the organisation must produce that it does not already possess. The target is zero.</li>
+<li>Minimise the share of raised funds lost before arrival. Total leakage before any platform charge is 8% to 12%, and the platform's own charge to the organisation is nothing.</li>
+<li>Maximise the proportion of campaigns that reach a fundable state without human help.</li>
+<li>Minimise the effort of the second campaign relative to the first.</li>
+</ol>
+<p><strong>Donor</strong></p>
+<ol start="6">
+<li>Minimise the time to determine whether an organisation is real.</li>
+<li>Maximise the proportion of a page's claims that are attributable to a source other than the organisation.</li>
+<li>Minimise the number of decisions required to give monthly rather than once.</li>
+<li>Minimise the time from feeling concern to having funded something specific.</li>
+</ol>
+<h2>Jobs the product deliberately does not serve</h2>
+<p>Named so the boundary is a decision rather than an oversight.</p>
+<ul>
+<li><strong>The institutional funder's sourcing job.</strong> Grace's job 9 is real and the product builds nothing for it. No funder discovery surface, no directory, no grantmaker matching. Her job is served incidentally by a page built for a donor.</li>
+<li><strong>The unregistered group's job.</strong> Marisol's job 3 gets an answer and the answer is no. The platform holds no money and therefore has no remedy after the fact, which leaves the gate as its only fraud control. This is the honest limit of the purpose statement rather than a phase of the roadmap.</li>
+<li><strong>The donor's tax-relief job.</strong> Unavailable in every market examined and structurally tied to the custody decision. Stated on the page rather than worked around.</li>
+<li><strong>The organisation's reporting-back job.</strong> Job 5 depends on it and the MVP commits to it without delivering it. Roadmap item, named as a gap.</li>
+</ul>
+<h2>What is not established</h2>
+<p>Every job on the donor side is constructed from stated preference and from benchmarks drawn overwhelmingly from US organisations with established digital programmes. Job 8 in particular assumes that a donor arriving without a link will fund adaptation specifically, as distinct from disaster relief, and that is the deepest untested assumption in the project. The evidence pointing the other way is in the personas and the brief rather than in a footnote: disaster philanthropy concentrates on the visible emergency, and a study of 1.23 million IRS Form 990 filings from 2010 to 2021 found internationally-focused nonprofits losing donations as local climate risk rises, at 1.26% per standard deviation, measured on US intermediaries rather than on donors. These jobs are the input to the concept test rather than its result.</p>
+<div class="doc-footer">Part of the Fund the Future case study documentation set. For the short version, see the <a href="../index.html">case study page</a>.</div>
+</article>
+<footer>
+  <div class="wrap">Fund the Future is a fictional case study built for portfolio purposes. Market research is real and cited; personas, interviews, campaigns and donations are synthetic. No money moves at any point.</div>
+</footer>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'neutral',
+    fontFamily: '-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif',
+    flowchart: { curve: 'basis' },
+  });
+</script>
+</body>
+</html>

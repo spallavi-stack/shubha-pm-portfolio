@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Technical Feasibility & Architecture, Fund the Future | Shubha's PM Portfolio</title>
+<style>
+  :root{
+    --teal:#C24E2E; --teal-dark:#9E3E22; --navy:#241F1B;
+    --ink:#1F1B17; --ink-soft:#5B5750; --paper:#FFFFFF; --paper-soft:#F4F0EA; --border:#E4DED4;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;color:var(--ink);background:var(--paper);line-height:1.7;}
+  .wrap{max-width:760px;margin:0 auto;padding:0 24px;}
+  nav{position:sticky;top:0;z-index:50;background:rgba(255,255,255,0.95);backdrop-filter:blur(8px);border-bottom:1px solid var(--border);}
+  nav .navwrap{max-width:920px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:14px 24px;}
+  nav a{color:var(--teal-dark);text-decoration:none;font-size:13.5px;font-weight:600;}
+  nav .brand{color:var(--navy);font-weight:700;font-size:15px;}
+  nav .brand span{color:var(--teal);}
+  article{padding:48px 0 64px;}
+  article h1{font-size:30px;letter-spacing:-0.01em;color:var(--navy);margin:0 0 8px;}
+  article h1 + p{color:var(--ink-soft);font-size:14px;margin-top:0;}
+  article h2{font-size:20px;margin:36px 0 12px;padding-bottom:8px;border-bottom:2px solid var(--teal);color:var(--navy);}
+  article h3{font-size:16px;margin:24px 0 8px;color:var(--navy);}
+  article p{font-size:15px;color:var(--ink);margin:0 0 14px;}
+  article ul, article ol{padding-left:22px;margin:0 0 14px;}
+  article li{font-size:15px;margin-bottom:6px;}
+  article strong{color:var(--navy);}
+  article blockquote{margin:16px 0;padding:10px 18px;border-left:3px solid var(--teal);background:var(--paper-soft);color:var(--navy);font-style:italic;}
+  article hr{border:none;border-top:1px solid var(--border);margin:32px 0;}
+  article table{width:100%;border-collapse:collapse;margin:16px 0;font-size:13.5px;}
+  article th, article td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--border);}
+  article th{font-size:11px;text-transform:uppercase;letter-spacing:0.04em;color:var(--ink-soft);}
+  article code{background:var(--paper-soft);padding:1px 5px;border-radius:4px;font-size:13px;}
+  article svg{max-width:100%;height:auto;display:block;margin:20px 0;border:1px solid var(--border);border-radius:12px;padding:10px;background:#fff;}
+  article pre.mermaid{background:none;border:none;padding:0;margin:20px 0;overflow-x:auto;text-align:center;}
+  article pre.mermaid svg{margin:0 auto;}
+  .doc-footer{margin-top:40px;padding-top:20px;border-top:1px solid var(--border);font-size:13px;color:var(--ink-soft);}
+  footer{background:var(--navy);color:#D8D0C6;padding:32px 0;text-align:center;font-size:13px;}
+  footer a{color:#E8865F;}
+</style>
+</head>
+<body>
+<nav>
+  <div class="navwrap">
+    <span class="brand">Fund the Future<span>.</span> Documentation</span>
+    <div style="display:flex;gap:18px;">
+      <a href="../index.html">← Case study</a>
+      <a href="../../../index.html">Portfolio</a>
+    </div>
+  </div>
+</nav>
+<article class="wrap">
+<h1>Fund the Future: Technical Feasibility and Architecture</h1>
+<p><em>Drafted August 2026. This document carries the architecture the real product would need. It exists because the case study ships a prototype, and the engineering thinking should be recorded rather than implied by a click-through. Every market and provider fact traces to <a href="grounding-research.md"><code>grounding-research.md</code></a>. Scope is phase 1 of <a href="roadmap.md"><code>roadmap.md</code></a>.</em></p>
+<h2>The constraint everything else follows from</h2>
+<p><strong>The platform never holds funds.</strong> That decision was made to stay out of money transmitter licensing, and it is not primarily a legal choice once you start building. It determines the payment architecture, it removes refunds, it removes pooled or all-or-nothing goals, and it is the reason the verification gate carries the entire fraud burden. An architecture that lets money rest in a platform account for even a moment reopens all of it.</p>
+<p>The practical form of the constraint: <strong>the organisation is the merchant of record for its own donations.</strong> The platform originates the transaction and never appears in the settlement path.</p>
+<hr />
+<h2>1. The payment layer, which is the hardest part</h2>
+<h3>What is ruled out</h3>
+<p><strong>Stripe Connect cannot pay this product's users.</strong> Its cross-border payout recipients are limited to the United States, the United Kingdom, the EEA, Canada and Switzerland. The Philippines is not among them, and neither is any market this project has considered for expansion. The default architecture a developer would reach for is unavailable, which is what makes the remaining providers load-bearing rather than convenient.</p>
+<p><strong>dLocal cannot collect from the donor markets.</strong> Its pay-in coverage is emerging markets only, and it lists none of the United States, the United Kingdom, the Netherlands, Germany, Canada or Australia as countries a payer can pay from. For this product dLocal is a payout provider and nothing else. A claim made earlier in the project that two providers gave redundancy on both legs was checked and was half right.</p>
+<h3>What is left</h3>
+<table>
+<thead>
+<tr>
+<th>Leg</th>
+<th>Provider</th>
+<th>What it does</th>
+<th>Confidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Pay-in, donor to organisation</td>
+<td>Xendit</td>
+<td>Multi-currency card processing lets a Philippine merchant accept foreign-issued Visa and Mastercard presented in USD, EUR or GBP and settled in PHP, with Xendit doing the FX. Xendit charges cards worldwide regardless of currency</td>
+<td>Verified against Xendit's own documentation and help centre</td>
+</tr>
+<tr>
+<td>Payout, into the organisation's hands</td>
+<td>Xendit or dLocal</td>
+<td>Banks plus seven e-wallet providers. The wallet channel is the one that matters, because an organisation with no bank account can still be paid</td>
+<td>Verified against both providers' documentation</td>
+</tr>
+</tbody>
+</table>
+<p><strong>The single point of failure is stated plainly: collection rests on Xendit alone.</strong> This is critical success factor 7 in the product brief and a phase 2 item in the roadmap. A split architecture looks plausible, because what removed Stripe was payout to the Philippines rather than collection from the United States, so Stripe, Adyen, Checkout.com or PayPal could in principle collect while Xendit or dLocal pays out. That has not been researched and should not be assumed.</p>
+<p><strong>Philippine merchants sit on a smaller currency subset than Hong Kong or Singapore merchants, and pair availability is confirmed per account rather than published.</strong> Any currency claim in donor-facing copy has to be verified against the live account rather than against the documentation.</p>
+<h3>How direct settlement is actually implemented</h3>
+<p>Xendit's platform model lets a parent account originate transactions on behalf of sub-accounts that are themselves the merchants. Each organisation is onboarded as its own sub-account, completes its own KYC, and holds its own payout destination. The platform's roles are to create the transaction, to receive the webhook, and to record what happened. Funds never enter a platform-controlled balance.</p>
+<p><strong>Two consequences to design around.</strong></p>
+<ol>
+<li><strong>The organisation's KYC is not the platform's to schedule.</strong> Xendit's review takes 5 to 10 business days, and dLocal imposes a hard 30-day KYC completion window after which the account deactivates, and reserves the right to reject an applicant without giving reasons. The campaign page therefore has to work and be shareable before payout is live, which is a product requirement rather than a caveat.</li>
+<li><strong>The tip cannot ride inside the organisation's transaction.</strong> A donor tip is platform revenue and the organisation's donation is not, so they are separate transactions to separate merchants, presented as one action. Getting this wrong either routes platform revenue through the organisation's books or routes the donation through the platform's, and the second one recreates custody.</li>
+</ol>
+<hr />
+<h2>2. The verification pipeline, which is the product</h2>
+<p>The gate is the only fraud control, so this pipeline is the highest-consequence code in the system.</p>
+<h3>Inputs and where each comes from</h3>
+<table>
+<thead>
+<tr>
+<th>Input</th>
+<th>Source</th>
+<th>Cost</th>
+<th>Automatable</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Registration status, incorporation, address</td>
+<td>Philippine SEC register</td>
+<td>Free eSEARCH lookup, or the API below</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>General Information Sheet and audited financial statement filing record</td>
+<td>Same</td>
+<td>Same</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>PCNC accreditation and expiry</td>
+<td>PCNC public register</td>
+<td>Free, dated register</td>
+<td>Yes, by scheduled read</td>
+</tr>
+<tr>
+<td>Identity of the named accountable person</td>
+<td>Government ID via the payment provider's KYC</td>
+<td>Included in provider onboarding</td>
+<td>Provider-side</td>
+</tr>
+<tr>
+<td>Sanctions and watchlist screening, organisation and person</td>
+<td>Provider's AML screening</td>
+<td>Included</td>
+<td>Provider-side, though what the provider passes back is an open question</td>
+</tr>
+<tr>
+<td>Work category, budget, prior work, reporting commitment</td>
+<td>The organisation</td>
+<td>Free</td>
+<td>Not checked, and labelled as unchecked</td>
+</tr>
+</tbody>
+</table>
+<h3>The SEC API, and the reason for a cache</h3>
+<p>The SEC API Marketplace sells a nine-API Company Information Lookup bundle covering registration status, audited financial statements and General Information Sheets at PHP 10,000 per 100 calls a year or PHP 50,000 per 1,000, which is roughly PHP 50 to 100 per lookup. A separate SEC Number API is free at ten calls a day.</p>
+<p><strong>Ten calls a day is a development allowance rather than a production one</strong>, and PHP 50 to 100 a lookup is fine per organisation and ruinous per page view. The lookup therefore has to be a cached, versioned record rather than a live call:</p>
+<ul>
+<li>One lookup at registration, stored as a dated verification record.</li>
+<li>Re-checked on a schedule, at least at the twelve-month green-light expiry.</li>
+<li>Campaign pages render from the stored record and display the date it was read, which is what makes the display honest rather than merely current.</li>
+<li>The free tier's response fields are undocumented, and inspecting one response is a registration task rather than a fetch. It is roadmap item 0.3.</li>
+</ul>
+<h3>The floor and the cap, as code</h3>
+<p>The rule that decides who publishes and for how much is a platform judgment applied to real organisations, so three properties matter more than the rule itself.</p>
+<ol>
+<li><strong>Deterministic.</strong> The same register record always produces the same ceiling. No scoring model, no discretion at the point of decision.</li>
+<li><strong>Versioned.</strong> The rule version is stored on every verification record, so an organisation can be told which rule produced its ceiling and a rule change does not silently rewrite history.</li>
+<li><strong>Explainable in one sentence.</strong> If the reason for a ceiling cannot be stated to the organisation in a sentence, the rule is wrong. The prototype's version is: registered and not revoked publishes, and each year of missing audited financial statements lowers the ceiling.</li>
+</ol>
+<p><strong>What the rule must never become.</strong> A composite score, a tier, or anything a donor could read as a quality rating. That reintroduces the badge the product ruled out, and it makes a promise the platform has no mechanism to keep.</p>
+<hr />
+<h2>3. Data model, phase 1</h2>
+<p>Seven tables carry the product. The shape below is the part worth arguing about; the columns are not.</p>
+<ul>
+<li><strong>organisation.</strong> Registration number, name as registered, contact, work category, payout provider account reference, current green-light state and expiry.</li>
+<li><strong>verification.</strong> One row per check, per organisation, dated, with the raw provider or register response retained, the rule version applied, and the resulting ceiling. Append-only. This table is the product's evidence, so nothing in it is ever updated in place.</li>
+<li><strong>campaign.</strong> Organisation, theme, title, one-sentence ask, prior work, reporting commitment, state.</li>
+<li><strong>impact_line</strong> and <strong>budget_line.</strong> Both belong to a campaign. Units on impact lines come from the theme and are not free text.</li>
+<li><strong>donation.</strong> Campaign, amount, currency, one-off or recurring, provider transaction reference, state. Carries no account or card data of any kind.</li>
+<li><strong>tip.</strong> Deliberately its own table with its own transaction reference, for the reason in section 1.</li>
+<li><strong>theme.</strong> Content structure rather than configuration: unit definitions, suggested budget lines, accent, imagery treatment, placeholder copy.</li>
+</ul>
+<p><strong>The one modelling decision that matters.</strong> <code>verification</code> being append-only and retaining the raw response is what lets a campaign page say what was read and when, rather than what is true now. The product's central claim is about what was checked, and a table that overwrites cannot support that claim.</p>
+<hr />
+<h2>4. Stack</h2>
+<p>Chosen for a solo builder on free infrastructure, which is the real constraint on a case study.</p>
+<table>
+<thead>
+<tr>
+<th>Layer</th>
+<th>Choice</th>
+<th>Reason</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Application</td>
+<td>Next.js with the App Router, TypeScript</td>
+<td>Server components render the campaign page as HTML, which matters because the page is the product and it must be fast and indexable on a phone in the Philippines</td>
+</tr>
+<tr>
+<td>Data</td>
+<td>Postgres, through Prisma</td>
+<td>The verification model is relational and append-only. A document store would make the evidence trail harder rather than easier</td>
+</tr>
+<tr>
+<td>Hosting</td>
+<td>Any Node host with a free tier</td>
+<td>Nothing in the architecture needs more, and the campaign page caches well</td>
+</tr>
+<tr>
+<td>Auth</td>
+<td>Email link, built in the application</td>
+<td>Managed auth costs money or an account, and the organisation logs in rarely</td>
+</tr>
+<tr>
+<td>Images</td>
+<td>Object storage, fixed aspect ratios, one grade applied on upload</td>
+<td>Design rule 5. These are phone photographs taken in bad light, and the gap between that and an agency page is mostly photographic</td>
+</tr>
+<tr>
+<td>Payments</td>
+<td>Xendit platform accounts</td>
+<td>Section 1</td>
+</tr>
+<tr>
+<td>Register lookups</td>
+<td>An adapter interface, with a cached implementation</td>
+<td>Section 2</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Two interfaces are worth defining before anything else</strong>, because both external dependencies are single points of failure and both are likely to change. A <code>RegisterLookup</code> interface with one live implementation and one fixture implementation, and a <code>PaymentProvider</code> interface with the same. The prototype runs entirely on the fixture implementations, which is not a shortcut so much as the same seam the real system needs for testing.</p>
+<hr />
+<h2>5. Unit economics, and what they demand of the architecture</h2>
+<p>Revenue is donor tips and the organisation pays nothing, which puts an unusual amount of weight on cost per organisation.</p>
+<p><strong>Cost is per organisation and roughly fixed.</strong> A register lookup is PHP 50 to 100. Human review where the register is unclear is the dominant cost and is a known limit of the pilot rather than a steady state. Verification costs about the same whether a campaign raises PHP 20,000 or PHP 400,000, which is exactly why the percentage fee was dropped.</p>
+<p><strong>Revenue is per donation and variable.</strong> The environmental donor gives $93 on a one-time gift against $139 across all causes, and monthly giving is 32% of environmental online revenue. Tip uptake and average tip rate are both unknown, and the business model rests entirely on them. That is stated in the brief as an accepted weakness rather than modelled here, because a number invented for this document would be worse than an admission.</p>
+<p><strong>What this demands of the build.</strong> Every avoidable per-organisation cost is a threat to the model, which is the architectural argument for caching register lookups, for automating the lookup rather than reviewing by hand, and for vetting once per organisation rather than per campaign. It is also the argument against anything that raises support load per organisation, which is a real risk given the target user's administrative capacity.</p>
+<hr />
+<h2>6. Compliance</h2>
+<ul>
+<li><strong>Not a money transmitter.</strong> Because the platform never holds funds, it is software rather than a money services business, and it needs no US state-by-state licensing. This is the whole reason for the custody decision and every architectural choice above protects it.</li>
+<li><strong>AML and sanctions ride on the payment provider.</strong> The provider performs KYC on the organisation and its officers and screens both. What the provider passes back to the platform is an open technical question and it matters, because the campaign page displays the result.</li>
+<li><strong>Tax deductibility is unavailable and is not an engineering problem.</strong> US IRC section 170(c)(2) allows a deduction only for gifts to US-organised entities, and the conduit rule requires an intermediary that genuinely holds the funds and is free not to send them, which is the custody the product gave up. <em>Persche</em> covers giving inside the EU and EEA and does not reach the Philippines. UK Gift Aid needs an HMRC-recognised charity. There is no implementation that changes this, so the page states it.</li>
+<li><strong>Data protection in two jurisdictions at once.</strong> Organisation and officer data is Philippine and falls under the Data Privacy Act. Donor data is worldwide, which brings GDPR into scope for European donors. The named accountable person's details are published deliberately, which makes consent at registration a real requirement rather than a formality.</li>
+</ul>
+<hr />
+<h2>7. Risks, ranked by what they would cost</h2>
+<ol>
+<li><strong>Collection rests on one provider.</strong> If Xendit declines the account or changes its multi-currency terms, the donor side stops. No second pay-in provider has been researched. Phase 2, and arguably earlier.</li>
+<li><strong>The register lookup is the gate and its API is priced per call with an undocumented free tier.</strong> If the response does not contain the filing record, verification stays manual and per-organisation cost rises against a revenue model that cannot absorb it.</li>
+<li><strong>Human vetting does not scale.</strong> Recorded as a known limit of the pilot rather than solved. It is the cost line most likely to break the model at growth.</li>
+<li><strong>The tip is the entire business model and its uptake is unmeasured.</strong> No architectural fix exists. It is instrumented from day one or it is guessed at forever.</li>
+<li><strong>Published personal data.</strong> The product requires a named individual on a public page, in a country where civil society organisations have faced state pressure. This is recorded here because it is a real risk to a real person in the live product, and it is not addressed by anything in this document.</li>
+</ol>
+<hr />
+<h2>8. What the prototype fakes, and what that hides</h2>
+<p>Stated because a click-through can make hard things look solved.</p>
+<table>
+<thead>
+<tr>
+<th>The prototype does this</th>
+<th>The real product would face this</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Reads a hardcoded register record instantly</td>
+<td>A priced API with undocumented fields, a cache, a re-check schedule, and a manual fallback</td>
+</tr>
+<tr>
+<td>Advances the five-day wait with a button</td>
+<td>Two asynchronous processes, the platform's and the provider's, neither of which reports progress on a schedule</td>
+</tr>
+<tr>
+<td>Adds a donation to a number in memory</td>
+<td>Two separate transactions to two separate merchants, webhooks, retries, failed cards, and recurring donations that outlive the campaign</td>
+</tr>
+<tr>
+<td>Generates its imagery</td>
+<td>Uploads from phones in bad light, fixed crops, a consistent grade, and storage</td>
+</tr>
+<tr>
+<td>Assumes the named person consents</td>
+<td>Consent, and the safety of publishing an identifiable individual</td>
+</tr>
+<tr>
+<td>Has no failure states</td>
+<td>Rejected KYC, lapsed green lights against live recurring donations, revoked registrations mid-campaign</td>
+</tr>
+</tbody>
+</table>
+<p>The last row is the one that matters most. Every hard problem in this product is a failure state, and a happy-path prototype is the least honest possible view of it. That is why the failure states are written down here and in the roadmap rather than left for the build to discover.</p>
+<div class="doc-footer">Part of the Fund the Future case study documentation set. For the short version, see the <a href="../index.html">case study page</a>.</div>
+</article>
+<footer>
+  <div class="wrap">Fund the Future is a fictional case study built for portfolio purposes. Market research is real and cited; personas, interviews, campaigns and donations are synthetic. No money moves at any point.</div>
+</footer>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'neutral',
+    fontFamily: '-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif',
+    flowchart: { curve: 'basis' },
+  });
+</script>
+</body>
+</html>

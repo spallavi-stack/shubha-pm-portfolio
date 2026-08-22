@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Roadmap, Fund the Future | Shubha's PM Portfolio</title>
+<style>
+  :root{
+    --teal:#C24E2E; --teal-dark:#9E3E22; --navy:#241F1B;
+    --ink:#1F1B17; --ink-soft:#5B5750; --paper:#FFFFFF; --paper-soft:#F4F0EA; --border:#E4DED4;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;color:var(--ink);background:var(--paper);line-height:1.7;}
+  .wrap{max-width:760px;margin:0 auto;padding:0 24px;}
+  nav{position:sticky;top:0;z-index:50;background:rgba(255,255,255,0.95);backdrop-filter:blur(8px);border-bottom:1px solid var(--border);}
+  nav .navwrap{max-width:920px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:14px 24px;}
+  nav a{color:var(--teal-dark);text-decoration:none;font-size:13.5px;font-weight:600;}
+  nav .brand{color:var(--navy);font-weight:700;font-size:15px;}
+  nav .brand span{color:var(--teal);}
+  article{padding:48px 0 64px;}
+  article h1{font-size:30px;letter-spacing:-0.01em;color:var(--navy);margin:0 0 8px;}
+  article h1 + p{color:var(--ink-soft);font-size:14px;margin-top:0;}
+  article h2{font-size:20px;margin:36px 0 12px;padding-bottom:8px;border-bottom:2px solid var(--teal);color:var(--navy);}
+  article h3{font-size:16px;margin:24px 0 8px;color:var(--navy);}
+  article p{font-size:15px;color:var(--ink);margin:0 0 14px;}
+  article ul, article ol{padding-left:22px;margin:0 0 14px;}
+  article li{font-size:15px;margin-bottom:6px;}
+  article strong{color:var(--navy);}
+  article blockquote{margin:16px 0;padding:10px 18px;border-left:3px solid var(--teal);background:var(--paper-soft);color:var(--navy);font-style:italic;}
+  article hr{border:none;border-top:1px solid var(--border);margin:32px 0;}
+  article table{width:100%;border-collapse:collapse;margin:16px 0;font-size:13.5px;}
+  article th, article td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--border);}
+  article th{font-size:11px;text-transform:uppercase;letter-spacing:0.04em;color:var(--ink-soft);}
+  article code{background:var(--paper-soft);padding:1px 5px;border-radius:4px;font-size:13px;}
+  article svg{max-width:100%;height:auto;display:block;margin:20px 0;border:1px solid var(--border);border-radius:12px;padding:10px;background:#fff;}
+  article pre.mermaid{background:none;border:none;padding:0;margin:20px 0;overflow-x:auto;text-align:center;}
+  article pre.mermaid svg{margin:0 auto;}
+  .doc-footer{margin-top:40px;padding-top:20px;border-top:1px solid var(--border);font-size:13px;color:var(--ink-soft);}
+  footer{background:var(--navy);color:#D8D0C6;padding:32px 0;text-align:center;font-size:13px;}
+  footer a{color:#E8865F;}
+</style>
+</head>
+<body>
+<nav>
+  <div class="navwrap">
+    <span class="brand">Fund the Future<span>.</span> Documentation</span>
+    <div style="display:flex;gap:18px;">
+      <a href="../index.html">← Case study</a>
+      <a href="../../../index.html">Portfolio</a>
+    </div>
+  </div>
+</nav>
+<article class="wrap">
+<h1>Fund the Future: Roadmap</h1>
+<p><em>Drafted August 2026, after the prototype. Sequenced against <a href="product-brief.md"><code>product-brief.md</code></a> and the decisions in <code>HANDOVER.md</code>. Every claim about the market traces to <a href="grounding-research.md"><code>grounding-research.md</code></a>.</em></p>
+<p>The product brief's recommendation is GO to prototype and concept test, and not GO to build. This roadmap is written to that recommendation. Phase 0 is the work that decides whether phase 1 should happen at all, and the phases after it are conditional on results rather than scheduled.</p>
+<h2>The shape of the sequencing problem</h2>
+<p>Three facts set the order of everything below.</p>
+<p><strong>The gate is the only fraud control.</strong> The platform holds no funds, so there is no freezing, no reversal and no holding pending investigation. Anything that widens who can publish has to ship after the checks that decide who can publish, never alongside them.</p>
+<p><strong>Verification cost is per organisation, not per campaign.</strong> That is why onboarding is vetted once and campaigns are unlimited, and it is why anything that raises per-organisation cost is a bigger threat to the model than anything that raises per-campaign cost.</p>
+<p><strong>Revenue is donor tips, so revenue tracks donor volume rather than gift size.</strong> The environmental donor gives less per gift than average, $93 against $139, and retains better, 53% against 48%, with monthly giving at 32% of online revenue. Every prioritisation call below that looks like a choice between more donors and larger donors resolves toward more donors and toward retention.</p>
+<hr />
+<h2>Phase 0: decide whether to build. Roughly one quarter.</h2>
+<p>Nothing here is engineering. The brief's recommendation stops at this phase, and passing it is the condition for phase 1.</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Work</th>
+<th>What it settles</th>
+<th>Why it is first</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0.1</td>
+<td>Concept test with roughly twenty donors in the proposed starting markets</td>
+<td>Whether structured disclosure substitutes for audited financials, and whether the named-person structure conflicts with the effectiveness finding</td>
+<td>These are the two questions no desk research can answer, and both sit under locked decisions</td>
+</tr>
+<tr>
+<td>0.2</td>
+<td>Assemble a sample of real Philippine grassroots adaptation organisations, starting from the 25 live projects returned by GlobalGiving's Philippines and Climate Action filters and the 11 PCNC-accredited environment organisations</td>
+<td>Whether the fundable set is narrower than the target user base</td>
+<td>The deepest open assumption in the project. Three data points currently point two ways</td>
+</tr>
+<tr>
+<td>0.3</td>
+<td>Register for the SEC free API tier, at ten calls a day, and inspect one response</td>
+<td>Whether verification automates or stays manual, and what the response actually contains</td>
+<td>The lookup is the gate, and its fields are undocumented. This is a signup rather than a fetch</td>
+</tr>
+<tr>
+<td>0.4</td>
+<td>Interview five to eight organisations from 0.2 on the registration flow</td>
+<td>Whether an organisation accepts the public display of its own missing filings</td>
+<td>Untested by any source, and it is what the whole verification design rests on</td>
+</tr>
+<tr>
+<td>0.5</td>
+<td>Establish what fiscal sponsors charge and how they handle the donor relationship</td>
+<td>Whether the differentiation against the real substitute holds</td>
+<td>The competitive section currently states this contrast without the numbers behind it</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Kill criteria, stated in advance.</strong> If 0.2 shows the fundable set is a dozen organisations rather than a population, the product is a service rather than a platform and should be rebuilt as one. If 0.4 shows organisations will not publish their filing gaps, the floor-and-cap model fails and the only remaining options are the documentation barrier the product exists to remove or a permissive front door it has no remedy behind.</p>
+<hr />
+<h2>Phase 1: the minimum that can take a real donation. Two quarters.</h2>
+<p>Ships only if phase 0 passes. This is the scope the prototype demonstrates, built for real.</p>
+<p><strong>Organisation side</strong></p>
+<ol>
+<li>Registration and the SEC register check, automated where 0.3 allows and manual behind the same interface where it does not.</li>
+<li>Sanctions and watchlist screening, and identity verification of the named accountable person, both riding on the payment provider's KYC.</li>
+<li>The verification wait as one status screen. No draft state, because at five business days it earns too little to justify one.</li>
+<li>Approval, with the raise ceiling set and explained in pesos.</li>
+<li>The rejection path, carrying the reason, the specific missing item, and the cost and duration of SEC registration.</li>
+<li>The campaign builder across all seven themes.</li>
+<li>Payout onboarding with Xendit, including the e-wallet route, because an organisation with no bank account is a core case rather than an edge one.</li>
+</ol>
+<p><strong>Donor side</strong></p>
+<ol start="8">
+<li>The campaign page, with the verification display and the costed budget.</li>
+<li>One-off and recurring giving at the same decision point. Recurring ships in phase 1 rather than later, on the environmental-sector retention evidence.</li>
+<li>The donor tip.</li>
+<li>The Matchmaker, ordered on a fact the donor chose.</li>
+</ol>
+<p><strong>What phase 1 deliberately excludes</strong></p>
+<ul>
+<li>Reporting back to donors. Committed on the page, not delivered by the product. This is the largest gap and it is phase 2's first item.</li>
+<li>Any second pay-in provider. Collection rests on Xendit alone, which is critical success factor 7 in the brief and a known single point of failure.</li>
+<li>Any market other than the Philippines. The country selector shows Kenya, Ghana and Mozambique greyed out and unselectable.</li>
+<li>Tax relief in any form. Structurally unavailable and stated on the page.</li>
+</ul>
+<hr />
+<h2>Phase 2: make the second donation possible. Two quarters.</h2>
+<p>Phase 1 gets money once. New-donor retention of 24% to 28% means a single campaign raises money roughly once, so a platform that stops at phase 1 is a platform organisations use once and leave.</p>
+<ol>
+<li><strong>Reporting back.</strong> The organisation states at build time what it will report and when. Phase 2 carries the reporting itself: a structured update against the commitment, delivered to everyone who gave. This is the mechanism behind retention and it is the promise phase 1 makes without keeping.</li>
+<li><strong>The lapsed green light against a live recurring donation.</strong> A green light is valid twelve months or until SEC status changes. Today nothing is designed for what happens to an active monthly donor when it lapses. This is a donor-trust hole rather than an administrative one and it needs both a policy and a screen.</li>
+<li><strong>Repeat campaigns.</strong> The second campaign should cost an afternoon and reuse everything settled at onboarding.</li>
+<li><strong>A second pay-in provider.</strong> dLocal cannot collect from any proposed starting donor market, so a split architecture is the likely answer, since what removed Stripe was payout to the Philippines rather than collection from the United States.</li>
+<li><strong>Donor-facing evidence of completion.</strong> From the interviews: the retention message is a photograph of the finished thing rather than a restatement of the crisis.</li>
+</ol>
+<hr />
+<h2>Phase 3: conditional expansion. Unscheduled.</h2>
+<p>Each item is gated on a specific result rather than on a date.</p>
+<table>
+<thead>
+<tr>
+<th>Work</th>
+<th>Gate</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A second market</td>
+<td>Phase 2 retention holds in the Philippines, and the candidate market has a register that shows filing rather than only existence. Kenya beats the Philippines on registry quality and payout maturity and stays out on FATF grey-listing plus the 2024 referral of 16 civil society organisations to the Directorate of Criminal Investigations. That is the condition to watch</td>
+</tr>
+<tr>
+<td>An impact module that carries a list rather than a count</td>
+<td>The preparedness theme underperforms the others on conversion. Ruben's evacuation register is more persuasive than his drill count, and the design brief left the module's form open</td>
+</tr>
+<tr>
+<td>A donor-facing unit translation per theme</td>
+<td>Evidence that native units cost conversion. Hectares are correct and illegible, which cuts against the theme library's own premise</td>
+</tr>
+<tr>
+<td>Corporate employee matching as a channel</td>
+<td>Establishing whether matching programmes will match a cross-border gift to a Philippine organisation. Pledge 1% is 19,000 companies across 130+ countries, which raises the value of settling it, and nothing currently establishes eligibility for a foreign recipient</td>
+</tr>
+<tr>
+<td>Institutional funder surfaces</td>
+<td>Not planned. The product surface decision holds, and the programme officer stays a visitor</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>The real application</h2>
+<p>This case study ships a prototype. Building the product means building software, and the architecture for it is specified in <a href="technical-feasibility.md"><code>technical-feasibility.md</code></a> rather than left implied. Two things in that document set the engineering order rather than the product order: the register lookup has to be cached because its free tier allows ten calls a day, and Stripe Connect cannot pay a recipient in the Philippines, which makes the payment provider a load-bearing choice rather than a swappable one.</p>
+<h2>What would change this roadmap</h2>
+<p><strong>The finding most likely to reorder everything</strong> is 0.2. If the population of fundable Philippine grassroots adaptation organisations turns out to be roughly a dozen, phases 1 and 2 are the wrong shape and the right product is a hands-on service for a small set of organisations, priced and staffed accordingly.</p>
+<p><strong>The finding most likely to stop it</strong> is 0.1. Donation size is strongly driven by perceived effectiveness at addressing climate change, and adaptation protects against consequences rather than reducing emissions. The costed budget is the proposed answer and it is untested. If donors will not fund adaptation at retail, no amount of verification design fixes that, and the honest response is to say so rather than to iterate on the page.</p>
+<div class="doc-footer">Part of the Fund the Future case study documentation set. For the short version, see the <a href="../index.html">case study page</a>.</div>
+</article>
+<footer>
+  <div class="wrap">Fund the Future is a fictional case study built for portfolio purposes. Market research is real and cited; personas, interviews, campaigns and donations are synthetic. No money moves at any point.</div>
+</footer>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'neutral',
+    fontFamily: '-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif',
+    flowchart: { curve: 'basis' },
+  });
+</script>
+</body>
+</html>

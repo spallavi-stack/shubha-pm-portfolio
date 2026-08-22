@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Market Selection, Fund the Future | Shubha's PM Portfolio</title>
+<style>
+  :root{
+    --teal:#C24E2E; --teal-dark:#9E3E22; --navy:#241F1B;
+    --ink:#1F1B17; --ink-soft:#5B5750; --paper:#FFFFFF; --paper-soft:#F4F0EA; --border:#E4DED4;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;color:var(--ink);background:var(--paper);line-height:1.7;}
+  .wrap{max-width:760px;margin:0 auto;padding:0 24px;}
+  nav{position:sticky;top:0;z-index:50;background:rgba(255,255,255,0.95);backdrop-filter:blur(8px);border-bottom:1px solid var(--border);}
+  nav .navwrap{max-width:920px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:14px 24px;}
+  nav a{color:var(--teal-dark);text-decoration:none;font-size:13.5px;font-weight:600;}
+  nav .brand{color:var(--navy);font-weight:700;font-size:15px;}
+  nav .brand span{color:var(--teal);}
+  article{padding:48px 0 64px;}
+  article h1{font-size:30px;letter-spacing:-0.01em;color:var(--navy);margin:0 0 8px;}
+  article h1 + p{color:var(--ink-soft);font-size:14px;margin-top:0;}
+  article h2{font-size:20px;margin:36px 0 12px;padding-bottom:8px;border-bottom:2px solid var(--teal);color:var(--navy);}
+  article h3{font-size:16px;margin:24px 0 8px;color:var(--navy);}
+  article p{font-size:15px;color:var(--ink);margin:0 0 14px;}
+  article ul, article ol{padding-left:22px;margin:0 0 14px;}
+  article li{font-size:15px;margin-bottom:6px;}
+  article strong{color:var(--navy);}
+  article blockquote{margin:16px 0;padding:10px 18px;border-left:3px solid var(--teal);background:var(--paper-soft);color:var(--navy);font-style:italic;}
+  article hr{border:none;border-top:1px solid var(--border);margin:32px 0;}
+  article table{width:100%;border-collapse:collapse;margin:16px 0;font-size:13.5px;}
+  article th, article td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--border);}
+  article th{font-size:11px;text-transform:uppercase;letter-spacing:0.04em;color:var(--ink-soft);}
+  article code{background:var(--paper-soft);padding:1px 5px;border-radius:4px;font-size:13px;}
+  article svg{max-width:100%;height:auto;display:block;margin:20px 0;border:1px solid var(--border);border-radius:12px;padding:10px;background:#fff;}
+  article pre.mermaid{background:none;border:none;padding:0;margin:20px 0;overflow-x:auto;text-align:center;}
+  article pre.mermaid svg{margin:0 auto;}
+  .doc-footer{margin-top:40px;padding-top:20px;border-top:1px solid var(--border);font-size:13px;color:var(--ink-soft);}
+  footer{background:var(--navy);color:#D8D0C6;padding:32px 0;text-align:center;font-size:13px;}
+  footer a{color:#E8865F;}
+</style>
+</head>
+<body>
+<nav>
+  <div class="navwrap">
+    <span class="brand">Fund the Future<span>.</span> Documentation</span>
+    <div style="display:flex;gap:18px;">
+      <a href="../index.html">← Case study</a>
+      <a href="../../../index.html">Portfolio</a>
+    </div>
+  </div>
+</nav>
+<article class="wrap">
+<h1>Fund the Future: Pilot Market Selection</h1>
+<h2>Status: rewritten August 2026</h2>
+<p>This document has been rewritten twice. The first version named Kenya, the Philippines and India, chosen by association rather than against criteria. The second redid the selection properly against six ranked criteria and produced a three-market pilot of the Philippines, Nigeria and Honduras.</p>
+<p><strong>This version makes two changes.</strong></p>
+<p><strong>One: the pilot is a single market.</strong> Researching payout rails and verification to the depth this product requires produced three partial answers rather than one complete one. Expansion is a post-MVP question.</p>
+<p><strong>Two: criterion 4, diaspora size and remittance corridor strength, has been deleted, and every market's score has been re-derived without it.</strong> The reasoning behind that criterion was that a builder-plus-link product with no discovery surface travels only as far as an organisation's own network carries it, which made a large higher-income diaspora look like the most plausible donor pool. That reasoning conflated two different behaviours. Remittance is money sent to one's own family under obligation. Donating to a climate organisation is charitable giving to strangers. Proximity to a country is not proximity to a cause, and no evidence in this research connects the two. A market selected for remittance strength was selected on the wrong evidence.</p>
+<p><strong>The donor for this product is a climate-motivated retail donor</strong>, meaning someone who already gives to environmental causes and would give to adaptation work if it were legible, specific and trustworthy. Nothing about that donor makes any particular recipient country more or less suitable, so the surviving criteria are all about the recipient side.</p>
+<p>Every claim below is tagged <strong>Fact</strong> (cited), <strong>Inference</strong> (reasoned from stated facts), or <strong>Assumption</strong> (unverified). Claims sourced only from search snippets rather than the primary document are marked as such and carry a verification task.</p>
+<hr />
+<h2>Method</h2>
+<p><strong>Stage 1: hard filters.</strong> Pass or fail. A country failing any filter is out regardless of how well it scores elsewhere, because each filter breaks the product's core operation rather than degrading it.</p>
+<p><strong>Stage 2: five ranked criteria</strong>, applied to the survivors. Three were set by the user, two were added for product-specific reasons.</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Criterion</th>
+<th>Origin</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Impact of the climate crisis on the country</td>
+<td>User</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Size and documentability of the nonprofit sector, measured by total registered NPO count, with an explicit flag where the registration regime likely hides a large informal sector</td>
+<td>User, restated August 2026</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Population in or near poverty, measured both as a rate and as an absolute count, reported separately</td>
+<td>User</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Whether a public NGO registry exists that can actually be queried</td>
+<td>Added</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Whether an established, documented payout rail already reaches organisations in the country</td>
+<td>Added</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Why criteria 4 and 5 were added, and why those reasons survive.</strong> Verification is the product's stated differentiator, so a market with no checkable register is a poor place to pilot a trust product. Cross-border money movement is the product's defining technical constraint, so payout rails work two ways: <strong>pass or fail on whether any documented rail reaches the country at all</strong>, and <strong>ranked on how established that rail is</strong>, measured by number of channels, breadth of receiving institutions, and whether organisations without a traditional bank account can be paid.</p>
+<p><strong>[Inference]</strong> With diaspora removed, criteria 4 and 5 carry more weight than before, because they are the two that map directly onto the product's two hard problems. That is a defensible reweighting rather than a convenient one: the product's difficulty is proving an organisation is real and getting money to it, and these are the two criteria that measure exactly that.</p>
+<p><strong>Criterion 2 was restated in August 2026 because its original form was never satisfiable.</strong> It previously asked for the number of registered climate or adaptation NGOs. That figure was not obtainable for any candidate market in any of three research passes, and Kenya, now eliminated, is the only country where a government-published sector breakdown exists at all. A scoring criterion that scores nobody is decorative, which is the problem this document exists to fix.</p>
+<p>The criterion now measures <strong>total registered NPO count</strong>, which is available and already collected for the leading candidates. <strong>[Inference]</strong> This preserves what the criterion was actually asking, meaning whether a real pool of organisations exists and whether the state keeps track of them, while making it answerable. It also strengthens the Philippines, which holds the largest verified count of any candidate, so the restatement is declared here rather than left to look like a convenient adjustment made after the selection.</p>
+<p><strong>The informal-sector flag survives the restatement and matters more under it.</strong> Registered counts systematically undercount this product's target user, because the product exists for organisations too small or too informal to appear on a register at all.</p>
+<hr />
+<h2>Stage 1: hard filters</h2>
+<h3>Filter A: foreign donations must be legally receivable by small organisations</h3>
+<p>An approval gate that most small organisations cannot clear makes the product unusable for its target user, regardless of need.</p>
+<p><strong>Eliminated:</strong> India (Foreign Contribution Regulation Act, with amendments under consideration that would expand government authority further), Bangladesh (Foreign Donations Regulation Act approval gate), Vietnam (Decree 80), Pakistan, Uganda (Protection of Sovereignty Bill, 2026), Zimbabwe, China, Egypt, Nicaragua, El Salvador (Foreign Agents Law, May 2025). (<strong>Fact</strong> for India, Uganda and El Salvador, per <a href="https://www.icnl.org/our-work/cross-border-funding">ICNL</a> and <a href="https://www.wola.org/analysis/curtailing-civic-space-tightening-restrictions-on-civil-society-in-the-americas/">WOLA</a>; <strong>Inference</strong> for the remainder, from the same restriction pattern, and each needs verification before any of them is reconsidered.)</p>
+<p><strong>Nepal</strong> requires Social Welfare Council approval for foreign funding, which is the same category of gate the user asked to avoid. (<strong>Assumption</strong>, not verified. Worth verifying if the shortlist is reopened.) Note that Nepal was previously described here as a painful loss because of its remittance-to-GDP ratio. That reasoning is void. It remains a reasonable candidate on climate exposure alone.</p>
+<p><strong>Ghana: unresolved.</strong> Ghanaian NGOs register under the Companies Act, whose provisions facilitate NGO formation, and no specific foreign-funding restriction was located. But no source positively confirms that foreign donations are receivable without an approval gate. (<strong>Assumption</strong>, per <a href="https://www.icnl.org/wp-content/uploads/global-ngo-law_trends3-3.pdf">ICNL sub-Saharan Africa survey</a>, which documents a regional trend toward prior-approval requirements without resolving Ghana's current position.) <strong>Ghana cannot be selected until this is verified</strong>, and this is a genuine gap rather than a reason to dismiss it.</p>
+<h3>Filter B: a documented payout rail must reach the country</h3>
+<p><strong>Eliminated:</strong> Somalia, Afghanistan, Syria, Yemen, South Sudan.</p>
+<p>All markets reaching stage 2 were verified against primary provider documentation rather than assumed.</p>
+<h3>Filter C: no comprehensive sanctions, and no conflict state that makes payouts impossible</h3>
+<p><strong>Eliminated:</strong> Myanmar, Sudan, Democratic Republic of Congo (eastern provinces), Haiti, Venezuela.</p>
+<p><strong>Mozambique is now eliminated here.</strong> It was previously set aside for a weak diaspora, which is no longer a reason for anything, so it was re-examined against the hard filters directly. The Cabo Delgado insurgency has displaced close to a million people, with roughly 660,000 internally displaced across Cabo Delgado, Niassa and Nampula and a 2026 humanitarian response plan requiring US$348m across the three northern provinces. (<strong>Fact</strong>, per <a href="https://www.unocha.org/publications/report/mozambique/mozambique-2026-humanitarian-response-conflict-31-january-2026">OCHA</a> and <a href="https://civil-protection-humanitarian-aid.ec.europa.eu/where/africa/mozambique_en">ECHO</a>.) It also has an unresolved filter A exposure: a draft NGO law introduced in 2022, framed as anti-money-laundering and counter-terrorist-financing measures, imposes excessive formation requirements, grants officials overbroad discretion over authorisation, allows arbitrary dissolution, and imposes civil liability on officers and members. (<strong>Fact</strong> on the draft's content, per <a href="https://www.americanbar.org/groups/human_rights/reports/mozambique-ngo-law-analysis/">American Bar Association analysis</a>. <strong>Assumption:</strong> whether it has been enacted was not established.) Government forces have also been accused of harassment and intimidation of civil society organisations in the insurgency response.</p>
+<p><strong>[Inference]</strong> Mozambique fails filter C on the same basis as eastern DRC, and would need filter A resolved even if it did not. Its elimination does not depend on the deleted criterion, which is the point of re-examining it.</p>
+<h3>FATF grey-listing</h3>
+<p>Not a hard filter, because it does not make the product illegal. Scored as a significant negative, because it drives correspondent-bank de-risking and heightened scrutiny of nonprofit payment flows, which lands directly on the product's core operation of moving donor money to small nonprofits.</p>
+<p>As of 19 June 2026, 22 jurisdictions are under increased monitoring, including <strong>Kenya</strong> and <strong>Nepal</strong>. The Philippines, Nigeria, Ghana, Mozambique and Honduras are all absent from the list. (<strong>Fact</strong>, verified primary 21 August 2026 against <a href="https://www.fatf-gafi.org/en/publications/High-risk-and-other-monitored-jurisdictions/increased-monitoring-june-2026.html">FATF's own statement of 19 June 2026</a>, which names Kenya among the listed jurisdictions. Iraq and Bosnia and Herzegovina were added at that plenary and Algeria and Namibia removed.)</p>
+<p>The Philippines was removed in February 2025, and Nigeria and Mozambique in October 2025. (<strong>Fact</strong>, per <a href="https://thediplomat.com/2025/02/philippines-removed-from-watchdogs-money-laundering-grey-list/">The Diplomat</a> and <a href="https://www.aluko-oyebode.com/insights/nigeria-fatf-grey-list-removal-2025/">Aluko &amp; Oyebode</a>.)</p>
+<hr />
+<h2>Stage 2: re-scoring against the five surviving criteria</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Philippines</th>
+<th>Honduras</th>
+<th>Nigeria</th>
+<th>Kenya</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>1. Climate impact</strong></td>
+<td>Top ten CRI long-term</td>
+<td><strong>Strongest.</strong> 3rd in the world in both CRI editions</td>
+<td>Weakest. Real exposure, absent from top rankings</td>
+<td>Moderate</td>
+</tr>
+<tr>
+<td><strong>2. Registered NPO count</strong></td>
+<td><strong>Strongest.</strong> 64,087 NPOs</td>
+<td>Not found, likely small</td>
+<td>Not found</td>
+<td>12,643 registered, 10,279 active</td>
+</tr>
+<tr>
+<td><strong>3. Poverty</strong></td>
+<td>15.5%, 17.54m people</td>
+<td>50.3% rate</td>
+<td><strong>Strongest on absolute count.</strong> ~12% of the world's extreme poor</td>
+<td>Moderate</td>
+</tr>
+<tr>
+<td><strong>4. Queryable registry</strong></td>
+<td><strong>Strongest.</strong> SEC register, annual GIS and audited financial statements</td>
+<td>URSAC, closed list of requirements</td>
+<td>Name search only</td>
+<td>Strong</td>
+</tr>
+<tr>
+<td><strong>5. Payout rail</strong></td>
+<td><strong>Strongest verified.</strong> Banks plus 7 wallets, two like-for-like providers</td>
+<td><strong>Weakest.</strong> 16 banks, no wallet, single-rail</td>
+<td>Strong. 100+ institutions including fintech</td>
+<td>Strongest infrastructure, but grey-listed</td>
+</tr>
+<tr>
+<td><strong>FATF</strong></td>
+<td>Clean since Feb 2025</td>
+<td>Clean</td>
+<td>Clean since Oct 2025</td>
+<td><strong>On the grey list</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>[Inference]</strong> Removing criterion 4 changes the shape of this table in a specific way. The Philippines previously led partly on reach, and that column is gone. What it still leads on is the registry and the payout rail, which are the two criteria that correspond to the product's two hard problems. Honduras leads on climate impact and Nigeria on absolute poverty, and each is weakest on one of the two product-critical criteria.</p>
+<hr />
+<h2>Selection: the Philippines</h2>
+<p><strong>The Philippines is selected on criteria 4 and 5, supported by criterion 1.</strong> No part of this rests on diaspora, remittance flows, or population living abroad.</p>
+<ul>
+<li><strong>Registry, criterion 4.</strong> The SEC register of non-stock corporations operates a dedicated NPO regime under SEC Memorandum Circular 25 series of 2019. Organisations file annual General Information Sheets and audited financial statements. (<strong>Fact</strong>, per <a href="https://cof.org/content/nonprofit-law-philippines">Council on Foundations, Nonprofit Law in the Philippines</a>, current as of June 2026, link updated 22 August 2026.) <strong>[Fact, added 22 August 2026]</strong> That filing obligation is mandatory rather than optional: the audited financial statements must be supported by fund schedules and sworn statements from the President and Treasurer. An organisation that has not filed is in breach of its registration conditions, which is a sharper status than "unaccredited" and is flagged in <code>HANDOVER.md</code> as a tension for the verification design. <strong>[Inference]</strong> This is the decisive advantage. Verification is the product's stated pillar, and the Philippines is the only candidate whose register carries a continuing filing obligation rather than a one-off record of existence. A register that shows an organisation filed accounts last year proves something a register of names cannot.</li>
+<li><strong>Payout rail, criterion 5.</strong> dLocal documents both bank transfers and real-time wallet transfers into the Philippines, in PHP and USD, covering GCash, PayMaya, Coins, GrabPay, Starpay, TayoCash and PalawanPay, with wallet transfers capped at PHP 50,000 per transaction. (<strong>Fact</strong>, primary source, <a href="https://docs.dlocal.com/docs/philippines-payouts-v3">dLocal Philippines payouts documentation</a>.) Xendit provides a like-for-like alternative across 94+ banks and 13 e-wallets. <strong>[Inference]</strong> The wallet channel matters more than the bank channel, because an organisation with no bank account can still be paid, and that organisation is precisely the target user. Two like-for-like providers also removes the single-provider concentration risk that Honduras carries.</li>
+<li><strong>Climate impact, criterion 1.</strong> Among the ten most affected countries in the Climate Risk Index long-term ranking, and one of five lower-middle-income countries in that top ten. (<strong>Fact</strong>, per <a href="https://www.germanwatch.org/sites/default/files/2025-02/Climate%20Risk%20Index%202025.pdf">Germanwatch CRI 2025</a>.)</li>
+<li><strong>Registered NPOs, criterion 2.</strong> 64,087 NPOs registered across classifications as of 31 December 2020, the largest verified count of any candidate. (<strong>Fact</strong>, search-snippet sourced to SEC data. No current count is published: answering an FOI request in 2025 the SEC quoted PHP 1,000 plus PHP 4 per minute to produce a data extract rather than supplying a figure, and the AMLC NPO Risk Assessment PDF now returns 404. See <code>grounding-research.md</code> section 2.) A climate or environment subset is now available at the accredited tier only: of 604 PCNC-accredited NGOs, 11 are Environment/Biodiversity. (<strong>Fact</strong>, primary, <a href="https://pcnc.com.ph/accredited-ngos/">PCNC register</a>, read 21 August 2026.)</li>
+<li><strong>Poverty, criterion 3.</strong> 15.5% of the population, 17.54 million people, in 2023, down from 19.99 million in 2021. Substantial in absolute terms and moderate as a rate, making it the weakest of the candidates on this criterion. (<strong>Fact</strong>, verified, per <a href="https://psa.gov.ph/sites/default/files/phdsd/2023%20FY%20Official%20Poverty%20Statistics%20Publication_15August2024.pdf">PSA 2023 Full Year Official Poverty Statistics</a>.)</li>
+<li><strong>Foreign donations.</strong> Permitted. Receiving foreign grants triggers additional SEC, BIR and AMLA reporting rather than an approval gate. (<strong>Fact</strong>, same Council on Foundations source.)</li>
+<li><strong>Supporting evidence found after selection.</strong> Asia and Oceania received under 10% of foundation adaptation funding between 2021 and 2024 while holding more than half the world's population, and disaster risk management and infrastructure were the least funded sectors over that period. (<strong>Fact</strong>, <a href="https://www.climateworks.org/press-release/funding-for-climate-adaptation-and-resilience-hits-record-of-870-million/">ClimateWorks</a>, see <code>grounding-research.md</code> section 13.) <strong>[Inference]</strong> The pilot market sits in the region most exposed by population and least served by adaptation philanthropy, and the work most common among target organisations falls in the least-funded sectors.</li>
+</ul>
+<p><strong>The honest weakness.</strong> The Philippines is the weakest of the candidates on poverty rate and does not lead on climate impact. It is selected because it is strongest on the two criteria that map to the product's two hard problems, which is a deliberate weighting stated openly rather than an overall score.</p>
+<hr />
+<h2>Why not the others</h2>
+<h3>Honduras</h3>
+<p>Strongest climate-impact signal on the entire longlist: third most affected country in the world in both editions of the Climate Risk Index, the only candidate in the top three of both. (<strong>Fact</strong>, per <a href="https://www.germanwatch.org/en/cri">Germanwatch CRI 2026</a> and <a href="https://www.germanwatch.org/sites/default/files/2025-02/Climate%20Risk%20Index%202025.pdf">CRI 2025</a>.) Its registry, URSAC, operates under the 2011 NGO-D Law and its 2013 Regulations, which established a closed list of registration requirements specifically to limit official discretion, and Honduras has a Special Law for the Promotion of Non-Governmental Development Organizations explicitly covering environmental protection. (<strong>Fact</strong>, per <a href="https://www.icnl.org/resources/civic-freedom-monitor/honduras">ICNL Honduras</a>.)</p>
+<p><strong>Ruled out on criterion 5.</strong> dLocal documents bank transfers into 16 Honduran banks in HNL and USD, with beneficiaries required to supply a DNI or RTN. There is no wallet channel. (<strong>Fact</strong>, primary source, <a href="https://docs.dlocal.com/docs/honduras-payouts-v3">dLocal Honduras payouts documentation</a>.) The only verified alternative, Nium, pays a Visa card in HNL or wires over SWIFT, so it reaches a different destination type rather than substituting. (<strong>Fact</strong>, <a href="https://playbook.nium.com/country/honduras">Nium Honduras playbook</a>.) <strong>[Inference]</strong> An organisation needs a formal bank account to be paid at all, which is the exact barrier the product exists to lower, and the market is single-rail for local-currency payout.</p>
+<p><strong>Second reason.</strong> The government has restricted foreign donations administratively through the tax authority during the COVID-19 pandemic and in response to natural disasters, which is precisely when this product would see peak demand. (<strong>Fact</strong>, verified, per ICNL Honduras.) A general election in November 2025 carried associated pressure on civil society transparency. (<strong>Fact</strong>, per <a href="https://cepr.net/publications/honduras-social-economic-indicators-ahead-of-2025-general-election/">CEPR</a>.)</p>
+<p><strong>[Inference]</strong> In a three-market pilot Honduras was worth carrying, because its weaknesses forced honesty. As the sole pilot market it puts the payout rail, which is the product's defining technical constraint, in its weakest available configuration.</p>
+<h3>Nigeria</h3>
+<p>Holds the largest absolute number of people in extreme poverty of any country, roughly 12% of the global total, and is projected with DRC to account for a quarter of global extreme poverty by 2030. (<strong>Fact</strong>, search-snippet sourced to World Bank reporting; re-verify against the <a href="https://documents1.worldbank.org/curated/en/099253204222517873/txt/IDU-3e010784-3371-4dcb-b923-112e98052ed9.txt">Nigeria Poverty and Equity Brief</a>.) Foreign funding is unrestricted, with repeated legislative proposals over nearly two decades never enacted. (<strong>Fact</strong>, verified, per <a href="https://www.icnl.org/resources/civic-freedom-monitor/nigeria">ICNL Nigeria</a>.) Its payout rail is strong and well suited to the target user: dLocal documents transfers into 100+ institutions in NGN and USD, extending past traditional banks to microfinance banks and fintech providers including Moniepoint, PalmPay and OPay, with Flutterwave as a like-for-like alternative. (<strong>Fact</strong>, primary source, <a href="https://docs.dlocal.com/docs/nigeria-payouts-v3">dLocal Nigeria payouts documentation</a>.) <strong>[Inference]</strong> A small informal community group is more likely to hold an OPay or Moniepoint account than a traditional bank account, so the rail reaches the target user.</p>
+<p><strong>Ruled out on criteria 1 and 4.</strong> Nigeria does not appear near the top of the Climate Risk Index or ND-GAIN vulnerability rankings, despite serious exposure through flooding, Lake Chad desiccation and desertification. (<strong>Inference</strong>, from its absence from those rankings.) Its registry, the Corporate Affairs Commission's Incorporated Trustees regime under Part F of the Companies and Allied Matters Act 2020, sections 825 to 829, offers a public name search, and whether full organisational records are publicly queryable was never established. (<strong>Fact</strong> on the legal framework, <strong>open question</strong> on registry depth, per <a href="https://cof.org/country-notes/nonprofit-law-nigeria">Council on Foundations</a>.)</p>
+<p><strong>[Inference]</strong> For an adaptation product, leading on poverty while ranking low on climate impact is the wrong pair of scores. Nigeria is the strongest candidate if the product is ever reframed around domestic giving, since it ranked first in the world by share of income donated in the 2025 CAF World Giving Report. That is an expansion note, not a reason to select it now.</p>
+<h3>Kenya</h3>
+<p>Best-documented market on the longlist and the only one with a government-published NGO count and sector breakdown: 12,643 registered as of 30 June 2023, 10,279 active, with Environment sixth largest by expenditure at KES 6.18bn, 5.64% of sector spending, Water and Sanitation at 5.07% and Agriculture at 4.39%. (<strong>Fact</strong>, primary source, <a href="https://www.pbora.go.ke/sites/default/files/2025-09/Annual%20NGOS%20Sector%20Report%202022-2023.pdf">Annual NGO Sector Report 2022/2023</a>.) Foreign funding is legally unrestricted. (<strong>Fact</strong>, per <a href="https://www.icnl.org/resources/civic-freedom-monitor/kenya">ICNL Kenya</a>.) Its payout rail is the most established in the world: dLocal documents bank transfers plus real-time wallet transfers to M-Pesa, Airtel Money and Equitel, addressed by phone number. (<strong>Fact</strong>, primary source, <a href="https://docs.dlocal.com/docs/kenya-payouts-v3">dLocal Kenya payouts documentation</a>.)</p>
+<p><strong>Ruled out on FATF exposure.</strong> Kenya is on the grey list as of June 2026, and grey-listing drives correspondent-bank de-risking and heightened scrutiny of nonprofit payment flows, which is the exact operation a payout rail performs. Separately, in 2024 the government accused 16 civil society organisations of misusing foreign funding and referred their files to the Directorate of Criminal Investigations, so foreign-funded civil society is politically exposed despite being legally unrestricted. (<strong>Fact</strong>, per ICNL Kenya.)</p>
+<p><strong>[Inference]</strong> On criteria 4 and 5 alone Kenya beats the Philippines. Removing the diaspora criterion strengthens Kenya's case rather than weakening it, and this should be said plainly. <strong>Override condition:</strong> Kenya is the correct selection if grey-list exposure is judged manageable and registry data quality plus payout maturity are weighted above everything else. It is the better-documented market and, given the political exposure of foreign-funded civil society there, the riskier one for a product whose entire operation is receiving foreign donations.</p>
+<h3>Ghana</h3>
+<p>Payout rail matches the Philippines' shape: bank transfers plus real-time mobile money to MTN, Vodafone, AirtelTigo and G-Money, in GHS and USD, with a Ghana Card required for certain transaction types. (<strong>Fact</strong>, primary source, <a href="https://docs.dlocal.com/docs/ghana-payouts-v3">dLocal Ghana payouts documentation</a>.) Clean on FATF.</p>
+<p><strong>Not selectable yet.</strong> Filter A is unresolved, as set out above. <strong>[Inference]</strong> Ghana was previously dismissed partly for a small diaspora, which is no longer a reason. With that removed, it is a legitimate candidate blocked only by an unverified hard filter, and verifying Ghana's foreign-funding position is now a live research task rather than a closed question. Its climate-impact ranking and poverty rate are both materially below the leading candidates, so verification would likely still leave it behind the Philippines on criterion 1.</p>
+<h3>Guatemala</h3>
+<p>Bank transfers only, reaching 19 financial institutions against Honduras' 16, with a 13-digit CUI required. No wallet channel. (<strong>Fact</strong>, primary source, <a href="https://docs.dlocal.com/docs/guatemala-payouts-v3">dLocal Guatemala payouts documentation</a>.) Ranked 14th among the twenty most affected countries for 1998 to 2017. (<strong>Fact</strong>, search-snippet sourced, per <a href="https://ccafs.cgiar.org/regions/latin-america/guatemala">CGIAR CCAFS</a>.) No restrictions on domestic CSOs receiving foreign funding (<strong>Fact</strong>, per <a href="https://www.icnl.org/resources/civic-freedom-monitor/guatemala">ICNL Guatemala</a>), though its 2020 NGO Law, Decree 04-2020, complicates registration and a reform bill has been pending since 2024. Carries Honduras' payout weakness with a weaker climate-impact ranking.</p>
+<h3>Maldives</h3>
+<p>Permissive foreign-funding regime and existential climate exposure, but a population of roughly half a million cannot compete on criterion 2 or criterion 3 against any other candidate. It was selected in an earlier pass on qualitative argument rather than against the criteria.</p>
+<h3>Also considered</h3>
+<p>Madagascar, Malawi, Tanzania, Zambia, Senegal, Vanuatu, Solomon Islands, Fiji, Indonesia, Colombia and Peru were on the longlist and did not reach the shortlist on the combined criteria.</p>
+<hr />
+<h2>Conflicting statistic: resolved</h2>
+<p>Honduras' poverty rate came back with two live values: <strong>50.5% in 2024, projected 50.3% in 2025</strong> (World Bank Macro Poverty Outlook), and <strong>63% of the population</strong> (other 2024 reporting). Both were surfaced rather than resolved unilaterally, per the portfolio's standing rule.</p>
+<p><strong>Decision (user, August 2026): the World Bank figure is canonical. Honduras' poverty rate is 50.3%.</strong> Every Fund the Future document uses this figure and no other. The 63% value is not to be used anywhere, including in passing. (Source: <a href="https://thedocs.worldbank.org/en/doc/e408a7e21ba62d843bdd90dc37e61b57-0500032021/related/mpo-hnd.pdf">World Bank Macro Poverty Outlook, Honduras</a>.) Retained here even though Honduras is no longer the pilot market, because the figure appears in <code>grounding-research.md</code>.</p>
+<hr />
+<h2>The finding that matters most, and it is not about country selection</h2>
+<p>Kenya's sector report contains a number that should shape the product brief. In FY 2022/23, Kenyan NGOs received KES 196bn. <strong>Individual donors accounted for 2.3% of it, and that source shrank 10% year on year.</strong> The sector runs on affiliates (27.6%), other NGOs, foundations and trusts (25.8%), and foreign government agencies (21.2%). (<strong>Fact</strong>, primary source, same report.)</p>
+<p>Fund the Future is a retail-giving product aimed at a sector where retail giving is around 2% of income and falling. Sections 10 and 13 of <code>grounding-research.md</code> partially explain why: cross-border philanthropy is roughly 11% of global individual charitable giving, and adaptation is a small share of climate philanthropy within that. What remains unresolved is whether individual donors will fund adaptation work specifically.</p>
+<p>A second figure from the same report bears directly on the verification pillar: only 2,829 of 10,279 active NGOs filed annual reports that year. Registration status alone proves less about an organisation than it appears to, even in the best-documented market examined. (<strong>Fact</strong>, same report.) <strong>[Inference]</strong> This is also the strongest argument for the Philippines' annual filing obligation being the right thing to build verification on, and the strongest caution against assuming a filing obligation means filings happen.</p>
+<hr />
+<h2>Open verification tasks</h2>
+<p>Updated 21 August 2026 after a verification pass.</p>
+<ol>
+<li>~~<strong>Philippines: registered climate or environment NGO count.</strong>~~ <strong>Partly answered.</strong> 11 of 604 PCNC-accredited NGOs are Environment/Biodiversity. That is the certified tier, which is a floor rather than an estimate of the addressable population. A count of <em>registered</em> environment NGOs is still not obtainable.</li>
+<li>~~<strong>Philippines: whether the SEC register supports programmatic lookup.</strong>~~ <strong>Answered.</strong> The SEC API Marketplace sells a Company Information Lookup bundle covering status, AFS and GIS at PHP 10,000 per 100 calls a year or PHP 50,000 per 1,000, and offers a free SEC Number API at 10 calls a day. Verification can be automated. See <code>grounding-research.md</code> section 15. Residual task: register for the free tier and inspect one response, since its fields are undocumented.</li>
+<li><strong>Philippines: current NPO count.</strong> <strong>Answered negatively.</strong> The SEC publishes no aggregate count and sells a raw extract instead. The 2020 figure stands with its date.</li>
+<li>~~<strong>Philippines: payment provider onboarding timelines.</strong>~~ <strong>Answered.</strong> Xendit: 5 to 10 business days. dLocal: no published review SLA, but a hard 30-day KYC window after which the account deactivates, and a right to reject without giving reasons.</li>
+<li>~~<strong>Re-verify the FATF grey list.</strong>~~ <strong>Done.</strong> Verified against FATF's own 19 June 2026 statement. Kenya is listed; the Philippines is not.</li>
+<li><strong>Ghana: foreign-funding position.</strong> Still open. The ICNL page reached is an overview of ICNL's own work rather than a legal analysis, and the Council on Foundations country note now returns 404. Expansion-market question only.</li>
+<li>~~<strong>Composite climate-risk figure of 83.1.</strong>~~ <strong>Deleted 21 August 2026 by the user's decision.</strong> No index publishes that figure and it is not a Germanwatch CRI value. Criterion 1 rests on the CRI long-term top-ten placement, which is separately sourced. Recorded here so the claim is not reintroduced.</li>
+</ol>
+<p>Verification tasks specific to Nigeria and Honduras from the three-market pass are retained in the git history and are no longer blocking.</p>
+<div class="doc-footer">Part of the Fund the Future case study documentation set. For the short version, see the <a href="../index.html">case study page</a>.</div>
+</article>
+<footer>
+  <div class="wrap">Fund the Future is a fictional case study built for portfolio purposes. Market research is real and cited; personas, interviews, campaigns and donations are synthetic. No money moves at any point.</div>
+</footer>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'neutral',
+    fontFamily: '-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif',
+    flowchart: { curve: 'basis' },
+  });
+</script>
+</body>
+</html>

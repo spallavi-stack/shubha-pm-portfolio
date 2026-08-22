@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Product Brief, Fund the Future | Shubha's PM Portfolio</title>
+<style>
+  :root{
+    --teal:#C24E2E; --teal-dark:#9E3E22; --navy:#241F1B;
+    --ink:#1F1B17; --ink-soft:#5B5750; --paper:#FFFFFF; --paper-soft:#F4F0EA; --border:#E4DED4;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;color:var(--ink);background:var(--paper);line-height:1.7;}
+  .wrap{max-width:760px;margin:0 auto;padding:0 24px;}
+  nav{position:sticky;top:0;z-index:50;background:rgba(255,255,255,0.95);backdrop-filter:blur(8px);border-bottom:1px solid var(--border);}
+  nav .navwrap{max-width:920px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:14px 24px;}
+  nav a{color:var(--teal-dark);text-decoration:none;font-size:13.5px;font-weight:600;}
+  nav .brand{color:var(--navy);font-weight:700;font-size:15px;}
+  nav .brand span{color:var(--teal);}
+  article{padding:48px 0 64px;}
+  article h1{font-size:30px;letter-spacing:-0.01em;color:var(--navy);margin:0 0 8px;}
+  article h1 + p{color:var(--ink-soft);font-size:14px;margin-top:0;}
+  article h2{font-size:20px;margin:36px 0 12px;padding-bottom:8px;border-bottom:2px solid var(--teal);color:var(--navy);}
+  article h3{font-size:16px;margin:24px 0 8px;color:var(--navy);}
+  article p{font-size:15px;color:var(--ink);margin:0 0 14px;}
+  article ul, article ol{padding-left:22px;margin:0 0 14px;}
+  article li{font-size:15px;margin-bottom:6px;}
+  article strong{color:var(--navy);}
+  article blockquote{margin:16px 0;padding:10px 18px;border-left:3px solid var(--teal);background:var(--paper-soft);color:var(--navy);font-style:italic;}
+  article hr{border:none;border-top:1px solid var(--border);margin:32px 0;}
+  article table{width:100%;border-collapse:collapse;margin:16px 0;font-size:13.5px;}
+  article th, article td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--border);}
+  article th{font-size:11px;text-transform:uppercase;letter-spacing:0.04em;color:var(--ink-soft);}
+  article code{background:var(--paper-soft);padding:1px 5px;border-radius:4px;font-size:13px;}
+  article svg{max-width:100%;height:auto;display:block;margin:20px 0;border:1px solid var(--border);border-radius:12px;padding:10px;background:#fff;}
+  article pre.mermaid{background:none;border:none;padding:0;margin:20px 0;overflow-x:auto;text-align:center;}
+  article pre.mermaid svg{margin:0 auto;}
+  .doc-footer{margin-top:40px;padding-top:20px;border-top:1px solid var(--border);font-size:13px;color:var(--ink-soft);}
+  footer{background:var(--navy);color:#D8D0C6;padding:32px 0;text-align:center;font-size:13px;}
+  footer a{color:#E8865F;}
+</style>
+</head>
+<body>
+<nav>
+  <div class="navwrap">
+    <span class="brand">Fund the Future<span>.</span> Documentation</span>
+    <div style="display:flex;gap:18px;">
+      <a href="../index.html">← Case study</a>
+      <a href="../../../index.html">Portfolio</a>
+    </div>
+  </div>
+</nav>
+<article class="wrap">
+<h1>Fund the Future: Product Brief</h1>
+<p><em>Drafted August 2026. Compressed from <a href="grounding-research.md"><code>grounding-research.md</code></a>, which holds the full sourcing and confidence level for every claim footnoted here. Scope and locked decisions are in <a href="scope.md"><code>scope.md</code></a>; pilot market selection is in <a href="market-selection.md"><code>market-selection.md</code></a>.</em></p>
+<h2>One-line pitch</h2>
+<p>Fund the Future lets a grassroots climate-adaptation organisation raise money from donors anywhere in the world.</p>
+<p>The organisation is verified before it can publish, and every donation settles directly into its own account.</p>
+<h2>Problem</h2>
+<p>UNEP sizes the adaptation finance gap for developing countries at $284bn to $339bn a year until 2035.<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup> Philanthropy is not closing it: foundation funding for adaptation and resilience reached $870m in 2024, roughly 0.3% of that annual gap.<sup id="fnref:8"><a class="footnote-ref" href="#fn:8">8</a></sup> The money that does exist lands away from the organisations doing the work. Asia and Oceania receive under 10% of adaptation funding while holding more than half the world's population, and disaster risk management and community infrastructure are the least funded sectors in the category.<sup id="fnref2:8"><a class="footnote-ref" href="#fn:8">8</a></sup> In humanitarian funding, the best-tracked analog, $1.7bn went directly to local and national actors in 2023, 4.5% of trackable funding, against a 25% target set in 2016 that has never been met.<sup id="fnref:6"><a class="footnote-ref" href="#fn:6">6</a></sup></p>
+<p>For a small Philippine organisation the practical problem is narrower than any of those numbers. The platforms that could carry its story ask for what it does not have. GlobalGiving already operates in 175 countries, so geography is not the barrier; formal registration, two years of financial statements, a documented board and a prior-funder track record are.<sup id="fnref:4"><a class="footnote-ref" href="#fn:4">4</a></sup> Every requirement removed to reach this organisation is a fraud control that GlobalGiving chose to keep, which is the real design problem rather than a gap in the market nobody noticed.</p>
+<h2>Who it's for</h2>
+<p><strong>The organisation: a Philippine grassroots adaptation group below the documentation floor.</strong> Registered with the SEC or intending to be, doing work with a physical output such as mangrove replanting, watershed restoration or flood-resilient community infrastructure. It has a named leader accountable for money, no audited accounts, no grant history, and often no business bank account, which is why wallet payout matters more than bank payout.<sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup> The scale of this population is not directly measurable: 64,087 NPOs were registered across all classifications as of December 2020, and of the 604 organisations PCNC has accredited, 11 are Environment/Biodiversity.<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup> That accredited tier is roughly the documentation floor this product sits below, so those 11 are close to the count of Philippine environmental organisations that do not need it.</p>
+<p><strong>The donor: a climate-motivated retail giver, anywhere in the world.</strong> Someone already giving to environmental or climate causes who would give to adaptation if it were legible and checkable. Giving is not a rich-world behaviour: 60% of people globally donated money in 2025, and Africa gives the highest share of income of any region at 1.6% against Europe's 0.6%.<sup id="fnref:17"><a class="footnote-ref" href="#fn:17">17</a></sup> What is scarce is the cross-border half of the behaviour. 22% of donors support charities that work across multiple countries, against 56% who give locally and 55% nationally, and by value that multi-country share rises with national income, from 7% of donations in low-income countries to 19% in high-income ones.<sup id="fnref2:17"><a class="footnote-ref" href="#fn:17">17</a></sup> Both figures are upper bounds on what this product needs, because a donor supporting a charity that works in many countries is not necessarily a donor who would fund an organisation based in one.</p>
+<p>Two things are therefore true and the brief states them separately. <strong>Reach:</strong> a donor in the starting markets can pay by card. Xendit's multi-currency card processing lets a Philippine merchant accept foreign-issued Visa and Mastercard presented in USD, EUR or GBP and settled in PHP.<sup id="fnref2:3"><a class="footnote-ref" href="#fn:3">3</a></sup> The wallet rails are a payout-side asset, since GCash and its peers are Philippine domestic wallets that a donor abroad would not use.<sup id="fnref3:3"><a class="footnote-ref" href="#fn:3">3</a></sup> <strong>Acquisition:</strong> the first donors will concentrate in a handful of high-income markets with a high charitable share of giving and mature online donation behaviour, proposed as the United States, the United Kingdom, the Netherlands, Germany, Canada and Australia, which is reasoning from CAF's regional patterns rather than a measured ranking.<sup id="fnref3:17"><a class="footnote-ref" href="#fn:17">17</a></sup></p>
+<p>Where this donor has been measured, in the US, they give roughly a third less per gift than the all-cause average, $93 against $139, and retain better, 53% against 48%, with monthly giving at 32% of environmental online revenue against 27% across causes.<sup id="fnref:7"><a class="footnote-ref" href="#fn:7">7</a></sup> They are also the highest-due-diligence segment in the IRS donor database, researching environmental charities at close to the rate donors research medical and direct-aid charities.<sup id="fnref:11"><a class="footnote-ref" href="#fn:11">11</a></sup> Those figures describe US organisations with established digital programmes and are the weakest transfer in the brief, which assumption 8 now records.</p>
+<p><strong>The institutional funder, who is a visitor rather than a user.</strong> Programme officers arrive through a shared campaign link. The product builds nothing for them, per the locked product-surface decision, and the page has to survive their scrutiny anyway.</p>
+<h2>Why now</h2>
+<p>Official development assistance fell 23.1% in real terms in 2025 to $174.3bn, the largest annual decline on record, with the United States alone accounting for 75.1% of the fall.<sup id="fnref2:6"><a class="footnote-ref" href="#fn:6">6</a></sup> The institutional money these organisations depend on is being withdrawn while the need grows. At the same time the category they work in is expanding: adaptation philanthropy more than doubled from $404m in 2021 to $870m in 2024, and the number of foundations making adaptation grants grew 55%.<sup id="fnref3:8"><a class="footnote-ref" href="#fn:8">8</a></sup> Two things are true at once, and the second is what makes a new entrant plausible rather than merely necessary.</p>
+<p><strong>Climate is being experienced rather than forecast, and that changes who is available to ask.</strong> Across 142 countries and 128,093 people, those who have lived through a climate hazard are more likely than their compatriots who have not to call climate change a very serious threat, by 13.3 points for heatwave experience against 10.5 points for holding a university degree.<sup id="fnref:16"><a class="footnote-ref" href="#fn:16">16</a></sup> The same study finds no such relationship between countries, so this is a fact about individuals inside a market rather than a reason to prefer one market.<sup id="fnref2:16"><a class="footnote-ref" href="#fn:16">16</a></sup> Among 16 to 25 year olds in ten countries, 59% are very or extremely worried and 75% say the future is frightening, and the Philippines is the most distressed country in that sample on every measure, with 91.5% saying the future is frightening.<sup id="fnref3:16"><a class="footnote-ref" href="#fn:16">16</a></sup></p>
+<p><strong>Concern on its own does not produce donations, and that is the useful part.</strong> Climate anxiety converts into action for some people and into paralysis for others, with self-efficacy as the mediating variable, and despair suppresses the giving that worry might otherwise produce.<sup id="fnref4:16"><a class="footnote-ref" href="#fn:16">16</a></sup> What moves money is a specific, credible, bounded thing to do at the moment the concern is felt. That is a third independent body of evidence pointing at the same page this product builds, alongside the identifiable-victim effect and the transparency findings.<sup id="fnref2:7"><a class="footnote-ref" href="#fn:7">7</a></sup> It also gives the grow-the-pie goal a mechanism: concern that currently converts into nothing is the material the category grows from.</p>
+<p><strong>A large pool of new philanthropic capital is forming.</strong> Pledge 1%, under which companies set aside equity, product, profit or employee time before a liquidity event, reports 19,000 member companies across more than 130 countries and $3bn unlocked.<sup id="fnref:18"><a class="footnote-ref" href="#fn:18">18</a></sup> Anthropic's seven cofounders pledged 80% of their wealth in January 2026, employees have pledged shares, and the company matches them.<sup id="fnref2:18"><a class="footnote-ref" href="#fn:18">18</a></sup> This money is directed at other problems and lands through foundations and donor-advised funds rather than on retail donation pages, so it is a signal about the size of new giving capacity rather than an addressable market for this product. Its practical use is as a distribution route, which the go-to-market section takes up.</p>
+<p>The payout mechanics have also arrived. Two like-for-like providers, dLocal and Xendit, document bank and e-wallet payouts into the Philippines covering seven wallet providers, which means an organisation with no bank account can still be paid.<sup id="fnref4:3"><a class="footnote-ref" href="#fn:3">3</a></sup></p>
+<h2>Market size &amp; opportunity</h2>
+<p>The realistic flow is small, and stating it honestly is the point of this section. Global individual charitable giving is roughly $770bn.<sup id="fnref3:6"><a class="footnote-ref" href="#fn:6">6</a></sup> Of that, cross-border philanthropy is about $82bn in 2023, roughly 11%.<sup id="fnref4:6"><a class="footnote-ref" href="#fn:6">6</a></sup> Environment and animals take 3.6% of US giving even domestically.<sup id="fnref5:6"><a class="footnote-ref" href="#fn:6">6</a></sup> Of what crosses a border, very little reaches local organisations directly.<sup id="fnref6:6"><a class="footnote-ref" href="#fn:6">6</a></sup> Compounding those shares puts individual cross-border giving currently reaching small local climate and environment organisations in the hundreds of millions of dollars globally rather than billions, an order-of-magnitude estimate built by multiplying independently sourced shares, since no source measures this flow directly.<sup id="fnref7:6"><a class="footnote-ref" href="#fn:6">6</a></sup></p>
+<p><strong>The opportunity is therefore to grow a category rather than to take a share of one.</strong> Adaptation philanthropy doubling in three years with a 55% rise in the number of funders is the evidence that the category expands when it becomes fundable.<sup id="fnref4:8"><a class="footnote-ref" href="#fn:8">8</a></sup> Any framing that positions this as capturing a slice of $392bn or $2.3tn misstates the market by two orders of magnitude, and the brief should not be read that way. The corporate pledge capacity described under Why now belongs to that error if it is read as market size, since none of it arrives on a retail donation page.</p>
+<p><strong>Two findings point the other way and are recorded here rather than in a footnote.</strong> Disaster philanthropy concentrates on the visible emergency and away from the work done beforehand: 90% of the $5.2bn given in 2020 went to immediate needs, and in 2012 preparedness and resilience together took 14% against 46% for response and relief.<sup id="fnref5:16"><a class="footnote-ref" href="#fn:16">16</a></sup> Adaptation is the work done beforehand, so the money that moves fastest in this category moves past it. That evidence covers foundations, donor-advised funds and corporations rather than the retail donors this product is built for, which limits how far it carries.<sup id="fnref6:16"><a class="footnote-ref" href="#fn:16">16</a></sup></p>
+<p>More directly, a study of 1.23 million IRS Form 990 filings from 2010 to 2021 found donations rising with local climate risk for hospitals and human-service organisations while <strong>internationally-focused nonprofits saw declines</strong>.<sup id="fnref7:16"><a class="footnote-ref" href="#fn:16">16</a></sup> Read plainly, giving moves closer to home as climate risk rises, which is the behaviour this product depends on moving the wrong way. Three things bound it. The study measures contributions reported by US-registered organisations against US county-level hazard exposure, so it never observes a donor and the declining category is US intermediaries rather than direct cross-border gifts. Its window closes in 2021, before the adaptation-philanthropy growth above. And the effect is 1.26% per standard deviation of climate risk. It is still the strongest counter-evidence in the project.</p>
+<h2>Competitive landscape &amp; differentiation</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Reaches organisations with no grant history</th>
+<th>Documents the organisation must assemble</th>
+<th>Charges the organisation</th>
+<th>Holds the funds</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GlobalGiving</td>
+<td>No, by policy<sup id="fnref6:4"><a class="footnote-ref" href="#fn:4">4</a></sup></td>
+<td>Registration, two years of financial statements, board documentation, prior funders<sup id="fnref7:4"><a class="footnote-ref" href="#fn:4">4</a></sup></td>
+<td>7% plus 3% for non-US/UK, 15% ceiling<sup id="fnref8:4"><a class="footnote-ref" href="#fn:4">4</a></sup></td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Donorbox</td>
+<td>Requires the org to already have a payment relationship</td>
+<td>Not researched</td>
+<td>2.95% plus processing<sup id="fnref9:4"><a class="footnote-ref" href="#fn:4">4</a></sup></td>
+<td>No</td>
+</tr>
+<tr>
+<td>GoFundMe / Chuffed</td>
+<td>Philippine payout coverage not established</td>
+<td>Not researched</td>
+<td>0%, donor tips<sup id="fnref10:4"><a class="footnote-ref" href="#fn:4">4</a></sup></td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Fiscal sponsorship</td>
+<td>Yes, this is the real substitute</td>
+<td>Not researched</td>
+<td>Not researched</td>
+<td>Yes, by definition</td>
+</tr>
+<tr>
+<td><strong>Fund the Future</strong></td>
+<td><strong>Yes, by design</strong></td>
+<td><strong>An SEC registration number, a named accountable person, a costed budget</strong></td>
+<td><strong>Nothing</strong></td>
+<td><strong>No</strong></td>
+</tr>
+</tbody>
+</table>
+<p>The middle column is the differentiator, and it is a statement about <strong>who assembles the paperwork rather than how much checking happens</strong>. The checks themselves are covered under Solution and are meant to equal what any funding aggregator does.</p>
+<p><strong>Fiscal sponsorship is the substitute that already works,</strong> and the differentiation has to be stated against it rather than around it. A fiscal sponsor lets an unregistered group receive charitable money under another entity's legal status, which means the funds pass through the sponsor's entity rather than the organisation's.<sup id="fnref:12"><a class="footnote-ref" href="#fn:12">12</a></sup> What sponsors charge, and how they handle the donor relationship, was not researched, and both should be established before this contrast is used publicly. Fund the Future takes nothing from the organisation, never holds its money, and leaves the donor relationship with the organisation, because donations settle from the donor through a licensed payment provider directly into the organisation's account.</p>
+<p><strong>The honest cost of that position is tax-deductibility, and it is worth stating as the structural trade it is.</strong> In the United States, IRC section 170(c)(2) allows a deduction only for gifts to organisations created or organised in the United States, so a gift straight to a Philippine organisation is not deductible however sound that organisation is.<sup id="fnref4:17"><a class="footnote-ref" href="#fn:17">17</a></sup> The workaround requires a US charity in the chain, and the IRS conduit rule disallows the deduction where that charity is obliged to pass the money to a named foreign recipient. It has to hold the funds and be genuinely free to decide not to send them.<sup id="fnref5:17"><a class="footnote-ref" href="#fn:17">17</a></sup> That is precisely the custody the product gave up to stay out of money transmitter licensing, so deductibility and the custody decision are one decision seen from two sides. A fiscal sponsor can offer the deduction because it accepts the custody, and for some donors that will decide it.</p>
+<p><strong>Opening the donor market beyond the US does not change this.</strong> Within the EU and EEA, <em>Persche</em> (2009) stops a member state refusing a deduction purely because the charity sits in another member state, and that ruling does not reach third countries such as the Philippines.<sup id="fnref6:17"><a class="footnote-ref" href="#fn:17">17</a></sup> UK Gift Aid requires an HMRC-recognised charity.<sup id="fnref7:17"><a class="footnote-ref" href="#fn:17">17</a></sup> The position is the same in every market examined, which is why the brief states it generally rather than as a US caveat. The third-country position in the EU is recorded as an unverified assumption in the research and needs a primary source before it is claimed publicly.<sup id="fnref8:17"><a class="footnote-ref" href="#fn:17">17</a></sup></p>
+<p><strong>Against the platforms, the differentiator is what gets shown rather than what gets charged.</strong> The Philippines was selected because its SEC register carries a continuing filing obligation, so the page can show whether an organisation filed rather than only that it exists.<sup id="fnref:10"><a class="footnote-ref" href="#fn:10">10</a></sup></p>
+<h2>Solution</h2>
+<p><strong>The platform does the same diligence any funding aggregator does. What it does not do is make the organisation assemble it.</strong> The Philippine SEC runs an NPO regime in which organisations file an annual General Information Sheet, naming officers and board, and audited financial statements, and the free register shows whether an organisation filed rather than only that it exists.<sup id="fnref2:10"><a class="footnote-ref" href="#fn:10">10</a></sup> So the accounts and the governance record are checked at the registry, and the organisation is never asked to produce a document it does not have. The one requirement dropped deliberately is a prior-funder track record, which is circular: an organisation can only earn one by being funded, and it is a proxy for a check rather than a check.</p>
+<p>Eligibility is settled once, before any campaign exists. The organisation answers the bureaucratic questions, the platform vets them by API where it can and by human contact where it cannot, and issues a green light in about five business days, running alongside the payment provider's own KYC so the week costs nothing in elapsed time.<sup id="fnref3:10"><a class="footnote-ref" href="#fn:10">10</a></sup> After that, campaigns are fast and repeatable. The organisation picks the kind of work it does from seven themes, and the page is generated from that theme's structure, which already knows what that work is counted in; the organisation supplies a photograph, a logo, its own words, and a named accountable person, who is required rather than optional. The page displays evidence rather than a badge: the SEC register entry and filing record, the named person, the costed budget, prior work, and what will be reported back.<sup id="fnref:5"><a class="footnote-ref" href="#fn:5">5</a></sup></p>
+<p><strong>Donors ask for exactly this, and it is the largest demand signal in the research.</strong> Asked what would encourage them to give more, the top answer worldwide was "be transparent around how the charity is run" at 47%, ahead of "clearly explain how they are making change" at 40% and well ahead of making donation easier at 23%.<sup id="fnref:9"><a class="footnote-ref" href="#fn:9">9</a></sup> Among people who gave nothing in 2025, 13% named distrust of how charities spend money, rising to 18% in high-income countries.<sup id="fnref2:9"><a class="footnote-ref" href="#fn:9">9</a></sup> This is stated preference rather than observed behaviour, so it cannot prove the mechanism works. It does establish that the thing this product makes its centrepiece is the thing donors say they want most.</p>
+<p><strong>Why the gate sits on the organisation rather than the campaign.</strong> Because the platform never holds the money, there is no freezing, no reversal and no holding pending investigation, so there is no remedy after the fact and the only available fraud control is at the entrance. Vetting per organisation also matches the cost structure, since verification costs roughly the same per organisation regardless of what any campaign raises.<sup id="fnref:14"><a class="footnote-ref" href="#fn:14">14</a></sup> Full reasoning is in <a href="design-brief.md"><code>design-brief.md</code></a>.</p>
+<p><strong>What the verification display depends on, input by input.</strong> The core mechanism is a check, so its data model is named here rather than assumed:</p>
+<table>
+<thead>
+<tr>
+<th>Input</th>
+<th>Source</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SEC registration number</td>
+<td>Self-reported at signup, then checked against the register</td>
+<td>Decided</td>
+</tr>
+<tr>
+<td>Registration status, GIS and AFS filing record</td>
+<td>SEC register. Free eSEARCH lookup, or the SEC API Marketplace: free SEC Number API at 10 calls/day, or Company Information Lookup at roughly PHP 50 to 100 per call<sup id="fnref10:10"><a class="footnote-ref" href="#fn:10">10</a></sup></td>
+<td><strong>Automated or manual is undecided</strong>, see Open questions</td>
+</tr>
+<tr>
+<td>PCNC accreditation and expiry date</td>
+<td>PCNC public register, free<sup id="fnref11:10"><a class="footnote-ref" href="#fn:10">10</a></sup></td>
+<td>Decided, shown only where held, absent where not</td>
+</tr>
+<tr>
+<td>Identity of the named accountable person</td>
+<td>Government ID, through the payment provider's KYC on the organisation and its officers<sup id="fnref12:10"><a class="footnote-ref" href="#fn:10">10</a></sup></td>
+<td>Decided 22 August 2026</td>
+</tr>
+<tr>
+<td>Sanctions and watchlist screening, organisation and named person</td>
+<td>The payment provider's own AML screening</td>
+<td>Decided 22 August 2026. What the provider passes back to the platform is a technical-feasibility question</td>
+</tr>
+<tr>
+<td>Named accountable person, displayed</td>
+<td>Required to publish, prompted with an explanation of why</td>
+<td>Decided</td>
+</tr>
+<tr>
+<td>Line-item budget</td>
+<td>Self-reported</td>
+<td>Decided</td>
+</tr>
+<tr>
+<td>Prior work</td>
+<td>Self-reported photos and links</td>
+<td>Decided</td>
+</tr>
+<tr>
+<td>Reporting commitment</td>
+<td>Self-reported</td>
+<td>Decided</td>
+</tr>
+<tr>
+<td>Payout readiness</td>
+<td>dLocal or Xendit KYC status<sup id="fnref13:10"><a class="footnote-ref" href="#fn:10">10</a></sup></td>
+<td>Decided</td>
+</tr>
+<tr>
+<td>Work category, one of seven</td>
+<td>Self-reported at pre-onboarding, selects the theme</td>
+<td>Decided</td>
+</tr>
+</tbody>
+</table>
+<p>The page labels which rows were checked and which the organisation stated about itself, and that labelling is the product. Because the platform holds no money, every claim it makes is about what was checked rather than about what is guaranteed.</p>
+<h2>Hypothesis</h2>
+<p>We believe that showing a donor what has been checked about an organisation, alongside what that organisation says about itself, will let money reach groups that no existing platform will list, without the documentation those platforms require.</p>
+<p>Four falsifiable behaviours follow:</p>
+<ol>
+<li>An organisation with no audited accounts completes a campaign page unaided in under one working day.</li>
+<li>Donors who reach a completed page convert at a rate comparable to published environmental-sector benchmarks, rather than materially below them.</li>
+<li>A meaningful minority of donors choose the monthly path rather than the one-off path.</li>
+<li>Enough donors add a tip, at a large enough average, to cover verification and operating cost per campaign.</li>
+</ol>
+<p>Each maps to a metric below.</p>
+<h2>Go-to-market</h2>
+<h3>Channel strategy per segment</h3>
+<p><strong>Philippine grassroots organisations.</strong> These groups are reached through the institutions already touching them rather than through paid acquisition, because the defining trait of the segment is being outside formal funding networks. Three concrete routes are proposed. Regranting funds that exist specifically to move money to grassroots climate groups, notably the CLIMA Fund and Global Greengrants Fund.<sup id="fnref2:12"><a class="footnote-ref" href="#fn:12">12</a></sup> The PCNC accredited register, which names 604 Philippine organisations and the sector each works in.<sup id="fnref4:10"><a class="footnote-ref" href="#fn:10">10</a></sup> And organisations already listed on GlobalGiving's Philippine projects, which is the population that cleared the documentation floor this product sits below.<sup id="fnref2:4"><a class="footnote-ref" href="#fn:4">4</a></sup> Whether any of the three actually reaches the target user is untested.</p>
+<p><strong>Climate-motivated retail donors, worldwide.</strong> The donor arrives through a link an organisation shared, so the product's donor-side channel work is making that link perform rather than buying attention. Acquisition effort concentrates in the starting markets named under Who it's for, while the page itself is open to a donor anywhere. Two sourced facts shape the calendar and the page: 37% of all online revenue arrives in December and 4% on the final day of the year,<sup id="fnref3:7"><a class="footnote-ref" href="#fn:7">7</a></sup> so payout onboarding of 5 to 10 business days must be complete before December rather than started in it;<sup id="fnref5:10"><a class="footnote-ref" href="#fn:10">10</a></sup> and this donor researches before giving,<sup id="fnref2:11"><a class="footnote-ref" href="#fn:11">11</a></sup> so the page's checkable content is the acquisition mechanism. Both figures are US data, and whether the December concentration holds in the other starting markets is untested.</p>
+<h3>Institutional and strategic distribution</h3>
+<p>The regranting funds above are the first candidate, since they already select for grassroots climate groups.<sup id="fnref3:12"><a class="footnote-ref" href="#fn:12">12</a></sup> Fiscal sponsors are the second, on the argument that the two products suit different needs: an organisation requiring US tax-deductibility is better served by a sponsor, and one wanting speed and the full donation is better served here. Corporate pledge programmes are the third. Pledge 1% alone reports 19,000 member companies across more than 130 countries, and employee matching is the part of that machinery that sends individual donations to a chosen organisation rather than institutional grants to a foundation.<sup id="fnref3:18"><a class="footnote-ref" href="#fn:18">18</a></sup> Anthropic's commitment to match its employees' share donations is a current example of the mechanism operating at scale.<sup id="fnref4:18"><a class="footnote-ref" href="#fn:18">18</a></sup> Matching programmes commonly restrict eligibility to domestic registered charities, so whether any would match a donation to a Philippine grassroots organisation is the question that decides whether this route exists at all.<sup id="fnref5:18"><a class="footnote-ref" href="#fn:18">18</a></sup> None of the three routes has been tested, all are proposals rather than findings, and the referral logic is reasoning rather than something any source establishes.</p>
+<h3>Business model</h3>
+<p>Donor tips. The organisation pays nothing, which is a positioning decision as much as a pricing one: cross-border cost already takes 8% to 12% of a donation before any platform charge,<sup id="fnref5:3"><a class="footnote-ref" href="#fn:3">3</a></sup> and verification costs roughly the same per organisation regardless of how much a campaign raises, so a percentage fee would earn least from the smallest campaigns.<sup id="fnref2:14"><a class="footnote-ref" href="#fn:14">14</a></sup> The honest weakness is that tip revenue is unpredictable, and the one public data point on how far it carries an operator is Chuffed's disclosure that optional donations supply 46% of its funding, with the remainder from investment and grants.<sup id="fnref3:4"><a class="footnote-ref" href="#fn:4">4</a></sup> The business model rests entirely on assumption 4 above.</p>
+<h2>Success metrics &amp; validation methodology</h2>
+<p><strong>Leading indicators.</strong> Time from signup to a published page. Share of organisations completing a page without support contact. Share of pages carrying a complete line-item budget. Donor conversion on a completed page. Share of gifts taken as monthly. Tip attach rate and average tip.</p>
+<p><strong>Lagging indicators.</strong> Total raised per campaign. Share of organisations running a second campaign. Monthly donor retention at 12 months, against the published environmental benchmark. Platform tip revenue against verification and operating cost per campaign.</p>
+<p><strong>Go/no-go test, and what it is not.</strong> With no product and no users, the available test is a concept test run against synthetic personas: describe the one-line pitch and Solution inside the interview, then ask the disappointment question anchored to that description. <strong>This is not a product-market-fit survey.</strong> Sean Ellis's 40% threshold was calibrated on people with real usage history, and a reaction to a pitch is not equivalent evidence. Any percentage this produces is reported as a synthetic concept-test signal and nothing stronger.</p>
+<p><strong>Disproof signals for the riskiest-assumption log.</strong></p>
+<table>
+<thead>
+<tr>
+<th>Assumption</th>
+<th>What would prove it wrong</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1. The constraint is campaign creation rather than distribution</td>
+<td>Organisations complete pages and the pages get no traffic. Median campaign raises near zero while completion rates stay high</td>
+</tr>
+<tr>
+<td>2. A compliant payout path exists for informal organisations</td>
+<td>A material share of verified organisations fail dLocal or Xendit KYC, or hit the 30-day window and deactivate<sup id="fnref14:10"><a class="footnote-ref" href="#fn:10">10</a></sup></td>
+</tr>
+<tr>
+<td>3. Verification is light enough for speed and strong enough for trust</td>
+<td>Either donors say the evidence display does not move them, or a fraudulent campaign clears it</td>
+</tr>
+<tr>
+<td>4. Enough donors tip, and tip enough</td>
+<td>Tip revenue per campaign falls below verification cost per campaign at pilot volume</td>
+</tr>
+<tr>
+<td>5. Adaptation is fundable retail, and the fundable set is not narrower than the user base</td>
+<td>Campaigns with a countable physical output raise, and capacity or governance campaigns raise nothing</td>
+</tr>
+<tr>
+<td>6. Retail giving works for this sector at all</td>
+<td>Total raised stays at the ~2% of income that Kenyan sector data shows for individual donors<sup id="fnref:15"><a class="footnote-ref" href="#fn:15">15</a></sup></td>
+</tr>
+<tr>
+<td>8. Climate donors behave like the benchmarks</td>
+<td>Philippine campaigns convert far below the environmental-sector figures. The transfer is now weaker in two directions at once, since those figures describe US organisations with existing lists<sup id="fnref5:7"><a class="footnote-ref" href="#fn:7">7</a></sup> and the donor base is no longer US-only<sup id="fnref11:17"><a class="footnote-ref" href="#fn:17">17</a></sup></td>
+</tr>
+<tr>
+<td>10. Cross-border climate giving holds up as climate risk rises</td>
+<td>Donations track the IRS-filing finding, where domestic causes gain and internationally-focused organisations lose, as climate risk increases<sup id="fnref11:16"><a class="footnote-ref" href="#fn:16">16</a></sup></td>
+</tr>
+<tr>
+<td>9. Structured disclosure substitutes for audited financials</td>
+<td>Donors in concept tests ask for audited accounts specifically and discount the page without them</td>
+</tr>
+</tbody>
+</table>
+<h2>Critical success factors</h2>
+<ol>
+<li><strong>The gate holding, because nothing behind it can.</strong> Direct settlement removes every remedy after a donation is made, so pre-onboarding is the only fraud control the product has. It also has to stay light enough that a genuine grassroots organisation clears it, which is the tension the whole product lives inside.</li>
+<li><strong>A payout rail that accepts the target user.</strong> dLocal and Xendit both reserve the right to reject without giving reasons, and dLocal deactivates an account if KYC is not completed within 30 days.<sup id="fnref8:10"><a class="footnote-ref" href="#fn:10">10</a></sup> Some legitimate organisations will be refused a rail for reasons the platform cannot see or appeal.</li>
+<li><strong>The SEC register staying free to check.</strong> The gate depends on it. Automating it is priced and affordable; losing free access to status and filing history would change the product.<sup id="fnref9:10"><a class="footnote-ref" href="#fn:10">10</a></sup></li>
+<li><strong>The platform never touching the money.</strong> Direct settlement is what keeps this software rather than a money transmitter, and it is what removes state-by-state licensing.<sup id="fnref:13"><a class="footnote-ref" href="#fn:13">13</a></sup> It also removes refunds, pooling and all-or-nothing goals, and those are accepted consequences rather than gaps to fix later.</li>
+<li><strong>Tip uptake.</strong> See assumption 4.</li>
+<li><strong>Stripe being unavailable, and the architecture reflecting it.</strong> Stripe Connect supports none of the candidate markets as payout recipients, so the default marketplace architecture cannot pay this product's users.<sup id="fnref6:3"><a class="footnote-ref" href="#fn:3">3</a></sup></li>
+<li><strong>Xendit alone on the donor side.</strong> Verified 22 August 2026: dLocal's pay-in coverage is emerging markets only and does not include any of the proposed starting donor markets, so dLocal is a payout provider for this product and collection rests on Xendit by itself.<sup id="fnref7:3"><a class="footnote-ref" href="#fn:3">3</a></sup> The two-provider redundancy established for payout does not exist for pay-in, and a second collecting provider is unresearched.</li>
+</ol>
+<h2>Not yet covered (separate artifacts, sequenced next)</h2>
+<p>Everything below is a matter of sequencing. Each is a separate artifact to be built in order, and none is cut from the project.</p>
+<ul>
+<li><strong>Personas, jobs-to-be-done and synthetic interviews.</strong> Not started. The concept test above depends on them.</li>
+<li><strong>Roadmap and user stories.</strong> Not started.</li>
+<li><strong>The onboarding and verification flow.</strong> Sequenced ahead of the campaign page as of 22 August 2026, on the reasoning that the checks are the differentiator, so the flow that performs them is where the product's claim lives. <a href="design-brief.md"><code>design-brief.md</code></a> does not cover this surface.</li>
+<li><strong>The prototype.</strong> <a href="design-brief.md"><code>design-brief.md</code></a> exists and specifies the campaign page and the builder, the page skeleton, the content model and the seven themes. The build itself is next, including the country selector where the Philippines is the only selectable market and Kenya, Ghana and Mozambique appear greyed out as markets coming next.</li>
+<li><strong>Technical feasibility</strong>, including which of the SEC lookup routes is used and how KYC status is received.</li>
+<li><strong>A second pilot market.</strong> A post-MVP expansion question. Kenya is the live override on registry quality and payout maturity, held out on FATF grey-listing and the 2024 referral of 16 civil society organisations to the Directorate of Criminal Investigations.</li>
+</ul>
+<h2>Open questions</h2>
+<p>The questions below are the ones that bear on the recommendation. The full worklist across every document on this project, including sourcing upgrades and items awaiting a better fetching tool, is in <a href="HANDOVER.md"><code>HANDOVER.md</code></a>.</p>
+<p><strong>Runtime inputs, per the data model above.</strong> Every input the verification display needs is named, and one source is undecided: whether the SEC lookup runs through the free SEC Number API, the paid Company Information Lookup, or a manual eSEARCH check. The free tier's response fields are not published, so the deciding task is to register and inspect one response.<sup id="fnref6:10"><a class="footnote-ref" href="#fn:10">10</a></sup> This matters more than it did when the lookup only fed a display. It is now the gate, and the gate is the only fraud control the product has, so a lookup that cannot confirm current registration status would need replacing with a manual check rather than dropped.</p>
+<p><strong>Whether individual donors fund adaptation specifically, as distinct from disaster relief.</strong> The deepest assumption in the project. Three data points bear on it. In favour: a Philippine mangrove-rehabilitation campaign raised PHP 2.9m through GlobalGiving for a countable output, though it dates from 2014 and the organisation is a large corporate-backed foundation.<sup id="fnref2:2"><a class="footnote-ref" href="#fn:2">2</a></sup> Against: only 11 of 604 accredited Philippine NGOs are Environment/Biodiversity, with 2 naming disaster or resilience work.<sup id="fnref3:2"><a class="footnote-ref" href="#fn:2">2</a></sup> Also against, and new: GlobalGiving's Philippines and Climate Action filter returns exactly 25 live projects, most raising under $10,000 and several at or near zero, including a community-resilience project at $38 against a $72,126 goal.<sup id="fnref4:4"><a class="footnote-ref" href="#fn:4">4</a></sup> That is what this category currently raises on the best-known platform serving it, after clearing a vetting gate. The countervailing reading is that it measures discoverability as much as appetite, since a donor has to go looking. Those 25 organisations are a usable starting list for the sample that would settle the question, and it is worth assembling before the roadmap.</p>
+<p><strong>Whether donors accept structured disclosure in place of audited financials.</strong> No source tests it.<sup id="fnref3:9"><a class="footnote-ref" href="#fn:9">9</a></sup> It sits directly under the evidence-not-badge decision.</p>
+<p><strong>Time from deciding to fundraise to a first donation.</strong> No platform publishes it, so the product's speed claim has no external benchmark and must be stated against page creation, which the product controls.</p>
+<p><strong>Which donor markets to acquire in first.</strong> The product position is donors anywhere, decided 22 August 2026. No source ranks countries by cross-border giving propensity, so the proposed starting set is reasoning from CAF's regional and income patterns rather than a measured ranking.<sup id="fnref9:17"><a class="footnote-ref" href="#fn:17">17</a></sup> A measured ranking may not exist, in which case the honest route is to instrument it from the platform's own donor data from launch.</p>
+<p><strong>Whether donors give closer to home as climate risk rises.</strong> The IRS-filing study is the strongest counter-evidence in the project. Reading it at source resolved the first half of this question and hardened the second. It measures contributions reported by US-registered organisations against US county-level physical hazard exposure, so it describes the reporting behaviour of US intermediaries and never observes a donor choosing.<sup id="fnref8:16"><a class="footnote-ref" href="#fn:16">16</a></sup> Whether it holds after 2021 cannot be answered from the paper, because its sample ends where Form 990 availability ends, and the results body is paywalled with no open preprint.<sup id="fnref9:16"><a class="footnote-ref" href="#fn:16">16</a></sup> What remains open is whether the same pattern applies to a direct gift to a foreign organisation, which no source measures.</p>
+<p><strong>Whether EU member states extend deductibility to third-country recipients.</strong> <em>Persche</em> settles giving inside the EU and EEA. The position on a gift to a Philippine organisation is reasoned rather than sourced, and it needs a primary source before any public claim rests on it.<sup id="fnref10:17"><a class="footnote-ref" href="#fn:17">17</a></sup></p>
+<p><strong>Whether the identifiable-victim page structure and the effectiveness finding conflict.</strong> Donors give more to a named person and a bounded project,<sup id="fnref4:7"><a class="footnote-ref" href="#fn:7">7</a></sup> and give more when they believe the organisation is effective at addressing climate change, while adaptation protects against consequences rather than reducing emissions.<sup id="fnref3:11"><a class="footnote-ref" href="#fn:11">11</a></sup> The costed budget is the proposed answer, and it is untested.</p>
+<h2>Recommendation</h2>
+<p><strong>GO, to prototype and concept test. Not GO to build.</strong></p>
+<p>The case for continuing is that three independent things line up: a category that doubled in three years,<sup id="fnref5:8"><a class="footnote-ref" href="#fn:8">8</a></sup> a competitor gap that is documentation rather than geography,<sup id="fnref5:4"><a class="footnote-ref" href="#fn:4">4</a></sup> and a pilot market whose register can actually be checked and whose wallet rails can actually pay an organisation without a bank account.<sup id="fnref7:10"><a class="footnote-ref" href="#fn:10">10</a></sup> The donor evidence points the same way, since the segment this product needs is the segment that checks before giving.<sup id="fnref4:11"><a class="footnote-ref" href="#fn:11">11</a></sup></p>
+<p>The case against is partly evidential and partly sequencing. On the evidence, the IRS-filing study finds internationally-focused nonprofits losing donations as climate risk rises, which is the one finding that contradicts the product's premise rather than qualifying it, and it should be probed in the concept test rather than waved through.<sup id="fnref10:16"><a class="footnote-ref" href="#fn:16">16</a></sup> On sequencing, the two assumptions the business rests on are both untested and both cheap to test. Whether enough donors tip to fund a platform, and whether the fundable set is narrower than the user base, can each be probed with a prototype and a sample of real organisations before any payment integration exists. The traffic problem is the third: at published conversion rates, outcomes are dominated by traffic volume, and a builder plus a link puts that problem entirely on an organisation with no audience.</p>
+<p><strong>What would flip this to PIVOT:</strong> evidence that organisations complete pages and cannot get anyone to them. The pivot in that case is toward distribution, which means the funder-discovery surface the current scope deliberately excludes.</p>
+<h2>Further reading</h2>
+<ul>
+<li><a href="scope.md"><code>scope.md</code></a>. Locked decisions, restated criteria, riskiest-assumption log.</li>
+<li><a href="market-selection.md"><code>market-selection.md</code></a>. The five criteria and why the Philippines was selected.</li>
+<li><a href="grounding-research.md"><code>grounding-research.md</code></a>. Sixteen sections of sourced research, every claim tagged Fact, Inference or Assumption. Permanent backing material for everything above.</li>
+</ul>
+<h2>Sources</h2>
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:1">
+<p><code>grounding-research.md</code> §1 The adaptation funding gap&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p><code>grounding-research.md</code> §2 Market sizing beyond historical adoption&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:3">
+<p><code>grounding-research.md</code> §5 Payments and payout rails&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:3" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:3" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:3" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:3" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:3" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+</li>
+<li id="fn:4">
+<p><code>grounding-research.md</code> §6 Competitive landscape&#160;<a class="footnote-backref" href="#fnref:4" title="Jump back to footnote 4 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:4" title="Jump back to footnote 4 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:4" title="Jump back to footnote 4 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:4" title="Jump back to footnote 4 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:4" title="Jump back to footnote 4 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:4" title="Jump back to footnote 4 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:4" title="Jump back to footnote 4 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:4" title="Jump back to footnote 4 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:4" title="Jump back to footnote 4 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:4" title="Jump back to footnote 4 in the text">&#8617;</a></p>
+</li>
+<li id="fn:5">
+<p><code>grounding-research.md</code> §7 Verification and donor trust&#160;<a class="footnote-backref" href="#fnref:5" title="Jump back to footnote 5 in the text">&#8617;</a></p>
+</li>
+<li id="fn:6">
+<p><code>grounding-research.md</code> §10 Where philanthropic money actually goes&#160;<a class="footnote-backref" href="#fnref:6" title="Jump back to footnote 6 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:6" title="Jump back to footnote 6 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:6" title="Jump back to footnote 6 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:6" title="Jump back to footnote 6 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:6" title="Jump back to footnote 6 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:6" title="Jump back to footnote 6 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:6" title="Jump back to footnote 6 in the text">&#8617;</a></p>
+</li>
+<li id="fn:7">
+<p><code>grounding-research.md</code> §12 Why people give, and how much&#160;<a class="footnote-backref" href="#fnref:7" title="Jump back to footnote 7 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:7" title="Jump back to footnote 7 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:7" title="Jump back to footnote 7 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:7" title="Jump back to footnote 7 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:7" title="Jump back to footnote 7 in the text">&#8617;</a></p>
+</li>
+<li id="fn:8">
+<p><code>grounding-research.md</code> §13 The climate and environment slice, and the five-year mismatch&#160;<a class="footnote-backref" href="#fnref:8" title="Jump back to footnote 8 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:8" title="Jump back to footnote 8 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:8" title="Jump back to footnote 8 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:8" title="Jump back to footnote 8 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:8" title="Jump back to footnote 8 in the text">&#8617;</a></p>
+</li>
+<li id="fn:9">
+<p><code>grounding-research.md</code> §14 The small-organisation problem: trust, effort, and transparency&#160;<a class="footnote-backref" href="#fnref:9" title="Jump back to footnote 9 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:9" title="Jump back to footnote 9 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:9" title="Jump back to footnote 9 in the text">&#8617;</a></p>
+</li>
+<li id="fn:10">
+<p><code>grounding-research.md</code> §15 Philippine verification and onboarding mechanics&#160;<a class="footnote-backref" href="#fnref:10" title="Jump back to footnote 10 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:10" title="Jump back to footnote 10 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:10" title="Jump back to footnote 10 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:10" title="Jump back to footnote 10 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:10" title="Jump back to footnote 10 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:10" title="Jump back to footnote 10 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:10" title="Jump back to footnote 10 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:10" title="Jump back to footnote 10 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:10" title="Jump back to footnote 10 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:10" title="Jump back to footnote 10 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:10" title="Jump back to footnote 10 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:10" title="Jump back to footnote 10 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:10" title="Jump back to footnote 10 in the text">&#8617;</a><a class="footnote-backref" href="#fnref14:10" title="Jump back to footnote 10 in the text">&#8617;</a></p>
+</li>
+<li id="fn:11">
+<p><code>grounding-research.md</code> §16 Who the climate donor is&#160;<a class="footnote-backref" href="#fnref:11" title="Jump back to footnote 11 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:11" title="Jump back to footnote 11 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:11" title="Jump back to footnote 11 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:11" title="Jump back to footnote 11 in the text">&#8617;</a></p>
+</li>
+<li id="fn:12">
+<p><code>grounding-research.md</code> §11 How money moves through the philanthropy sector&#160;<a class="footnote-backref" href="#fnref:12" title="Jump back to footnote 12 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:12" title="Jump back to footnote 12 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:12" title="Jump back to footnote 12 in the text">&#8617;</a></p>
+</li>
+<li id="fn:13">
+<p><code>grounding-research.md</code> §4 Platform-side regulation&#160;<a class="footnote-backref" href="#fnref:13" title="Jump back to footnote 13 in the text">&#8617;</a></p>
+</li>
+<li id="fn:14">
+<p><code>grounding-research.md</code> §9 Monetization&#160;<a class="footnote-backref" href="#fnref:14" title="Jump back to footnote 14 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:14" title="Jump back to footnote 14 in the text">&#8617;</a></p>
+</li>
+<li id="fn:15">
+<p><code>grounding-research.md</code> §Open questions, item 1 (Kenyan individual-donor share, primary-sourced to the Annual NGO Sector Report 2022/2023)&#160;<a class="footnote-backref" href="#fnref:15" title="Jump back to footnote 15 in the text">&#8617;</a></p>
+</li>
+<li id="fn:16">
+<p><code>grounding-research.md</code> §17 Climate exposure, climate anxiety, and what turns concern into a gift&#160;<a class="footnote-backref" href="#fnref:16" title="Jump back to footnote 16 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:16" title="Jump back to footnote 16 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:16" title="Jump back to footnote 16 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:16" title="Jump back to footnote 16 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:16" title="Jump back to footnote 16 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:16" title="Jump back to footnote 16 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:16" title="Jump back to footnote 16 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:16" title="Jump back to footnote 16 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:16" title="Jump back to footnote 16 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:16" title="Jump back to footnote 16 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:16" title="Jump back to footnote 16 in the text">&#8617;</a></p>
+</li>
+<li id="fn:17">
+<p><code>grounding-research.md</code> §18 Where in the world the donors are, including its tax-deductibility subsection&#160;<a class="footnote-backref" href="#fnref:17" title="Jump back to footnote 17 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:17" title="Jump back to footnote 17 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:17" title="Jump back to footnote 17 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:17" title="Jump back to footnote 17 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:17" title="Jump back to footnote 17 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:17" title="Jump back to footnote 17 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:17" title="Jump back to footnote 17 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:17" title="Jump back to footnote 17 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:17" title="Jump back to footnote 17 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:17" title="Jump back to footnote 17 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:17" title="Jump back to footnote 17 in the text">&#8617;</a></p>
+</li>
+<li id="fn:18">
+<p><code>grounding-research.md</code> §19 New philanthropic capital: corporate and founder pledges&#160;<a class="footnote-backref" href="#fnref:18" title="Jump back to footnote 18 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:18" title="Jump back to footnote 18 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:18" title="Jump back to footnote 18 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:18" title="Jump back to footnote 18 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:18" title="Jump back to footnote 18 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
+<div class="doc-footer">Part of the Fund the Future case study documentation set. For the short version, see the <a href="../index.html">case study page</a>.</div>
+</article>
+<footer>
+  <div class="wrap">Fund the Future is a fictional case study built for portfolio purposes. Market research is real and cited; personas, interviews, campaigns and donations are synthetic. No money moves at any point.</div>
+</footer>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'neutral',
+    fontFamily: '-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif',
+    flowchart: { curve: 'basis' },
+  });
+</script>
+</body>
+</html>
