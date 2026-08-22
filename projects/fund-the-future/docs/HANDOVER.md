@@ -52,7 +52,11 @@ Three things in the earlier version of this project were wrong and have been fix
 - `grounding-research.md`. Sixteen sections, every claim tagged Fact, Inference or Assumption. A verification pass on 21 August 2026 upgraded most of the weak sourcing to primary and corrected three figures.
 - `product-brief.md`. **Drafted 21 August 2026**, against the frozen template, audited before presenting. Recommendation is GO to prototype and concept test. Not GO to build.
 - `design-brief.md`. **Written 21 August 2026**. Carries the user's dictated direction verbatim, the onboarding model, the seven-theme library, the page skeleton, the content model, and the four aesthetic decisions deliberately left to be made by eye in a design tool.
-- **No personas, jobs-to-be-done, roadmap, prototype or case-study page yet.**
+- `personas.md`, `jobs-to-be-done.md`, `synthetic-interviews.md`, `roadmap.md`, `user-stories.md`, `technical-feasibility.md`. **All written 22 August 2026** in the build session.
+- `prototype.html`. **Built 22 August 2026.** Self-contained, both flows and both sides, verified end to end through fifteen screens.
+- `index.html`. **Built 22 August 2026.** Prototype directly under the hero, per the portfolio's own layout decision.
+- `scripts/build_docs.py` carries a `fund-the-future` entry rendering eight public documents. `grounding-research.md`, `design-brief.md`, `scope.md` and this file are excluded deliberately.
+- **The portfolio hub is untouched.** Fund the Future is still shown as a greyed-out "Coming soon" card and nothing links to the case study. Releasing that is the user's call and hers alone.
 
 ## Decisions taken on 21 August 2026
 
@@ -112,14 +116,21 @@ The v2 design introduced a donor-side surface that no brief asked for: a prefere
 
 **What does not change.** Nothing is built for the institutional funder. There is no grantmaker matching and no directory of organisations as organisations. The Matchmaker lists campaigns, and only campaigns from organisations already past the gate.
 
-### Work order agreed
+### Work order agreed, and what was completed
 
-The user asked for the whole set, with nothing published until it is done.
+The user asked for the whole set, with nothing published until it is done. Items 1 to 3 are done and item 4 is done apart from the hub link.
 
-1. Personas, jobs-to-be-done, synthetic interviews.
-2. The prototype, including the onboarding and verification screens rebuilt in v2's language.
-3. Roadmap, user stories, technical feasibility.
-4. The case-study page, the `build_docs.py` entry and the hub link. **Held until the user releases them.**
+1. ~~Personas, jobs-to-be-done, synthetic interviews.~~ Done.
+2. ~~The prototype, including the onboarding and verification screens rebuilt in v2's language.~~ Done.
+3. ~~Roadmap, user stories, technical feasibility.~~ Done.
+4. ~~The case-study page and the `build_docs.py` entry.~~ Done. **The hub link is not done and is held until the user releases it.**
+
+### What a new session should pick up
+
+- **The hub link, on the user's word only.** `index.html` at the repo root still shows a greyed-out "Coming soon" card tagged "Research next", which now badly understates the project. Read `docs/portfolio-feedback.md` before touching it.
+- **No intro video.** The portfolio's layout decision pairs a video with the prototype, and Flexy and SunnySideUp both have one. Fund the Future does not, and `docs/video-scripts.md` has no script for it.
+- **Worklist items 10 and 13** remain open, plus everything in groups B to F.
+- **Five design changes surfaced by the synthetic interviews** are recorded at the end of that document and none are built. The largest is that the product has no answer for a lapsed green light against a live recurring donation.
 
 ## Findings added 22 August 2026
 
