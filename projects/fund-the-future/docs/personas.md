@@ -106,7 +106,7 @@ Seven personas across three groups. Three organisations, because the organisatio
 
 **What serves him:** The "what was checked" section, and the rule that facts the platform verified carry a different visual treatment from things the organisation stated, applied without exception so the distinction is learnable within one page. The costed line-by-line budget is the other half.
 
-**Grounding fact:** Asked what would encourage them to give more, donors worldwide put "be transparent around how the charity is run" first at 47%, ahead of "clearly explain how they are making change" at 40% and well ahead of making donation easier at 23%. Climate donors are separately the highest-due-diligence segment in the IRS donor database. This is stated preference rather than observed behaviour, which is why hypothesis 2 in the product brief exists to test it.
+**Grounding fact:** Asked what would encourage them to give more, donors worldwide put "be transparent around how the charity is run" first at 47%, ahead of "clearly explain how they are making change" at 40% and well ahead of making donation easier at 23%. Climate donors are separately the highest-due-diligence segment in the IRS donor database, which is the weakest sourcing behind any load-bearing claim in this document and is on the handover's worklist for a primary upgrade. Both figures are stated preference rather than observed behaviour, which is why hypothesis 2 in the product brief exists to test it.
 
 ---
 
