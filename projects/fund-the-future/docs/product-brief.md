@@ -166,6 +166,8 @@ Everything below is a matter of sequencing. Each is a separate artifact to be bu
 
 ## Open questions
 
+The questions below are the ones that bear on the recommendation. The full worklist across every document on this project, including sourcing upgrades and items awaiting a better fetching tool, is in [`HANDOVER.md`](HANDOVER.md).
+
 **Runtime inputs, per the data model above.** Every input the verification display needs is named, and one source is undecided: whether the SEC lookup runs through the free SEC Number API, the paid Company Information Lookup, or a manual eSEARCH check. The free tier's response fields are not published, so the deciding task is to register and inspect one response.[^10] This matters more than it did when the lookup only fed a display. It is now the gate, and the gate is the only fraud control the product has, so a lookup that cannot confirm current registration status would need replacing with a manual check rather than dropped.
 
 **Whether individual donors fund adaptation specifically, as distinct from disaster relief.** The deepest assumption in the project. Two data points bear on it and point opposite ways: a Philippine mangrove-rehabilitation campaign raised PHP 2.9m through GlobalGiving for a countable output, though it dates from 2014 and the organisation is a large corporate-backed foundation; and only 11 of 604 accredited Philippine NGOs are Environment/Biodiversity, with 2 naming disaster or resilience work.[^2] A sample of real Philippine organisations would settle whether the fundable set is narrower than the target user base, and it is worth assembling before the roadmap.
