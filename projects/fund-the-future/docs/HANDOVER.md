@@ -2,7 +2,7 @@
 
 Status as of 22 August 2026, updated the same day after a fetching pass that cleared most of group A. Read this first in a new session, then `scope.md`, then `market-selection.md`, then `product-brief.md`, then `design-brief.md`. `grounding-research.md` is the full backing material behind all of it.
 
-**Where the project stands.** Research is closed. The product brief is drafted and audited, and reworked again on 22 August. The design brief is written and is ready to be taken into a design tool. Nothing is blocked. The next piece of work is the onboarding and verification flow, then visual design, then the prototype.
+**Where the project stands.** Research is closed. The product brief is drafted and audited, and reworked again on 22 August. The design brief is written and has been through a design tool, which returned two art directions. **The project then changed shape: it is being built as a working application rather than a click dummy.** See "The build session" below for the decisions that govern that. Nothing is blocked. Nothing goes on the public portfolio until the user says so.
 
 **Everything still open is in one place:** see "Open questions: the consolidated worklist" below. **Group A has now been worked: 12 of its 14 items are settled and only items 10 and 13 remain.** One of those twelve turned out to be a correction rather than an upgrade, described under "What was corrected on 22 August 2026" below.
 
@@ -22,7 +22,7 @@ What the article actually supports, and what now replaces it: a Chronicle analys
 
 **Two other things changed on 22 August 2026, both settled by the user.** CAF's 22% was restated to what the report measures, donors supporting charities that work across multiple countries, with the donors-are-worldwide decision left standing. Pledge 1% went from 3,400 member companies to **19,000**, from the organisation's own current homepage.
 
-**One tension surfaced and is not resolved.** The Council on Foundations note for the Philippines, current as of June 2026, establishes that **audited financial statements are a mandatory annual SEC filing**, not an optional accreditation extra. An organisation without them is therefore in breach of its registration conditions rather than merely unaccredited. The target user is still real, but "below the documentation floor" describes non-compliance as much as capacity, and the onboarding and verification design has to decide what the page shows when the register returns a registered organisation with missing filings. That is the most likely single result for this user, and it should be settled during the next piece of work rather than after it.
+**One tension surfaced and was resolved in the build session on the same day; see decision 2 there.** The resolution is publish, state the gap plainly, cap the raise. The Council on Foundations note for the Philippines, current as of June 2026, establishes that **audited financial statements are a mandatory annual SEC filing**, not an optional accreditation extra. An organisation without them is therefore in breach of its registration conditions rather than merely unaccredited. The target user is still real, but "below the documentation floor" describes non-compliance as much as capacity, and the onboarding and verification design has to decide what the page shows when the register returns a registered organisation with missing filings. That is the most likely single result for this user, and it should be settled during the next piece of work rather than after it.
 
 ## Read this before anything else: what was corrected on 20 August 2026
 
@@ -36,7 +36,7 @@ Three things in the earlier version of this project were wrong and have been fix
 
 1. **Geography:** Philippines only for the pilot. Global South ambition beyond that is a post-MVP roadmap question.
 2. **Donor:** climate-motivated retail donors **anywhere in the world**, meaning people who already give to environmental or climate causes and would give to adaptation if it were legible, specific and trustworthy. Institutional funders are treated as visitors arriving via a shared link. **Reversed 22 August 2026**, replacing the US-only pilot donor market decided on 21 August. Reach and acquisition are now stated separately: the page is open to a donor anywhere, and acquisition effort concentrates in a proposed starting set of the United States, the United Kingdom, the Netherlands, Germany, Canada and Australia.
-3. **Product surface:** campaign builder plus a shareable link. No funder discovery surface, no directory, no grantmaker matching.
+3. **Product surface:** campaign builder, a shareable link, and a donor-side discovery surface. **Amended 22 August 2026** by the user's decision to keep the Matchmaker, which the design pass produced. The original decision read "campaign builder plus a shareable link, no funder discovery surface, no directory, no grantmaker matching" and it stood from kickoff until the build session. What stays out is unchanged: nothing is built for the institutional funder, there is no grantmaker matching and no directory of organisations. What comes in is a donor-facing browse and filter surface. See "The Matchmaker reverses locked decision 3" below for what this costs.
 4. **Custody: none.** Donations settle from the donor, through a licensed payment provider, directly into the organisation's account. The platform never holds funds, so it is software rather than a money transmitter and needs no US state-by-state licensing. **Accepted consequences: no refunds, no holding funds pending investigation, no pooling of small donations, no all-or-nothing goals.**
 5. **Monetization: donor tips. The organisation pays nothing.** Reversed from the fee-on-funds model locked at kickoff, because cross-border costs already take 7% to 12%, because verification costs roughly the same per organisation regardless of amount raised so a percentage fee earns least from the smallest campaigns, and because charging the under-resourced party contradicts the positioning. Accepted weakness: tip revenue is unpredictable, and the business model now rests entirely on tip uptake.
 6. **Verification is shown as evidence, not as a badge.** The page displays the SEC register entry and filing history, the named person accountable for the money, a line-by-line account of what the funds buy, prior work, and what will be reported back. No seal, no tier, no rating. Because the platform holds no money, every claim is about what was checked rather than what is guaranteed.
@@ -81,6 +81,49 @@ These came out of the user's review of the product brief. All are locked unless 
 6. **The adaptation gap is stated as UNEP's annualised figure, $284bn to $339bn per year until 2035.** The previous framing compared a 2035 need against a 2023 flow. The 12-to-14-times ratio is UNEP's own, but it reads as a same-year comparison to anyone not told otherwise, so it is retired from this project's writing.
 7. **Corporate philanthropy pledges belong in Why now and Go-to-market, never in Market size.** Pledge 1% has 3,400+ member companies across 85 countries, and Anthropic's seven cofounders pledged 80% of their wealth in January 2026, with employee pledges matched by the company. This capital lands through foundations and donor-advised funds rather than on retail donation pages, and reading it as addressable market would repeat exactly the order-of-magnitude error the brief warns against.
 8. **Onboarding is designed before the campaign page.** This supersedes the 21 August decision that the campaign page is the design pass's only real surface. If the checks are the differentiator, the onboarding flow is where the product's claim actually lives.
+
+## The build session, 22 August 2026
+
+The design tool returned its work and the user's direction changed the project's shape. Everything in this section is a user decision and is locked unless she reopens it.
+
+### What the project now is
+
+**A working application, not a prototype.** Every earlier plan in this document assumed a click dummy of the kind the portfolio's first two projects carry. That is superseded. The product is being built as real software: real accounts, a real database, a real campaign builder writing real records, real register lookups, and a real donation flow. It lives at `projects/fund-the-future/app/`, which makes it the first project in this repo to carry application code rather than a single static file.
+
+**It will never take real money, and this is a permanent constraint rather than a phase.** Donations are processed by a simulated payment provider. The application is written against a `PaymentProvider` interface so a Stripe test-mode implementation can be enabled by environment variable, which is also free and also moves no money. No live keys, no merchant account, no settlement. The reason is structural as well as practical: taking live donor money would require a real Philippine merchant account under a real legal entity, and this is a fictional organisation. The case study states this rather than implying a working payment path.
+
+**Nothing may cost anything.** Free tiers only, and the application must run locally with no third-party account at all. Every external dependency is behind an interface with a working offline default.
+
+### Decisions
+
+1. **Art direction: v2.** Cream ground, Playfair Display with DM Sans. The design tool returned two directions. v1 (dark ground, Public Sans with Source Serif) carried the complete flow but lost on appearance. v2's screen coverage is thinner, so v1's missing surfaces, the organisation registration, the verification wait and the approval state, are rebuilt in v2's visual language rather than carried across.
+2. **The verification gap is resolved: publish, state it plainly, cap the raise.** This accepts recommendation 1 and 2 of `design-brief.md` section 9 together and closes the tension recorded at the top of this document. An SEC status of registered and not revoked is the publishing floor. Missing General Information Sheets or audited financial statements do not block publication; they lower the amount the campaign may raise, and the page states which filings are missing in the platform's own words. The donor is never handed a judgment call, because the platform has already priced the gap.
+3. **The Matchmaker stays in the MVP.** See below.
+4. **Stack, chosen by this session rather than by the user, who asked for the pick to be made for her.** Next.js with the App Router, TypeScript and Prisma. SQLite locally and Postgres on a free tier when deployed, swapped by one environment variable. Authentication, sessions and file handling are written in the application rather than bought, because every managed alternative either costs money or needs an account. Full reasoning belongs in `technical-feasibility.md`.
+5. **The SEC register adapter ships with a fixture implementation as its default**, with the live free-tier API behind a credential. This settles worklist item 24: the free tier's response fields get inspected once the user registers, which is a signup only she can perform, and nothing in the build waits on it.
+6. **Nothing is published until the user says so.** No case-study page, no hub link, no `build_docs.py` entry. The full document set below is finished first.
+
+### The Matchmaker reverses locked decision 3
+
+The v2 design introduced a donor-side surface that no brief asked for: a preference drawer headed "What kind of impact do you want to fund today?", which filters campaigns by the kind of work. The user has kept it. It is recorded here as a reversal rather than absorbed silently, because three parts of the project were written on the assumption it did not exist.
+
+**What it changes.**
+
+- **Go-to-market.** The brief's channel strategy assumes every donor arrives through a link the organisation shared. A discovery surface means donors also arrive at the platform first and pick an organisation there. That is a different acquisition problem and a different unit of competition, and it puts the product much closer to GlobalGiving than the competitive section currently allows for.
+- **The fraud surface.** A shared link is vouched for by whoever shared it. A browsable list is vouched for by the platform, because appearing in it reads as selection. The floor-and-cap model in decision 2 is what carries this, and the ranking rule inside the Matchmaker becomes a trust decision rather than a display one.
+- **The evidence-not-badge decision.** Locked decision 6 rules out a seal or a tier. A filterable, ordered list is a ranking, and a ranking is the thing a badge is. Whatever orders the Matchmaker has to be a fact the donor chose, such as the work category or the amount still needed, rather than a platform judgment of quality.
+
+**What does not change.** Nothing is built for the institutional funder. There is no grantmaker matching and no directory of organisations as organisations. The Matchmaker lists campaigns, and only campaigns from organisations already past the gate.
+
+### Work order agreed for the build
+
+The user asked for the whole set, with nothing published until it is done.
+
+1. Personas, jobs-to-be-done, synthetic interviews.
+2. The onboarding and verification screens, designed in v2's language.
+3. Roadmap, user stories, technical feasibility.
+4. The application itself.
+5. The case-study page, the `build_docs.py` entry and the hub link. **Held until the user releases them.**
 
 ## Findings added 22 August 2026
 
