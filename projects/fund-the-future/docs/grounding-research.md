@@ -12,6 +12,10 @@ This document is permanent backing material and stays markdown-only. It is not r
 
 **[Fact]** Adaptation finance needs in developing countries are projected at US$310bn to US$365bn per year by 2035. International public adaptation finance flows stood at US$26bn in 2023. Needs are therefore 12 to 14 times current flows. (Source: primary, [UNEP Adaptation Gap Report 2025, "Running on Empty"](https://www.unep.org/resources/adaptation-gap-report-2025), UNEP's own publication page read 21 August 2026. An earlier pass recorded unep.org and four secondary sites as returning HTTP 403 to automated fetching and flagged these figures as needing a human; the page was reachable in this pass and every figure matched what the snippets had reported. The $310bn is the modelled cost and the $365bn the extrapolation from Nationally Determined Contributions and National Adaptation Plans.)
 
+**[Fact]** UNEP states the adaptation finance gap itself as **US$284bn to US$339bn per year until 2035**. (Same source.)
+
+**[Inference]** That single annualised figure is the one to use in public-facing writing, and the 12-to-14-times ratio is the one to avoid. The ratio is UNEP's own, but it is built by comparing a 2035 need against a 2023 flow, and a reader who is not told so will read it as a same-year comparison. The gap figure carries the same force with no year mismatch inside it. (Framing decided by the user, 22 August 2026.)
+
 **[Fact]** UNEP puts the private sector's realistic contribution at around US$50bn per year, conditional on targeted policy action and blended finance. (Same source.)
 
 **[Fact]** The Glasgow Climate Pact goal of doubling international public adaptation finance from 2019 levels by 2025 will not be met on current trends, and the New Collective Quantified Goal is not sized to close the gap. (Same source.)
@@ -135,6 +139,22 @@ Payout rail was upgraded from a hard filter to a scored selection criterion, and
 **[Inference]** Ranked on how established the rail is, the order is Philippines, then Nigeria, then Honduras. The Philippines has two channel types and reaches organisations with no bank account through wallets. Nigeria has one channel type but its 100+ institutions extend to fintech and microfinance providers, which a small informally-run group is more likely to hold than a traditional bank account, so the rail reaches the target user despite having no wallet option. Honduras has one channel type and 16 institutions, all conventional banks, so an organisation there needs a formal bank account to receive anything. Honduras is viable and it is the market where the payout requirement itself will exclude the most target organisations.
 
 **[Inference]** A finding that cuts across the verification pillar: every market's payout documentation requires a beneficiary document number tied to a person or a legal entity, whether that is a Philippine PSN, a Nigerian NUBAN-validated account, or a Honduran DNI or RTN. Verification is therefore not a feature the platform chooses to add. The rail imposes an identity floor before it will move money, and the platform's verification ladder starts from that floor rather than from zero. Nigeria's NUBAN algorithm and account-name resolution are a free verification signal the product gets from the rail itself.
+
+### Donor-side acceptance, verified 22 August 2026
+
+Added after the user opened the donor market beyond the United States, to check a claim that had been asserted rather than sourced: that accepting a donation from a donor in most countries is a solved problem.
+
+**[Fact]** Xendit's card multi-currency processing lets a merchant accept Visa, Mastercard and other supported schemes with the charge presented in the cardholder's currency and settled in the merchant's. Philippine merchants currently support a subset of presentment currencies including USD, EUR, GBP, HKD, SGD, IDR, PHP, MYR, THB and VND, with Xendit handling the FX conversion to PHP. Hong Kong and Singapore merchants support all scheme-supported currencies, while the Philippines, Thailand and Malaysia are on the smaller subset, described as expanding. Currency-pair availability is confirmed per account rather than published as final. (Source: primary, [Xendit card multi-currency processing documentation](https://docs.xendit.co/docs/card-multi-currency-processing), read 22 August 2026.)
+
+**[Fact]** Xendit states it can accept foreign-issued cards regardless of the cardholder's currency where the charge goes through the card rails, supporting Visa, Mastercard, American Express and JCB. (Source: [Xendit help centre](https://help.xendit.co/hc/en-us/articles/360026383052), which returned HTTP 403 to direct fetching in this pass and is recorded from search results rather than read directly. The multi-currency documentation above is primary and carries the same point.)
+
+**[Fact]** dLocal's pay-in coverage is emerging markets only. Its payment-method documentation lists supported pay-in countries across Africa and the Middle East, Asia and Latin America, and **does not list the United States, the United Kingdom, the Netherlands, Germany, Canada or Australia as countries a payer can pay from**. (Source: primary, [dLocal coverage documentation](https://docs.dlocal.com/docs/payment-method), read 22 August 2026.)
+
+**[Inference] The claim was half right, and the correction matters.** A donor in the proposed starting markets can pay by card, and that side is genuinely solved, through Xendit. What is not true is that the two providers are interchangeable. dLocal was verified as a second payout provider and it cannot collect from donors in any of the proposed starting markets, so for this product dLocal is a payout provider and the donor side rests on Xendit alone. The redundancy established earlier exists on the payout leg and does not exist on the pay-in leg.
+
+**[Inference]** The wallet rails are a payout-side asset rather than a donor-side one. GCash, Maya and their peers are Philippine domestic wallets, so they matter because an organisation with no bank account can be paid, and not because a donor abroad would use one. Any statement that card and wallet acceptance is solved overstates the wallet half.
+
+**[Assumption]** A second pay-in provider for the donor side has not been researched. Stripe, Adyen, Checkout.com and PayPal all plausibly accept from the starting markets, and the constraint that removed Stripe was payout to the Philippines rather than pay-in from the United States, so a split architecture with one provider collecting and another paying out may be available. This is a technical-feasibility question and it is now load-bearing, because single-provider dependency on the donor side is a concentration risk the payout leg does not have.
 
 ### Second provider per market, verified
 
@@ -423,6 +443,8 @@ Upgraded to primary 21 August 2026. **Decision (user, August 2026): M+R Benchmar
 
 **[Inference]** Put the two sides together and the arithmetic is stark. Philanthropic adaptation funding of $870m sits against a projected annual need of $310bn, which is **0.28%**. Over the next five years the need rises toward the 2035 projection while both of its current funding sources contract: international public adaptation finance fell between 2022 and 2023, and total ODA fell 23.1% in 2025. The gap widens from both directions at once.
 
+**[Note, 22 August 2026]** The comparisons in this subsection set a 2035 need against a 2024 or 2023 flow. That is UNEP's own construction and it stays here, because this document is backing material and should hold the figures in the form the source published them. Public-facing writing uses the annualised gap in section 1 instead, per the user's framing decision.
+
 **[Inference]** Philanthropy cannot close a $310bn gap and the product brief must not imply otherwise. What the numbers do support is a narrower and defensible claim: adaptation philanthropy is small, growing fast, more than doubling in three years, and structurally misallocated away from the region and the sectors where exposure is highest. A product that increases the number of fundable organisations and the number of people giving to them is acting on the growth and the misallocation, which is a real contribution at a scale a platform can plausibly affect.
 
 **[Inference]** This is also where the pie-growth goal earns its evidence. Adaptation philanthropy more than doubled between 2021 and 2024 and the funder count grew 55%, so this is a category in expansion rather than a fixed pot being divided. Growing it further is consistent with the observed trend rather than contrary to it.
@@ -521,7 +543,109 @@ Added August 2026, after the donor was defined as a climate-motivated retail don
 
 ---
 
+## 17. Climate exposure, climate anxiety, and what turns concern into a gift
+
+Added 22 August 2026 at the user's request, to test whether the spread of climate experience is itself an opportunity for the product, and whether the distress that comes with it connects to giving.
+
+### How widely climate change is being experienced
+
+**[Fact]** Analysis of nationally representative survey data from more than 128,000 people across 142 countries finds that people who have lived through floods, heatwaves or other climate-related disasters are significantly more likely to rate climate change a very serious threat. (Source: [reporting on the study](https://phys.org/news/2025-10-extreme-weather-climate-perceptions-worldwide.html). Search-snippet sourced; the underlying journal article was not read in this pass.)
+
+**[Fact]** In a 2024 global survey across 77 countries, 43% thought extreme weather events were worse than the year before. (Source: [Clean Energy Wire factsheet on global climate surveys](https://www.cleanenergywire.org/factsheets/global-surveys-show-peoples-growing-concern-about-climate-change). Search-snippet sourced.)
+
+**[Fact]** Hickman et al., published in *The Lancet Planetary Health* in December 2021, surveyed 10,000 people aged 16 to 25 across ten countries including Brazil, India and Nigeria. 59% were very or extremely worried about climate change, between 50% and 67% reported sadness, fear, anxiety, anger, powerlessness, helplessness or guilt, 45% said those feelings negatively affected daily functioning including eating, sleeping and studying, and 75% agreed that the future is frightening. Distress was significantly associated with perceived inadequacy of government response. (Source: [The Lancet Planetary Health](https://www.thelancet.com/journals/lanplh/article/PIIS2542-5196(21)00278-3/fulltext). Abstract-level, the full paper was not read.)
+
+**[Fact]** Gallup records a high of 48% of Americans calling global warming a serious threat, and separate US polling puts the share saying they have personally experienced the effects of global warming at 47% in late 2025. (Sources: [Gallup](https://news.gallup.com/poll/659387/record-high-call-global-warming-serious-threat.aspx), [Climate Change in the American Mind, Fall 2025](https://climatecommunication.gmu.edu/all/climate-change-in-the-american-mind-beliefs-attitudes-fall-2025/). Search-snippet sourced.)
+
+### Whether that concern converts into giving
+
+**[Fact]** In experimental work on media coverage, exposure to global-warming news increased state eco-anxiety and increased donations to environmental organisations, while the study found no significant link between eco-anxiety itself and pro-environmental behaviour. (Source: [Journal of Environmental Psychology](https://www.sciencedirect.com/science/article/abs/pii/S0272494423001780). Search-snippet sourced, abstract only.)
+
+**[Fact]** Climate anxiety produces pro-environmental behaviour in some people and eco-paralysis in others, with self-efficacy acting as the mediating variable. (Source: [study on climate anxiety, pro-environmental behaviour and general self-efficacy](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC9960236/).)
+
+**[Fact]** Hope and despair moderate that relationship. Lower despair strengthens the link between climate anxiety and pro-environmental action, and higher hope strengthens it too. Where eco-anxiety produces helplessness, the person's sense of being able to change anything falls, and that becomes a barrier to acting. (Sources: [Environment and Behavior](https://journals.sagepub.com/doi/10.1177/00139165241297050), [correlational meta-analysis](https://www.mdpi.com/2076-0760/15/2/88), [climate anxiety across 32 countries](https://www.sciencedirect.com/science/article/pii/S0272494422001323). Search-snippet sourced.)
+
+**[Inference]** Hopelessness is not a fundraising asset. The evidence runs the other way: despair suppresses the action that anxiety might otherwise produce, and efficacy is what carries it through. In the one experiment here that raised donations, the trigger was news exposure rather than the anxiety itself, so what a platform can act on is the availability of a specific credible thing to do at the moment concern is felt.
+
+**[Inference]** This is a third independent line of evidence arriving at the same page design as section 12's identifiable-victim effect and section 14's transparency findings. A bounded project with a countable output, a costed budget and a named accountable person describes a specific act with a visible result, which is what an efficacy-mediated donation requires. The earlier two bodies of evidence explain what makes a donor trust the page. This one explains why the donor acts at all.
+
+**[Inference]** It also gives the grow-the-pie goal in section 13 a mechanism rather than an aspiration. If concern is widespread and rising while its conversion into giving is limited by having nowhere credible to put it, then new money is available in principle to a product that supplies the missing half. This remains a mechanism rather than a measurement, and nothing here sizes it.
+
+### Two findings that cut against the product
+
+**[Fact]** About 80% of charitable giving in response to a disaster happens in the first 72 hours, and in one year studied only 2% of donors gave to recovery from disasters that had occurred in earlier years. (Source: [The Chronicle of Philanthropy](https://www.philanthropy.com/article/disaster-giving-goes-mostly-to-immediate-relief-not-prevention-or-long-term-recovery). Search-snippet sourced.)
+
+**[Inference]** Adaptation has no 72-hour window. It is money spent before an event, with no news trigger and no date attached. The reflex that makes climate-related giving move fastest is the one reflex this product cannot use, which sharpens riskiest assumption 5 rather than answering it.
+
+**[Fact]** A study of 1.23 million IRS Form 990 filings by US nonprofits between 2010 and 2021 found a significant positive relationship between climate risk and donations overall. The largest increases went to hospitals and human-service organisations, while internationally-focused nonprofits saw declines. (Source: [Journal of Business Ethics](https://link.springer.com/article/10.1007/s10551-025-06158-8). Search-snippet sourced, abstract only.)
+
+**[Inference]** This is the sharpest counter-evidence in the project so far, because it describes the exact behaviour the product depends on and finds it moving the wrong way. Read plainly, as climate risk rises, US donors give closer to home and cross-border climate giving is the category that loses. Two things qualify it without dissolving it. The unit of analysis is the recipient organisation's IRS filing, so it measures US-registered internationally-focused nonprofits rather than direct cross-border gifts. And the period ends in 2021, before the adaptation-philanthropy growth recorded in section 13. It belongs in the product brief rather than in a footnote.
+
+---
+
+## 18. Where in the world the donors are
+
+Added 22 August 2026, after the user reversed the decision to pilot with US donors only. The product position is now that a donor anywhere can give, so this section asks what the giving data supports and what it constrains.
+
+### The global picture
+
+**[Fact]** 60% of people globally donated money in 2025, and the global average donation is about 1% of income. By region, Africa gives the highest share of income at 1.6% and Europe the lowest at 0.6%. (Source: primary, [CAF World Giving Report 2026, donor insights](https://www.worldgivingreport.org/donor-insights), read 22 August 2026.)
+
+**[Fact]** Giving splits three ways globally. Direct giving to people in need reaches 36% of people and carries 41% of donated value, charitable giving 34% and 38%, religious giving 23% and 21%. The Netherlands routes the highest share through charities at 79% and the lowest directly at 10%. Morocco is the highest direct giver at 77%. (Same source.)
+
+**[Fact]** Ranked by share of income donated, the most generous countries in the 2025 edition were Nigeria at 2.83%, Egypt at 2.45%, and Ghana and China tied at 2.19%, against a global average of 1.04%. Indonesia gave 1.55% and ranked 21st of 101 countries surveyed, having previously led the index. (Sources: [Philanthropy Age](https://www.philanthropyage.org/articles/caf-world-giving-report-2025/), [Tempo](https://en.tempo.co/read/2035318/indonesia-slips-to-21st-place-among-worlds-most-generous-countries). Search-snippet sourced. Note the 1% and 1.04% averages come from different editions and are not a conflict.)
+
+**[Fact]** Only 22% of donors globally support charities working across many countries, against 56% supporting charities working locally and 55% supporting national ones. Donors in higher-income countries give a higher share to multi-country charities than donors in lower-income countries. (Sources: [Civil Society coverage of the report](https://www.civilsociety.co.uk/news/uk-ranked-64th-most-generous-country-in-caf-world-giving-report.html), [PR Newswire release](https://www.prnewswire.co.uk/news-releases/world-giving-report-reveals-factors-that-increase-generosity-to-good-causes-302789605.html). Search-snippet sourced.)
+
+**[Fact]** CAF's 2026 edition reports global donations falling year on year. (Source: [Dompet Dhuafa summary of the 2026 report](https://www.dompetdhuafa.org/en/world-giving-report-2026-indonesians-charity-remains-steady-as-global-donations-fall-with-72-per-cent-through-laz/). Search-snippet sourced.)
+
+**[Inference]** The two headline measures point in opposite directions and both matter. The countries giving the largest share of their income are largely in Africa and Asia, and the countries most willing to give across a border are the high-income ones giving the smallest share. A product whose recipients sit in one country and whose donors sit anywhere lives at that intersection, and roughly one donor in five gives to work in another country at all. Cross-border giving is a minority behaviour in every market, including the generous ones.
+
+**[Inference]** The charitable-versus-direct split is a selection signal in its own right. This product routes money to an organisation, so a market where giving flows person-to-person suits it less well than one where giving flows through charities, whatever either market's total generosity. The Netherlands at 79% charitable and Morocco at 77% direct are the two ends of that spectrum.
+
+**[Inference]** Reach and acquisition are different claims and the brief should make them separately. Nothing in the architecture is donor-market-specific: card and wallet acceptance from most countries is a solved problem, and payout into the Philippines was the binding constraint, which this reversal does not touch. Acquisition is another matter, because the first donors will concentrate in a small number of markets.
+
+**[Assumption]** A proposed starting set of donor markets is the United States, the United Kingdom, the Netherlands, Germany, Canada and Australia, on high income, a high charitable share of giving, mature online donation behaviour and English or high English proficiency. No source ranks countries on cross-border giving specifically, so this is reasoning from CAF's regional and income patterns rather than a measured ranking. It should be tested rather than treated as settled.
+
+**[Inference]** Two consequences follow elsewhere in this document. The M+R environmental benchmarks in section 12 are US data already being applied to Philippine organisations with no list, and applying them to a globally sourced donor base weakens them further, so riskiest assumption 8 needs restating rather than narrowing. And nothing about the payout side changes, because the constraint was always the recipient's rail rather than the donor's.
+
+### Tax deductibility across donor markets
+
+**[Fact]** In the United States, IRC section 170(c)(2) limits the charitable deduction to corporations, funds or foundations created or organised in the United States or under its laws. A gift made directly to a foreign charity is therefore not deductible for a US donor, whatever the recipient's standing at home. (Sources: [IRC section 170 text](https://irc.bloombergtax.com/public/uscode/doc/irc/section_170), [IRS guidance on charitable contribution deductions](https://www.irs.gov/charities-non-profits/charitable-organizations/charitable-contribution-deductions).)
+
+**[Fact]** A US charity acting as a mere conduit does not produce a deduction either. Where the domestic organisation is required by its charter, bylaws or an agreement with the donor to transmit funds to a named foreign organisation, the deduction is disallowed. Deductibility requires the US entity to retain full control and discretion over the funds, with the gift not earmarked for a specific foreign recipient. (Sources: [Rev. Rul. 63-252](https://www.taxnotes.com/research/federal/irs-guidance/revenue-rulings/rev-rul-63-252/d5p2), [practitioner summary](https://fsb-law.com/tax-matters/charitable-contributions-to-foreign-organizations-andor-designated-to-foreign-organizations/). Search-snippet sourced.)
+
+**[Inference]** Deductibility and the custody decision are one decision seen from two sides. Every route to a US deduction requires a US charitable entity that receives the money, holds it, and is genuinely free to decide not to send it onward. That is exactly the custody that locked decision 4 gave up to stay out of money transmitter licensing. The product cannot offer a US deduction without becoming the thing it declined to be, which makes this a structural trade rather than a missing feature. It is also the clearest statement available of what a fiscal sponsor sells that this product does not.
+
+**[Fact]** In the European Union, the Court of Justice held in *Persche v Finanzamt Lüdenscheid* (2009) that a member state cannot refuse a deduction for a donation solely because the recipient is established in another member state, where that recipient meets the domestic criteria for charitable status. Member states remain free to set those criteria and are not required to recognise a foreign charitable status automatically. (Sources: [ECNL briefing](https://ecnl.org/news/briefing-academy-european-law-era-persche-case), [Withers](http://www.withersworldwide.com/news-publications/hein-persche-v-finanzamt-l%C3%BCdenscheid-cross-border-giving-within-eu-ramifications-for-charities-and-donors), [EFC study on cross-border philanthropy after Persche and Stauffer](https://efc.issuelab.org/resources/18545/18545.pdf). Search-snippet sourced.)
+
+**[Assumption]** *Persche* addresses giving within the EU and EEA and does not extend the same treatment to gifts to third countries such as the Philippines, where member states may restrict relief on the grounds that no mutual administrative assistance exists for verifying the recipient. No primary source for the third-country position was read in this pass, and this should be verified before any public claim rests on it.
+
+**[Assumption]** UK Gift Aid requires the recipient to be a charity recognised by HMRC, so a direct gift to a Philippine organisation does not qualify. Not verified against HMRC guidance in this pass.
+
+**[Inference]** The practical position is the same in every market examined: a donor gets no tax relief for giving directly to a Philippine grassroots organisation through this product. Opening the donor market beyond the United States neither creates nor solves that problem, and the brief should state the position generally rather than as a US-specific caveat.
+
+---
+
+## 19. New philanthropic capital: corporate and founder pledges
+
+Added 22 August 2026 at the user's request, to establish whether pledged corporate and founder wealth is relevant to this product and, if so, where.
+
+**[Fact]** Pledge 1% asks companies to set aside 1% of equity, product, profit or employee time for social causes, and works with companies to reserve equity before a liquidity event. It counts more than 3,400 member companies across 85 countries, including Salesforce, Atlassian and Yelp, and reports unlocking over US$1bn in new philanthropy. The model originates with Salesforce setting aside 1% of its equity in 1999. (Source: [Pledge 1%](https://www.pledge1percent.org/pledge-1-unlocks-another-1-billion-in-new-philanthropy/). Search-snippet sourced. Membership counts are reported inconsistently across the organisation's own pages, from 3,400 to 8,500 depending on the page and date, so the lower figure is used here.)
+
+**[Fact]** Anthropic's seven cofounders pledged 80% of their wealth to philanthropy in late January 2026, directed at the societal risks of advanced AI, particularly wealth concentration and economic disruption. At the valuation being discussed at the time this is estimated at US$39bn to US$59bn. The pledges are non-binding. Employees have separately pledged shares, with the company matching. (Sources: [Transformer](https://www.transformernews.ai/p/anthropic-employees-philanthropy-billions-donations-effective-altruism-coefficient-giving-ai-safety), [InvestmentNews](https://www.investmentnews.com/retirement-planning/wealthy-donors-stay-the-course-on-giving-as-anthropic-funnels-ai-fortunes-into-philanthropy/265452). Search-snippet sourced, no primary announcement read in this pass.)
+
+**[Inference]** None of this is addressable market for this product, and treating it as such would repeat exactly the error section 10 warns about. Pledged equity converts through foundations and donor-advised funds, which section 11 describes, and it lands as institutional grants rather than as retail donations on a campaign page. The Anthropic pledge is also directed at a different problem.
+
+**[Inference]** It is still worth carrying, in two places. As a why-now signal it evidences that new philanthropic capacity is forming at scale rather than that the existing pie is being redivided, which is the same directional argument as section 13's growth in adaptation funders. As a go-to-market route it is concrete: employee matching is the part of corporate pledge machinery that sends an individual's donation to an organisation the individual chose, which is the shape this product's donation path already has. Whether any pledge programme would match a donation to an unregistered-in-their-country recipient is untested and is the question that decides whether the route is real.
+
+**[Assumption]** The employee-matching route is proposed on the mechanism rather than on evidence. No source examined describes a corporate matching programme handling a cross-border donation to a small foreign organisation, and matching programmes commonly restrict eligibility to domestic registered charities. This should be checked before the route is presented as available.
+
+---
+
 ## Open questions and lowest-confidence areas
+
+**The consolidated worklist across all of this project's documents is in [`HANDOVER.md`](HANDOVER.md), grouped by what would actually settle each item.** This section stays as the record of how each question arose and what was tried. Settle an item and update both.
 
 Updated 21 August 2026, after a verification pass that reached several sources previously blocked by bot protection. Questions resolved or made moot are marked rather than deleted, so the reasoning stays visible.
 
@@ -541,6 +665,14 @@ Updated 21 August 2026, after a verification pass that reached several sources p
 
 14. **Ghana's foreign-funding position is still open.** An ICNL page for Ghana was reached but is a short overview of ICNL's own technical assistance rather than a legal analysis, and an extraction from it produced specific claims about registration bodies and approval gates that are not on the page. Those claims were discarded rather than recorded. The Council on Foundations country note for Ghana now returns 404. Nothing here blocks the MVP, since Ghana is an expansion market only.
 12. **The transparency evidence is published by an interested party.** The 53% and 62% contribution-lift figures in section 14 come from Candid, which operates the seal being evaluated, and the studies are observational rather than experimental. The direction is consistent with independent findings in section 7, and the effect size should not be quoted as established.
+
+15. **Whether the Philippines is one of the ten countries in the Hickman climate-anxiety survey.** The abstract read in this pass named only some of the ten. If the pilot market is in the sample, section 17's distress figures apply to the recipient country as well as to donor countries, which is worth knowing before personas are written. Cheap to settle by reading the full paper.
+
+16. **Whether EU member states extend charitable deductibility to third-country recipients.** *Persche* settles giving within the EU and EEA. The position on a gift to a Philippine organisation is recorded in section 18 as an Assumption, reasoned from the mutual-assistance justification member states rely on, with no primary source read. It matters for any public claim about what a European donor gets, and it should be verified before one is made.
+
+17. **Which donor markets to acquire in first.** The user locked "donors anywhere" on 22 August 2026 as the product position. No source ranks countries by cross-border giving propensity, so section 18's proposed starting set is reasoning from CAF's regional and income patterns rather than a measured ranking. A measured ranking may not exist, in which case the honest route is to instrument it from the platform's own donor data.
+
+18. **How far the climate-risk-and-donations finding travels.** Section 17 records a study of 1.23 million IRS filings finding that internationally-focused nonprofits lose donations as climate risk rises, while domestic hospitals and human-service organisations gain. It is the strongest counter-evidence in the project. What is unresolved is whether it describes donor preference shifting homeward or the reporting behaviour of US-registered international nonprofits, and whether it still holds after 2021, since the period ends before the adaptation-philanthropy growth in section 13.
 
 ### Sources requiring upgrade from search snippet to primary
 
