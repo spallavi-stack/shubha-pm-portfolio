@@ -2,7 +2,7 @@
 
 Status as of 22 August 2026, updated the same day after a fetching pass that cleared most of group A. Read this first in a new session, then `scope.md`, then `market-selection.md`, then `product-brief.md`, then `design-brief.md`. `grounding-research.md` is the full backing material behind all of it.
 
-**Where the project stands.** Research is closed. The product brief is drafted and audited, and reworked again on 22 August. The design brief is written and has been through a design tool, which returned two art directions. **The project then changed shape: it is being built as a working application rather than a click dummy.** See "The build session" below for the decisions that govern that. Nothing is blocked. Nothing goes on the public portfolio until the user says so.
+**Where the project stands.** Research is closed. The product brief is drafted and audited, and reworked again on 22 August. The design brief is written and has been through a design tool, which returned two art directions, and the user has chosen between them. **The remaining work is a single self-contained prototype plus the document set**, per "The build session" below. Nothing is blocked. Nothing goes on the public portfolio until the user says so.
 
 **Everything still open is in one place:** see "Open questions: the consolidated worklist" below. **Group A has now been worked: 12 of its 14 items are settled and only items 10 and 13 remain.** One of those twelve turned out to be a correction rather than an upgrade, described under "What was corrected on 22 August 2026" below.
 
@@ -84,46 +84,42 @@ These came out of the user's review of the product brief. All are locked unless 
 
 ## The build session, 22 August 2026
 
-The design tool returned its work and the user's direction changed the project's shape. Everything in this section is a user decision and is locked unless she reopens it.
+The design tool returned its work and the user settled the questions the build needed. Everything in this section is a user decision and is locked unless she reopens it.
 
-### What the project now is
+### What is being built
 
-**A working application, not a prototype.** Every earlier plan in this document assumed a click dummy of the kind the portfolio's first two projects carry. That is superseded. The product is being built as real software: real accounts, a real database, a real campaign builder writing real records, real register lookups, and a real donation flow. It lives at `projects/fund-the-future/app/`, which makes it the first project in this repo to carry application code rather than a single static file.
+**A single self-contained prototype, at `projects/fund-the-future/prototype.html`.** This follows the repo's existing convention rather than departing from it. One HTML file, all state in memory, seeded fixture data, no backend, no accounts, no cost, nothing to maintain.
 
-**It will never take real money, and this is a permanent constraint rather than a phase.** Donations are processed by a simulated payment provider. The application is written against a `PaymentProvider` interface so a Stripe test-mode implementation can be enabled by environment variable, which is also free and also moves no money. No live keys, no merchant account, no settlement. The reason is structural as well as practical: taking live donor money would require a real Philippine merchant account under a real legal entity, and this is a fictional organisation. The case study states this rather than implying a working payment path.
-
-**Nothing may cost anything.** Free tiers only, and the application must run locally with no third-party account at all. Every external dependency is behind an interface with a working offline default.
+**This was decided against a working application, and the reversal is worth recording because the reasoning generalises.** For part of this session the plan was a real Next.js application with a database, authentication and live register lookups. Two of the user's own constraints removed its reason to exist. The product will never take real money, so payments are simulated either way. And the SEC register's free API tier allows ten calls a day, which could never serve public traffic, so the live lookup would have been a fixture in production too. What remained was hosting accounts, a database that sleeps on free tiers, and a sign-up standing between a portfolio visitor and the work. The static file loads instantly, works in three years unattended, and shows the same product. **The architecture that application would have used is not discarded; it moves into `technical-feasibility.md`, which is where a PM artifact of that kind belongs.**
 
 ### Decisions
 
-1. **Art direction: v2.** Cream ground, Playfair Display with DM Sans. The design tool returned two directions. v1 (dark ground, Public Sans with Source Serif) carried the complete flow but lost on appearance. v2's screen coverage is thinner, so v1's missing surfaces, the organisation registration, the verification wait and the approval state, are rebuilt in v2's visual language rather than carried across.
-2. **The verification gap is resolved: publish, state it plainly, cap the raise.** This accepts recommendation 1 and 2 of `design-brief.md` section 9 together and closes the tension recorded at the top of this document. An SEC status of registered and not revoked is the publishing floor. Missing General Information Sheets or audited financial statements do not block publication; they lower the amount the campaign may raise, and the page states which filings are missing in the platform's own words. The donor is never handed a judgment call, because the platform has already priced the gap.
-3. **The Matchmaker stays in the MVP.** See below.
-4. **Stack, chosen by this session rather than by the user, who asked for the pick to be made for her.** Next.js with the App Router, TypeScript and Prisma. SQLite locally and Postgres on a free tier when deployed, swapped by one environment variable. Authentication, sessions and file handling are written in the application rather than bought, because every managed alternative either costs money or needs an account. Full reasoning belongs in `technical-feasibility.md`.
-5. **The SEC register adapter ships with a fixture implementation as its default**, with the live free-tier API behind a credential. This settles worklist item 24: the free tier's response fields get inspected once the user registers, which is a signup only she can perform, and nothing in the build waits on it.
-6. **Nothing is published until the user says so.** No case-study page, no hub link, no `build_docs.py` entry. The full document set below is finished first.
+1. **Art direction: v2.** Cream ground, Playfair Display with DM Sans. The design tool returned two directions. v1 (dark ground, Public Sans with Source Serif) carried the complete flow but lost on appearance. v2's screen coverage is thinner, so the surfaces only v1 has, the organisation registration, the verification wait and the approval state, get rebuilt in v2's visual language rather than carried across.
+2. **The verification gap is resolved: publish, state it plainly, cap the raise.** This accepts recommendations 1 and 2 of `design-brief.md` section 9 together and closes the tension recorded at the top of this document. An SEC status of registered and not revoked is the publishing floor. Missing General Information Sheets or audited financial statements do not block publication; they lower the amount the campaign may raise, and the page states which filings are missing in the platform's own words. The donor is never handed a judgment call, because the platform has already priced the gap.
+3. **The Matchmaker stays.** See below.
+4. **No real money, permanently.** The donation flow is simulated. This is a property of the case study rather than a stage of it, and the prototype and the case-study page both say so plainly rather than implying a working payment path.
+5. **Nothing is published until the user says so.** No case-study page link, no hub entry, no `build_docs.py` entry until she releases them.
 
 ### The Matchmaker reverses locked decision 3
 
-The v2 design introduced a donor-side surface that no brief asked for: a preference drawer headed "What kind of impact do you want to fund today?", which filters campaigns by the kind of work. The user has kept it. It is recorded here as a reversal rather than absorbed silently, because three parts of the project were written on the assumption it did not exist.
+The v2 design introduced a donor-side surface that no brief asked for: a preference drawer headed "What kind of impact do you want to fund today?", which filters campaigns by the kind of work. The user has kept it, and her reason is that it is cheap to build, which is true. It is recorded here as a reversal rather than absorbed silently, because three parts of the project were written on the assumption it did not exist, and the cost is in those documents rather than in the build.
 
 **What it changes.**
 
-- **Go-to-market.** The brief's channel strategy assumes every donor arrives through a link the organisation shared. A discovery surface means donors also arrive at the platform first and pick an organisation there. That is a different acquisition problem and a different unit of competition, and it puts the product much closer to GlobalGiving than the competitive section currently allows for.
-- **The fraud surface.** A shared link is vouched for by whoever shared it. A browsable list is vouched for by the platform, because appearing in it reads as selection. The floor-and-cap model in decision 2 is what carries this, and the ranking rule inside the Matchmaker becomes a trust decision rather than a display one.
-- **The evidence-not-badge decision.** Locked decision 6 rules out a seal or a tier. A filterable, ordered list is a ranking, and a ranking is the thing a badge is. Whatever orders the Matchmaker has to be a fact the donor chose, such as the work category or the amount still needed, rather than a platform judgment of quality.
+- **Go-to-market.** The brief's channel strategy assumes every donor arrives through a link the organisation shared. A discovery surface means donors also arrive at the platform first and choose an organisation there. That is a different acquisition problem and a different unit of competition, and it puts the product closer to GlobalGiving than the competitive section currently allows for.
+- **The fraud surface.** A shared link is vouched for by whoever shared it. A browsable list is vouched for by the platform, because appearing in it reads as selection. The floor-and-cap model in decision 2 is what carries this, and the rule that orders the Matchmaker becomes a trust decision rather than a display one.
+- **The evidence-not-badge decision.** Locked decision 6 rules out a seal or a tier. A filterable, ordered list is a ranking, and a ranking does what a badge does. Whatever orders the Matchmaker therefore has to be a fact the donor chose, such as the kind of work or the amount still needed, rather than a platform judgment of quality.
 
 **What does not change.** Nothing is built for the institutional funder. There is no grantmaker matching and no directory of organisations as organisations. The Matchmaker lists campaigns, and only campaigns from organisations already past the gate.
 
-### Work order agreed for the build
+### Work order agreed
 
 The user asked for the whole set, with nothing published until it is done.
 
 1. Personas, jobs-to-be-done, synthetic interviews.
-2. The onboarding and verification screens, designed in v2's language.
+2. The prototype, including the onboarding and verification screens rebuilt in v2's language.
 3. Roadmap, user stories, technical feasibility.
-4. The application itself.
-5. The case-study page, the `build_docs.py` entry and the hub link. **Held until the user releases them.**
+4. The case-study page, the `build_docs.py` entry and the hub link. **Held until the user releases them.**
 
 ## Findings added 22 August 2026
 
