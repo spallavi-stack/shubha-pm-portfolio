@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Analytics self-check</title>
+<style>
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+       background:#12102A;color:#E8E6F2;line-height:1.6;padding:32px 20px;}
+  .wrap{max-width:680px;margin:0 auto;}
+  h1{font-size:24px;margin:0 0 6px;}
+  .sub{color:#A5A0C4;font-size:14px;margin:0 0 28px;}
+  .row{display:flex;gap:12px;padding:14px 0;border-bottom:1px solid rgba(255,255,255,0.1);align-items:flex-start;}
+  .mark{font-size:18px;line-height:1.3;min-width:22px;}
+  .label{font-weight:600;font-size:15px;}
+  .detail{color:#A5A0C4;font-size:13px;margin-top:2px;word-break:break-word;}
+  .verdict{margin-top:28px;padding:18px 20px;border-radius:10px;background:rgba(255,255,255,0.06);
+           border-left:3px solid #7C6BF0;font-size:15px;}
+  .verdict h2{font-size:15px;margin:0 0 8px;}
+  code{background:rgba(255,255,255,0.1);padding:1px 6px;border-radius:4px;font-size:13px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Analytics self-check</h1>
+  <p class="sub">Temporary diagnostic page. Open it on the live site, read the verdict at the bottom, then delete this file.</p>
+  <div id="rows"></div>
+  <div class="verdict" id="verdict"><h2>Running checks...</h2></div>
+</div>
+<script>
+(function () {
+  var WEBSITE_ID = '9f3c4bb5-e3da-4e35-a81f-d9fa7c41eab1';
+  var rows = document.getElementById('rows');
+  var results = {};
+
+  function add(key, label, state, detail) {
+    results[key] = state;
+    var marks = { pass: ['✓', '#4ADE80'], fail: ['✗', '#F87171'], warn: ['!', '#FBBF24'], info: ['•', '#A5A0C4'] };
+    var m = marks[state] || marks.info;
+    var el = document.createElement('div');
+    el.className = 'row';
+    el.innerHTML = '<div class="mark" style="color:' + m[1] + '">' + m[0] + '</div>' +
+      '<div><div class="label">' + label + '</div>' +
+      (detail ? '<div class="detail">' + detail + '</div>' : '') + '</div>';
+    rows.appendChild(el);
+  }
+
+  // 1. Where are we running?
+  var onLive = location.hostname === 'spallavi-stack.github.io';
+  add('host', onLive ? 'Running on the live site' : 'Not running on the live site',
+      onLive ? 'pass' : 'warn',
+      'hostname: ' + (location.hostname || '(none, opened as a local file)') +
+      (onLive ? '' : ' &mdash; open this page on spallavi-stack.github.io for a valid result'));
+
+  // 2. Self-exclusion flag
+  var flag = null, storageOk = true;
+  try { flag = localStorage.getItem('portfolio-notrack'); } catch (e) { storageOk = false; }
+  if (!storageOk) {
+    add('notrack', 'Could not read local storage', 'warn', 'Private mode, or site data is blocked.');
+  } else if (flag === '1') {
+    add('notrack', 'You have excluded yourself from tracking', 'fail',
+        'The <code>portfolio-notrack</code> flag is set in this browser, so your own visits are deliberately not counted. ' +
+        'Visit the site with <code>?notrack=0</code> to undo it.');
+  } else {
+    add('notrack', 'Not excluded from tracking', 'pass', 'No <code>portfolio-notrack</code> flag in this browser.');
+  }
+
+  // 3. Can the Umami script load? This is the ad blocker test.
+  var scriptDone = false;
+  var s = document.createElement('script');
+  s.src = 'https://cloud.umami.is/script.js';
+  s.setAttribute('data-website-id', WEBSITE_ID);
+  s.onload = function () {
+    if (scriptDone) return;
+    scriptDone = true;
+    add('script', 'Umami tracker script loaded', 'pass', 'cloud.umami.is is reachable from this browser.');
+    testSend();
+  };
+  s.onerror = function () {
+    if (scriptDone) return;
+    scriptDone = true;
+    add('script', 'Umami tracker script was blocked', 'fail',
+        'This browser could not load cloud.umami.is. Almost always an ad blocker or privacy extension. ' +
+        'Try an Incognito window with extensions disabled.');
+    finish();
+  };
+  document.head.appendChild(s);
+  setTimeout(function () {
+    if (scriptDone) return;
+    scriptDone = true;
+    add('script', 'Umami tracker script timed out', 'fail', 'No response after 8 seconds.');
+    finish();
+  }, 8000);
+
+  // 4. Can we actually reach the collect endpoint?
+  function testSend() {
+    fetch('https://gateway.umami.is/api/send', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type: 'event', payload: {
+        website: WEBSITE_ID, hostname: location.hostname, url: '/analytics-check',
+        title: 'Analytics self-check', referrer: '',
+        language: navigator.language, screen: screen.width + 'x' + screen.height
+      }})
+    }).then(function (r) {
+      add('send', r.ok ? 'Test event accepted by Umami' : 'Umami rejected the test event',
+          r.ok ? 'pass' : 'fail', 'HTTP ' + r.status +
+          (r.ok ? '. Look for a visit to <code>/analytics-check</code> in your dashboard within a minute.' : ''));
+      finish();
+    }).catch(function (e) {
+      add('send', 'Could not reach the collect endpoint', 'fail',
+          'gateway.umami.is was blocked by this browser or the network. ' + (e && e.message ? e.message : ''));
+      finish();
+    });
+  }
+
+  function finish() {
+    var v = document.getElementById('verdict');
+    var html;
+    if (results.notrack === 'fail') {
+      html = '<h2>You are excluded from your own analytics</h2>' +
+        'That is why nothing shows up, and it is working as designed. Visit the site with ' +
+        '<code>?notrack=0</code> on the end of the URL, then reload this page.';
+    } else if (results.script === 'fail' || results.send === 'fail') {
+      html = '<h2>This browser is blocking the analytics</h2>' +
+        'The site is fine and your browser is not sending the data. An ad blocker or privacy extension is the usual cause. ' +
+        'Open this page in an Incognito window with extensions off and check again. ' +
+        'Real visitors who do not block trackers are still counted either way.';
+    } else if (results.send === 'pass') {
+      html = '<h2>Everything works from this browser</h2>' +
+        'A test visit to <code>/analytics-check</code> was just sent and accepted. ' +
+        'If it appears in your dashboard within a minute, the setup is healthy end to end. ' +
+        'If it never appears, the problem is on the Umami side, most likely the Domain field on the website entry. ' +
+        'It has to be exactly <code>spallavi-stack.github.io</code>, with no <code>https://</code> and nothing after it.';
+    } else {
+      html = '<h2>Checks incomplete</h2>Something stopped partway. A screenshot of this page will tell me where.';
+    }
+    v.innerHTML = html;
+  }
+})();
+</script>
+</body>
+</html>
