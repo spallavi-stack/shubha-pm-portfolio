@@ -80,21 +80,47 @@ Umami then shows those as separate sources, so you can tell that the Acme applic
 
 ---
 
-## 5. Build sequence
+## 5. Turning it on
 
-| Phase | Work | Effort |
-|---|---|---|
-| 1 | Create the Umami account, add the site | 30 min |
-| 2 | Write `assets/js/analytics.js` with the seven events, self-exclusion and the Umami adapter | 2 hrs |
-| 3 | Add the script tag to the four pages, confirm each event fires | 1 hr |
-| 4 | Define the funnel in Umami, add a short privacy line to `contact.html` | 30 min |
-| 5 | Start tagging outbound links with UTM parameters | ongoing |
+The code is built and committed. It is dormant until you paste in a website ID, so nothing is being tracked right now.
 
-Half a day of work in total. Then leave it alone for a month before reading anything into it.
+1. Sign up at [cloud.umami.is](https://cloud.umami.is) and choose the free Hobby plan.
+2. Add a website. Name it anything, and set the domain to `spallavi-stack.github.io`.
+3. It gives you a **website ID**, a long string like `b3f1c2d4-...`. Copy it.
+4. Open `assets/js/analytics.js` and put it on line 26, the `WEBSITE_ID` line near the top:
+
+   ```js
+   var WEBSITE_ID = 'paste-the-id-here';
+   ```
+
+5. Commit and push. Tracking starts on the next GitHub Pages deploy.
+6. Visit your own site once with `?notrack=1` on the end of the URL, from every browser and device you use, so your own visits stay out of the data.
+
+**Where you read it:** [cloud.umami.is](https://cloud.umami.is), signed into your account. That is the dashboard. It shows visitors, page views, referrers and UTM sources on the front page, your six custom events under Events, and the funnel under Reports once you build it there. Nothing gets installed on the portfolio itself, and no dashboard page is added to the site.
+
+To build the funnel: Reports, then Funnel, then add the steps from section 2 in order, using the event names from section 1.
 
 ---
 
-## 6. Deliberately not doing
+## 6. What was built
+
+`assets/js/analytics.js`, loaded with a `defer` script tag from the four pages in section 3. It loads Umami itself, so there is one tag per page rather than two, and it queues any event that fires before Umami has finished loading.
+
+Verified in a real browser before committing: all seven events fire from the actual markup, the section and video events count once per page load rather than repeatedly, a "Coming soon" card fires nothing, the CV click is not double counted as a contact click, `?notrack=1` suppresses everything including the page view, `?notrack=0` reverses it, and no page throws a JavaScript error.
+
+One resilience note. `case-study-open` fires as the browser is navigating away, so a slow beacon could occasionally be dropped. The case study page's own page view covers the same question, so the count survives either way, and the event is what tells you the visitor arrived from the hub card rather than from a direct link.
+
+Still to do:
+
+- Paste in the website ID, per section 5.
+- Add a short privacy line to `contact.html` saying the site counts anonymous visits and sets no cookies.
+- Start tagging the links you send with UTM parameters, per section 4.
+
+Then leave it alone for a month before reading anything into it.
+
+---
+
+## 7. Deliberately not doing
 
 Listed so these do not creep back in without a decision:
 
@@ -106,7 +132,7 @@ Listed so these do not creep back in without a decision:
 
 ---
 
-## 7. Open
+## 8. Open
 
 1. **Custom domain.** Would improve the portfolio URL and reduce ad blocker loss, since blockers stop some share of analytics regardless of tool. Easier to do before the history starts than after. Independent of everything above.
 2. **Fund the Future's video files are missing.** Its page references `assets/video-intro.mp4` and `assets/poster-intro.jpg`, and neither exists in that project's `assets/`. This costs nothing while the page is unlinked, and it needs fixing before that case study goes live.
