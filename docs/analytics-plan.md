@@ -2,6 +2,8 @@
 
 Written August 2026. A plan for measuring who visits the portfolio and how far into it they get, given the site as it stands today: static HTML on GitHub Pages, no server, no build step beyond `scripts/build_docs.py`.
 
+**Decisions locked 25 August 2026, before any code was written:** the tool is Umami Cloud on the free tier, and prototype instrumentation goes to full step-by-step depth rather than a single core-action event. Sections 6 and 9 reflect both. The custom domain and dashboard questions in section 10 are still open. Implementation was deliberately held until this plan is reviewed.
+
 Nothing is instrumented right now. There is no analytics script of any kind on any page, so today the only visitor signal available is GitHub's repo traffic tab, which counts clones and repo views rather than site visits.
 
 ---
@@ -110,6 +112,7 @@ Every event carries two properties derived automatically from the URL, so nothin
 Two rules keep this from rotting:
 
 - **Nothing personally identifying, ever.** No names, no email addresses, no free-text field contents. The prototypes take postcode input, and that input must never be sent as an event property. Send `postcode_entered: true` and nothing more.
+- **Prototype instrumentation goes to full depth.** Each prototype gets an event per meaningful step rather than one event for the core action, so the section 3 prototype funnel shows where people abandon rather than only whether they finished. This is the largest single piece of work in the plan and the reason phase 5 is not optional.
 - **Explicit calls only where delegation cannot reach.** Everything driven by a link or a class gets caught by one delegated listener. Only in-prototype state changes need a line of code added at the call site.
 
 ---
@@ -146,7 +149,7 @@ Two details worth building in from the start, both of which matter disproportion
 
 Sourcing note, following this repo's usual discipline: Umami's Hobby tier is listed as 100,000 events a month, 3 websites and 6 months of retention, with funnels, user journeys and session replay included, and Plausible gates funnels and its Stats API behind the Business plan at around $19 a month **(Fact, from vendor and review pages consulted August 2026, though Umami restructured its cloud plans in July 2026 and the pricing page renders client-side, so confirm the current tier at signup rather than trusting this table)**.
 
-**Recommendation: Umami Cloud, on the free tier.**
+**Decided: Umami Cloud, on the free tier.**
 
 The reasoning:
 
@@ -160,7 +163,7 @@ Two limitations to accept knowingly:
 - **Six months of retention on the free tier** means no year-over-year view. If the portfolio runs for years, either pay to extend or export monthly. Building a monthly export into the plan later is cheap insurance.
 - **Ad blockers will eat some share of traffic.** Umami is a known-blocked domain in common filter lists, and the audience most likely to block is technically sophisticated people at tech companies, which is precisely your target audience. This undercounts, and it undercounts non-randomly.
 
-**On GA4 specifically:** there is one legitimate reason to pick it that has nothing to do with data quality. "Instrumented and analysed a funnel in GA4" is a line a hiring manager recognises, and a screenshot of a GA4 funnel exploration is legible to people who have never heard of Umami. If that career signal matters more than the data quality and the consent banner, GA4 is a defensible choice. It is possible to run both, with the adapter in section 5 forwarding to each, at the cost of a consent banner and more moving parts.
+**On GA4, considered and set aside:** there is one legitimate reason to pick it that has nothing to do with data quality. "Instrumented and analysed a funnel in GA4" is a line a hiring manager recognises, and a screenshot of a GA4 funnel exploration is legible to people who have never heard of Umami. That career signal was weighed against the consent banner and the weaker session-path views, and Umami won. Because section 5 puts every vendor behind one adapter function, adding GA4 alongside Umami later stays a single-function change if the CV signal becomes worth the banner.
 
 **On the ad blocker problem:** the standard fix is serving the analytics script from your own domain so it looks first-party. That is not available on `spallavi-stack.github.io` because the domain is shared and you cannot proxy from it. Buying a custom domain and pointing GitHub Pages at it would fix this, and would also make the portfolio URL itself better. Worth considering as an adjacent decision rather than part of this one.
 
@@ -202,18 +205,23 @@ Worth writing down before you start reading numbers, so the first surprising cha
 | 2 | Write `assets/js/analytics.js`: context derivation, `track()`, the adapter, self-exclusion, queue | 2 to 3 hrs |
 | 3 | Add the script tag to `TEMPLATE` in `build_docs.py`, rebuild, hand-edit the nine remaining pages, verify events arrive from each page type | 1 to 2 hrs |
 | 4 | Add the automatic listeners: delegated clicks, section views, scroll depth, outbound, CV, contact | 2 hrs |
-| 5 | Add explicit `track()` calls inside the three prototypes and the PM Lab tools | 2 to 3 hrs |
+| 5 | Add explicit `track()` calls inside the three prototypes and the PM Lab tools, at full step-by-step depth | 3 to 4 hrs |
 | 6 | Define the four funnels in Umami, add a privacy note to `contact.html` | 1 hr |
 | 7 | Let it run. Read nothing for a month | |
 | 8 | Optional: the custom dashboard, option B in section 7 | 1 to 2 days |
 
-Phases 1 to 4 are the whole thing in practice. Phase 5 is what makes the prototype funnel real, and it is the part most likely to get skipped, so it is worth doing while the schema is fresh.
+Phases 1 to 4 stand the funnel up. Phase 5 is what makes the prototype funnel real, and with full-depth instrumentation chosen it carries the most work, so it is worth doing while the schema is fresh rather than deferring it.
 
 ---
 
-## 10. Decisions needed before phase 2
+## 10. Decisions
 
-1. **Umami, or GA4 for the CV signal, or both.** Section 6 recommends Umami alone. This changes the adapter and whether a consent banner is needed, and nothing else.
-2. **Custom domain, yes or no.** Fixes part of the ad blocker problem and improves the URL. Independent of everything else here, and it is easier to do before the analytics history starts than after.
-3. **Is the dashboard a private tool or a case study.** If it is a case study, it should be built as one, and the site's own funnel becomes a documented portfolio artifact rather than a hidden page.
-4. **How much prototype instrumentation.** Full step-by-step funnels inside all three prototypes, or a single "reached the core action" event each. The first is considerably more work and considerably more interesting.
+### Settled, 25 August 2026
+
+1. **Tool: Umami Cloud, free tier.** GA4 was considered for its career signal and set aside over the consent banner and weaker session paths. The adapter keeps adding it later cheap. See section 6.
+2. **Prototype instrumentation: full step-by-step depth**, across all three prototypes. See sections 3 and 5.
+
+### Still open
+
+3. **Custom domain, yes or no.** Fixes part of the ad blocker problem and improves the URL. Independent of everything else here, and it is easier to do before the analytics history starts than after.
+4. **Is the dashboard a private tool or a case study.** If it is a case study, it should be built as one, and the site's own funnel becomes a documented portfolio artifact rather than a hidden page. This one can wait until there is data worth putting in a dashboard.
