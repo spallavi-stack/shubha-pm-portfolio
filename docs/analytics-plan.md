@@ -82,19 +82,12 @@ Umami then shows those as separate sources, so you can tell that the Acme applic
 
 ## 5. Turning it on
 
-The code is built and committed. It is dormant until you paste in a website ID, so nothing is being tracked right now.
+The code is built, and the website ID is in place, so tracking is live as soon as these changes reach the branch GitHub Pages serves.
 
-1. Sign up at [cloud.umami.is](https://cloud.umami.is) and choose the free Hobby plan.
-2. Add a website. Name it anything, and set the domain to `spallavi-stack.github.io`.
-3. It gives you a **website ID**, a long string like `b3f1c2d4-...`. Copy it.
-4. Open `assets/js/analytics.js` and put it on line 26, the `WEBSITE_ID` line near the top:
-
-   ```js
-   var WEBSITE_ID = 'paste-the-id-here';
-   ```
-
-5. Commit and push. Tracking starts on the next GitHub Pages deploy.
-6. Visit your own site once with `?notrack=1` on the end of the URL, from every browser and device you use, so your own visits stay out of the data.
+1. Sign up at [cloud.umami.is](https://cloud.umami.is) on the free Hobby plan. Done, on the EU region.
+2. Add a website with the domain `spallavi-stack.github.io`. Done.
+3. It gives you a **website ID**. This is done, and it is set in `assets/js/analytics.js`.
+4. Visit your own site once with `?notrack=1` on the end of the URL, from every browser and device you use, so your own visits stay out of the data.
 
 **Where you read it:** [cloud.umami.is](https://cloud.umami.is), signed into your account. That is the dashboard. It shows visitors, page views, referrers and UTM sources on the front page, your six custom events under Events, and the funnel under Reports once you build it there. Nothing gets installed on the portfolio itself, and no dashboard page is added to the site.
 
@@ -112,7 +105,7 @@ One resilience note. `case-study-open` fires as the browser is navigating away, 
 
 Still to do:
 
-- Paste in the website ID, per section 5.
+- Merge to the branch GitHub Pages serves. Nothing is collected until the change is deployed.
 - Start tagging the links you send with UTM parameters, per section 4.
 
 The privacy line is in place, sitting under the existing note in the footer of all four instrumented pages: "This site counts anonymous visits to see which case studies get read. It sets no cookies and collects no personal data."

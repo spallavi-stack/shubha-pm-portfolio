@@ -21,9 +21,9 @@
 (function () {
   'use strict';
 
-  // Paste the website ID from your Umami dashboard here. Until this is set,
-  // the script stays dormant and sends nothing.
-  var WEBSITE_ID = '';
+  // Website ID from the Umami dashboard. Emptying this makes the script
+  // dormant, which is the quickest way to switch tracking off entirely.
+  var WEBSITE_ID = '9f3c4bb5-e3da-4e35-a81f-d9fa7c41eab1';
   var UMAMI_SRC = 'https://cloud.umami.is/script.js';
 
   var STORAGE_KEY = 'portfolio-notrack';
