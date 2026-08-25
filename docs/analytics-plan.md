@@ -101,7 +101,7 @@ Listed so these do not creep back in without a decision:
 - Step-by-step tracking inside the prototypes. This reverses the full-depth choice made earlier the same day, on the basis that prototype usage is not on the list of seven.
 - Scroll depth percentages, video progress quartiles, time-on-page buckets.
 - Tracking of the source document pages.
-- A custom dashboard. Umami's own dashboard is the dashboard.
+- A custom dashboard, and any version of this that becomes portfolio material. Decided 25 August: the dashboard is a private tool for your own use. Umami's own dashboard is the dashboard, and reading it is the whole workflow.
 - GA4 alongside Umami.
 
 ---
