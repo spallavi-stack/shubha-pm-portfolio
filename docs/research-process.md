@@ -1,0 +1,36 @@
+# Research process
+
+Run this for every new case study. Extracted from `CLAUDE.md` on 25 August 2026, so that sessions not doing research do not carry it.
+
+Everything below is hard-won from real runs. The lessons are the point, not the skill list.
+
+Three skills in `.claude/skills/` exist to fix three recurring problems with AI-assisted PM research: incomplete coverage, padding with unrequested content, and claims that can't be trusted without independent verification. Run them in sequence for any new case study:
+
+1. **`discovery-scope`** — before any drafting, produces a project-specific checklist of what's needed and what's explicitly out of scope. Saves to `projects/<slug>/docs/scope.md`.
+2. **`grounding-research`** — produces sourced market/regulatory/technical research where every claim is tagged **Fact** (cited), **Inference** (reasoned, shown), or **Assumption** (flagged, unverified). Always checks what the closest competitive analog *doesn't* do, not just whether it exists, and always looks beyond historical adoption for market sizing (comparable-market analogs, addressable-population size, forward-looking targets). Saves to `projects/<slug>/docs/grounding-research.md`.
+3. **`research-auditor`** — a review pass on any drafted doc, run on your own draft before presenting it, not only when the user asks. Checks three things: unlabeled or unsourced claims (findings-only, the user decides the fix), sections that don't actually connect to the rest of the document or its research (fixed directly), and padding or hedging sentences that don't add information (fixed directly).
+
+`discovery-scope` and `grounding-research` are adapted from [deanpeters/Product-Manager-Skills](https://github.com/deanpeters/Product-Manager-Skills) (CC BY-NC-SA 4.0). `research-auditor`'s Fact/Inference/Assumption discipline is adapted from the confidence-and-methodology principle in [alirezarezvani/claude-skills](https://github.com/alirezarezvani/claude-skills)' `research-ops-orchestrator` (not its full multi-lane enterprise routing system). Full attribution is in each skill's `SKILL.md`.
+
+First real run (SunnySideUp, July 2026) caught a genuine gap: the initial `grounding-research.md` never researched UK leasehold/tenancy consent law even though `scope.md` named it as a defining constraint — `research-auditor` caught it, a follow-up pass fixed it. That loop working as intended is itself evidence the process is worth keeping.
+
+That same first run also needed a lot of manual back-and-forth to reach a good product brief: missing market-sizing angles, a competitive-differentiation insight, a Hypothesis disconnected from the rest of the document, and padding sentences all had to be caught by the user one at a time rather than by the process itself. `grounding-research` and `research-auditor` were both extended (see their `SKILL.md` files) specifically to catch these categories automatically next time, so this shouldn't require the same amount of manual intervention on future briefs.
+
+Finishing that same SunnySideUp brief (still July 2026) surfaced a second, distinct round of gaps, after the user pushed back on doing this level of manual correction per brief going forward:
+- The Hypothesis fix above turned out to be an overcorrection — requiring citations back to Market size produced a worse, citation-dense rehash. Reverted in favor of a belief statement plus named behaviors mapped to Success Metrics (`research-auditor` and the template both updated; see their files for the full story).
+- **Go-to-market's template instruction was a single throwaway line** and produced a weak, funding-only paragraph on the first pass. The user's own rewrite (channel strategy per segment, institutional distribution, business model kept distinct) was substantially better, so the template now asks for that structure directly.
+- **The product's actual data model went unquestioned by all three skills.** SunnySideUp's brief promised a "green/amber/red in seconds" viability check with no stated inputs behind it — not caught by `discovery-scope`, `grounding-research`, or `research-auditor`, only by the user thinking through the product mechanics herself. All three skills and the template now explicitly ask, for any product whose core value is a calculation or score: what runtime inputs does it need, and where does each come from.
+- **An audit finding's suggested fix isn't always right the first time.** When this process invented unsourced GTM rationale (a DNO pain point, a Reddit advice gap), the first fix — relabel as an "unverified assumption" — was itself wrong: an Assumption tag only earns its keep if the claim could plausibly get verified later, and a GTM tactic's throwaway justification never will. `research-auditor` now defaults toward cutting unverifiable tactical rationale rather than hedging it.
+- **A stray cross-reference to Flexy leaked into SunnySideUp's own brief** while filling in a templated section. Each project's docs should stand alone; a portfolio-wide rule against naming other projects unless specifically relevant is now stated in the template and below.
+
+## Two standing rules, stated in full
+
+Both are summarised in `CLAUDE.md` because they must load every session. The reasoning behind them lives here.
+
+### Conflicting statistics
+
+**A single fact carrying two different numbers in two different places went unnoticed until the user caught it (Flexy, August 2026).** The US electricity bill increase was stated as "26% in five years" on Flexy's case study page (`index.html`, uncited) and "roughly 40% since 2021" in `product-brief.md` (cited to a Fortune article). Neither number was wrong on its face, and neither `grounding-research` nor `research-auditor` flagged the mismatch, since each was checking one document at a time rather than checking the same fact across documents. The user's standing instruction going forward: whenever conflicting statistics for the same fact turn up, surface both (with sources) and ask which one is canonical, rather than picking one — the newer file, the better-cited one, or any other heuristic — unilaterally. Once decided, every instance of that fact across the project (and portfolio, if it appears in more than one project's material) gets updated to match, so only one number for any given fact is ever live at once. `research-auditor` (step 2a) now checks for this at audit time; `grounding-research` (step 2d) now checks for it before writing a new numeric claim, so it's caught before a second number ever gets written rather than only after.
+
+### `grounding-research.md` is permanent backing material
+
+**`grounding-research.md` is permanent backing material, not scratch.** It stays `.md`-only — never rendered to HTML, never linked from the public site — because it's internal reading material, not a portfolio-facing artifact. The product brief (and any other doc that draws on it) is a compressed, scannable summary of it, not a replacement for it. Once a project's product brief is drafted, don't delete, shrink, or fold `grounding-research.md` away — every claim-bearing section of the brief should cite back to it for full sourcing and confidence level, so the depth stays reachable instead of being silently lost to compression.

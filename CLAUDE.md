@@ -4,9 +4,25 @@ A growing collection of fictional, deeply-researched 0-to-1 product case studies
 
 This repo used to be split across multiple repos (one per case study, e.g. `spallavi-stack/flexy`). It has been consolidated into this single repo so every case study lives together under `projects/`.
 
+## Read only what the task needs
+
+This file loads at the start of every session, so it is kept short on purpose. The heavy material lives in `docs/` and is read on demand. Find the task, read what it names, and stop.
+
+| If the task is | Read |
+|---|---|
+| Working on a specific case study | `docs/project-status.md`, that project's entry only |
+| Starting research on a new project, or reworking existing research | `docs/research-process.md`, then run `discovery-scope` |
+| Writing or auditing a product brief | `templates/product-brief-template.md`, plus `docs/research-process.md` |
+| Changing `index.html`, `contact.html`, or a case study page | `docs/portfolio-feedback.md` first, without fail |
+| A fetch, PDF extraction, or source lookup that failed | `docs/environment-notes.md` |
+| Rendering docs to HTML | `scripts/build_docs.py` and the build script note below |
+| Video scripts | `docs/video-scripts.md` |
+
+Everything below this line applies to every task and is deliberately kept brief.
+
 ## Target structure for every project
 
-Each case study gets its own folder under `projects/<name>/`. The convention (in progress — see "Migration status" below):
+Each case study gets its own folder under `projects/<name>/`. The convention (migration still in progress, see `docs/project-status.md`):
 
 ```
 projects/<name>/
@@ -31,47 +47,7 @@ Rationale: `index.html` + `prototype.html` at a fixed relative path per project 
 
 ## Shared build script
 
-Markdown docs are rendered to styled HTML via a shared, parameterized script (not yet built — currently `projects/flexy/build_docs.py` is a Flexy-only copy, see migration status). The target is one script — likely `scripts/build_docs.py` at the repo root — that takes a project slug and renders that project's `docs/*.md` into `docs/*.html` using that project's theme colors/title. Avoids copy-pasting the same markdown→HTML rendering logic into every new project folder.
-
-## Migration status
-
-- **Flexy**: fully migrated to the `index.html` / `prototype.html` / `docs/` / `assets/` convention above (July 2026).
-- **SunnySideUp**: in progress. `scope.md`, `grounding-research.md`, and `research-audit.md` exist under `projects/sunnysideup/docs/`; product brief, personas, and everything else in the "out of scope for this pass" list in `scope.md` haven't started yet.
-- **Refractor**: research only, started August 2026. `scope.md`, `grounding-research.md` and `context-handoff.md` exist under `projects/refractor/docs/`. No case study page, no prototype, no `assets/`, and nothing linked from the portfolio hub. An AI tool that recommends packaging material substitutions to indie cosmetics brands, cutting carbon without changing unit cost, tooling or timeline, then connecting them to suppliers who can make the substitution. Formula is out of scope, small brands are not charged, and monetization is deliberately open. Geographic scope is fixed at five countries (France, Italy, Germany, Spain, Poland), which hold 57% of Europe's cosmetics manufacturing SMEs. Widen that cut only deliberately. `context-handoff.md` describes a superseded paid two-tier compliance product and carries a banner saying so. Read `scope.md` first.
-- **Fund the Future**: furthest along after Flexy, started August 2026. Research is closed, the product brief is drafted and audited, and the design brief is written and ready for a design tool. A campaign-building and fundraising platform for grassroots climate-adaptation organisations: an organisation enters who they are and what they need money for, and gets a shareable campaign page with a working donation path. The user's own statement of purpose is *"I want grassroots organizations doing honest work in adaptation to have a way to fund their activities through retail giving."* Under `projects/fund-the-future/docs/`: `HANDOVER.md`, `scope.md`, `market-selection.md`, `grounding-research.md`, `product-brief.md`, `design-brief.md`. **Read `HANDOVER.md` first**, then `scope.md`, `market-selection.md`, `product-brief.md`, `design-brief.md`. No personas, jobs-to-be-done, roadmap, prototype, `assets/` or case-study page yet, no `fund-the-future` entry in `scripts/build_docs.py`, and the portfolio hub still shows it as a greyed-out "Coming soon" card tagged "Research next", which now understates it. `design-brief.md` is internal working material and, like `grounding-research.md`, should never be rendered to HTML or linked publicly. Next steps in order, per the handover: visual design, then personas/JTBD/synthetic interviews, then the prototype, then the case-study page, then the build-script entry and the hub link.
-  - **Locked decisions and corrections a new session must not reverse or reintroduce.** The diaspora thesis is deleted: remittance volume is not evidence of willingness to donate to strangers, and the market selection was re-run without it. The pilot is one country, the Philippines, selected on registry quality (the SEC shows whether an organisation filed, not only that it exists) and payout rails (dLocal and Xendit reach banks plus seven wallet providers, where Stripe Connect cannot pay recipients in any market considered). Kenya is the live override, held out on FATF grey-listing. Monetization is donor tips and the organisation pays nothing. The platform holds no funds, which makes it software rather than a money transmitter and means the vetting gate is the only fraud control the product has. Verification is shown as evidence rather than a badge. Canonical figures: global individual giving **$770bn** (cash only, with $1.3tn and $1.5tn barred from this project's material), cross-border philanthropy **$82bn (2023)**, Honduras poverty **50.3%**. The Philippines' 83.1 composite climate-risk figure was deleted by the user's decision and must not come back. **Added 22 August 2026:** donors are worldwide, reversing the short-lived US-only pilot donor market, with reach and acquisition stated as separate claims; the platform performs the same diligence any funding aggregator performs and does not ask the organisation to assemble it, since the Philippine SEC register already shows whether audited financial statements and the officer list were filed, and the target user stays below the documentation floor; a prior-funder track record is dropped on purpose as circular; the adaptation gap is stated as UNEP's annualised **$284bn to $339bn per year until 2035** rather than the cross-year 12-to-14-times ratio; corporate philanthropy pledges belong in Why now and Go-to-market and never in Market size; and onboarding is designed before the campaign page.
-- The shared, parameterized build script lives at `scripts/build_docs.py` (repo root). It currently only has a `flexy` entry in its `PROJECTS` dict — add a `sunnysideup` (or other) entry there when that project's docs are ready to render, rather than copying the script into the project folder.
-
-## Research process (use for every new project)
-
-Three skills in `.claude/skills/` exist to fix three recurring problems with AI-assisted PM research: incomplete coverage, padding with unrequested content, and claims that can't be trusted without independent verification. Run them in sequence for any new case study:
-
-1. **`discovery-scope`** — before any drafting, produces a project-specific checklist of what's needed and what's explicitly out of scope. Saves to `projects/<slug>/docs/scope.md`.
-2. **`grounding-research`** — produces sourced market/regulatory/technical research where every claim is tagged **Fact** (cited), **Inference** (reasoned, shown), or **Assumption** (flagged, unverified). Always checks what the closest competitive analog *doesn't* do, not just whether it exists, and always looks beyond historical adoption for market sizing (comparable-market analogs, addressable-population size, forward-looking targets). Saves to `projects/<slug>/docs/grounding-research.md`.
-3. **`research-auditor`** — a review pass on any drafted doc, run on your own draft before presenting it, not only when the user asks. Checks three things: unlabeled or unsourced claims (findings-only, the user decides the fix), sections that don't actually connect to the rest of the document or its research (fixed directly), and padding or hedging sentences that don't add information (fixed directly).
-
-`discovery-scope` and `grounding-research` are adapted from [deanpeters/Product-Manager-Skills](https://github.com/deanpeters/Product-Manager-Skills) (CC BY-NC-SA 4.0). `research-auditor`'s Fact/Inference/Assumption discipline is adapted from the confidence-and-methodology principle in [alirezarezvani/claude-skills](https://github.com/alirezarezvani/claude-skills)' `research-ops-orchestrator` (not its full multi-lane enterprise routing system). Full attribution is in each skill's `SKILL.md`.
-
-First real run (SunnySideUp, July 2026) caught a genuine gap: the initial `grounding-research.md` never researched UK leasehold/tenancy consent law even though `scope.md` named it as a defining constraint — `research-auditor` caught it, a follow-up pass fixed it. That loop working as intended is itself evidence the process is worth keeping.
-
-That same first run also needed a lot of manual back-and-forth to reach a good product brief: missing market-sizing angles, a competitive-differentiation insight, a Hypothesis disconnected from the rest of the document, and padding sentences all had to be caught by the user one at a time rather than by the process itself. `grounding-research` and `research-auditor` were both extended (see their `SKILL.md` files) specifically to catch these categories automatically next time, so this shouldn't require the same amount of manual intervention on future briefs.
-
-Finishing that same SunnySideUp brief (still July 2026) surfaced a second, distinct round of gaps, after the user pushed back on doing this level of manual correction per brief going forward:
-- The Hypothesis fix above turned out to be an overcorrection — requiring citations back to Market size produced a worse, citation-dense rehash. Reverted in favor of a belief statement plus named behaviors mapped to Success Metrics (`research-auditor` and the template both updated; see their files for the full story).
-- **Go-to-market's template instruction was a single throwaway line** and produced a weak, funding-only paragraph on the first pass. The user's own rewrite (channel strategy per segment, institutional distribution, business model kept distinct) was substantially better, so the template now asks for that structure directly.
-- **The product's actual data model went unquestioned by all three skills.** SunnySideUp's brief promised a "green/amber/red in seconds" viability check with no stated inputs behind it — not caught by `discovery-scope`, `grounding-research`, or `research-auditor`, only by the user thinking through the product mechanics herself. All three skills and the template now explicitly ask, for any product whose core value is a calculation or score: what runtime inputs does it need, and where does each come from.
-- **An audit finding's suggested fix isn't always right the first time.** When this process invented unsourced GTM rationale (a DNO pain point, a Reddit advice gap), the first fix — relabel as an "unverified assumption" — was itself wrong: an Assumption tag only earns its keep if the claim could plausibly get verified later, and a GTM tactic's throwaway justification never will. `research-auditor` now defaults toward cutting unverifiable tactical rationale rather than hedging it.
-- **A stray cross-reference to Flexy leaked into SunnySideUp's own brief** while filling in a templated section. Each project's docs should stand alone; a portfolio-wide rule against naming other projects unless specifically relevant is now stated in the template and below.
-
-**A single fact carrying two different numbers in two different places went unnoticed until the user caught it (Flexy, August 2026).** The US electricity bill increase was stated as "26% in five years" on Flexy's case study page (`index.html`, uncited) and "roughly 40% since 2021" in `product-brief.md` (cited to a Fortune article). Neither number was wrong on its face, and neither `grounding-research` nor `research-auditor` flagged the mismatch, since each was checking one document at a time rather than checking the same fact across documents. The user's standing instruction going forward: whenever conflicting statistics for the same fact turn up, surface both (with sources) and ask which one is canonical, rather than picking one — the newer file, the better-cited one, or any other heuristic — unilaterally. Once decided, every instance of that fact across the project (and portfolio, if it appears in more than one project's material) gets updated to match, so only one number for any given fact is ever live at once. `research-auditor` (step 2a) now checks for this at audit time; `grounding-research` (step 2d) now checks for it before writing a new numeric claim, so it's caught before a second number ever gets written rather than only after.
-
-**`grounding-research.md` is permanent backing material, not scratch.** It stays `.md`-only — never rendered to HTML, never linked from the public site — because it's internal reading material, not a portfolio-facing artifact. The product brief (and any other doc that draws on it) is a compressed, scannable summary of it, not a replacement for it. Once a project's product brief is drafted, don't delete, shrink, or fold `grounding-research.md` away — every claim-bearing section of the brief should cite back to it for full sourcing and confidence level, so the depth stays reachable instead of being silently lost to compression.
-
-**Resolved environment limitation: direct primary-source fetching was blocked by the environment's network policy, fixable via environment settings.** During SunnySideUp's initial research (July 2026), `WebFetch`/direct HTTPS access to virtually all external sites (gov.uk, Ofgem, HMRC, MCS, ENA, Which?, even a neutral test domain and GitHub Pages) returned 403s from the session's network proxy — diagnosed via `curl -sS http://127.0.0.1:<port>/__agentproxy/status` (see `/root/.ccr/README.md`) as a broad session-level egress policy, not a targeted block on sensitive sites. **The fix, confirmed working (23 July 2026)**: in Claude Code on the web (claude.ai/code), open the environment for editing (click the environment name near the session, hover it in the selector, click the settings icon) and change **Network access** from **Trusted** (the restrictive default — package registries and little else) to **Full** in the dialog, then start a *new* session under that environment — the change doesn't apply retroactively to an already-running session. This genuinely unblocked direct reads of gov.uk, legislation.gov.uk, ofgem.gov.uk, and theiet.org, and let several `grounding-research.md` claims get upgraded from search-snippet-sourced to directly-verified primary sources (see its "Update (23 July 2026)" note and the corresponding `research-audit.md` findings).
-
-**Residual limitation: some individual sites block automated fetching regardless of this fix.** Reddit and niceic.com both returned HTTP 403 with bot protection even under Full network access; nycto.io loaded but its own Anubis anti-bot challenge rejected the request. That's the site's own defense against scrapers/AI crawlers, not Anthropic's egress policy — switching network access doesn't help here. Expect this on platforms with a strong incentive to block bots (high-value UGC platforms like Reddit, sites that have adopted bot-walls like Anubis); most ordinary sites (government, regulatory, docs pages) don't do this. **Qualified by the Fund the Future verification pass (21 August 2026): "blocked by bot protection" sometimes describes the fetching tool rather than the source.** UNEP, FATF and sec.gov.ph had all been recorded as unreachable in earlier passes on that project, and all three were read directly once a different route was tried (a scraping service using a stealth proxy). Three figures changed as a result and one closed question reopened. Try a second fetching route before recording a source as unreachable. Genuinely bot-walled sites (Reddit and similar) stay unreachable either way.
-
-**Resolved: PDF-extraction tooling failure was a stale package list, not a broken environment.** poppler-utils, pypdf, and pdfminer.six all failed when a July 2026 verification pass tried to read a linked Ofgem PDF for the SIF's RIIO-3 funding figures — that figure stayed tagged as an unverified Assumption in `grounding-research.md` for a tooling reason, not because the data doesn't exist. **Fix, confirmed working (24 July 2026):** running `apt-get update` before `apt-get install poppler-utils` resolved it — a later verification pass (household electricity consumption figures, same document) successfully installed poppler-utils and extracted Ofgem's TDCV decision PDF and DfT's National Travel Survey PDF directly with `pdftotext`. If a fresh session hits the same install failure, try updating the package list first before concluding PDF sources are unreachable.
+Markdown docs are rendered to styled HTML via a shared, parameterized script (not yet built, currently `projects/flexy/build_docs.py` is a Flexy-only copy, see `docs/project-status.md`). The target is one script — likely `scripts/build_docs.py` at the repo root — that takes a project slug and renders that project's `docs/*.md` into `docs/*.html` using that project's theme colors/title. Avoids copy-pasting the same markdown→HTML rendering logic into every new project folder.
 
 ## Product brief template
 
@@ -89,9 +65,23 @@ Applies to product briefs, case studies, personas, and anything else meant to be
 
 This rule was set explicitly because the docs written so far violate it constantly. Check new writing against it deliberately rather than assuming default style is fine.
 
-## Git & PR workflow
+## Rules that always apply
+
+### Conflicting statistics
+
+When two different numbers turn up for the same fact, surface both with their sources and ask which is canonical. Never resolve it silently by picking the newer file, the better-cited one, or any other heuristic. Once decided, update every instance across the project, and across the portfolio if the fact appears in more than one project, so only one number is ever live. Full backstory and the skill-level fixes: `docs/research-process.md`.
+
+### `grounding-research.md` is permanent
+
+It stays `.md`-only, never rendered to HTML and never linked publicly. Once a product brief exists, do not delete, shrink, or fold the research away. The brief cites back to it. Full reasoning: `docs/research-process.md`.
+
+### Git and pull requests
 
 **Always ask before merging a pull request, every time — even after the user has approved a merge earlier in the same session.** Opening a PR and pushing commits to a feature branch don't need per-action confirmation, but merging into `main` does, no exceptions.
+
+### Privacy boundary
+
+This repository is public and served via GitHub Pages. The private job-search repo (`spallavi-stack/Hustle`) holds career, health and financial material. Nothing from there is ever copied into this repo, quoted in a commit message here, or linked from the public site.
 
 ## Other notes
 
