@@ -127,7 +127,7 @@
       return;
     }
 
-    if (href.indexOf('shubha-cv-v2.pdf') !== -1) {
+    if (href.indexOf('shubha-pallavi-cv.pdf') !== -1) {
       track('cv-download');
       return;
     }
