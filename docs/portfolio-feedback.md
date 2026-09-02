@@ -16,7 +16,7 @@ Status values: **Open** (logged, no decision yet), **Decided** (approach agreed,
 
 ### 1. The portfolio speaks to the audience least able to hire
 
-**Status:** Open, and now unblocked. **Read Round 2 (items 8 to 11) alongside this one**, which develops it substantially and settles the two decisions it was waiting on. Climate leads (item 10), the audience is English-speaking plus a warm German network (item 9), and the segment framing stays broad (item 11). What remains is writing the copy.
+**Status:** Open, partly addressed. **Read Round 2 (items 8 to 11) alongside this one**, which develops it substantially and settles the two decisions it was waiting on. Climate leads (item 10), the audience is English-speaking plus a warm German network (item 9), and the segment framing stays broad (item 11). See the progress note dated 2 September 2026 at the end of this file for what has now been built and what is still outstanding.
 
 **What was said.** The site reads as though it is aimed at founders of small, ideation-stage companies who need someone to take them from idea to prototype. That audience has a real problem: they typically don't have much money, and many are themselves mid-fundraise, so hiring an experienced product manager is not a near-term move for them. Optimising the portfolio for that group points it at the segment least able to act on it.
 
@@ -235,3 +235,17 @@ Both decisions that were blocked on Shubha are now made. **Item 9:** English-spe
 **Item 1 is therefore unblocked.** The positioning work can now be written against settled ground: climate leads, the audience is English-speaking plus a warm German network, and per item 11 the segment framing stays broad enough to catch work she would take rather than narrowing to one buyer. What remains is writing the copy, since the site still states no audience, no engagement type, and no working language.
 
 The one piece of Round 2 still worth acting on independently is surfacing the method better, which item 10 records as compatible with climate leading.
+
+## Progress, 2 September 2026
+
+Against item 1, the "Who this is for" row on `index.html` was reworked. This is the first piece of the item's copy work to reach the site.
+
+**Two cards merged into one.** "Innovation leads" and "Experiment leads" were saying the same thing in different words, and reading them one after the other made the row look padded. They are now a single card, with the description widened to carry both meanings: "Testing an idea or a feature before you commit engineering time to it."
+
+**One card added, aimed at a buyer the row was missing entirely.** "Impact organisations", described as "Funding or running programmes that need product thinking." The row previously spoke only to startups, agencies and founders, so a programme lead at a foundation, a UN agency or a development bank had nothing to recognise themselves in. That buyer is a real target, and it is the one segment where Shubha's EESL record is the strongest asset she has.
+
+Two wording decisions worth recording, since both went against the first draft. No institution is named in the card, on Shubha's call, so the copy stays broad in the way item 11 asks for and does not read as a list of logos she has worked with. The word "real" was cut from "real product thinking", because it was the only intensifier in the row and it implied the reader's current product thinking was not real, which is a poor thing to say to the exact person the card is trying to reach.
+
+The row now runs five cards: Innovation leads, Teams mid-pivot, Agencies & studios, Early-stage founders, Impact organisations.
+
+**Still outstanding on item 1.** The site names an audience now, but still states no engagement type and no working language, both of which the item calls for. The hero copy above the row is unchanged and still carries the old framing.
