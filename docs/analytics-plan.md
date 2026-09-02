@@ -108,7 +108,7 @@ Still to do:
 - Merge to the branch GitHub Pages serves. Nothing is collected until the change is deployed.
 - Start tagging the links you send with UTM parameters, per section 4.
 
-The privacy line is in place, sitting under the existing note in the footer of all four instrumented pages: "This site counts anonymous visits to see which case studies get read. It sets no cookies and collects no personal data."
+The privacy line is in place, sitting under the existing note in the footer of all four instrumented pages: "This site counts anonymous visits. It sets no cookies and collects no personal data."
 
 Then leave it alone for a month before reading anything into it.
 
