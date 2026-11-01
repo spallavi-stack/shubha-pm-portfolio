@@ -1615,8 +1615,8 @@ const CONSUMPTION_SOURCE_NOTE = "Consumption modeled on EIA's Illinois residenti
 // Real ComEd Hourly Pricing data (cents/kWh), last refreshed by scripts/refresh_comed_prices.py.
 // Used as a last-resort fallback when the live fetch below can't reach ComEd at all (network down, etc.)
 // This is real historical ComEd pricing, not invented numbers, even when it's not live.
-const FALLBACK_COMED_PRICES = [1.6,1.7,1.2,1.6,1.8,2.8,10.7,4.1,3.2,2.9,3.3,3.3,11.8,3.1,3.6,4.1,4.1,4.3,3.7,4.8,3.5,3.8,3.3,10.6];
-const FALLBACK_LABEL = 'Sep 30, 2026';
+const FALLBACK_COMED_PRICES = [1.9,2.0,3.2,2.4,1.1,0.8,2.8,2.6,3.9,2.2,3.4,2.8,2.7,4.1,4.3,6.0,4.7,3.8,4.5,3.9,4.0,2.7,2.7,2.6];
+const FALLBACK_LABEL = 'Oct 31, 2026';
 const RTP_COLORS = {0:'#34C759',1:'#F5A623',2:'#FF6B6B'};
 // ComEd's actual filed residential TOU proposal (ICC docket, targeting a 2026 rollout) doesn't
 // change the real-time supply price at all, it replaces the flat delivery charge with a
@@ -1634,7 +1634,7 @@ const TOU_PREMIUM_COLOR = '#33267A';
 const COMED_STANDARD_DELIVERY_CENTS = 5.9;
 const COMED_FIXED_MONTHLY = 19.07;
 
-const FALLBACK_DATE_STR = '20260930';
+const FALLBACK_DATE_STR = '20261031';
 let priceState = { hours: FALLBACK_COMED_PRICES, source: 'fallback', isToday: false, label: FALLBACK_LABEL, dateStr: FALLBACK_DATE_STR, touMode: false, tomorrowHours: null, tomorrowSource: 'not-posted' };
 let currentRange = 'today';
 let latestSubView = 'today';
@@ -1646,16 +1646,16 @@ let latestSubView = 'today';
 const RANGE_DAYS = { week: 7, month: 30, year: 365 };
 const RANGE_LABEL = { week: 'weekly', month: 'monthly', year: 'yearly' };
 const RANGE_SOURCE_LABEL = {
-  week: 'Real avg of 7 days, Sep 24–30, 2026',
-  month: 'Real avg of 2 sampled days, Sep 5–20, 2026',
-  year: 'Real avg of 5 sampled days, Oct 2025–Aug 2026'
+  week: 'Real avg of 7 days, Oct 25–31, 2026',
+  month: 'Real avg of 2 sampled days, Oct 6–21, 2026',
+  year: 'Real avg of 5 sampled days, Nov 2025–Oct 2026'
 };
 const RANGE_SAVINGS_PCT = { week: -14, month: -11, year: -9 };
-const RANGE_SPOT_CHECK_DATE = { week: '20260930', month: '20260920', year: '20260831' };
+const RANGE_SPOT_CHECK_DATE = { week: '20261031', month: '20261021', year: '20261001' };
 const RANGE_PRICES = {
-  week:  [1.51,1.4,1.59,1.73,1.67,2.29,3.0,2.8,4.23,2.19,2.23,2.4,3.6,2.33,2.87,2.94,3.21,3.09,5.7,12.13,4.79,2.99,2.54,3.0],
-  month: [3.45,3.3,2.5,2.5,2.0,2.2,1.9,2.7,2.5,1.85,2.6,3.85,7.55,4.2,5.5,4.7,4.85,4.55,4.9,4.2,2.45,2.95,4.6,1.3],
-  year:  [1.92,1.1,0.94,0.92,1.28,1.5,2.04,2.46,5.16,2.36,3.0,2.64,3.84,3.32,3.26,3.64,3.36,3.4,3.5,6.72,3.9,2.86,2.32,2.36]
+  week:  [3.24,2.24,2.84,2.53,3.73,2.13,3.83,8.87,5.53,2.31,2.26,2.91,2.96,3.16,3.04,3.33,3.56,5.61,16.19,10.46,4.81,4.19,3.19,3.2],
+  month: [2.0,1.85,1.75,1.8,2.45,2.25,4.6,8.55,3.85,2.35,2.35,2.45,2.35,2.6,2.8,2.85,2.25,4.75,16.75,15.3,5.4,4.25,4.45,3.4],
+  year:  [2.5,2.8,2.9,1.72,1.68,1.82,6.18,4.8,2.7,2.66,2.62,4.64,2.68,2.96,2.68,2.98,2.26,3.12,3.72,3.88,4.72,3.28,4.86,2.66]
 };
 function getRangeCurves(range){
   // Real usage data is still gated behind Green Button Connect (see the technical feasibility
